@@ -1,0 +1,542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="/lua_sandbox_extensions/docs.css" type="text/css" />
+</head>
+<body>
+<div id="title">Lua Sandbox Extensions<hr/></div>
+<div class="menu">
+<ul>
+<li><a href="/lua_sandbox_extensions/index.html">OVERVIEW</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/bloom_filter/index.html">bloom_filter</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/circular_buffer/index.html">circular_buffer</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/cbufd.html">cbufd</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/index.html">analysis</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/throughput.html">throughput</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/cjson/index.html">cjson</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/modules/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/modules/heka/elasticsearch/index.html">elasticsearch</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/elasticsearch/modules/heka/elasticsearch/payload.html">payload</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/elasticsearch/modules/heka/elasticsearch.html">elasticsearch</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.html">elasticsearch_bulk_api</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/modules/heka/index.html">heka</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/modules/heka/msg_interpolate.html">msg_interpolate</a></li>
+<li><a href="/lua_sandbox_extensions/heka/modules/heka/util.html">util</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_stdin.html">heka_stdin</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_debug.html">heka_debug</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_inject_payload.html">heka_inject_payload</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_log_rolling.html">heka_log_rolling</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/hyperloglog/index.html">hyperloglog</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/kafka/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/heka_kafka.html">heka_kafka</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/heka_kafka.html">heka_kafka</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lpeg/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/common_log_format.html">common_log_format</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/date_time.html">date_time</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/ip_address.html">ip_address</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/mysql.html">mysql</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/postfix.html">postfix</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lsb/index.html">lsb</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lsb/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lsb/modules/lsb/index.html">lsb</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lsb/modules/lsb/util.html">util</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/socket/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/heka_tcp.html">heka_tcp</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp.html">heka_tcp</a></li>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp_matcher.html">heka_tcp_matcher</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/ssl/index.html">ssl</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/struct/index.html">struct</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog.html">syslog</a></li>
+<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog_message.html">syslog_message</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/syslog_udp.html">syslog_udp</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+</div>
+<div class="main-content">
+<h1 id="lua-circular-buffer-module">Lua Circular Buffer Module</h1>
+<h2 id="overview">Overview</h2>
+<p>A circular buffer library for an in-memory sliding window time series data store.</p>
+<h2 id="module">Module</h2>
+<h3 id="example-usage">Example Usage</h3>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;circular_buffer&quot;</span>
+
+<span class="kw">local</span> cb <span class="ot">=</span> circular_buffer<span class="ot">.</span>new<span class="ot">(</span><span class="dv">1440</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">60</span><span class="ot">)</span>
+<span class="kw">local</span> ERRORS <span class="ot">=</span> cb:set_header<span class="ot">(</span><span class="dv">1</span><span class="ot">,</span> <span class="st">&quot;Errors&quot;</span><span class="ot">)</span>
+cb:add<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> ERRORS<span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+cb:add<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> ERRORS<span class="ot">,</span> <span class="dv">7</span><span class="ot">)</span>
+<span class="kw">local</span> val <span class="ot">=</span> cb:get<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> ERRORS<span class="ot">)</span>
+<span class="co">-- val == 8</span></code></pre></div>
+<h3 id="functions">Functions</h3>
+<h4 id="new">new</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;circular_buffer&quot;</span>
+<span class="kw">local</span> cb <span class="ot">=</span> circular_buffer<span class="ot">.</span>new<span class="ot">(</span><span class="dv">1440</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">60</span><span class="ot">)</span></code></pre></div>
+<p>Import the Lua <em>circular_buffer</em> via the Lua 'require' function. The module is globally registered and returned by the require function.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>rows (unsigned) The number of rows in the buffer (must be &gt; 1)</li>
+<li>columns (unsigned) The number of columns in the buffer (must be &gt; 0 and &lt;= 256)</li>
+<li>seconds_per_row (unsigned) The number of seconds each row represents (must be &gt; 0).</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>circular_buffer userdata object.</li>
+</ul>
+<h4 id="version">version</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> v <span class="ot">=</span> circular_buffer<span class="ot">.</span>version<span class="ot">()</span>
+<span class="co">-- v == &quot;1.0.0&quot;</span></code></pre></div>
+<p>Returns a string with the running version of circular_buffer.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>Semantic version string</li>
+</ul>
+<h3 id="methods">Methods</h3>
+<p><strong>Note:</strong> All column arguments are 1 based. If the column is out of range for the configured circular buffer a fatal error is generated.</p>
+<h4 id="add">add</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">d <span class="ot">=</span> cb:add<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+<span class="co">-- d == 1</span>
+d <span class="ot">=</span> cb:add<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">99</span><span class="ot">)</span>
+<span class="co">-- d == 100</span></code></pre></div>
+<p>Adds a value to the specified row/column in the circular buffer.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>nanosecond (unsigned) The number of nanosecond since the UNIX epoch. The value is used to determine which row is being operated on.</li>
+<li>column (unsigned) The column within the specified row to perform an add operation on.</li>
+<li>value (double) The value to be added to the specified row/column.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The value of the updated row/column or nil if the time was outside the range of the buffer.</li>
+</ul>
+<h4 id="set">set</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">d <span class="ot">=</span> cb:set<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+<span class="co">-- d == 1</span>
+d <span class="ot">=</span> cb:set<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">99</span><span class="ot">)</span>
+<span class="co">-- d == 99</span></code></pre></div>
+<p>Overwrites the value at a specific row/column in the circular buffer.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>nanosecond (unsigned) The number of nanosecond since the UNIX epoch. The value is used to determine which row is being operated on.</li>
+<li>column (unsigned) The column within the specified row to perform a set operation on.</li>
+<li>value (double) The value to be overwritten at the specified row/column. For aggregation methods &quot;min&quot; and &quot;max&quot; the value is only overwritten if it is smaller/larger than the current value.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The resulting value of the row/column or nil if the time was outside the range of the buffer.</li>
+</ul>
+<h4 id="get">get</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">d <span class="ot">=</span> cb:get<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+<span class="co">-- d == 99</span></code></pre></div>
+<p>Fetches the value at a specific row/column in the circular buffer.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>nanosecond (unsigned) The number of nanosecond since the UNIX epoch. The value is used to determine which row is being operated on.</li>
+<li>column (unsigned) The column within the specified row to retrieve the data from.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The value at the specifed row/column or nil if the time was outside the range of the buffer.</li>
+</ul>
+<h4 id="get_delta">get_delta</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">d <span class="ot">=</span> cb:get_delta<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+<span class="co">-- d == 99</span></code></pre></div>
+<p>Fetches the delta value at a specific row/column in the circular buffer since the last reset/output.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>nanosecond (unsigned) The number of nanosecond since the UNIX epoch. The value is used to determine which row is being operated on.</li>
+<li>column (unsigned) The column within the specified row to retrieve the data from.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The delta value at the specifed row/column or nil if the time was outside the range of the buffer.</li>
+</ul>
+<h4 id="get_range">get_range</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> stats <span class="ot">=</span> circular_buffer<span class="ot">.</span>new<span class="ot">(</span><span class="dv">5</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">2e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">3e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">3</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">4e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">4</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">5e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">5</span><span class="ot">)</span>
+
+<span class="kw">local</span> a <span class="ot">=</span> stats:get_range<span class="ot">(</span><span class="dv">1</span><span class="ot">,</span> <span class="dv">3e9</span><span class="ot">,</span> <span class="dv">4e9</span><span class="ot">)</span>
+<span class="co">-- a = {3, 4}</span></code></pre></div>
+<p>Returns an array of column values spanning the specificed time range.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>column (unsigned) The column that the computation is performed against.</li>
+<li>start (unsigned <em>optional</em>) The number of nanosecond since the UNIX epoch. Sets the start time of the computation range; if nil the buffer's start time is used.</li>
+<li>end (unsigned <em>optional</em>) The number of nanosecond since the UNIX epoch. Sets the end time of the computation range (inclusive); if nil the buffer's end time is used. The end time must be greater than or equal to the start time.</li>
+</ul>
+<p><em>Returns</em></p>
+<ul>
+<li>Array of column values or nil if the range fell entirely outside of the buffer.</li>
+</ul>
+<h4 id="get_range_delta">get_range_delta</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> stats <span class="ot">=</span> circular_buffer<span class="ot">.</span>new<span class="ot">(</span><span class="dv">5</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">2e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">3e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">3</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">4e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">4</span><span class="ot">)</span>
+stats:set<span class="ot">(</span><span class="dv">5e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">5</span><span class="ot">)</span>
+
+<span class="kw">local</span> a <span class="ot">=</span> stats:get_range<span class="ot">(</span><span class="dv">1</span><span class="ot">,</span> <span class="dv">3e9</span><span class="ot">,</span> <span class="dv">4e9</span><span class="ot">)</span>
+<span class="co">-- a = {3, 4}</span></code></pre></div>
+<p>Returns an array of column delta values spanning the specificed time range since the last reset/output.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>column (unsigned) The column that the computation is performed against.</li>
+<li>start (unsigned <em>optional</em>) The number of nanosecond since the UNIX epoch. Sets the start time of the computation range; if nil the buffer's start time is used.</li>
+<li>end (unsigned <em>optional</em>) The number of nanosecond since the UNIX epoch. Sets the end time of the computation range (inclusive); if nil the buffer's end time is used. The end time must be greater than or equal to the start time.</li>
+</ul>
+<p><em>Returns</em></p>
+<ul>
+<li>Array of column delta values or nil if the range fell entirely outside of the buffer.</li>
+</ul>
+<h4 id="get_configuration">get_configuration</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">rows<span class="ot">,</span> columns<span class="ot">,</span> seconds_per_row <span class="ot">=</span> cb:get_configuration<span class="ot">()</span>
+<span class="co">-- rows == 1440</span>
+<span class="co">-- columns = 1</span>
+<span class="co">-- seconds_per_row = 60</span></code></pre></div>
+<p>Returns the configuration options passed to <em>new</em>.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The circular buffer dimension values specified in the constructor.
+<ul>
+<li>rows</li>
+<li>columns</li>
+<li>seconds_per_row</li>
+</ul></li>
+</ul>
+<h4 id="current_time">current_time</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">t <span class="ot">=</span> cb:current_time<span class="ot">()</span>
+<span class="co">-- t == 86340000000000</span></code></pre></div>
+<p>Returns the timestamp of the newest row.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The time of the most current row in the circular buffer (nanoseconds).</li>
+</ul>
+<h4 id="set_header">set_header</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">column <span class="ot">=</span> cb:set_header<span class="ot">(</span><span class="dv">1</span><span class="ot">,</span> <span class="st">&quot;Errors&quot;</span><span class="ot">)</span>
+<span class="co">-- column == 1</span></code></pre></div>
+<p>Sets the header metadata for the specifed column.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>column (unsigned) The column number where the header information is applied.</li>
+<li>name (string) Descriptive name of the column (maximum 15 characters). Any non alpha numeric characters will be converted to underscores. (default: Column_N)</li>
+<li>unit (string <em>optional</em>) The unit of measure (maximum 7 characters). Alph numeric, '/', and '*' characters are allowed everything else will be converted to underscores. i.e. KiB, Hz, m/s (default: count)</li>
+<li>aggregation_method (string <em>optional</em>) Controls how the column data is aggregated when combining multiple circular buffers.
+<ul>
+<li><strong>sum</strong> The total is computed for the time/column (default).</li>
+<li><strong>min</strong> The smallest value is retained for the time/column.</li>
+<li><strong>max</strong> The largest value is retained for the time/column.</li>
+<li><strong>none</strong> No aggregation will be performed the column.</li>
+</ul></li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The column number passed into the function.</li>
+</ul>
+<h4 id="get_header">get_header</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">name<span class="ot">,</span> unit<span class="ot">,</span> aggregation_method <span class="ot">=</span> cb:get_header<span class="ot">(</span><span class="dv">1</span><span class="ot">)</span>
+<span class="co">-- name == &quot;Errors&quot;</span>
+<span class="co">-- unit == &quot;count&quot;</span>
+<span class="co">-- aggregation_method == &quot;sum&quot;</span></code></pre></div>
+<p>Retrieves the header metadata for the specified column.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>column (unsigned) The column number of the header information to be retrieved.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The current values of specified header column.
+<ul>
+<li>name</li>
+<li>unit</li>
+<li>aggregation_method</li>
+</ul></li>
+</ul>
+<h4 id="reset_delta">reset_delta</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="co">-- only available when using the non lua_sandbox (the sandbox output manages the</span>
+<span class="co">-- reset in that case)</span>
+cb:reset_delta<span class="ot">(</span><span class="st">&quot;)</span></code></pre></div>
+<p>Resets the delta counts back to initialized.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none</li>
+</ul>
+<h4 id="annotate">annotate</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="co">-- only available when using the lua_sandbox</span>
+cb:annotate<span class="ot">(</span><span class="dv">1e9</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="st">&quot;alert&quot;</span><span class="ot">,</span> <span class="st">&quot;Anonmaly detected rate of change exceeded 2 standard deviations&quot;</span><span class="ot">)</span></code></pre></div>
+<p>Creates/Overwrites the annotation at a specific row/column in the circular buffer.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>nanosecond (unsigned) The number of nanosecond since the UNIX epoch. The value is used to determine which row is being operated on.</li>
+<li>column (unsigned) The column within the specified row to perform a set operation on.</li>
+<li>type (string) - info|alert</li>
+<li>annotation (string) - full text of the annotation</li>
+<li>delta (bool <em>optional</em>) - include the change in the cbufd ouput (default true)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none</li>
+</ul>
+<h4 id="format">format</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="co">-- only available when using the lua_sandbox</span>
+cb:<span class="fu">format</span><span class="ot">(</span><span class="st">&quot;cbufd&quot;</span><span class="ot">)</span></code></pre></div>
+<p>Sets an internal flag to control the output format of the circular buffer data structure.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>format (string)
+<ul>
+<li><strong>cbuf</strong> The circular buffer full data set format.</li>
+<li><strong>cbufd</strong> The circular buffer delta data set format.</li>
+</ul></li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The circular buffer object.</li>
+</ul>
+<h3 id="output">Output</h3>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="co">-- only available when using the lua_sandbox todo: add tostring support</span>
+cb:<span class="fu">format</span><span class="ot">(</span><span class="st">&quot;cbuf&quot;</span><span class="ot">)</span>
+output<span class="ot">(</span>cb<span class="ot">)</span> <span class="co">-- serializes the full buffer</span>
+cb:<span class="fu">format</span><span class="ot">(</span><span class="st">&quot;cbufd&quot;</span><span class="ot">)</span>
+output<span class="ot">(</span>cb<span class="ot">)</span> <span class="co">-- serializes the delta of the buffer since the last output</span></code></pre></div>
+<p>The circular buffer can be passed to the lua_sandbox output() function. The output format can be selected using the format() function.</p>
+<p>The cbuf (full data set) output format consists of newline delimited rows starting with a json header row followed by the data rows with tab delimited columns. The time in the header corresponds to the time of the first data row, the time for the other rows is calculated using the seconds_per_row header value.</p>
+<pre><code>{json header}
+row1_col1\trow1_col2\n
+.
+.
+.
+rowN_col1\trowN_col2\n</code></pre>
+<p>The cbufd (delta) output format consists of newline delimited rows starting with a json header row followed by the data rows with tab delimited columns. The first column is the timestamp for the row (time_t). The cbufd output will only contain the rows that have changed and the corresponding delta values for each column.</p>
+<pre><code>{json header}
+row14_timestamp\trow14_col1\trow14_col2\n
+row10_timestamp\trow10_col1\trow10_col2\n</code></pre>
+<h2 id="sample-cbuf-output">Sample Cbuf Output</h2>
+<pre><code>{&quot;time&quot;:2,&quot;rows&quot;:3,&quot;columns&quot;:3,&quot;seconds_per_row&quot;:60,&quot;column_info&quot;:[{&quot;name&quot;:&quot;HTTP_200&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;},{&quot;name&quot;:&quot;HTTP_400&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;},{&quot;name&quot;:&quot;HTTP_500&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;}], &quot;annotations&quot;:[]}
+10002   0   0
+11323   0   0
+10685   0   0</code></pre>
+</div>
+</body>
+</html>
