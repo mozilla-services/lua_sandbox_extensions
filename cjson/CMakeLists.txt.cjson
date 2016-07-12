@@ -1,0 +1,64 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(cjson VERSION 2.1.0 LANGUAGES C)
+
+set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua cjson Module")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_CONTACT "Mike Trinkala <trink@mozilla.com>")
+set(CPACK_RPM_PACKAGE_LICENSE "MIT License")
+set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
+set(CPACK_STRIP_FILES TRUE)
+set(PACKAGE_DEPENDENCIES "luasandbox (>= 0.24)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS ${PACKAGE_DEPENDENCIES})
+string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${PACKAGE_DEPENDENCIES})
+
+if(MSVC)
+    set(CMAKE_C_FLAGS           "/W3")
+    set(CMAKE_C_FLAGS_RELEASE   "/MD /O2 /Ob2")
+else()
+	set(CMAKE_C_FLAGS           "-Wall -fPIC")
+    set(CMAKE_C_FLAGS_RELEASE   "-O2")
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif()
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(LUA51) # build against installed lua 5.1
+	set(CPACK_PACKAGE_NAME lua-${PROJECT_NAME})
+    find_package(Lua51)
+    find_program(LUA NAMES lua lua.bat)
+    add_test(NAME test COMMAND ${LUA} test.lua)
+else() # lua_sandbox build
+	find_package(luasandbox 0.24.0 REQUIRED CONFIG)
+	set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
+	set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
+endif()
+
+set(FPCONV_SOURCES fpconv.c)
+
+# Handle platforms missing isinf() macro (Eg, some Solaris systems).
+include(CheckSymbolExists)
+CHECK_SYMBOL_EXISTS(isinf math.h HAVE_ISINF)
+if(NOT HAVE_ISINF)
+    add_definitions(-DUSE_INTERNAL_ISINF)
+endif()
+
+if(WIN32)
+    # Windows sprintf()/strtod() handle NaN/inf differently. Not supported.
+    add_definitions(-DDISABLE_INVALID_NUMBERS)
+endif()
+
+include(CPack)
+include_directories(${LUA_INCLUDE_DIR})
+add_definitions(-DLUA_SANDBOX -DDIST_VERSION="${PROJECT_VERSION}")
+add_library(cjson SHARED lua_cjson.c strbuf.c fpconv.c lua_cjson.def)
+target_link_libraries(cjson ${LUA_LIBRARIES})
+if(LIBM_LIBRARY)
+  target_link_libraries(cjson ${LIBM_LIBRARY})
+endif()
+install(TARGETS cjson DESTINATION ${INSTALL_MODULE_PATH})

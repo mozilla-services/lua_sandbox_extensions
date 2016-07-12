@@ -1,0 +1,1 @@
+set(CTEST_CUSTOM_PRE_TEST  "${CMAKE_MAKE_PROGRAM} install DESTDIR=install")

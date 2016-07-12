@@ -1,0 +1,52 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(sax VERSION 0.5.0 LANGUAGES C)
+
+set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua SAX Module")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_CONTACT "Mike Trinkala <trink@mozilla.com>")
+set(CPACK_RPM_PACKAGE_LICENSE "MIT License")
+set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
+set(CPACK_STRIP_FILES TRUE)
+set(PACKAGE_DEPENDENCIES "luasandbox (>= 0.24)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS ${PACKAGE_DEPENDENCIES})
+string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${PACKAGE_DEPENDENCIES})
+
+if(MSVC)
+    set(CMAKE_C_FLAGS           "/W3 /WX")
+    set(CMAKE_C_FLAGS_RELEASE   "/MD /O2 /Ob2")
+else()
+	set(CMAKE_C_FLAGS           "-std=c99 -pedantic -Werror -Wall -Wextra -fPIC")
+    set(CMAKE_C_FLAGS_RELEASE   "-O2")
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif()
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(LUA51) # build against installed lua 5.1
+	set(CPACK_PACKAGE_NAME lua-${PROJECT_NAME})
+    find_package(Lua51)
+    find_program(LUA NAMES lua lua.bat)
+    add_test(NAME test COMMAND ${LUA} test.lua)
+else() # lua_sandbox build
+	find_package(luasandbox 0.24.0 REQUIRED CONFIG)
+	set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
+	set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
+endif()
+
+find_library(LIBM_LIBRARY m)
+
+include(CPack)
+include_directories(${LUA_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/include)
+add_definitions(-DLUA_SANDBOX -DDIST_VERSION="${PROJECT_VERSION}")
+add_library(sax SHARED src/symtseries.c lua/lua_sax.c lua/lua_sax.def)
+target_link_libraries(sax ${LUA_LIBRARIES})
+if(LIBM_LIBRARY)
+  target_link_libraries(sax ${LIBM_LIBRARY})
+endif()
+install(TARGETS sax DESTINATION ${INSTALL_MODULE_PATH})

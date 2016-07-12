@@ -1,0 +1,90 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(socket VERSION 3.0.0 LANGUAGES C)
+
+set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Socket Modules")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_CONTACT "Mike Trinkala <trink@mozilla.com>")
+set(CPACK_RPM_PACKAGE_LICENSE "MIT License")
+set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
+set(CPACK_STRIP_FILES TRUE)
+set(PACKAGE_DEPENDENCIES "luasandbox (>= 0.24)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS ${PACKAGE_DEPENDENCIES})
+string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${PACKAGE_DEPENDENCIES})
+
+if(MSVC)
+    set(CMAKE_C_FLAGS           "/W3")
+    set(CMAKE_C_FLAGS_RELEASE   "/MD /O2 /Ob2")
+	set(SOCKETC src/wsocket.c)
+	set(LIB_SOCKET ws2_32)
+	add_definitions("-DMIME_API=__declspec(dllexport)" "-DLUASOCKET_API=__declspec(dllexport)")
+else()
+    set(CMAKE_C_FLAGS           "-D_POSIX_SOURCE -fPIC")
+    set(CMAKE_C_FLAGS_RELEASE   "-O2")
+	set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+	set(SOCKETC src/usocket.c)
+	add_definitions("-D_GNU_SOURCE")
+endif()
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(LUA51) # build against installed lua 5.1
+	set(CPACK_PACKAGE_NAME lua-${PROJECT_NAME})
+    find_package(Lua51)
+    find_program(LUA NAMES lua lua.bat)
+    add_test(NAME test COMMAND ${LUA} test.lua)
+else() # lua_sandbox build
+	find_package(luasandbox 0.24.0 REQUIRED CONFIG)
+	set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
+	set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
+endif()
+
+include(CPack)
+include_directories(${LUA_INCLUDE_DIR})
+
+file(WRITE socket.def "EXPORTS\nluaopen_socket_core\n")
+set(SRC_SOCKET
+${SOCKETC}
+src/auxiliar.c
+src/buffer.c
+src/except.c
+src/inet.c
+src/io.c
+src/luasocket.c
+src/options.c
+src/select.c 
+src/tcp.c
+src/timeout.c
+src/udp.c
+socket.def
+)
+
+add_library(socket_core SHARED ${SRC_SOCKET})
+set_target_properties(socket_core PROPERTIES OUTPUT_NAME core)
+target_link_libraries(socket_core ${LUA_LIBRARIES})
+if(LIB_SOCKET)
+    target_link_libraries(socket_core ${LIB_SOCKET})
+endif()
+install(TARGETS socket_core DESTINATION ${INSTALL_IOMODULE_PATH}/socket)
+
+file(WRITE mime.def "EXPORTS\nnluaopen_mime_core\n")
+add_library(mime_core SHARED src/mime.c mime.def)
+set_target_properties(mime_core PROPERTIES OUTPUT_NAME core)
+install(TARGETS mime_core DESTINATION ${INSTALL_IOMODULE_PATH}/mime)
+
+set(SOCKET_MODULES
+src/ftp.lua 
+src/headers.lua
+src/http.lua
+src/smtp.lua
+src/tp.lua
+src/url.lua
+)
+install(FILES ${SOCKET_MODULES} DESTINATION ${INSTALL_IOMODULE_PATH}/socket)
+install(FILES  src/ltn12.lua src/mime.lua src/socket.lua DESTINATION ${INSTALL_IOMODULE_PATH})
+install(DIRECTORY ${PARENT_SOURCE_DIR}/sandboxes/ DESTINATION ${INSTALL_SANDBOX_PATH})
