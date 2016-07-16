@@ -220,23 +220,100 @@
 </ul>
 </div>
 <div class="main-content">
-<h1 id="syslog-module">Syslog Module</h1>
-<h2 id="variables">Variables</h2>
-<ul>
-<li><code>severity</code> - LPEG grammar to parse a syslog severity string and return the numeric value</li>
-</ul>
+<h1 id="lua-sandbox-stats-module">Lua Sandbox Stats Module</h1>
 <h2 id="functions">Functions</h2>
-<h3 id="build_rsyslog_grammar">build_rsyslog_grammar</h3>
-<p>Constructs an LPEG grammar based on the rsyslog template configuration string.</p>
+<h3 id="sum">sum</h3>
+<p>Sum an array of numbers ignoring NaN.</p>
 <p><em>Arguments</em></p>
 <ul>
-<li>template (string) - <a href="http://rsyslog-5-8-6-doc.neocities.org/rsyslog_conf_templates.html" class="uri">http://rsyslog-5-8-6-doc.neocities.org/rsyslog_conf_templates.html</a></li>
+<li>array (table)</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>grammar (LPEG user data object) or an error is thrown</li>
+<li>sum (number)</li>
+<li>count (integer) - number of items summed (non NaN)</li>
 </ul>
-<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/syslog/modules/lpeg/syslog.lua">syslog.lua</a></p>
+<h3 id="avg">avg</h3>
+<p>Average an array of numbers ignoring NaN.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>array (table)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>avg (number)</li>
+<li>count (integer) - number of items averaged (non NaN)</li>
+</ul>
+<h3 id="min">min</h3>
+<p>Return the minimum value in an array of numbers.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>array (table)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>min (number)</li>
+<li>count (integer) - number of items compared (non NaN)</li>
+</ul>
+<h3 id="max">max</h3>
+<p>Return the maximum value in an array of numbers.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>array (table)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>max (number)</li>
+<li>count (integer) - number of items compared (non NaN)</li>
+</ul>
+<h3 id="variance">variance</h3>
+<p>Return the variance of an array of numbers.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>array (table)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>variance (number)</li>
+<li>count (integer) - number of items in the calculation (non NaN)</li>
+</ul>
+<h3 id="sd">sd</h3>
+<p>Return the standard deviation of an array of numbers.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>array (table)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>sd (number)</li>
+<li>count (integer) - number of items in the calculation (non NaN)</li>
+</ul>
+<h3 id="ndtr">ndtr</h3>
+<p>Normal ditribution function.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>x (number)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>a (number) - returns the area under the Gaussian probability density function, integrated from minus infinity to x</li>
+</ul>
+<h3 id="mannwhitneyu">mannwhitneyu</h3>
+<p>Computes the Mann-Whitney rank test on arrays x and y.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>x (table)</li>
+<li>y (table)</li>
+<li>use_continuity (bool) - whether a continuity correction (1/2) should be taken into account (default: true)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>u (number) - Mann-Whitney U statistic, equal to min(u for x, u for y)</li>
+<li>p (number) - one-sided p-value assuming a asymptotic normal distribution</li>
+</ul>
+<p><strong>Note:</strong> Use only when the number of observation in each sample is &gt; 20 and you have 2 independent samples of ranks. Mann-Whitney U is significant if the u obtained is LESS THAN or equal to the critical value of u.</p>
+<p>This test corrects for ties and by default uses a continuity correction. The reported p-value is for a one-sided hypothesis, to get the two-sided p-value multiply the returned p-value by 2.</p>
+<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/lsb/modules/lsb/stats.lua">stats.lua</a></p>
 </div>
 </body>
 </html>
