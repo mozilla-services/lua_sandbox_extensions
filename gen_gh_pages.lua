@@ -220,7 +220,7 @@ end
 
 
 local function extract_lua_docs(path, paths)
-    local fh = assert(io.popen(string.format("find %s/sandboxes %s/modules -name \\*.lua", path, path)))
+    local fh = assert(io.popen(string.format("find %s/sandboxes %s/modules %s/io_modules -name \\*.lua", path, path, path)))
     for line in fh:lines() do
         local sfh = assert(io.open(line))
         local lua = sfh:read("*a")

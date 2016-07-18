@@ -3,9 +3,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(heka VERSION 1.1.0 LANGUAGES C)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Utility modules for Heka sandboxes")
-set(MODULE_DEPENDENCIES ep_cjson) # postgres is conditionaly so don't make it a dependency
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-cjson (>= 2.1)")
+project(moz_telemetry VERSION 1.0.0 LANGUAGES C)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Firefox Telemetry Data Processing")
+set(MODULE_DEPENDENCIES ep_cjson rjson)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-elasticsearch (>= 1.0)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)

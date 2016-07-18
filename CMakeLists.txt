@@ -74,6 +74,7 @@ hyperloglog
 kafka
 lpeg
 lsb
+moz_telemetry
 openssl
 postgres
 rjson
@@ -83,6 +84,7 @@ socket
 ssl
 struct
 syslog
+zlib
 )
 
 foreach(ext IN LISTS extensions)
@@ -106,6 +108,9 @@ foreach(ext IN LISTS extensions)
   if (EXT_${ext})
       add_subdirectory(${ext})
       set(PACKAGE_COMMANDS ${PACKAGE_COMMANDS} COMMAND cpack -G ${CPACK_GENERATOR} --config ${ext}.cpack)
+      message("${ext}\tENABLED")
+  else()
+      message("${ext}\tDISABLED")
   endif()
 endforeach()
 
