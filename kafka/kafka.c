@@ -534,7 +534,7 @@ static int producer_gc(lua_State *lua)
   lua_pushnil(lua);
   lua_rawset(lua, LUA_ENVIRONINDEX); // remove the producer topic table
 
-  // This may timeout because it might not be the last plugin running.
+  // This may timeout because it might not be the last sandbox running.
   rd_kafka_wait_destroyed(1000);
   return 0;
 }

@@ -51,5 +51,31 @@ local function pairs_by_key()
     end
 end
 
+
+local function merge_objects()
+    local a = {
+        foo = 1,
+        bar = {1, 1, 3},
+        quux = 3
+    }
+    local b = {
+        foo = 5,
+        bar = {0, 0, 5, 1},
+        baz = {
+            hello = 100
+        }
+    }
+
+    local c = util.merge_objects(a, b)
+    assert(c.foo == 6)
+    assert(c.bar[1] == 1)
+    assert(c.bar[2] == 1)
+    assert(c.bar[3] == 8)
+    assert(c.bar[4] == 1)
+    assert(c.baz.hello == 100)
+    assert(c.quux == 3)
+end
+
 behead_array()
 pairs_by_key()
+merge_objects()

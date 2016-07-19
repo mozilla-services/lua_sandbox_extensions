@@ -30,11 +30,47 @@ Sorts the keys into an array, and then iterates on the array.
 
 *Return*
 - function - iterator that traverses the table keys in sort function order
+
+
+### merge_objects
+Merge two objects. Add all data from "src" to "dest". Numeric values are added,
+boolean and string values are overwritten, and arrays and objects are
+recursively merged. Any data with different types in dest and src will be
+skipped.
+
+#### Example
+
+```lua
+local a = {
+    foo = 1,
+    bar = {1, 1, 3},
+    quux = 3
+}
+local b = {
+    foo = 5,
+    bar = {0, 0, 5, 1},
+    baz = {
+        hello = 100
+    }
+}
+
+local c = merge_objects(a, b)
+-------
+ c contains {
+    foo = 5,
+    bar = {1, 1, 8, 1},
+    baz = {
+        hello = 100
+    },
+    quux = 3
+}
+```
 --]]
 
 -- Imports
 local pairs = pairs
 local table = require "table"
+local type = type
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -72,6 +108,44 @@ function pairs_by_key(t, f)
         end
     end
     return iter
+end
+
+
+function merge_objects(dest, src)
+    if dest == nil then
+        return src
+    end
+    if src == nil then
+        return dest
+    end
+
+    local tdest = type(dest)
+    local tsrc = type(src)
+
+    -- Types are different. Ignore the src value, because src is wrong.
+    if tdest ~= tsrc then
+        return dest
+    end
+
+    -- types are the same, neither is nil.
+    if tdest == "number" then
+        return dest + src
+    end
+
+    -- most recent wins:
+    if tdest == "boolean" or tdest == "string" then
+        return src
+    end
+
+    if tdest == "table" then
+        -- array or object, iterate by key
+        for k,v in pairs(src) do
+            dest[k] = merge_objects(dest[k], v)
+        end
+        return dest
+    end
+
+    return dest -- unmergable type, leave as-is
 end
 
 return M
