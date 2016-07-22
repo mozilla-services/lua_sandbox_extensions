@@ -5,7 +5,7 @@
 --[[
 # Elasticsearch Encoder for Mozilla Telemetry Messages
 
-## Module Configuration Table
+## encoder_cfg Table
 
 [Common Options](/lua_sandbox_extensions/elasticsearch/modules/heka/elasticsearch.html)
 ```lua

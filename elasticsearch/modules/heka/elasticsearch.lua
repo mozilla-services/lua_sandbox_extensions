@@ -5,12 +5,12 @@
 --[[
 # Elasticsearch Utility Functions
 
-## Module Configuration Table (common options)
+## encoder_cfg Table
 ```lua
 -- Boolean flag, if true then any time interpolation (often used to generate the
 -- ElasticSeach index) will use the timestamp from the processed message rather
 -- than the system time.
-es_index_from_timestamp == false -- optional, default shown
+es_index_from_timestamp = false -- optional, default shown
 
 -- String to use as the `_index` key's value in the  generated JSON.
 -- Supports field interpolation as described below.
@@ -47,6 +47,16 @@ Returns a simple JSON 'index' structure satisfying the [ElasticSearch BulkAPI](h
 
 *See*
 [Field Interpolation](/lua_sandbox_extensions/heka/modules/heka/msg_interpolate.html)
+
+### load_encoder_cfg
+
+Loads and validates the common Elastic Search encoder configuration options.
+
+*Arguments*
+* none
+
+*Return*
+* cfg (table)
 --]]
 
 local cjson         = require "cjson"
@@ -94,6 +104,7 @@ end
 
 function load_encoder_cfg()
     local cfg = read_config("encoder_cfg")
+    assert(type(cfg) == "table", "encoder_cfg must be a table")
 
     if cfg.es_index_from_timestamp == nil then
         cfg.es_index_from_timestamp = false
