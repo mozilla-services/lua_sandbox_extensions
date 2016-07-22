@@ -52,6 +52,7 @@ set(SRC_SOCKET
 ${SOCKETC}
 src/auxiliar.c
 src/buffer.c
+src/compat.c
 src/except.c
 src/inet.c
 src/io.c
@@ -80,8 +81,9 @@ install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH}/mime ${DPER
 install(TARGETS socket_core DESTINATION ${INSTALL_IOMODULE_PATH}/socket)
 
 file(WRITE mime.def "EXPORTS\nnluaopen_mime_core\n")
-add_library(mime_core SHARED src/mime.c mime.def)
+add_library(mime_core SHARED src/mime.c src/compat.c mime.def)
 set_target_properties(mime_core PROPERTIES OUTPUT_NAME core LIBRARY_OUTPUT_DIRECTORY mime)
+target_link_libraries(mime_core ${LUA_LIBRARIES})
 install(TARGETS mime_core DESTINATION ${INSTALL_IOMODULE_PATH}/mime)
 
 set(SOCKET_MODULES
