@@ -217,6 +217,7 @@ local function process_json(hsr, msg, schema)
         return false
     end
 
+    msg.Fields.submission           = doc
     msg.Fields.creationTimestamp    = dt.time_to_ns(dt.rfc3339:match(doc:value(doc:find("creationDate"))))
     msg.Fields.reason               = doc:value(doc:find("payload", "info", "reason"))
     msg.Fields.os                   = doc:value(doc:find("environment", "system", "os", "name"))
