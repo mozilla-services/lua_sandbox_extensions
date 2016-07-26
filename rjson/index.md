@@ -4,7 +4,7 @@
 Lua wrapper for the RapidJSON library allowing for for JSON-Schema validation
 and more efficient manipulation of large JSON structures where only a small
 amount of the data is consumed within the Lua script.  Schema pattern matching
-is restricted to a subset of regex decribed in the *Regular Expression* section
+is restricted to a subset of regex described in the *Regular Expression* section
 of the [RapidJSON Schema Documentation](http://rapidjson.org/md_doc_schema.html).
 
 ## Module
@@ -163,7 +163,7 @@ assert("bar" == str, tostring(str))
   inner expression) e.g., str = doc:value(doc:find("foo")) or "my default"
 
 *Return*
-* primitive - string, number, bool, nil or throws an error if not convertable
+* primitive - string, number, bool, nil or throws an error if not convertible
   (object, array)
 
 #### type
@@ -186,7 +186,7 @@ assert(t == "object", t)
 
 #### iter
 
-Retrieves an interator function for an object/array.
+Retrieves an iterator function for an object/array.
 
 ```lua
 local v = doc:find("obj", "arr")

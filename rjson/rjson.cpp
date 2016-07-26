@@ -417,7 +417,7 @@ static int rjson_iter(lua_State *lua)
       luaL_getmetatable(lua, mozsvc_rjson_object_iter);
       lua_setmetatable(lua, -2);
       if (!hoi->it || !hoi->end) {
-        return luaL_error(lua, "memary allocation failure");
+        return luaL_error(lua, "memory allocation failure");
       }
       *hoi->it = v->MemberBegin();
       *hoi->end = v->MemberEnd();
