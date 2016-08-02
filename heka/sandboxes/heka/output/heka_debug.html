@@ -235,8 +235,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/index.html">moz_telemetry</a></li>
 <ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/extract_dimensions.html">extract_dimensions</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/extract_tls_info.html">extract_tls_info</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/normalize.html">normalize</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/ping.html">ping</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/webrtc.html">webrtc</a></li>
 </ul>
 </ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/index.html">sandboxes</a></li>
@@ -246,6 +249,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
 </ul>
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/index.html">input</a></li>
 <ul>
@@ -258,6 +262,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.html">moz_telemetry_crash_summary</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.html">moz_telemetry_executive_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_http.html">moz_telemetry_http</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.html">moz_telemetry_main_summary</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.html">moz_telemetry_s3</a></li>
 </ul>
@@ -337,7 +342,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 id="rst-heka-message-output">RST Heka Message Output</h1>
 <p>Writes a user friendly version (RST format) of the full Heka message to stdout</p>
 <h2 id="sample-configuration">Sample Configuration</h2>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename        <span class="ot">=</span> <span class="st">&quot;debug.lua&quot;</span>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename        <span class="ot">=</span> <span class="st">&quot;heka_debug.lua&quot;</span>
 message_matcher <span class="ot">=</span> <span class="st">&quot;TRUE&quot;</span></code></pre></div>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/sandboxes/heka/output/heka_debug.lua">heka_debug.lua</a></p>
 </div>

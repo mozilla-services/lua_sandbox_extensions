@@ -235,8 +235,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/index.html">moz_telemetry</a></li>
 <ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/extract_dimensions.html">extract_dimensions</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/extract_tls_info.html">extract_tls_info</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/normalize.html">normalize</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/ping.html">ping</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/webrtc.html">webrtc</a></li>
 </ul>
 </ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/index.html">sandboxes</a></li>
@@ -246,6 +249,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
 </ul>
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/index.html">input</a></li>
 <ul>
@@ -258,6 +262,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.html">moz_telemetry_crash_summary</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.html">moz_telemetry_executive_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_http.html">moz_telemetry_http</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.html">moz_telemetry_main_summary</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.html">moz_telemetry_s3</a></li>
 </ul>
@@ -341,7 +346,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 s3_bucket       <span class="ot">=</span> <span class="st">&quot;net-mozaws-prod-us-west-2-pipeline-data&quot;</span>
 s3_file_list    <span class="ot">=</span> <span class="st">&quot;landfill_dims.ls.1&quot;</span>
 tmp_dir         <span class="ot">=</span> <span class="st">&quot;/mnt/work/tmp&quot;</span>
-schema_path     <span class="ot">=</span> <span class="st">&quot;./mozilla-pipeline-schemas&quot;</span></code></pre></div>
+schema_path     <span class="ot">=</span> <span class="st">&quot;./mozilla-pipeline-schemas&quot;</span>
+passthru        <span class="ot">=</span> <span class="kw">false</span> <span class="co">-- if true the raw message is injected as-is (nginx_moz_ingest test)</span></code></pre></div>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.lua">moz_telemetry_s3_landfill.lua</a></p>
 </div>
 </body>

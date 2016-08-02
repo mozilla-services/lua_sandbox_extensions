@@ -235,8 +235,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/index.html">moz_telemetry</a></li>
 <ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/extract_dimensions.html">extract_dimensions</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/extract_tls_info.html">extract_tls_info</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/normalize.html">normalize</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/ping.html">ping</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/webrtc.html">webrtc</a></li>
 </ul>
 </ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/index.html">sandboxes</a></li>
@@ -246,6 +249,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
 </ul>
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/index.html">input</a></li>
 <ul>
@@ -258,6 +262,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.html">moz_telemetry_crash_summary</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.html">moz_telemetry_executive_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_http.html">moz_telemetry_http</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.html">moz_telemetry_main_summary</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.html">moz_telemetry_s3</a></li>
 </ul>
@@ -367,7 +372,15 @@ preserve_data       <span class="ot">=</span> <span class="kw">not</span> flush_
 
 s3_uri             <span class="ot">=</span> <span class="st">&quot;s3://foo&quot;</span>
 
-compression         <span class="ot">=</span> <span class="st">&quot;zst&quot;</span></code></pre></div>
+compression         <span class="ot">=</span> <span class="st">&quot;zst&quot;</span>
+
+<span class="co">-- The type of storage to use for the object.</span>
+<span class="co">-- Valid choices are:  STANDARD | REDUCED_REDUNDANCY | STANDARD_IA</span>
+<span class="co">-- (default &quot;STANDARD&quot;)</span>
+storage_class       <span class="ot">=</span> <span class="st">&quot;STANDARD&quot;</span>
+
+<span class="co">-- Specify an optional module to encode incoming messages via its encode function.</span>
+encoder_module <span class="ot">=</span> <span class="kw">nil</span></code></pre></div>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.lua">moz_telemetry_s3.lua</a></p>
 </div>
 </body>
