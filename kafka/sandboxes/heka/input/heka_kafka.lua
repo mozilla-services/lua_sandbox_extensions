@@ -13,7 +13,7 @@ filename                = "heka_kafka.lua"
 output_limit            = 8 * 1024 * 1024
 brokerlist              = "localhost:9092" -- see https://github.com/edenhill/librdkafka/blob/master/src/rdkafka.h#L2205
 
--- in balanced consumer group mode a consumer can only subscribe on topics, not topics:partitions.
+-- In balanced consumer group mode a consumer can only subscribe on topics, not topics:partitions.
 -- The partition syntax is only used for manual assignments (without balanced consumer groups).
 topics                  = {"test"}
 ticker_interval         = 60
@@ -30,12 +30,24 @@ topic_conf = {
     -- ["auto.commit.enable"] = true, -- cannot be overridden
     -- ["offset.store.method"] = "broker, -- cannot be overridden
 }
+
+-- Specify a module to pass decode and inject to via its decode function.
+-- Default is to use inject_message.
+decoder_module = nil
 ```
 --]]
-local brokerlist    = read_config("brokerlist") or error("brokerlist must be set")
-local topics        = read_config("topics") or error("topics must be set")
-local consumer_conf = read_config("consumer_conf")
-local topic_conf    = read_config("topic_conf")
+local brokerlist     = read_config("brokerlist") or error("brokerlist must be set")
+local topics         = read_config("topics") or error("topics must be set")
+local consumer_conf  = read_config("consumer_conf")
+local topic_conf     = read_config("topic_conf")
+local decoder_module = read_config("decoder_module")
+local inject         = inject_message
+if decoder_module then
+    inject = require(decoder_module).decode
+    if not inject then
+        error(decoder_module .. " does not provide a decode function")
+    end
+end
 
 local consumer = kafka.consumer(brokerlist, topics, consumer_conf, topic_conf)
 
@@ -49,7 +61,7 @@ function process_message()
     while true do
         local msg, topic, partition, key = consumer:receive()
         if msg then
-            local ok, err = pcall(inject_message, msg)
+            local ok, err = pcall(inject, msg)
             if not ok then
                 err_msg.Payload = err
                 pcall(inject_message, err_msg)

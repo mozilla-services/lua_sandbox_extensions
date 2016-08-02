@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(kafka VERSION 1.0.0 LANGUAGES C)
+project(kafka VERSION 1.0.1 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Kafka producer/consumer module")
 
 # todo add a more robust kafka check

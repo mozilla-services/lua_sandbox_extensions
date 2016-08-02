@@ -9,7 +9,7 @@ Writes a user friendly version (RST format) of the full Heka message to stdout
 
 ## Sample Configuration
 ```lua
-filename        = "debug.lua"
+filename        = "heka_debug.lua"
 message_matcher = "TRUE"
 ```
 --]]

@@ -18,6 +18,7 @@ timeout             = 10
 flush_count         = 50000
 flush_on_shutdown   = false
 preserve_data       = not flush_on_shutdown --in most cases this should be the inverse of flush_on_shutdown
+discard_on_error    = false
 
 -- See the elasticsearch module directory for the various encoders and configuration documentation.
 encoder_module  = "heka.elasticsearch.moz_telemetry"
@@ -41,6 +42,7 @@ local http      = require("socket.http")
 local address   = read_config("address") or "127.0.0.1"
 local port      = read_config("port") or 9200
 local timeout   = read_config("timeout") or 10
+local discard   = read_config("discard_on_error")
 
 local batch_file        = string.format("%s/%s.batch", read_config("output_path"), read_config("Logger"))
 local flush_on_shutdown = read_config("flush_on_shutdown")
@@ -147,7 +149,9 @@ function process_message()
 
     if batch_count == flush_count then
         local ret, err = send_batch()
-        if ret == 0  then
+        if ret == 0 or discard then
+            ret = 0
+            err = nil
             retry = false
             batch_count = 0
             batch:close()
@@ -166,7 +170,7 @@ function timer_event(ns, shutdown)
     local timedout = (ns / 1e9 - last_flush) >= ticker_interval
     if (timedout or (shutdown and flush_on_shutdown)) and batch_count > 0 then
         local ret, err = send_batch()
-        if ret == 0 then
+        if ret == 0 or discard then
             retry = false
             batch_count = 0
             batch:close()

@@ -43,6 +43,14 @@ preserve_data       = not flush_on_shutdown -- should always be the inverse of f
 s3_uri             = "s3://foo"
 
 compression         = "zst"
+
+-- The type of storage to use for the object.
+-- Valid choices are:  STANDARD | REDUCED_REDUNDANCY | STANDARD_IA
+-- (default "STANDARD")
+storage_class       = "STANDARD"
+
+-- Specify an optional module to encode incoming messages via its encode function.
+encoder_module = nil
 ```
 --]]
 
@@ -69,6 +77,21 @@ if compression and compression ~= "zst" and compression ~= "gz" then
     error("compression must be nil, zst or gz")
 end
 
+local storage_class         = read_config("storage_class") or "STANDARD"
+if storage_class ~= "STANDARD" and
+   storage_class ~= "REDUCED_REDUNDANCY" and 
+   storage_class ~= "STANDARD_IA" then
+     error("storage_class must be STANDARD, REDUCED_REDUNDANCY or STANDARD_IA")
+end
+
+local encoder_module        = read_config("encoder_module")
+local encode                = false
+if encoder_module then
+    encode = require(encoder_module).encode
+    if not encode then
+        error(encoder_module .. " does not provide a encode function")
+    end
+end
 
 local function get_fqfn(path)
     return string.format("%s/%s", batch_dir, path)
@@ -97,14 +120,14 @@ local function copy_file(path, entry)
     local src  = get_fqfn(path)
     local dim_path = string.gsub(path, "+", "/")
     if compression == "zst" then
-        cmd = string.format("zstd -c %s | aws s3 cp - %s/%s/%d_%d_%s.%s", src,
-                            s3_uri, dim_path, time_t, buffer_cnt, hostname, compression)
+        cmd = string.format("zstd -c %s | aws s3 cp --storage-class %s - %s/%s/%d_%d_%s.%s", src,
+                            storage_class, s3_uri, dim_path, time_t, buffer_cnt, hostname, compression)
     elseif compression == "gz" then
-        cmd = string.format("gzip -c %s | aws s3 cp - %s/%s/%d_%d_%s.%s", src,
-                            s3_uri, dim_path, time_t, buffer_cnt, hostname, compression)
+        cmd = string.format("gzip -c %s | aws s3 cp --storage-class %s - %s/%s/%d_%d_%s.%s", src,
+                            storage_class, s3_uri, dim_path, time_t, buffer_cnt, hostname, compression)
     else
-        cmd = string.format("aws s3 cp %s %s/%s/%d_%d_%s", src,
-                            s3_uri, dim_path, time_t, buffer_cnt, hostname)
+        cmd = string.format("aws s3 cp %s --storage-class %s %s/%s/%d_%d_%s", src,
+                            storage_class, s3_uri, dim_path, time_t, buffer_cnt, hostname)
     end
 
     print(cmd)
@@ -153,6 +176,12 @@ local function get_entry(path)
 end
 
 local dimensions = mts3.validate_dimensions(read_config("dimension_file"))
+-- create the batch directory if it does not exist
+local cmd = string.format("mkdir -p %s", batch_dir)
+local ret = os.execute(cmd)
+if ret ~= 0 then
+    error(string.format("ret: %d, cmd: %s", ret, cmd))
+end
 
 function process_message()
     local dims = {}
@@ -171,7 +200,9 @@ function process_message()
     local path = table.concat(dims, "+") -- the plus will be converted to a path separator '/' on copy
     local entry = get_entry(path)
     local fh = entry[2]
-    fh:write(read_message("framed"))
+    local encoded = (encoder and encode()) or read_message("framed")
+    if not encoded then return 0 end
+    fh:write(encoded)
     local size = fh:seek()
     if size >= max_file_size then
         local err = copy_file(path, entry)

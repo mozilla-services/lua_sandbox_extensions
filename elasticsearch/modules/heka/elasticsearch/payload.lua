@@ -8,7 +8,7 @@
 The message payload must be pre-formatted JSON in an ElasticSearch compatible
 format.
 
-## Module Configuration Table
+## encoder_cfg Table
 
 [Common Options](../elasticsearch.html)
 
