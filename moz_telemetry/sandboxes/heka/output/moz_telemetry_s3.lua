@@ -200,7 +200,12 @@ function process_message()
     local path = table.concat(dims, "+") -- the plus will be converted to a path separator '/' on copy
     local entry = get_entry(path)
     local fh = entry[2]
-    local encoded = (encoder and encode()) or read_message("framed")
+    local encoded
+    if encode then
+        encoded = encode()
+    else
+        encoded = read_message("framed")
+    end
     if not encoded then return 0 end
     fh:write(encoded)
     local size = fh:seek()
