@@ -61,6 +61,7 @@ local assert               = assert
 local pairs                = pairs
 local ipairs               = ipairs
 local create_stream_reader = create_stream_reader
+local decode_message       = decode_message
 local inject_message       = inject_message
 local type                 = type
 local tostring             = tostring
@@ -178,19 +179,19 @@ TODO: Remove Fields[X-Forwarded-For] and Fields[RemoteAddr]
 --]]
 local function inject_error(hsr, err_type, err_msg, extra_fields)
     local raw = hsr:read_message("raw")
-    local err = hsr:decode_message(raw)
+    local err = decode_message(raw)
     err.Logger = "telemetry"
     err.Type = "telemetry.error"
     if type(err.Fields) ~= "table" then
         err.Fields = {}
     end
-    err.Fields.DecodeErrorType = err_type
-    err.Fields.DecodeError = err_msg
+    err.Fields[#err.Fields] = { name="DecodeErrorType" value=err_type }
+    err.Fields[#err.Fields] = { name="DecodeError"     value=err_msg }
 
     if type(extra_fields) == "table" then
         -- Add these optional fields to the raw message.
         for k,v in pairs(extra_fields) do
-            err.Fields[k] = v
+            err.Fields[#err.Fields] = { name=k value=v }
         end
     end
     pcall(inject_message, err)
