@@ -295,13 +295,13 @@ local function process_json(hsr, msg, schema)
     local ok, doc = pcall(rjson.parse_message, hsr, cfg.content_field)
     if not ok then
         -- TODO: check for gzip errors and classify them properly
-        inject_error(hsr, "json", string.format("invalid submission: %s", doc))
+        inject_error(hsr, "json", string.format("invalid submission: %s", doc), msg.Fields)
         return false
     end
 
     local ok, err = doc:validate(schema)
     if not ok then
-        inject_error(hsr, "json", string.format("%s schema validation error: %s", msg.Fields.docType, err))
+        inject_error(hsr, "json", string.format("%s schema validation error: %s", msg.Fields.docType, err), msg.Fields)
         return false
     end
 
