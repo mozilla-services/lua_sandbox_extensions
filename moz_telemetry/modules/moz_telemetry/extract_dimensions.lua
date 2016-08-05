@@ -61,6 +61,7 @@ local assert               = assert
 local pairs                = pairs
 local ipairs               = ipairs
 local create_stream_reader = create_stream_reader
+local decode_message       = decode_message
 local inject_message       = inject_message
 local type                 = type
 local tostring             = tostring
@@ -170,15 +171,31 @@ local environment_objects = {
     "system",
     }
 
-local emsg = {
-    Logger = "telemetry",
-    Hostname = read_config("Hostname"),
-    Type = "telemetry.error",
-    Fields = {
-        DecodeErrorType = "",
-        DecodeError     = "",
-    }
-}
+--[[
+Read the raw message, annotate it with our error information,
+and attempt to inject it.
+TODO: Remove Fields[X-Forwarded-For] and Fields[RemoteAddr]
+      before injecting.
+--]]
+local function inject_error(hsr, err_type, err_msg, extra_fields)
+    local raw = hsr:read_message("raw")
+    local err = decode_message(raw)
+    err.Logger = "telemetry"
+    err.Type = "telemetry.error"
+    if type(err.Fields) ~= "table" then
+        err.Fields = {}
+    end
+    err.Fields[#err.Fields] = { name="DecodeErrorType" value=err_type }
+    err.Fields[#err.Fields] = { name="DecodeError"     value=err_msg }
+
+    if type(extra_fields) == "table" then
+        -- Add these optional fields to the raw message.
+        for k,v in pairs(extra_fields) do
+            err.Fields[#err.Fields] = { name=k value=v }
+        end
+    end
+    pcall(inject_message, err)
+end
 
 --[[
 Split a path into components. Multiple consecutive separators do not
@@ -206,34 +223,26 @@ local function process_uri(hsr)
 
     local components = split_path(path)
     if not components or #components < 3 then
-        emsg.Fields.DecodeErrorType = "uri"
-        emsg.Fields.DecodeError = "Not enough path components"
-        pcall(inject_message, emsg)
+        inject_error(hsr, "uri", "Not enough path components")
         return
     end
 
     local submit = table.remove(components, 1)
     if submit ~= "submit" then
-        emsg.Fields.DecodeErrorType = "uri"
-        emsg.Fields.DecodeError = string.format("Invalid path prefix: '%s' in %s", submit, path)
-        pcall(inject_message, emsg)
+        inject_error(hsr, "uri", string.format("Invalid path prefix: '%s' in %s", submit, path))
         return
     end
 
     local namespace = table.remove(components, 1)
     local ucfg = uri_config[namespace]
     if not ucfg then
-        emsg.Fields.DecodeErrorType = "uri"
-        emsg.Fields.DecodeError = string.format("Invalid namespace: '%s' in %s", namespace, path)
-        pcall(inject_message, emsg)
+        inject_error(hsr, "uri", string.format("Invalid namespace: '%s' in %s", namespace, path))
         return
     end
 
     local pathLength = string.len(path)
     if pathLength > ucfg.max_path_length then
-        emsg.Fields.DecodeErrorType = "uri"
-        emsg.Fields.DecodeError = string.format("Path too long: %d > %d", pathLength, ucfg.max_path_length)
-        pcall(inject_message, emsg)
+        inject_error(hsr, "uri", string.format("Path too long: %d > %d", pathLength, ucfg.max_path_length))
         return
     end
 
@@ -250,9 +259,7 @@ local function process_uri(hsr)
                 msg.Fields[dims[i]] = components[i]
             end
         else
-            emsg.Fields.DecodeErrorType = "uri"
-            emsg.Fields.DecodeError = string.format("dimension spec/path component mismatch")
-            pcall(inject_message, emsg)
+            inject_error(hsr, "uri", "dimension spec/path component mismatch", msg.Fields)
             return
         end
     end
@@ -263,9 +270,7 @@ local function process_uri(hsr)
     end
 
     if not schema then
-        emsg.Fields.DecodeErrorType = "uri"
-        emsg.Fields.DecodeError = string.format("docType: %s does not have a validation schema", tostring(msg.Fields.docType))
-        pcall(inject_message, emsg)
+        inject_error(hsr, "schema", string.format("docType: %s does not have a validation schema", tostring(msg.Fields.docType)), msg.Fields)
         return
     end
 
@@ -289,17 +294,14 @@ end
 local function process_json(hsr, msg, schema)
     local ok, doc = pcall(rjson.parse_message, hsr, cfg.content_field)
     if not ok then
-        emsg.Fields.DecodeErrorType = "json"
-        emsg.Fields.DecodeError = string.format("invalid submission: %s", doc)
-        pcall(inject_message, emsg)
+        -- TODO: check for gzip errors and classify them properly
+        inject_error(hsr, "json", string.format("invalid submission: %s", doc))
         return false
     end
 
     local ok, err = doc:validate(schema)
     if not ok then
-        emsg.Fields.DecodeErrorType = "json"
-        emsg.Fields.DecodeError = string.format("%s schema validation error: %s", msg.Fields.docType, err)
-        pcall(inject_message, emsg)
+        inject_error(hsr, "json", string.format("%s schema validation error: %s", msg.Fields.docType, err))
         return false
     end
 
@@ -373,9 +375,10 @@ function transform_message(hsr)
         if process_json(hsr, msg, schema) then
             local ok, err = pcall(inject_message, msg)
             if not ok then
-                emsg.Fields.DecodeErrorType = "inject_message"
-                emsg.Fields.DecodeError = err
-                pcall(inject_message, emsg)
+                -- Note: we do NOT pass the extra message fields here,
+                -- since it's likely that would simply hit the same
+                -- error when injecting.
+                inject_error(hsr, "inject_message", err)
             end
         end
     end
