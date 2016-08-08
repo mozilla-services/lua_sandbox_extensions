@@ -32,7 +32,7 @@ local req_headers = {
     ["user-agent"]      = http.USERAGENT,
     ["content-type"]    = "application/x-gzip",
     ["content-length"]  = 0,
-    ["host"]            = address .. ":" .. port,
+    ["host"]            = address,
 }
 
 function process_message()
