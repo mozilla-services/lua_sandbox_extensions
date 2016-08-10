@@ -19,6 +19,8 @@ uri_field = "Fields[uri]" -- optional, default shown
 -- String used to specify GeoIP city database location on disk.
 city_db_file = "/mnt/work/geoip/city.db" -- optional, if not specified no geoip lookup is performed
 
+-- Boolean used to determine whether to inject the raw message in addition to the decoded one.
+inject_raw = false -- optional, if not specified the raw message is not injected
 ```
 
 ## Functions
@@ -78,8 +80,10 @@ local function load_decoder_cfg()
     -- the old values for these were Fields[submission] and Fields[Path]
     if not cfg.content_field then cfg.content_field = "Fields[content]" end
     if not cfg.uri_field then cfg.uri_field = "Fields[uri]" end
+    if not cfg.inject_raw then cfg.inject_raw = false end
+    assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
 
-    if city_db_file then 
+    if city_db_file then
         geoip = require "geoip.city"
         city_db = assert(geoip.open(cfg.city_db_file))
     end
@@ -334,8 +338,10 @@ local function process_json(hsr, msg, schema)
 end
 
 function transform_message(hsr)
-    -- duplicate the raw message
-    pcall(inject_message, hsr)
+    if cfg.inject_raw then
+        -- duplicate the raw message
+        pcall(inject_message, hsr)
+    end
 
     if geoip then
         -- reopen city_db once an hour
