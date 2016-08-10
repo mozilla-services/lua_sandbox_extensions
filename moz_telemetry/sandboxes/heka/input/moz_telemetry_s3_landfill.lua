@@ -34,6 +34,7 @@ end
 
 
 local s3_file_list  = assert(io.open(read_config("s3_file_list")))
+local count         = 0
 
 local function process_file(hsr, fn)
     local fh, err =  io.open(fn)
@@ -47,6 +48,7 @@ local function process_file(hsr, fn)
         repeat
             found, consumed, read = hsr:find_message(fh)
             if found then
+                count = count + 1
                 if tm then
                     tm(hsr)
                 else
@@ -85,5 +87,5 @@ function process_message()
             print("failed to execute rv:", rv, " cmd:", cmd)
         end
     end
-    return 0
+    return 0, tostring(count)
 end
