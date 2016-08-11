@@ -42,6 +42,7 @@ local string = require "string"
 local cjson = require "cjson"
 local os = require "os"
 
+local assert = assert
 local ipairs = ipairs
 local type = type
 local next = next
