@@ -56,6 +56,25 @@ local function create_index(path, dir)
 end
 
 
+local function get_version(path)
+    local version = ""
+    local fh = io.open(string.format("%s/CMakeLists.txt.%s", path, path))
+    if not fh then fh = io.open(string.format("%s/CMakeLists.txt", path)) end
+    if fh then
+        local v
+        for line in fh:lines() do
+            v = line:match("^project%(%s*[^ ]+%s+VERSION%s+(%d+%.%d+%.%d+)")
+            if v then
+                version = string.format(" (%s)", v)
+                break
+            end
+        end
+        fh:close()
+    end
+    return version
+end
+
+
 local function output_tree(fh, list, key, dir)
     list[#list + 1] = key
     local path = table.concat(list, "/")
@@ -71,13 +90,15 @@ local function output_tree(fh, list, key, dir)
     end
     local list_size = #list
     local class = ""
+    local version = ""
     if list_size == 1 then
         class = 'class="module"'
         fh:write('<ul class="module-ul">\n')
+        version = get_version(path)
     elseif list_size == 2 then
         class = 'class="exttype"'
     end
-    fh:write(string.format('<li %s><a href="/lua_sandbox_extensions/%s/index.html">%s</a></li>\n', class, path, key))
+    fh:write(string.format('<li %s><a href="/lua_sandbox_extensions/%s/index.html">%s%s</a></li>\n', class, path, key, version))
 
     if dir then
         fh:write("<ul>\n")
