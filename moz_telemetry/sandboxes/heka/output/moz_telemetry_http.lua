@@ -32,8 +32,9 @@ local req_headers = {
     ["user-agent"]      = http.USERAGENT,
     ["content-type"]    = "application/x-gzip",
     ["content-length"]  = 0,
-    ["host"]            = address .. ":" .. port,
+    ["host"]            = address,
 }
+local count = 0
 
 function process_message()
     local s = read_message("Fields[submission]")
@@ -49,10 +50,12 @@ function process_message()
     if not r or c ~= 200 then
         return -1, tostring(c)
     end
+    count = count + 1
 
     return 0
 end
 
 
 function timer_event(ns, shutdown)
+    print(count)
 end

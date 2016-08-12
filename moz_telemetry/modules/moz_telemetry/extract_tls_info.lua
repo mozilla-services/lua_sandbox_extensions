@@ -7,6 +7,12 @@
 Extract clock skew, issuer info and Subject / SAN match status from tls error
 reports.
 
+## decoder_cfg Table
+```lua
+-- Boolean used to determine whether to inject the raw message in addition to the decoded one.
+inject_raw = false -- optional, if not specified the raw message is not injected
+```
+
 ## Functions
 
 ### transform_message
@@ -36,11 +42,13 @@ local string = require "string"
 local cjson = require "cjson"
 local os = require "os"
 
+local assert = assert
 local ipairs = ipairs
 local type = type
 local next = next
 local pcall = pcall
 
+local read_config = read_config
 local inject_message = inject_message
 local create_stream_reader = create_stream_reader
 
@@ -53,6 +61,17 @@ local certSuffix = "-----END CERTIFICATE-----\n"
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
+
+local function load_decoder_cfg()
+  local cfg = read_config("decoder_cfg")
+  if not cfg then cfg = {} end
+  assert(type(cfg) == "table", "decoder_cfg must be a table")
+  if not cfg.inject_raw then cfg.inject_raw = false end
+  assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
+  return cfg
+end
+
+local cfg = load_decoder_cfg()
 
 local msg = {
   Type = "tls_report",
@@ -97,9 +116,10 @@ local function parse_cert(cert)
 end
 
 function transform_message(hsr)
-    -- duplicate the raw message
-    pcall(inject_message, hsr)
-
+    if cfg.inject_raw then
+      -- duplicate the raw message
+      pcall(inject_message, hsr)
+    end
     msg.Fields["submissionDate"] = os.date("%Y%m%d", hsr:read_message("Timestamp") / 1e9)
     local payload = hsr:read_message("Fields[content]")
     local ok, report = pcall(cjson.decode, payload)

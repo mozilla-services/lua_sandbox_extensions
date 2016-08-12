@@ -21,14 +21,20 @@ passthru        = false -- if true the raw message is injected as-is (nginx_moz_
 --]]
 
 require "io"
+require "os"
 require "string"
-local tm = require "moz_telemetry.extract_dimensions".transform_message
 
+local tm
 local tmp_dir       = read_config("tmp_dir")
 local s3_bucket     = read_config("s3_bucket") or error("s3_bucket must be set")
 local logger        = read_config("Logger")
-local passthru      = read_config("passthru")
+if not read_config("passthru") then
+    tm = require "moz_telemetry.extract_dimensions".transform_message
+end
+
+
 local s3_file_list  = assert(io.open(read_config("s3_file_list")))
+local count         = 0
 
 local function process_file(hsr, fn)
     local fh, err =  io.open(fn)
@@ -42,12 +48,12 @@ local function process_file(hsr, fn)
         repeat
             found, consumed, read = hsr:find_message(fh)
             if found then
-                if passthru then
-                    inject_message(hsr)
-                else
+                count = count + 1
+                if tm then
                     tm(hsr)
+                else
+                    inject_message(hsr)
                 end
-
             end
         until not found
     until read == 0
@@ -81,5 +87,5 @@ function process_message()
             print("failed to execute rv:", rv, " cmd:", cmd)
         end
     end
-    return 0
+    return 0, tostring(count)
 end
