@@ -6,6 +6,43 @@
   <meta name="generator" content="pandoc" />
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
   <link rel="stylesheet" href="/lua_sandbox_extensions/docs.css" type="text/css" />
 </head>
 <body>
@@ -15,10 +52,10 @@
 <li><a href="/lua_sandbox_extensions/index.html">OVERVIEW</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/bloom_filter/index.html">bloom_filter</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/bloom_filter/index.html">bloom_filter (1.0.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/circular_buffer/index.html">circular_buffer</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/circular_buffer/index.html">circular_buffer (1.0.1)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/modules/index.html">modules</a></li>
 <ul>
@@ -44,13 +81,13 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/cjson/index.html">cjson</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/cjson/index.html">cjson (2.1.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.0.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.1)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/modules/index.html">modules</a></li>
 <ul>
@@ -76,10 +113,10 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.0)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -127,10 +164,10 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/hyperloglog/index.html">hyperloglog</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/hyperloglog/index.html">hyperloglog (1.0.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka (1.0.1)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/kafka/sandboxes/index.html">sandboxes</a></li>
 <ul>
@@ -149,7 +186,7 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg (1.0.0)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/lpeg/modules/index.html">modules</a></li>
 <ul>
@@ -165,7 +202,7 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/lsb/index.html">lsb</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/lsb/index.html">lsb (1.1.0)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/lsb/modules/index.html">modules</a></li>
 <ul>
@@ -178,7 +215,7 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.1.1)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -234,22 +271,22 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres (2.3.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.0.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax (0.5.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy (0.1.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.0)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/socket/sandboxes/index.html">sandboxes</a></li>
 <ul>
@@ -269,13 +306,13 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/ssl/index.html">ssl</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/ssl/index.html">ssl (0.6.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/struct/index.html">struct</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/struct/index.html">struct (0.2.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog (1.0.0)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/syslog/modules/index.html">modules</a></li>
 <ul>
@@ -298,12 +335,15 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/zlib/index.html">zlib</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/zlib/index.html">zlib (0.3.1)</a></li>
 </ul>
 </div>
 <div class="main-content">
 <h1 id="mozilla-tls-reports-decoder-module">Mozilla TLS Reports Decoder Module</h1>
 <p>Extract clock skew, issuer info and Subject / SAN match status from tls error reports.</p>
+<h2 id="decoder_cfg-table">decoder_cfg Table</h2>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="co">-- Boolean used to determine whether to inject the raw message in addition to the decoded one.</span>
+inject_raw <span class="ot">=</span> <span class="kw">false</span> <span class="co">-- optional, if not specified the raw message is not injected</span></code></pre></div>
 <h2 id="functions">Functions</h2>
 <h3 id="transform_message">transform_message</h3>
 <p>Transform and inject the message using the provided stream reader</p>
