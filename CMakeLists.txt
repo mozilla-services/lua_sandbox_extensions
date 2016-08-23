@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(luasandbox-extensions LANGUAGES NONE)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -28,7 +28,7 @@ if(LUA51) # build against installed lua 5.1
         string(REGEX REPLACE "\\.lua$" ".so" TEST_MODULE_CPATH ${TEST_MODULE_PATH})
     endif()
 else() # lua_sandbox build
-    find_package(luasandbox 1.0.2 REQUIRED CONFIG)
+    find_package(luasandbox 1.1.0 REQUIRED CONFIG)
     set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
     set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
     set(INSTALL_MODULE_PATH ${CMAKE_INSTALL_LIBDIR}/luasandbox/modules)

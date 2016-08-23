@@ -42,6 +42,8 @@ local consumer_conf  = read_config("consumer_conf")
 local topic_conf     = read_config("topic_conf")
 local decoder_module = read_config("decoder_module")
 local inject         = inject_message
+local is_running     = is_running
+
 if decoder_module then
     inject = require(decoder_module).decode
     if not inject then
@@ -57,8 +59,9 @@ local err_msg = {
     Payload = nil,
 }
 
+
 function process_message()
-    while true do
+    while is_running() do
         local msg, topic, partition, key = consumer:receive()
         if msg then
             local ok, err = pcall(inject, msg)
@@ -68,5 +71,5 @@ function process_message()
             end
         end
     end
-    return 0 -- unreachable but here for consistency
+    return 0
 end
