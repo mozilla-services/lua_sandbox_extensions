@@ -126,10 +126,30 @@ end
 local schemas = {}
 local function load_schemas()
     local schema_files = {
-        main    = string.format("%s/telemetry/main.schema.json", cfg.schema_path),
-        crash   = string.format("%s/telemetry/crash.schema.json", cfg.schema_path),
-        core    = string.format("%s/telemetry/core.schema.json", cfg.schema_path),
-        }
+        ["main"]                                 = string.format("%s/telemetry/main.schema.json", cfg.schema_path),
+        ["crash"]                                = string.format("%s/telemetry/crash.schema.json", cfg.schema_path),
+        ["core"]                                 = string.format("%s/telemetry/core.schema.json", cfg.schema_path),
+        -- apply vacuous schemas for all other known ping types
+        ["idle-daily"]                           = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["saved-session"]                        = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["android-anr-report"]                   = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["ftu"]                                  = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["loop"]                                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["flash-video"]                          = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["activation"]                           = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["deletion"]                             = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["uitour-tag"]                           = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["heartbeat"]                            = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["b2g-installer-device"]                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["b2g-installer-flash"]                  = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["advancedtelemetry"]                    = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["appusage"]                             = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["testpilot"]                            = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["testpilottest"]                        = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["malware-addon-states"]                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["sync"]                                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["outofdate-notifications-system-addon"] = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+    }
     for k,v in pairs(schema_files) do
         local fh = assert(io.input(v))
         local schema = fh:read("*a")
