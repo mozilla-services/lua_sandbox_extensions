@@ -174,8 +174,9 @@ function timer_event(ns, shutdown)
             retry = false
             batch_count = 0
             batch:close()
-            if not shutdown then
-                batch = assert(io.open(batch_file, "w"))
+            batch = assert(io.open(batch_file, "w"))
+            if shutdown then
+                batch:close()
             end
         end
     end
