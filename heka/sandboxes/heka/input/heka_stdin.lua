@@ -15,6 +15,7 @@ local stdin = require "io".stdin
 require "string"
 
 local hsr = create_stream_reader(read_config("Logger"))
+local is_running = is_running
 
 function process_message()
     local cnt = 0
@@ -27,6 +28,6 @@ function process_message()
                 cnt = cnt + 1
             end
         until not found
-    until read == 0
+    until read == 0 or not is_running()
     return 0, string.format("processed %d messages", cnt)
 end

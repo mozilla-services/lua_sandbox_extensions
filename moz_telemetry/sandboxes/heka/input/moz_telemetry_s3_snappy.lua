@@ -33,6 +33,7 @@ local tmp_dir       = read_config("tmp_dir")
 local s3_bucket     = read_config("s3_bucket") or error("s3_bucket must be set")
 local logger        = read_config("Logger")
 local s3_file_list  = assert(io.open(read_config("s3_file_list")))
+local is_running    = is_running
 
 
 local function snappy_decode(msgbytes)
@@ -45,6 +46,7 @@ end
 
 
 local function process_snappy_ugliness(hsr, dhsr, fh)
+    local shutdown = false
     local found, consumed, read
     repeat
         repeat
@@ -57,11 +59,14 @@ local function process_snappy_ugliness(hsr, dhsr, fh)
                 end
             end
         until not found
-    until read == 0
+        shutdown = not is_running()
+    until read == 0 or shutdown
+    return shutdown
 end
 
 
 local function process_file(hsr, fh)
+    local shutdown = false
     local found, consumed, read
     repeat
         repeat
@@ -70,7 +75,9 @@ local function process_file(hsr, fh)
                 inject_message(hsr)
             end
         until not found
-    until read == 0
+        shutdown = not is_running()
+    until read == 0 or shutdown
+    return shutdown
 end
 
 
@@ -87,8 +94,9 @@ end
 
 
 function process_message()
-    local hsr  = create_stream_reader("s3")
-    local dhsr = create_stream_reader("snappy")
+    local shutdown  = false
+    local hsr       = create_stream_reader("s3")
+    local dhsr      = create_stream_reader("snappy")
 
     for fn in s3_file_list:lines() do
         local cmd
@@ -112,11 +120,12 @@ function process_message()
                 return 0
             end
             if ext then
-                process_file(hsr, fh)
+                shutdown = process_file(hsr, fh)
             else
-                process_snappy_ugliness(hsr, dhsr, fh)
+                shutdown = process_snappy_ugliness(hsr, dhsr, fh)
             end
             fh:close()
+            if shutdown then break end
         else
             print("failed to execute rv:", rv, " cmd:", cmd)
         end

@@ -28,6 +28,7 @@ local tm
 local tmp_dir       = read_config("tmp_dir")
 local s3_bucket     = read_config("s3_bucket") or error("s3_bucket must be set")
 local logger        = read_config("Logger")
+local is_running    = is_running
 if not read_config("passthru") then
     tm = require "moz_telemetry.extract_dimensions".transform_message
 end
@@ -37,10 +38,11 @@ local s3_file_list  = assert(io.open(read_config("s3_file_list")))
 local count         = 0
 
 local function process_file(hsr, fn)
+    local shutdown = false
     local fh, err =  io.open(fn)
     if not fh then
         print("failed to open", fn)
-        return
+        return shutdown
     end
 
     local found, consumed, read
@@ -56,8 +58,10 @@ local function process_file(hsr, fn)
                 end
             end
         until not found
-    until read == 0
+        shutdown = not is_running()
+    until read == 0 or shutdown
     fh:close()
+    return shutdown
 end
 
 
@@ -82,7 +86,7 @@ function process_message()
         print("processing", cmd)
         local rv = execute_cmd(cmd, 3)
         if rv == 0 then
-            process_file(hsr, tfn)
+            if process_file(hsr, tfn) then break end
         else
             print("failed to execute rv:", rv, " cmd:", cmd)
         end

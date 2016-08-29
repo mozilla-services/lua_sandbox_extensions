@@ -42,6 +42,7 @@ local server = assert(socket.bind(address, port))
 server:settimeout(0)
 local threads = {}
 local sockets = {server}
+local is_running = is_running
 
 local function handle_client(client, caddr, cport)
     local found, consumed, need = false, 0, 8192 * 4
@@ -65,7 +66,7 @@ local function handle_client(client, caddr, cport)
 end
 
 function process_message()
-    while true do
+    while is_running() do
         local ready = socket.select(sockets, nil, 1)
         if ready then
             for _, s in ipairs(ready) do

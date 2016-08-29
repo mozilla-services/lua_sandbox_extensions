@@ -30,6 +30,7 @@ local port          = read_config("port") or 514
 local hostname_keep = read_config("hostname_keep")
 local template      = read_config("template") or "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%"
 local grammar       = syslog.build_rsyslog_grammar(template)
+local is_running    = is_running
 
 local msg = {
 Timestamp   = nil,
@@ -52,7 +53,7 @@ assert(server:setsockname(address, port))
 server:settimeout(1)
 
 function process_message()
-    while true do
+    while is_running() do
         local data, ip, port = server:receivefrom()
         if data then
             local fields = grammar:match(data)
