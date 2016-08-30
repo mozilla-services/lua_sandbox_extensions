@@ -72,6 +72,7 @@ geoip
 heka
 hyperloglog
 kafka
+lfs
 lpeg
 lsb
 moz_telemetry
