@@ -91,11 +91,11 @@ local function load_decoder_cfg()
     return cfg
 end
 
-
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 local cfg = load_decoder_cfg()
+local UNK_DIM = "UNKNOWN"
 local UNK_GEO = "??"
 -- Track the hour to facilitate reopening city_db hourly.
 local hour = floor(os.time() / 3600)
@@ -126,29 +126,10 @@ end
 local schemas = {}
 local function load_schemas()
     local schema_files = {
-        ["main"]                                 = string.format("%s/telemetry/main.schema.json", cfg.schema_path),
-        ["crash"]                                = string.format("%s/telemetry/crash.schema.json", cfg.schema_path),
-        ["core"]                                 = string.format("%s/telemetry/core.schema.json", cfg.schema_path),
-        -- apply vacuous schemas for all other known ping types
-        ["idle-daily"]                           = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["saved-session"]                        = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["android-anr-report"]                   = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["ftu"]                                  = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["loop"]                                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["flash-video"]                          = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["activation"]                           = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["deletion"]                             = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["uitour-tag"]                           = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["heartbeat"]                            = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["b2g-installer-device"]                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["b2g-installer-flash"]                  = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["advancedtelemetry"]                    = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["appusage"]                             = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["testpilot"]                            = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["testpilottest"]                        = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["malware-addon-states"]                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["sync"]                                 = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
-        ["outofdate-notifications-system-addon"] = string.format("%s/telemetry/generic.schema.json", cfg.schema_path),
+        ["main"]    = string.format("%s/telemetry/main.schema.json", cfg.schema_path),
+        ["crash"]   = string.format("%s/telemetry/crash.schema.json", cfg.schema_path),
+        ["core"]    = string.format("%s/telemetry/core.schema.json", cfg.schema_path),
+        ["vacuous"] = string.format("%s/telemetry/vacuous.schema.json", cfg.schema_path),
     }
     for k,v in pairs(schema_files) do
         local fh = assert(io.input(v))
@@ -157,7 +138,25 @@ local function load_schemas()
     end
 end
 load_schemas()
-schemas["saved-session"] = schemas.main
+schemas["saved-session"]                        = schemas.main
+-- apply vacuous schemas for all other known ping types
+schemas["android-anr-report"]                   = schemas.vacuous
+schemas["ftu"]                                  = schemas.vacuous
+schemas["loop"]                                 = schemas.vacuous
+schemas["flash-video"]                          = schemas.vacuous
+schemas["activation"]                           = schemas.vacuous
+schemas["deletion"]                             = schemas.vacuous
+schemas["uitour-tag"]                           = schemas.vacuous
+schemas["heartbeat"]                            = schemas.vacuous
+schemas["b2g-installer-device"]                 = schemas.vacuous
+schemas["b2g-installer-flash"]                  = schemas.vacuous
+schemas["advancedtelemetry"]                    = schemas.vacuous
+schemas["appusage"]                             = schemas.vacuous
+schemas["testpilot"]                            = schemas.vacuous
+schemas["testpilottest"]                        = schemas.vacuous
+schemas["malware-addon-states"]                 = schemas.vacuous
+schemas["sync"]                                 = schemas.vacuous
+schemas["outofdate-notifications-system-addon"] = schemas.vacuous
 
 local uri_config = {
     telemetry = {
@@ -329,30 +328,108 @@ local function process_json(hsr, msg, schema)
         return false
     end
 
-    msg.Fields.submission           = doc
-    local cts = doc:value(doc:find("creationDate"))
-    if cts then
-        msg.Fields.creationTimestamp = dt.time_to_ns(dt.rfc3339:match(cts))
+    local clientId
+    local ver = doc:value(doc:find("ver"))
+
+    if ver then
+        if ver == 3 then
+            -- Special case for FxOS FTU pings
+            msg.Fields.submission = doc
+            msg.Fields.sourceVersion = tostring(ver)
+
+            -- Get some more dimensions.
+            local channel = msg.Fields.appUpdateChannel
+            if channel and type(channel) == "string" then
+                msg.Fields.normalizedChannel = mtn.channel(channel)
+            end
+        else
+            -- Old-style telemetry.
+            local info = doc:find(info)
+            -- the info object should exist because we passed schema validation (maybe)
+            -- if type(info) == nil then
+            --     inject_error(hsr, "schema", string.format("missing info object"), msg.Fields)
+            -- end
+            msg.Fields.submission = doc
+            msg.Fields.sourceVersion = tostring(ver)
+
+            -- Get some more dimensions.
+            msg.Fields.docType           = doc:value(doc:find(info, "reason")) or UNK_DIM
+            msg.Fields.appName           = doc:value(doc:find(info, "appName")) or UNK_DIM
+            msg.Fields.appVersion        = doc:value(doc:find(info, "appVersion")) or UNK_DIM
+            msg.Fields.appUpdateChannel  = doc:value(doc:find(info, "appUpdateChannel")) or UNK_DIM
+            msg.Fields.appBuildId        = doc:value(doc:find(info, "appBuildID")) or UNK_DIM
+            msg.Fields.normalizedChannel = mtn.channel(doc:value(doc:find(info, "appUpdateChannel")))
+
+            -- Old telemetry was always "enabled"
+            msg.Fields.telemetryEnabled = true
+
+            -- Do not want default values for these.
+            msg.Fields.os = doc:value(doc:find(info, "OS"))
+            msg.Fields.appVendor = doc:value(doc:find(info, "vendor"))
+            msg.Fields.reason = doc:value(doc:find(info, "reason"))
+            clientId = doc:value(doc:find("clientID")) -- uppercase ID is correct
+            msg.Fields.clientId = clientId
+        end
+    elseif doc:value(doc:find("version")) then
+        -- new code
+        msg.Fields.submission           = doc
+        local cts = doc:value(doc:find("creationDate"))
+        if cts then
+            msg.Fields.creationTimestamp = dt.time_to_ns(dt.rfc3339:match(cts))
+        end
+        msg.Fields.reason               = doc:value(doc:find("payload", "info", "reason"))
+        msg.Fields.os                   = doc:value(doc:find("environment", "system", "os", "name"))
+        msg.Fields.telemetryEnabled     = doc:value(doc:find("environment", "settings", "telemetryEnabled"))
+        msg.Fields.activeExperimentId   = doc:value(doc:find("environment", "addons", "activeExperiment", "id"))
+        msg.Fields.clientId             = doc:value(doc:find("clientId"))
+        msg.Fields.sourceVersion        = doc:value(doc:find("version"))
+        msg.Fields.docType              = doc:value(doc:find("type"))
+
+        local app = doc:find("application")
+        msg.Fields.appName              = doc:value(doc:find(app, "name"))
+        msg.Fields.appVersion           = doc:value(doc:find(app, "version"))
+        msg.Fields.appBuildId           = doc:value(doc:find(app, "buildId"))
+        msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
+        msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
+        msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
+
+        remove_objects(msg, doc, "environment", environment_objects)
+        remove_objects(msg, doc, "payload", extract_payload_objects[msg.Fields.docType])
+        -- /new code
+    elseif doc:value(doc:find("deviceinfo")) ~= nil then
+        -- Old 'appusage' ping, see Bug 982663
+        msg.Fields.submission           = doc
+
+        -- Special version for this old format
+        msg.Fields.sourceVersion = "3"
+
+        local av = doc:value(doc:find("deviceinfo", "platform_version"))
+        local auc = doc:value(doc:find("deviceinfo", "update_channel"))
+        local abi = doc:value(doc:find("deviceinfo", "platform_build_id"))
+
+        -- Get some more dimensions.
+        msg.Fields.docType = "appusage"
+        msg.Fields.appName = "FirefoxOS"
+        msg.Fields.appVersion = av or UNK_DIM
+        msg.Fields.appUpdateChannel = auc or UNK_DIM
+        msg.Fields.appBuildId = abi or UNK_DIM
+        msg.Fields.normalizedChannel = mtn.channel(auc)
+
+        -- The "telemetryEnabled" flag does not apply to this type of ping.
+    elseif doc:value(doc:find("v")) then
+        -- This is a Fennec "core" ping
+        msg.Fields.sourceVersion = tostring(doc:value(doc:find("v")))
+        clientId = doc:value(doc:find("clientId"))
+        msg.Fields.clientId = clientId
+        msg.Fields.submission = doc
+    else
+        -- Everything else. Just store the submission in the submission field by default.
+        msg.Fields.submission = doc
     end
-    msg.Fields.reason               = doc:value(doc:find("payload", "info", "reason"))
-    msg.Fields.os                   = doc:value(doc:find("environment", "system", "os", "name"))
-    msg.Fields.telemetryEnabled     = doc:value(doc:find("environment", "settings", "telemetryEnabled"))
-    msg.Fields.activeExperimentId   = doc:value(doc:find("environment", "addons", "activeExperiment", "id"))
-    msg.Fields.clientId             = doc:value(doc:find("clientId"))
-    msg.Fields.sourceVersion        = doc:value(doc:find("version"))
-    msg.Fields.docType              = doc:value(doc:find("type"))
-    msg.Fields.sampleId             = crc32(msg.Fields.clientId) % 100
 
-    local app = doc:find("application")
-    msg.Fields.appName              = doc:value(doc:find(app, "name"))
-    msg.Fields.appVersion           = doc:value(doc:find(app, "version"))
-    msg.Fields.appBuildId           = doc:value(doc:find(app, "buildId"))
-    msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
-    msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
-    msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
-
-    remove_objects(msg, doc, "environment", environment_objects)
-    remove_objects(msg, doc, "payload", extract_payload_objects[msg.Fields.docType])
+    if type(msg.Fields.clientId) == "string" then
+        msg.Fields.sampleId = crc32(msg.Fields.clientId) % 100
+    end
 
     return true
 end
