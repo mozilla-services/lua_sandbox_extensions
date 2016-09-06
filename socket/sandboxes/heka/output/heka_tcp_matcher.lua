@@ -38,8 +38,9 @@ local address = read_config("address") or "127.0.0.1"
 local port = read_config("port") or 5566
 local ssl_params = read_config("ssl_params")
 local ssl_ctx = nil
+local ssl = nil
 if ssl_params then
-    require "ssl"
+    ssl = require "ssl"
     ssl_ctx = assert(ssl.newcontext(ssl_params))
 end
 local server = assert(socket.bind(address, port))
