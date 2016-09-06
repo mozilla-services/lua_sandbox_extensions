@@ -12,7 +12,7 @@ maintained.
 ```lua
 filename = "heka_tcp_matcher.lua"
 instruction_limit = 0
-messsage_matcher = "TRUE"
+message_matcher = "TRUE"
 ticker_interval = 1
 
 address = "127.0.0.1"
