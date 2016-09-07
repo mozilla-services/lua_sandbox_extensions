@@ -57,7 +57,7 @@ local b = {
 local c = merge_objects(a, b)
 -------
  c contains {
-    foo = 5,
+    foo = 6,
     bar = {1, 1, 8, 1},
     baz = {
         hello = 100

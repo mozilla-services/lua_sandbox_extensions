@@ -34,8 +34,10 @@ local timeout = read_config("timeout") or 10
 local ssl_params = read_config("ssl_params")
 
 local ssl_ctx = nil
+local ssl = nil
 if ssl_params then
-    require "ssl"
+    require "table"
+    ssl = require "ssl"
     ssl_ctx = assert(ssl.newcontext(ssl_params))
 end
 
