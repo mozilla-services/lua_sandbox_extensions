@@ -15,7 +15,7 @@ set(CPACK_PACKAGE_CONTACT       "Bruno Binet <bruno.binet@helioslite.com>")
 set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
 set(CPACK_STRIP_FILES           TRUE)
 
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0), libc6 (>= 2.14)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0), libc6 (>= 2.13)")
 set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
 
 if(MSVC)
