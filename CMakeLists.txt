@@ -85,6 +85,7 @@ socket
 ssl
 struct
 syslog
+systemd
 zlib
 )
 
