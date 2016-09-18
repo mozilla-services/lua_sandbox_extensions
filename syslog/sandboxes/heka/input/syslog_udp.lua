@@ -19,6 +19,10 @@ instruction_limit   = 0
 -- template (string) - The 'template' configuration string from rsyslog.conf
 -- see http://rsyslog-5-8-6-doc.neocities.org/rsyslog_conf_templates.html
 -- template = "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%" -- RSYSLOG_TraditionalForwardFormat
+
+-- send_decode_failures (bool) - If true, any decode failure will inject a
+-- message of Type "error", with the Payload containing the error, and with the
+-- "data" field containing the original, undecoded Payload.
 ```
 --]]
 
@@ -33,19 +37,22 @@ local grammar       = syslog.build_rsyslog_grammar(template)
 local is_running    = is_running
 
 local msg = {
-Timestamp   = nil,
-Type        = read_config("type"),
-Hostname    = nil,
-Payload     = nil,
-Pid         = nil,
-Severity    = nil,
-Fields      = nil
+    Timestamp = nil,
+    Type      = read_config("type"),
+    Hostname  = nil,
+    Payload   = nil,
+    Pid       = nil,
+    Severity  = nil,
+    Fields    = nil
 }
 
 local err_msg = {
     Logger  = read_config("Logger"),
     Type    = "error",
     Payload = nil,
+    Fields  = {
+        data = nil
+    }
 }
 
 local server = assert(socket.udp())
@@ -90,9 +97,16 @@ function process_message()
 
                 msg.Fields = fields
                 pcall(inject_message, msg)
+            elseif send_decode_failures then
+                err_msg.Type = "error.decode"
+                err_msg.Payload = "Unable to decode data"
+                err_msg.Fields.data = data
+                pcall(inject_message, err_msg)
             end
         elseif ip ~= "timeout" then
+            err_msg.Type = "error.closed"
             err_msg.Payload = ip
+            err_msg.Fields.data = nil
             pcall(inject_message, err_msg)
         end
     end
