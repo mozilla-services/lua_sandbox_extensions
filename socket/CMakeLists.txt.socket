@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(socket VERSION 3.0.2 LANGUAGES C)
+project(socket VERSION 3.0.3 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Socket Modules")
@@ -85,6 +85,28 @@ add_library(mime_core SHARED src/mime.c src/compat.c mime.def)
 set_target_properties(mime_core PROPERTIES OUTPUT_NAME core LIBRARY_OUTPUT_DIRECTORY mime)
 target_link_libraries(mime_core ${LUA_LIBRARIES})
 install(TARGETS mime_core DESTINATION ${INSTALL_IOMODULE_PATH}/mime)
+
+if(NOT MSVC)
+    set(SRC_SOCKET_UNIX
+    ${SOCKETC}
+    src/auxiliar.c
+    src/buffer.c
+    src/compat.c
+    src/io.c
+    src/options.c
+    src/timeout.c
+    src/unix.c
+    src/unixtcp.c
+    src/unixudp.c
+    socket_unix.def
+    )
+
+    file(WRITE socket_unix.def "EXPORTS\nnluaopen_socket_unix\n")
+    add_library(socket_unix SHARED ${SRC_SOCKET_UNIX})
+    set_target_properties(socket_unix PROPERTIES OUTPUT_NAME unix LIBRARY_OUTPUT_DIRECTORY socket)
+    target_link_libraries(socket_unix ${LUA_LIBRARIES})
+    install(TARGETS socket_unix DESTINATION ${INSTALL_IOMODULE_PATH}/socket)
+endif()
 
 set(SOCKET_MODULES
 src/ftp.lua 
