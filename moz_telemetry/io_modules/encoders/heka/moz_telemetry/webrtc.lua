@@ -5,6 +5,9 @@
 --[[
 # Mozilla Telemetry WebRTC Helper Module
 
+## Encoder Configuration Table
+* none
+
 ## Functions
 
 ### encode
@@ -15,7 +18,10 @@ Encodes a Mozilla telemetry message if it contains a WebRTC payload.
 - none
 
 *Return*
-- msg (string) or nil if the message does not contain a WebRTC payload.
+- data
+    - (nil) - skip
+    - (table) - read_message argument to retrieve the framed Heka protobuf
+       message
 --]]
 
 -- Imports
@@ -59,11 +65,14 @@ local function filter_message ()
     return not found
 end
 
-function encode ()
+
+local framed = read_message("framed", nil, nil, true)
+
+function encode()
     if filter_message() then
         return nil
     else
-        return read_message("framed")
+        return framed
     end
 end
 

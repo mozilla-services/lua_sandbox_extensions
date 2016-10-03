@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(lpeg VERSION 1.0.0 LANGUAGES C)
+project(lpeg VERSION 1.0.1 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua LPeg Module (Parsing Expression Grammars)")
@@ -15,7 +15,7 @@ set(CPACK_PACKAGE_CONTACT       "Mike Trinkala <trink@mozilla.com>")
 set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
 set(CPACK_STRIP_FILES           TRUE)
 
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.2)")
 set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
 
 if(MSVC)
@@ -34,7 +34,7 @@ if(LUA51) # build against installed lua 5.1
     find_program(LUA NAMES lua lua.bat)
     add_test(NAME test COMMAND ${LUA} test.lua)
 else() # lua_sandbox build
-	find_package(luasandbox 1.0.2 REQUIRED CONFIG)
+	find_package(luasandbox 1.2 REQUIRED CONFIG)
 	set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
 	set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
 endif()
@@ -58,6 +58,8 @@ set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP
 set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)
 file(MAKE_DIRECTORY ${EMPTY_DIR})
 install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_MODULE_PATH} ${DPERMISSION})
+install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH} ${DPERMISSION})
 install(TARGETS lpeg DESTINATION ${INSTALL_MODULE_PATH})
 install(FILES re.lua DESTINATION ${INSTALL_MODULE_PATH})
 install(DIRECTORY ${PARENT_SOURCE_DIR}/modules/ DESTINATION ${INSTALL_MODULE_PATH})
+install(DIRECTORY ${PARENT_SOURCE_DIR}/io_modules/ DESTINATION ${INSTALL_IOMODULE_PATH})

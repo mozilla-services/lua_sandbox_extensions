@@ -3,24 +3,26 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Mozilla Telemetry Decoder Module
+# Mozilla Telemetry Ping Decoder Module
 
-## decoder_cfg Table
+## Decoder Configuration Table
 ```lua
--- String used to specify the schema location on disk.
-schema_path = "/mnt/work/schemas"
+decoders_moz_telemetry_ping = {
+    -- String used to specify the schema location on disk.
+    schema_path = "/mnt/work/schemas",
 
--- String used to specify the message field containing the user submitted telemetry ping.
-content_field = "Fields[content]" -- optional, default shown
+    -- String used to specify the message field containing the user submitted telemetry ping.
+    content_field = "Fields[content]", -- optional, default shown
 
--- String used to specify the message field containing the URI of the submitted telemetry ping.
-uri_field = "Fields[uri]" -- optional, default shown
+    -- String used to specify the message field containing the URI of the submitted telemetry ping.
+    uri_field = "Fields[uri]", -- optional, default shown
 
--- String used to specify GeoIP city database location on disk.
-city_db_file = "/mnt/work/geoip/city.db" -- optional, if not specified no geoip lookup is performed
+    -- String used to specify GeoIP city database location on disk.
+    city_db_file = "/mnt/work/geoip/city.db", -- optional, if not specified no geoip lookup is performed
 
--- Boolean used to determine whether to inject the raw message in addition to the decoded one.
-inject_raw = false -- optional, if not specified the raw message is not injected
+    -- Boolean used to determine whether to inject the raw message in addition to the decoded one.
+    inject_raw = false, -- optional, if not specified the raw message is not injected
+}
 ```
 
 ## Functions
@@ -47,10 +49,13 @@ Decode and inject the message given as argument, using a module-internal stream 
 --]]
 
 -- Imports
+local module_name   = ...
+local string        = require "string"
+local module_cfg    = string.gsub(module_name, "%.", "_")
+
 local rjson  = require "rjson"
 local io     = require "io"
 local lpeg   = require "lpeg"
-local string = require "string"
 local table  = require "table"
 local os     = require "os"
 local floor  = require "math".floor
@@ -73,8 +78,8 @@ local city_db
 
 -- create before the environment is locked down since it conditionally includes a module
 local function load_decoder_cfg()
-    local cfg = read_config("decoder_cfg")
-    assert(type(cfg) == "table", "decoder_cfg must be a table")
+    local cfg = read_config(module_cfg)
+    assert(type(cfg) == "table", module_cfg .. " must be a table")
     assert(type(cfg.schema_path) == "string", "schema_path must be set")
 
     -- the old values for these were Fields[submission] and Fields[Path]
@@ -213,7 +218,7 @@ Examples:
 local sep           = lpeg.P("/")
 local elem          = lpeg.C((1 - sep)^1)
 local path_grammar  = lpeg.Ct(elem^0 * (sep^0 * elem)^0)
-local hsr           = create_stream_reader("telemetry_extract_dimensions")
+local hsr           = create_stream_reader("decoders.moz_telemetry.ping")
 
 local function split_path(s)
     if type(s) ~= "string" then return {} end

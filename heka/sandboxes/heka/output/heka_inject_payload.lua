@@ -14,7 +14,7 @@ and the contents are the message `Payload`.
 
 ## Sample Configuration
 ```lua
-filename        = "inject_payload.lua"
+filename        = "heka_inject_payload.lua"
 message_matcher = "Type == 'inject_payload'"
 ticker_interval = 0
 
@@ -24,7 +24,8 @@ output_dir      = "/var/www/hindsight/payload"
 ```
 --]]
 
-local output_dir = read_config("output_dir") or "/tmp"
+local output_dir = read_config("output_dir") or "/var/tmp"
+local payload = read_message("Payload", nil, nil, true)
 
 function process_message()
     local pt = read_message("Fields[payload_type]")
@@ -43,7 +44,6 @@ function process_message()
     local fh, err = io.open(fn, "w")
     if err then return -1, err end
 
-    local payload = read_message("Payload") or ""
     fh:write(payload)
     fh:close()
 

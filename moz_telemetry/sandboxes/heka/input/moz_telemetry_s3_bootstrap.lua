@@ -77,11 +77,15 @@ end
 local function dump_table(fh, t, sep)
     for k,v in pairs(t) do
         if type(v) == "table" then
-            fh:write(string.format("%s = {\n", k, v))
+            fh:write(string.format("%s = {\n", k))
             dump_table(fh, v, ",")
             fh:write(string.format("}%s\n", sep))
         else
-            fh:write(string.format("%s = [[%s]]%s\n", k, v, sep))
+            if type(v) == "string" then
+                fh:write(string.format("%s = [=[%s]=]%s\n", k, v, sep))
+            else
+                fh:write(string.format("%s = %s%s\n", k, tostring(v), sep))
+            end
         end
     end
 end

@@ -8,9 +8,9 @@
 The message payload must be pre-formatted JSON in an ElasticSearch compatible
 format.
 
-## encoder_cfg Table
+## Encoder Configuration Table
 
-[Common Options](../elasticsearch.html)
+[Common Options](common.html)
 
 ## Functions
 
@@ -23,7 +23,7 @@ pre-formatted JSON from the message payload (a new line is added if necessary).
 - none
 
 *Return*
-- JSON (string)
+- JSON (string, nil) Elasticsearch JSON or nil (skip no payload)
 
 ## Sample Output
 ```json
@@ -34,7 +34,7 @@ pre-formatted JSON from the message payload (a new line is added if necessary).
 
 -- Imports
 local string        = require "string"
-local es            = require "heka.elasticsearch"
+local es            = require "encoders.elasticsearch.common"
 local read_message  = read_message
 local cfg           = es.load_encoder_cfg()
 
@@ -42,10 +42,12 @@ local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 function encode()
+    local payload = read_message("Payload")
+    if not payload then return nil end
+
     local ns
     if cfg.es_index_from_timestamp then ns = read_message("Timestamp") end
     local idx_json = es.bulkapi_index_json(cfg.index, cfg.type_name, cfg.id, ns)
-    local payload  = read_message("Payload") or "{}"
     if string.match(payload, "\n$", -1) then
         return string.format("%s\n%s", idx_json, payload)
     end

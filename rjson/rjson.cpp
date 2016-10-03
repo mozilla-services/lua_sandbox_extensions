@@ -608,8 +608,8 @@ static int output_rjson(lua_State *lua)
 }
 
 
-lsb_const_string read_message(lua_State *lua, int idx,
-                              const lsb_heka_message *m)
+static lsb_const_string read_message(lua_State *lua, int idx,
+                                     const lsb_heka_message *m)
 {
   lsb_const_string ret = { NULL, 0 };
   size_t field_len;
@@ -657,7 +657,7 @@ static int rjson_parse_message(lua_State *lua)
   } else {
     luaL_argcheck(lua, n >= 1 && n <= 3, 0, "invalid number of arguments");
     const lsb_heka_message *hm = lsb_heka_get_message(hsb);
-    if (!hm ||  !hm->raw.s) {
+    if (!hm || !hm->raw.s) {
       return luaL_error(lua, "parse_message() no active message");
     }
     msg = hm;

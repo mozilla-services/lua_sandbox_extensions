@@ -7,10 +7,12 @@
 Extract clock skew, issuer info and Subject / SAN match status from tls error
 reports.
 
-## decoder_cfg Table
+## Decoder Configuration Table (optional)
 ```lua
--- Boolean used to determine whether to inject the raw message in addition to the decoded one.
-inject_raw = false -- optional, if not specified the raw message is not injected
+decoders_moz_telemetry_tls = {
+    -- Boolean used to determine whether to inject the raw message in addition to the decoded one.
+    inject_raw = false -- optional, if not specified the raw message is not injected
+}
 ```
 
 ## Functions
@@ -38,7 +40,10 @@ Decode and inject the message given as argument, using a module-internal stream 
 --]]
 
 -- Imports
-local string = require "string"
+local module_name   = ...
+local string        = require "string"
+local module_cfg    = string.gsub(module_name, "%.", "_")
+
 local cjson = require "cjson"
 local os = require "os"
 
@@ -63,9 +68,9 @@ local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 local function load_decoder_cfg()
-  local cfg = read_config("decoder_cfg")
+  local cfg = read_config(module_cfg)
   if not cfg then cfg = {} end
-  assert(type(cfg) == "table", "decoder_cfg must be a table")
+  assert(type(cfg) == "table", module_cfg .. " must be a table")
   if not cfg.inject_raw then cfg.inject_raw = false end
   assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
   return cfg
@@ -88,7 +93,7 @@ local emsg = {
     }
 }
 
-local hsr = create_stream_reader("extract_tls_info")
+local hsr = create_stream_reader("decoders.moz_telemetry.tls")
 
 -- create PEM data from base64 encoded DER
 local function make_pem(data)
