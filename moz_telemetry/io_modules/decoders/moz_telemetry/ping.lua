@@ -59,7 +59,7 @@ local lpeg   = require "lpeg"
 local table  = require "table"
 local os     = require "os"
 local floor  = require "math".floor
-local crc32  = require "zlib".crc32()
+local crc32  = require "zlib".crc32
 local mtn    = require "moz_telemetry.normalize"
 local dt     = require "lpeg.date_time"
 
@@ -433,7 +433,7 @@ local function process_json(hsr, msg, schema)
     end
 
     if type(msg.Fields.clientId) == "string" then
-        msg.Fields.sampleId = crc32(msg.Fields.clientId) % 100
+        msg.Fields.sampleId = crc32()(msg.Fields.clientId) % 100
     end
 
     return true
