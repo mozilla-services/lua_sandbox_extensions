@@ -88,7 +88,7 @@ local function load_decoder_cfg()
     if not cfg.inject_raw then cfg.inject_raw = false end
     assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
 
-    if city_db_file then
+    if cfg.city_db_file then
         geoip = require "geoip.city"
         city_db = assert(geoip.open(cfg.city_db_file))
     end
