@@ -18,8 +18,9 @@
 #include "lua.h"
 
 #ifdef LUA_SANDBOX
-#include "luasandbox/heka/sandbox.h"
-#include "luasandbox_output.h"
+#include <luasandbox.h>
+#include <luasandbox/heka/sandbox.h>
+#include <luasandbox_output.h>
 #endif
 
 static const char *mozsvc_kafka_consumer  = "mozsvc.kafka_consumer";
@@ -29,6 +30,9 @@ static const char *mozsvc_kafka_table     = "kafka";
 typedef struct kafka_producer {
   rd_kafka_t  *rk;
   void        *msg_opaque;
+#ifdef LUA_SANDBOX
+  const lsb_logger  *logger;
+#endif
   int         failures;
 } kafka_producer;
 
@@ -36,6 +40,9 @@ typedef struct kafka_producer {
 typedef struct kafka_consumer {
   rd_kafka_t                      *rk;
   rd_kafka_topic_partition_list_t *topics;
+#ifdef LUA_SANDBOX
+  const lsb_logger  *logger;
+#endif
 } kafka_consumer;
 
 
@@ -53,6 +60,18 @@ static kafka_producer* check_producer(lua_State *lua,
   luaL_argcheck(lua, n >= min_args && n <= max_args, n,
                 "incorrect number of arguments");
   return kp;
+}
+
+
+static void log_cb(const rd_kafka_t *rk,
+                   int level,
+                   const char *fac,
+                   const char *buf)
+{
+  if (!rk) {return;}
+  kafka_producer *kp = rd_kafka_opaque(rk);
+  kp->logger->cb(kp->logger->context, rd_kafka_name(rk), level, "%s\t%s", fac,
+                 buf);
 }
 
 
@@ -272,7 +291,23 @@ static int producer_new(lua_State *lua)
   }
   rd_kafka_conf_set_opaque(conf, kp);
   rd_kafka_conf_set_dr_cb(conf, msg_delivered);
+
+#ifdef LUA_SANDBOX
+  lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
+  lsb_lua_sandbox *lsb = lua_touserdata(lua, -1);
+  lua_pop(lua, 1); // remove this ptr
+  if (!lsb) {
+    return luaL_error(lua, "invalid " LSB_THIS_PTR);
+  }
+  kp->logger = lsb_get_logger(lsb);
+  if (kp->logger->cb) {
+    rd_kafka_conf_set_log_cb(conf, log_cb);
+  } else {
+    rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+  }
+#else
   rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+#endif
 
   char errstr[512];
   kp->rk = rd_kafka_new(RD_KAFKA_PRODUCER, conf, errstr, sizeof errstr);
@@ -706,7 +741,23 @@ static int consumer_new(lua_State *lua)
     return lua_error(lua);
   }
 
+#ifdef LUA_SANDBOX
+  rd_kafka_conf_set_opaque(conf, kc);
+  lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
+  lsb_lua_sandbox *lsb = lua_touserdata(lua, -1);
+  lua_pop(lua, 1); // remove this ptr
+  if (!lsb) {
+    return luaL_error(lua, "invalid " LSB_THIS_PTR);
+  }
+  kc->logger = lsb_get_logger(lsb);
+  if (kc->logger->cb) {
+    rd_kafka_conf_set_log_cb(conf, log_cb);
+  } else {
+    rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+  }
+#else
   rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+#endif
 
   char errstr[512];
   size_t len;

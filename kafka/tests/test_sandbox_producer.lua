@@ -14,13 +14,14 @@ local producer = kafka.producer("localhost:9092",
 local cnt = 0
 local topic = "test"
 local sid
+local raw = read_message("raw", nil, nil, true)
 function process_message(sequence_id)
     sid = sequence_id
     if cnt == 0 then
         local topic_tmp = "tmp"
         producer:create_topic(topic)
         assert(producer:has_topic(topic))
-        assert(0 == producer:send(topic, -1, sequence_id)) -- send the original
+        assert(0 == producer:send(topic, -1, sequence_id, raw))
 
         producer:create_topic(topic_tmp)
         producer:create_topic(topic_tmp, nil)
@@ -29,7 +30,7 @@ function process_message(sequence_id)
         assert(not producer:has_topic(topic_tmp))
         ok, err = pcall(producer.create_topic, producer, "topic", true)
         assert(err == "bad argument #3 to '?' (table expected, got boolean)", err)
-        ok, err = pcall(producer.send, producer, "foobar", -1, sequence_id)
+        ok, err = pcall(producer.send, producer, "foobar", -1, sequence_id, raw)
         assert(err == "invalid topic", err)
     elseif cnt == 1 then
         assert(0 == producer:send(topic, -1, sequence_id, encode_message({Payload = "two"})))
@@ -42,8 +43,8 @@ end
 
 function timer_event(ns)
     if sid then
-        ok, err = pcall(producer.send, producer, topic, -1, sid)
-        assert(err == "send() no active message", err)
+        ok, err = pcall(producer.send, producer, topic, -1, sid, raw)
+        assert(ok, "nil zero copy result should not error")
         sid = nil
     end
     producer:poll()
