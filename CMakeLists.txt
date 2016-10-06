@@ -66,6 +66,7 @@ set(extensions
 bloom_filter
 circular_buffer
 cjson
+compat
 cuckoo_filter
 elasticsearch
 geoip
