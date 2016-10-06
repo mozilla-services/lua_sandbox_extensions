@@ -63,6 +63,7 @@ static kafka_producer* check_producer(lua_State *lua,
 }
 
 
+#ifdef LUA_SANDBOX
 static void log_cb(const rd_kafka_t *rk,
                    int level,
                    const char *fac,
@@ -73,6 +74,7 @@ static void log_cb(const rd_kafka_t *rk,
   kp->logger->cb(kp->logger->context, rd_kafka_name(rk), level, "%s\t%s", fac,
                  buf);
 }
+#endif
 
 
 static void msg_delivered(rd_kafka_t *rk,
