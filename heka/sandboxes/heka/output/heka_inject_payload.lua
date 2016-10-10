@@ -3,6 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "io"
+require "os"
 require "string"
 
 --[[
@@ -24,29 +25,81 @@ output_dir      = "/var/www/hindsight/payload"
 ```
 --]]
 
-local output_dir = read_config("output_dir") or "/var/tmp"
-local payload = read_message("Payload", nil, nil, true)
+local output_dir    = read_config("output_dir") or "/var/tmp/hindsight"
+local install_path  = read_config("sandbox_install_path")
+
+local cmd = string.format("mkdir -p %s/graphs/js", output_dir)
+local ret = os.execute(cmd)
+if ret ~= 0 then
+    error(string.format("mkdir ret: %d, cmd: %s", ret, cmd))
+end
+
+local function copy_files()
+    local files = {"cbuf.js", "dygraph-combined.js"}
+    for i, v in ipairs(files) do
+        local cmd = string.format('cp "%s" "%s"',
+                                  string.format("%s/output/%s", install_path, v),
+                                  string.format("%s/graphs/js/%s", output_dir, v));
+        local ret = os.execute(cmd)
+        if ret ~= 0 then
+            error(string.format("copy ret: %d, cmd: %s", ret, cmd))
+        end
+    end
+end
+copy_files()
+
+local payload       = read_message("Payload", nil, nil, true)
+local graphs        = {}
+local html_template = [[
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="js/dygraph-combined.js"  type="text/javascript"></script>
+    <script src="js/cbuf.js"  type="text/javascript"></script>
+</head>
+<body onload="heka_load_cbuf('../%s', heka_load_cbuf_complete);">
+<p id="title" style="text-align: center">%s</p>
+<p id="range" style="text-align: center"></p>
+</body>
+</html>
+]]
+
+local function output_html(cbfn, logger, pn, nlogger, npn)
+    local fn = string.format("%s/graphs/%s.%s.html", output_dir, nlogger, npn)
+    local fh, err = io.open(fn, "w")
+    if err then return err end
+
+    local title = string.format("%s [%s]", logger, pn)
+    fh:write(string.format(html_template, cbfn, title))
+    fh:close()
+end
 
 function process_message()
-    local pt = read_message("Fields[payload_type]")
-    if type(pt) ~= "string" then return -1, "invalid payload_type" end
+    local logger = read_message("Logger") or ""
 
     local pn = read_message("Fields[payload_name]") or ""
     if type(pn) ~= "string" then return -1, "invalid payload_name" end
 
-    local logger = read_message("Logger") or ""
+    local pt = read_message("Fields[payload_type]")
+    if type(pt) ~= "string" then return -1, "invalid payload_type" end
 
-    pn = string.gsub(pn, "%W", "_")
-    pt = string.gsub(pt, "%W", "_")
-    logger = string.gsub(logger, "%W", "_")
+    local npn = string.gsub(pn, "[^%w%.]", "_")
+    local npt = string.gsub(pt, "%W", "_")
+    local nlogger = string.gsub(logger, "[^%w%.]", "_")
+    local cbfn = string.format("%s.%s.%s", nlogger, npn, npt)
+    local fn = string.format("%s/%s", output_dir, cbfn)
 
-    local fn = string.format("%s/%s.%s.%s", output_dir, logger, pn, pt)
+    if pt == "cbuf" and not graphs[fn] then
+        local err = output_html(cbfn, logger, pn, nlogger, npn)
+        if err then return -1, err end
+        graphs[fn] = true
+    end
+
     local fh, err = io.open(fn, "w")
     if err then return -1, err end
 
     fh:write(payload)
     fh:close()
-
     return 0
 end
 

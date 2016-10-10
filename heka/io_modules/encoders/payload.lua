@@ -21,10 +21,7 @@ message.
 - none
 
 *Return*
-- data (nil, string, table)
-    - nil - skip message
-    - string - data to output
-    - table - zero copy read_message arguments
+- data (userdata) - reference to the message Payload
 
 --]]
 
