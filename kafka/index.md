@@ -139,7 +139,7 @@ producer:destroy_topic(topic)
 Sends a message using the specified topic.
 
 ```lua
-local ret = producer:send(topic, -1, payload, sequence_id)
+local ret = producer:send(topic, -1, sequence_id, message)
 
 ```
 
@@ -149,9 +149,10 @@ local ret = producer:send(topic, -1, payload, sequence_id)
 * sequence_id 
     * lua_sandbox (lightuserdata/nil/none) - Opaque pointer for checkpointing
     * Lua 5.1 (number/nil/none) - range: zero to UINTPTR_MAX
-* payload
-    * heka_sandbox (string/nil/none) - Use nil/none to send the current
-    active message while in the process_message call
+* message
+    * heka_sandbox (string/table)
+        * string - message to send
+        * table - zero copy specifier (table of read_message arguments)
     * Lua 5.1 (string) - Message to send 
 
 

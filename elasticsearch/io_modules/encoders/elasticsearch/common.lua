@@ -3,26 +3,28 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Elasticsearch Utility Functions
+# Elasticsearch Common Encoder Utility Functions
 
-## encoder_cfg Table
+## Encoder Configuration Table
 ```lua
--- Boolean flag, if true then any time interpolation (often used to generate the
--- ElasticSeach index) will use the timestamp from the processed message rather
--- than the system time.
-es_index_from_timestamp = false -- optional, default shown
+encoders_elasticsearch_common = {
+    -- Boolean flag, if true then any time interpolation (often used to generate the
+    -- ElasticSeach index) will use the timestamp from the processed message rather
+    -- than the system time.
+    es_index_from_timestamp = false -- optional, default shown
 
--- String to use as the `_index` key's value in the  generated JSON.
--- Supports field interpolation as described below.
-index = "heka-%{%Y.%m.%d}" -- optional, default shown
+    -- String to use as the `_index` key's value in the  generated JSON.
+    -- Supports field interpolation as described below.
+    index = "heka-%{%Y.%m.%d}" -- optional, default shown
 
--- String to use as the `_type` key's value in the generated JSON.
--- Supports field interpolation as described below.
-type_name = "message" -- optional, default shown
+    -- String to use as the `_type` key's value in the generated JSON.
+    -- Supports field interpolation as described below.
+    type_name = "message" -- optional, default shown
 
--- String to use as the `_id` key's value in the generated JSON.
--- Supports field interpolation as described below.
-id = nil -- optional, default shown
+    -- String to use as the `_id` key's value in the generated JSON.
+    -- Supports field interpolation as described below.
+    id = nil -- optional, default shown
+}
 
 ```
 
@@ -59,9 +61,13 @@ Loads and validates the common Elastic Search encoder configuration options.
 * cfg (table)
 --]]
 
+-- Imports
+local module_name   = ...
+local string        = require "string"
+local module_cfg    = string.gsub(module_name, "%.", "_")
+
 local cjson         = require "cjson"
 local mi            = require "heka.msg_interpolate"
-local string        = require "string"
 local assert        = assert
 local type          = type
 local read_message  = read_message
@@ -103,8 +109,8 @@ end
 
 
 function load_encoder_cfg()
-    local cfg = read_config("encoder_cfg")
-    assert(type(cfg) == "table", "encoder_cfg must be a table")
+    local cfg = read_config(module_cfg)
+    assert(type(cfg) == "table", module_cfg .. " must be a table")
 
     if cfg.es_index_from_timestamp == nil then
         cfg.es_index_from_timestamp = false

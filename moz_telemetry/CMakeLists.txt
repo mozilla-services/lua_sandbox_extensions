@@ -3,9 +3,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(moz-telemetry VERSION 1.1.2 LANGUAGES C)
+project(moz-telemetry VERSION 1.2.0 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Firefox Telemetry Data Processing")
 set(MODULE_DEPENDENCIES ep_cjson rjson)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-elasticsearch (>= 1.0)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.2), ${PACKAGE_PREFIX}-elasticsearch (>= 1.0.3)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)

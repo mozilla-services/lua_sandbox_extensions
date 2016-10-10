@@ -18,7 +18,9 @@
 #include "lua.h"
 
 #ifdef LUA_SANDBOX
-#include "luasandbox/heka/sandbox.h"
+#include <luasandbox.h>
+#include <luasandbox/heka/sandbox.h>
+#include <luasandbox_output.h>
 #endif
 
 static const char *mozsvc_kafka_consumer  = "mozsvc.kafka_consumer";
@@ -28,6 +30,9 @@ static const char *mozsvc_kafka_table     = "kafka";
 typedef struct kafka_producer {
   rd_kafka_t  *rk;
   void        *msg_opaque;
+#ifdef LUA_SANDBOX
+  const lsb_logger  *logger;
+#endif
   int         failures;
 } kafka_producer;
 
@@ -35,6 +40,9 @@ typedef struct kafka_producer {
 typedef struct kafka_consumer {
   rd_kafka_t                      *rk;
   rd_kafka_topic_partition_list_t *topics;
+#ifdef LUA_SANDBOX
+  const lsb_logger  *logger;
+#endif
 } kafka_consumer;
 
 
@@ -43,13 +51,30 @@ typedef struct kafka_topic {
 } kafka_topic;
 
 
-static kafka_producer* check_producer(lua_State *lua, int min_args)
+static kafka_producer* check_producer(lua_State *lua,
+                                      int min_args,
+                                      int max_args)
 {
   kafka_producer *kp = luaL_checkudata(lua, 1, mozsvc_kafka_producer);
   int n = lua_gettop(lua);
-  luaL_argcheck(lua, min_args <= n, n, "incorrect number of arguments");
+  luaL_argcheck(lua, n >= min_args && n <= max_args, n,
+                "incorrect number of arguments");
   return kp;
 }
+
+
+#ifdef LUA_SANDBOX
+static void log_cb(const rd_kafka_t *rk,
+                   int level,
+                   const char *fac,
+                   const char *buf)
+{
+  if (!rk) {return;}
+  kafka_producer *kp = rd_kafka_opaque(rk);
+  kp->logger->cb(kp->logger->context, rd_kafka_name(rk), level, "%s\t%s", fac,
+                 buf);
+}
+#endif
 
 
 static void msg_delivered(rd_kafka_t *rk,
@@ -268,7 +293,23 @@ static int producer_new(lua_State *lua)
   }
   rd_kafka_conf_set_opaque(conf, kp);
   rd_kafka_conf_set_dr_cb(conf, msg_delivered);
+
+#ifdef LUA_SANDBOX
+  lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
+  lsb_lua_sandbox *lsb = lua_touserdata(lua, -1);
+  lua_pop(lua, 1); // remove this ptr
+  if (!lsb) {
+    return luaL_error(lua, "invalid " LSB_THIS_PTR);
+  }
+  kp->logger = lsb_get_logger(lsb);
+  if (kp->logger->cb) {
+    rd_kafka_conf_set_log_cb(conf, log_cb);
+  } else {
+    rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+  }
+#else
   rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+#endif
 
   char errstr[512];
   kp->rk = rd_kafka_new(RD_KAFKA_PRODUCER, conf, errstr, sizeof errstr);
@@ -301,10 +342,8 @@ static kafka_topic* get_topic(lua_State *lua, kafka_producer *kp,
 
 static int producer_create_topic(lua_State *lua)
 {
-  kafka_producer *kp = check_producer(lua, 2);
+  kafka_producer *kp = check_producer(lua, 2, 3);
   const char *topic = NULL;
-  int n = lua_gettop(lua);
-  luaL_argcheck(lua, n >= 2 && n <= 3, n, "incorrect number of arguments");
 
   topic = luaL_checkstring(lua, 2);
 
@@ -388,7 +427,7 @@ static int producer_destroy_topic(lua_State *lua)
 #ifdef LUA_SANDBOX
 static int producer_poll_heka(lua_State *lua)
 {
-  kafka_producer *kp = check_producer(lua, 1);
+  kafka_producer *kp = check_producer(lua, 1, 1);
   kp->failures = 0;
   kp->msg_opaque = NULL;
   rd_kafka_poll(kp->rk, 0);
@@ -405,12 +444,15 @@ static int producer_poll_heka(lua_State *lua)
     }
     lua_pop(lua, 1);
   }
-  return 0;}
+  return 0;
+}
 
 
 static int producer_send_heka(lua_State *lua)
 {
-  kafka_producer *kp = check_producer(lua, 4);
+  static const int msg_idx = 5;
+  kafka_producer *kp = check_producer(lua, msg_idx, msg_idx);
+
   const char *topic = luaL_checkstring(lua, 2);
   kafka_topic *kt = get_topic(lua, kp, topic);
   if (!kt) return luaL_error(lua, "invalid topic");
@@ -419,29 +461,84 @@ static int producer_send_heka(lua_State *lua)
   luaL_checktype(lua, 4, LUA_TLIGHTUSERDATA);
   void *sequence_id = lua_touserdata(lua, 4);
 
+  int msgflags = RD_KAFKA_MSG_F_COPY;
   size_t len = 0;
   const char *msg = NULL;
-  if (lua_type(lua, 5) == LUA_TSTRING) {
-    msg = lua_tolstring(lua, 5, &len);
-  } else {
-    lua_getfield(lua, LUA_REGISTRYINDEX, LSB_HEKA_THIS_PTR);
-    lsb_heka_sandbox *hsb = lua_touserdata(lua, -1);
-    lua_pop(lua, 1); // remove this ptr
-    if (!hsb) {
-      return luaL_error(lua, "send() invalid " LSB_HEKA_THIS_PTR);
+
+  switch (lua_type(lua, msg_idx)) {
+  case LUA_TSTRING:
+    msg = lua_tolstring(lua, msg_idx, &len);
+    break;
+  case LUA_TUSERDATA:
+    {
+      lua_CFunction fp = lsb_get_zero_copy_function(lua, msg_idx);
+      if (!fp) {
+        return luaL_argerror(lua, msg_idx, "no zero copy support");
+      }
+      int results = fp(lua);
+      int start = msg_idx + 1;
+      int end = start + results;
+      int segments = 0;
+      size_t total_len = 0;
+
+      for (int i = start; i < end; ++i) {
+        switch (lua_type(lua, i)) {
+        case LUA_TSTRING:
+          msg = lua_tolstring(lua, i, &len);
+          break;
+        case LUA_TLIGHTUSERDATA:
+          msg = lua_touserdata(lua, i++);
+          len = (size_t)lua_tointeger(lua, i);
+          break;
+        default:
+          return luaL_error(lua, "invalid zero copy return");
+        }
+        total_len += len;
+        ++segments;
+      }
+
+      if (segments == 0 || total_len == 0) {
+        lua_pushinteger(lua, 0);
+        return 1;
+      }
+
+      if (segments > 1) {
+        char *buf = malloc(total_len);
+        if (!buf) {
+          return luaL_error(lua, "malloc failed");
+        }
+
+        size_t pos = 0;
+        for (int i = start; i < end; ++i) {
+          switch (lua_type(lua, i)) {
+          case LUA_TSTRING:
+            msg = lua_tolstring(lua, i, &len);
+            break;
+          case LUA_TLIGHTUSERDATA:
+            msg = lua_touserdata(lua, i++);
+            len = (size_t)lua_tointeger(lua, i);
+            break;
+          }
+          if (msg && len > 0) {
+            memcpy(buf + pos, msg, len);
+            pos += len;
+          }
+        }
+        msg = buf;
+        len = total_len;
+        msgflags = RD_KAFKA_MSG_F_FREE; // give ownership to kafka
+      }
     }
-    const lsb_heka_message *hm = lsb_heka_get_message(hsb);
-    if (hm && hm->raw.s) {
-      len = hm->raw.len;
-      msg = hm->raw.s;
-    } else {
-      return luaL_error(lua, "send() no active message");
-    }
+    break;
+
+  default:
+    return luaL_typerror(lua, msg_idx, "string or userdata");
+    break;
   }
 
   errno = 0;
   int ret = rd_kafka_produce(kt->rkt, partition,
-                             RD_KAFKA_MSG_F_COPY,
+                             msgflags,
                              (void *)msg, len,
                              NULL, 0, // optional key/len
                              sequence_id // opaque pointer
@@ -455,15 +552,11 @@ static int producer_send_heka(lua_State *lua)
 }
 #endif
 
+
 static int producer_poll(lua_State *lua)
 {
-  kafka_producer *kp = check_producer(lua, 1);
-  int n = lua_gettop(lua);
-  luaL_argcheck(lua, n > 1 && n < 3, n, "invalid number of arguments");
-  int timeout = 0;
-  if (n == 2) {
-    timeout = luaL_checkint(lua, 2);
-  }
+  kafka_producer *kp = check_producer(lua, 1, 2);
+  int timeout = luaL_optint(lua, 2, 0);
   kp->failures = 0;
   kp->msg_opaque = NULL;
   rd_kafka_poll(kp->rk, timeout);
@@ -480,7 +573,8 @@ static int producer_poll(lua_State *lua)
 
 static int producer_send(lua_State *lua)
 {
-  kafka_producer *kp = check_producer(lua, 4);
+  kafka_producer *kp = check_producer(lua, 5, 5);
+
   const char *topic = luaL_checkstring(lua, 2);
   kafka_topic *kt = get_topic(lua, kp, topic);
   if (!kt) return luaL_error(lua, "invalid topic");
@@ -515,7 +609,7 @@ static int producer_send(lua_State *lua)
 
 static int producer_gc(lua_State *lua)
 {
-  kafka_producer *kp = check_producer(lua, 1);
+  kafka_producer *kp = check_producer(lua, 1, 1);
   lua_pushlightuserdata(lua, kp);
   lua_rawget(lua, LUA_ENVIRONINDEX);
   assert(lua_type(lua, -1) == LUA_TTABLE);
@@ -649,7 +743,23 @@ static int consumer_new(lua_State *lua)
     return lua_error(lua);
   }
 
+#ifdef LUA_SANDBOX
+  rd_kafka_conf_set_opaque(conf, kc);
+  lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
+  lsb_lua_sandbox *lsb = lua_touserdata(lua, -1);
+  lua_pop(lua, 1); // remove this ptr
+  if (!lsb) {
+    return luaL_error(lua, "invalid " LSB_THIS_PTR);
+  }
+  kc->logger = lsb_get_logger(lsb);
+  if (kc->logger->cb) {
+    rd_kafka_conf_set_log_cb(conf, log_cb);
+  } else {
+    rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+  }
+#else
   rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+#endif
 
   char errstr[512];
   size_t len;
@@ -752,15 +862,14 @@ static int consumer_gc(lua_State *lua)
 }
 
 
-static int kafka_version(lua_State* lua)
+static int kafka_version(lua_State *lua)
 {
   lua_pushstring(lua, DIST_VERSION);
   return 1;
 }
 
 
-static const struct luaL_reg kafkalib_f[] =
-{
+static const struct luaL_reg kafkalib_f[] = {
   { "consumer", consumer_new },
   { "producer", producer_new },
   { "version", kafka_version },
@@ -768,8 +877,7 @@ static const struct luaL_reg kafkalib_f[] =
 };
 
 
-static const struct luaL_reg producerlib_m[] =
-{
+static const struct luaL_reg producerlib_m[] = {
   { "create_topic", producer_create_topic },
   { "has_topic", producer_has_topic },
   { "destroy_topic", producer_destroy_topic },
@@ -780,8 +888,7 @@ static const struct luaL_reg producerlib_m[] =
 };
 
 #ifdef LUA_SANDBOX
-static const struct luaL_reg producerlibext_m[] =
-{
+static const struct luaL_reg producerlibext_m[] = {
   { "poll", producer_poll_heka },
   { "send", producer_send_heka },
   { NULL, NULL }
@@ -789,8 +896,7 @@ static const struct luaL_reg producerlibext_m[] =
 #endif
 
 
-static const struct luaL_reg consumerlib_m[] =
-{
+static const struct luaL_reg consumerlib_m[] = {
   { "receive", consumer_receive },
   { "__gc", consumer_gc },
   { NULL, NULL }

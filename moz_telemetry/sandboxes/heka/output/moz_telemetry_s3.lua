@@ -41,10 +41,11 @@ max_file_age        = 60 * 60
 flush_on_shutdown   = true
 preserve_data       = not flush_on_shutdown -- should always be the inverse of flush_on_shutdown
 
-compression         = "gz"
+-- enable compression (nil | "gz")
+-- compression         = nil -- default
 
 -- Specify an optional module to encode incoming messages via its encode function.
-encoder_module = nil
+-- encoder_module = "encoders.heka.framed_protobuf" -- default
 ```
 --]]
 
@@ -74,14 +75,12 @@ if compression == "gz" then
     require "zlib"
 end
 
-local encoder_module        = read_config("encoder_module")
-local encode                = false
-if encoder_module then
-    encode = require(encoder_module).encode
-    if not encode then
-        error(encoder_module .. " does not provide a encode function")
-    end
+local encoder_module = read_config("encoder_module") or "encoders.heka.framed_protobuf"
+local encode = require(encoder_module).encode
+if not encode then
+    error(encoder_module .. " does not provide an encode function")
 end
+
 
 local function get_fqfn(path)
     return string.format("%s/%s", batch_dir, path)
@@ -197,16 +196,14 @@ function process_message()
     local path = table.concat(dims, "+") -- the plus will be converted to a path separator '/' on copy
     local entry = get_entry(path)
     local fh = entry[2]
-    local encoded
-    if encode then
-        encoded = encode()
-    else
-        encoded = read_message("framed")
-    end
-    if not encoded then return 0 end
+
+    local ok, data = pcall(encode)
+    if not ok then return -1, data end
+    if not data then return -2 end
 
     if compression == "gz" then
-        local def, eof, bin, bout = entry[4](encoded)
+        if type(data) == "userdata" then data = tostring(data) end
+        local def, eof, bin, bout = entry[4](data)
         if #def > 0 then
             fh:write(def)
         end
@@ -214,7 +211,7 @@ function process_message()
             rename_file(path, entry)
         end
     else
-        fh:write(encoded)
+        fh:write(data)
         local size = fh:seek()
         if size >= max_file_size then
             rename_file(path, entry)

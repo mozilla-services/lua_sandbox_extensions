@@ -3,24 +3,26 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Mozilla Telemetry Decoder Module
+# Mozilla Telemetry Ping Decoder Module
 
-## decoder_cfg Table
+## Decoder Configuration Table
 ```lua
--- String used to specify the schema location on disk.
-schema_path = "/mnt/work/schemas"
+decoders_moz_telemetry_ping = {
+    -- String used to specify the schema location on disk.
+    schema_path = "/mnt/work/schemas",
 
--- String used to specify the message field containing the user submitted telemetry ping.
-content_field = "Fields[content]" -- optional, default shown
+    -- String used to specify the message field containing the user submitted telemetry ping.
+    content_field = "Fields[content]", -- optional, default shown
 
--- String used to specify the message field containing the URI of the submitted telemetry ping.
-uri_field = "Fields[uri]" -- optional, default shown
+    -- String used to specify the message field containing the URI of the submitted telemetry ping.
+    uri_field = "Fields[uri]", -- optional, default shown
 
--- String used to specify GeoIP city database location on disk.
-city_db_file = "/mnt/work/geoip/city.db" -- optional, if not specified no geoip lookup is performed
+    -- String used to specify GeoIP city database location on disk.
+    city_db_file = "/mnt/work/geoip/city.db", -- optional, if not specified no geoip lookup is performed
 
--- Boolean used to determine whether to inject the raw message in addition to the decoded one.
-inject_raw = false -- optional, if not specified the raw message is not injected
+    -- Boolean used to determine whether to inject the raw message in addition to the decoded one.
+    inject_raw = false, -- optional, if not specified the raw message is not injected
+}
 ```
 
 ## Functions
@@ -47,14 +49,17 @@ Decode and inject the message given as argument, using a module-internal stream 
 --]]
 
 -- Imports
+local module_name   = ...
+local string        = require "string"
+local module_cfg    = string.gsub(module_name, "%.", "_")
+
 local rjson  = require "rjson"
 local io     = require "io"
 local lpeg   = require "lpeg"
-local string = require "string"
 local table  = require "table"
 local os     = require "os"
 local floor  = require "math".floor
-local crc32  = require "zlib".crc32()
+local crc32  = require "zlib".crc32
 local mtn    = require "moz_telemetry.normalize"
 local dt     = require "lpeg.date_time"
 
@@ -73,8 +78,8 @@ local city_db
 
 -- create before the environment is locked down since it conditionally includes a module
 local function load_decoder_cfg()
-    local cfg = read_config("decoder_cfg")
-    assert(type(cfg) == "table", "decoder_cfg must be a table")
+    local cfg = read_config(module_cfg)
+    assert(type(cfg) == "table", module_cfg .. " must be a table")
     assert(type(cfg.schema_path) == "string", "schema_path must be set")
 
     -- the old values for these were Fields[submission] and Fields[Path]
@@ -83,7 +88,7 @@ local function load_decoder_cfg()
     if not cfg.inject_raw then cfg.inject_raw = false end
     assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
 
-    if city_db_file then
+    if cfg.city_db_file then
         geoip = require "geoip.city"
         city_db = assert(geoip.open(cfg.city_db_file))
     end
@@ -91,11 +96,11 @@ local function load_decoder_cfg()
     return cfg
 end
 
-
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 local cfg = load_decoder_cfg()
+local UNK_DIM = "UNKNOWN"
 local UNK_GEO = "??"
 -- Track the hour to facilitate reopening city_db hourly.
 local hour = floor(os.time() / 3600)
@@ -126,10 +131,11 @@ end
 local schemas = {}
 local function load_schemas()
     local schema_files = {
-        main    = string.format("%s/telemetry/main.schema.json", cfg.schema_path),
-        crash   = string.format("%s/telemetry/crash.schema.json", cfg.schema_path),
-        core    = string.format("%s/telemetry/core.schema.json", cfg.schema_path),
-        }
+        ["main"]    = string.format("%s/telemetry/main.schema.json", cfg.schema_path),
+        ["crash"]   = string.format("%s/telemetry/crash.schema.json", cfg.schema_path),
+        ["core"]    = string.format("%s/telemetry/core.schema.json", cfg.schema_path),
+        ["vacuous"] = string.format("%s/telemetry/vacuous.schema.json", cfg.schema_path),
+    }
     for k,v in pairs(schema_files) do
         local fh = assert(io.input(v))
         local schema = fh:read("*a")
@@ -137,7 +143,25 @@ local function load_schemas()
     end
 end
 load_schemas()
-schemas["saved-session"] = schemas.main
+schemas["saved-session"]                        = schemas.main
+-- apply vacuous schemas for all other known ping types
+schemas["android-anr-report"]                   = schemas.vacuous
+schemas["ftu"]                                  = schemas.vacuous
+schemas["loop"]                                 = schemas.vacuous
+schemas["flash-video"]                          = schemas.vacuous
+schemas["activation"]                           = schemas.vacuous
+schemas["deletion"]                             = schemas.vacuous
+schemas["uitour-tag"]                           = schemas.vacuous
+schemas["heartbeat"]                            = schemas.vacuous
+schemas["b2g-installer-device"]                 = schemas.vacuous
+schemas["b2g-installer-flash"]                  = schemas.vacuous
+schemas["advancedtelemetry"]                    = schemas.vacuous
+schemas["appusage"]                             = schemas.vacuous
+schemas["testpilot"]                            = schemas.vacuous
+schemas["testpilottest"]                        = schemas.vacuous
+schemas["malware-addon-states"]                 = schemas.vacuous
+schemas["sync"]                                 = schemas.vacuous
+schemas["outofdate-notifications-system-addon"] = schemas.vacuous
 
 local uri_config = {
     telemetry = {
@@ -213,7 +237,7 @@ Examples:
 local sep           = lpeg.P("/")
 local elem          = lpeg.C((1 - sep)^1)
 local path_grammar  = lpeg.Ct(elem^0 * (sep^0 * elem)^0)
-local hsr           = create_stream_reader("telemetry_extract_dimensions")
+local hsr           = create_stream_reader("decoders.moz_telemetry.ping")
 
 local function split_path(s)
     if type(s) ~= "string" then return {} end
@@ -309,30 +333,108 @@ local function process_json(hsr, msg, schema)
         return false
     end
 
-    msg.Fields.submission           = doc
-    local cts = doc:value(doc:find("creationDate"))
-    if cts then
-        msg.Fields.creationTimestamp = dt.time_to_ns(dt.rfc3339:match(cts))
+    local clientId
+    local ver = doc:value(doc:find("ver"))
+
+    if ver then
+        if ver == 3 then
+            -- Special case for FxOS FTU pings
+            msg.Fields.submission = doc
+            msg.Fields.sourceVersion = tostring(ver)
+
+            -- Get some more dimensions.
+            local channel = msg.Fields.appUpdateChannel
+            if channel and type(channel) == "string" then
+                msg.Fields.normalizedChannel = mtn.channel(channel)
+            end
+        else
+            -- Old-style telemetry.
+            local info = doc:find(info)
+            -- the info object should exist because we passed schema validation (maybe)
+            -- if type(info) == nil then
+            --     inject_error(hsr, "schema", string.format("missing info object"), msg.Fields)
+            -- end
+            msg.Fields.submission = doc
+            msg.Fields.sourceVersion = tostring(ver)
+
+            -- Get some more dimensions.
+            msg.Fields.docType           = doc:value(doc:find(info, "reason")) or UNK_DIM
+            msg.Fields.appName           = doc:value(doc:find(info, "appName")) or UNK_DIM
+            msg.Fields.appVersion        = doc:value(doc:find(info, "appVersion")) or UNK_DIM
+            msg.Fields.appUpdateChannel  = doc:value(doc:find(info, "appUpdateChannel")) or UNK_DIM
+            msg.Fields.appBuildId        = doc:value(doc:find(info, "appBuildID")) or UNK_DIM
+            msg.Fields.normalizedChannel = mtn.channel(doc:value(doc:find(info, "appUpdateChannel")))
+
+            -- Old telemetry was always "enabled"
+            msg.Fields.telemetryEnabled = true
+
+            -- Do not want default values for these.
+            msg.Fields.os = doc:value(doc:find(info, "OS"))
+            msg.Fields.appVendor = doc:value(doc:find(info, "vendor"))
+            msg.Fields.reason = doc:value(doc:find(info, "reason"))
+            clientId = doc:value(doc:find("clientID")) -- uppercase ID is correct
+            msg.Fields.clientId = clientId
+        end
+    elseif doc:value(doc:find("version")) then
+        -- new code
+        msg.Fields.submission           = doc
+        local cts = doc:value(doc:find("creationDate"))
+        if cts then
+            msg.Fields.creationTimestamp = dt.time_to_ns(dt.rfc3339:match(cts))
+        end
+        msg.Fields.reason               = doc:value(doc:find("payload", "info", "reason"))
+        msg.Fields.os                   = doc:value(doc:find("environment", "system", "os", "name"))
+        msg.Fields.telemetryEnabled     = doc:value(doc:find("environment", "settings", "telemetryEnabled"))
+        msg.Fields.activeExperimentId   = doc:value(doc:find("environment", "addons", "activeExperiment", "id"))
+        msg.Fields.clientId             = doc:value(doc:find("clientId"))
+        msg.Fields.sourceVersion        = doc:value(doc:find("version"))
+        msg.Fields.docType              = doc:value(doc:find("type"))
+
+        local app = doc:find("application")
+        msg.Fields.appName              = doc:value(doc:find(app, "name"))
+        msg.Fields.appVersion           = doc:value(doc:find(app, "version"))
+        msg.Fields.appBuildId           = doc:value(doc:find(app, "buildId"))
+        msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
+        msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
+        msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
+
+        remove_objects(msg, doc, "environment", environment_objects)
+        remove_objects(msg, doc, "payload", extract_payload_objects[msg.Fields.docType])
+        -- /new code
+    elseif doc:value(doc:find("deviceinfo")) ~= nil then
+        -- Old 'appusage' ping, see Bug 982663
+        msg.Fields.submission           = doc
+
+        -- Special version for this old format
+        msg.Fields.sourceVersion = "3"
+
+        local av = doc:value(doc:find("deviceinfo", "platform_version"))
+        local auc = doc:value(doc:find("deviceinfo", "update_channel"))
+        local abi = doc:value(doc:find("deviceinfo", "platform_build_id"))
+
+        -- Get some more dimensions.
+        msg.Fields.docType = "appusage"
+        msg.Fields.appName = "FirefoxOS"
+        msg.Fields.appVersion = av or UNK_DIM
+        msg.Fields.appUpdateChannel = auc or UNK_DIM
+        msg.Fields.appBuildId = abi or UNK_DIM
+        msg.Fields.normalizedChannel = mtn.channel(auc)
+
+        -- The "telemetryEnabled" flag does not apply to this type of ping.
+    elseif doc:value(doc:find("v")) then
+        -- This is a Fennec "core" ping
+        msg.Fields.sourceVersion = tostring(doc:value(doc:find("v")))
+        clientId = doc:value(doc:find("clientId"))
+        msg.Fields.clientId = clientId
+        msg.Fields.submission = doc
+    else
+        -- Everything else. Just store the submission in the submission field by default.
+        msg.Fields.submission = doc
     end
-    msg.Fields.reason               = doc:value(doc:find("payload", "info", "reason"))
-    msg.Fields.os                   = doc:value(doc:find("environment", "system", "os", "name"))
-    msg.Fields.telemetryEnabled     = doc:value(doc:find("environment", "settings", "telemetryEnabled"))
-    msg.Fields.activeExperimentId   = doc:value(doc:find("environment", "addons", "activeExperiment", "id"))
-    msg.Fields.clientId             = doc:value(doc:find("clientId"))
-    msg.Fields.sourceVersion        = doc:value(doc:find("version"))
-    msg.Fields.docType              = doc:value(doc:find("type"))
-    msg.Fields.sampleId             = crc32(msg.Fields.clientId) % 100
 
-    local app = doc:find("application")
-    msg.Fields.appName              = doc:value(doc:find(app, "name"))
-    msg.Fields.appVersion           = doc:value(doc:find(app, "version"))
-    msg.Fields.appBuildId           = doc:value(doc:find(app, "buildId"))
-    msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
-    msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
-    msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
-
-    remove_objects(msg, doc, "environment", environment_objects)
-    remove_objects(msg, doc, "payload", extract_payload_objects[msg.Fields.docType])
+    if type(msg.Fields.clientId) == "string" then
+        msg.Fields.sampleId = crc32()(msg.Fields.clientId) % 100
+    end
 
     return true
 end

@@ -21,12 +21,11 @@ preserve_data       = not flush_on_shutdown --in most cases this should be the i
 discard_on_error    = false
 
 -- See the elasticsearch module directory for the various encoders and configuration documentation.
-encoder_module  = "heka.elasticsearch.moz_telemetry"
-encoder_cfg     = {
+encoder_module  = "encoders.elasticsearch.payload"
+encoders_elasticsearch_common    = {
     es_index_from_timestamp = true,
     index                   = "%{Logger}-%{%Y.%m.%d}",
     type_name               = "%{Type}-%{Hostname}",
-    fields                  = {"Fields[request]", "Fields[http_user_agent]"},
 }
 ```
 --]]
@@ -36,13 +35,18 @@ require "rjson"
 require "string"
 local ltn12     = require "ltn12"
 local time      = require "os".time
-local em        = require(read_config("encoder_module"))
 local socket    = require "socket"
 local http      = require("socket.http")
 local address   = read_config("address") or "127.0.0.1"
 local port      = read_config("port") or 9200
 local timeout   = read_config("timeout") or 10
 local discard   = read_config("discard_on_error")
+
+local encoder_module = read_config("encoder_module") or "encoders.elasticsearch.payload"
+local encode = require(encoder_module).encode
+if not encode then
+    error(encoder_module .. " does not provide an encode function")
+end
 
 local batch_file        = string.format("%s/%s.batch", read_config("output_path"), read_config("Logger"))
 local flush_on_shutdown = read_config("flush_on_shutdown")
@@ -143,8 +147,11 @@ retry       = false
 
 function process_message()
     if not retry then
+        local ok, data = pcall(encode)
+        if not ok then return -1, data end
+        if not data then return -2 end
+        batch:write(data)
         batch_count = batch_count + 1
-        batch:write(em.encode())
     end
 
     if batch_count == flush_count then

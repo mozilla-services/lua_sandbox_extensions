@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "rjson"
-assert(rjson.version() == "1.0.0", rjson.version())
+assert(rjson.version() == "1.0.1", rjson.version())
 
 schema_json = [[{
     "type":"object",

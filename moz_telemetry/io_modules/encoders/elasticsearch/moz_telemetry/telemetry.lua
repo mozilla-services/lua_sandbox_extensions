@@ -5,12 +5,15 @@
 --[[
 # Elasticsearch Encoder for Mozilla Telemetry Messages
 
-## encoder_cfg Table
+## Encoder Configuration Table
 
-[Common Options](/lua_sandbox_extensions/elasticsearch/modules/heka/elasticsearch.html)
+[Common Options](/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/common.html)
 ```lua
--- Array of Heka message field names that should be passed to Elasticsearch.
-fields = {"Payload", "Fields[docType]"} -- required
+encoders_elasticsearch_common = {
+    -- Common Options
+    -- Array of Heka message field names that should be passed to Elasticsearch.
+    fields = {"Payload", "Fields[docType]"} -- required
+}
 ```
 ## Functions
 
@@ -32,7 +35,7 @@ local string        = require "string"
 local os            = require "os"
 local math          = require "math"
 local mi            = require "heka.msg_interpolate"
-local es            = require "heka.elasticsearch"
+local es            = require "encoders.elasticsearch.common"
 local rj            = require "rjson"
 local ipairs        = ipairs
 local pcall         = pcall
