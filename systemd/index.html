@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="/lua_sandbox_extensions/docs.css" type="text/css" />
+</head>
+<body>
+<div id="title">Lua Sandbox Extensions<hr/></div>
+<div class="menu">
+<ul>
+<li><a href="/lua_sandbox_extensions/index.html">OVERVIEW</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/bloom_filter/index.html">bloom_filter (1.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/circular_buffer/index.html">circular_buffer (1.0.1)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/cbufd.html">cbufd</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/index.html">analysis</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/throughput.html">throughput</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/output/cbuf2tsv.html">cbuf2tsv</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/cjson/index.html">cjson (2.1.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/compat/index.html">compat (0.3.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.3)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/index.html">encoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/index.html">elasticsearch</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/common.html">common</a></li>
+<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/payload.html">payload</a></li>
+</ul>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.html">elasticsearch_bulk_api</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.3)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/index.html">heka</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/json.html">json</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/protobuf.html">protobuf</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/payload.html">payload</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/encoders/index.html">encoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/index.html">heka</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/framed_protobuf.html">framed_protobuf</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/protobuf.html">protobuf</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/payload.html">payload</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/index.html">derived_stream</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/heka_protobuf.html">heka_protobuf</a></li>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/index.html">redshift</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/psv.html">psv</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/sql.html">sql</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift.html">redshift</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/tsv.html">tsv</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream.html">derived_stream</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/modules/heka/index.html">heka</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/modules/heka/msg_interpolate.html">msg_interpolate</a></li>
+<li><a href="/lua_sandbox_extensions/heka/modules/heka/util.html">util</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/analysis/index.html">analysis</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/analysis/heka_message_schema.html">heka_message_schema</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_s3.html">heka_s3</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_stdin.html">heka_stdin</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_debug.html">heka_debug</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_inject_payload.html">heka_inject_payload</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/logfile_roll_by_size.html">logfile_roll_by_size</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/hyperloglog/index.html">hyperloglog (1.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka (1.0.4)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/kafka/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/kafka.html">kafka</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/kafka.html">kafka</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lfs/index.html">lfs (1.6.3)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg (1.0.1)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lpeg/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/index.html">nginx</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/access.html">access</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/error.html">error</a></li>
+</ul>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lpeg/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/common_log_format.html">common_log_format</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/date_time.html">date_time</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/ip_address.html">ip_address</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/mysql.html">mysql</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/postfix.html">postfix</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lsb/index.html">lsb (1.1.0)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lsb/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lsb/modules/lsb/index.html">lsb</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lsb/modules/lsb/stats.html">stats</a></li>
+<li><a href="/lua_sandbox_extensions/lsb/modules/lsb/util.html">util</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.0)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/ping.html">ping</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/tls.html">tls</a></li>
+</ul>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/index.html">encoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/index.html">elasticsearch</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.html">telemetry</a></li>
+</ul>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.html">webrtc</a></li>
+</ul>
+</ul>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/moz_telemetry/s3.html">s3</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/normalize.html">normalize</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/ping.html">ping</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_serverlog_s3_bootstrap.html">moz_serverlog_s3_bootstrap</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.html">moz_telemetry_s3_bootstrap</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.html">moz_telemetry_s3_landfill</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.html">moz_telemetry_s3_snappy</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.html">moz_telemetry_crash_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.html">moz_telemetry_executive_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_http.html">moz_telemetry_http</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.html">moz_telemetry_main_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.html">moz_telemetry_s3</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres (2.3.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.0.1)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax (0.5.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy (0.1.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.3)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/socket/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/heka_tcp.html">heka_tcp</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp.html">heka_tcp</a></li>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp_matcher.html">heka_tcp_matcher</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/ssl/index.html">ssl (0.6.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/struct/index.html">struct (0.2.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog (1.0.3)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog.html">syslog</a></li>
+<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog_message.html">syslog_message</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/klog.html">klog</a></li>
+<li><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/syslog_udp.html">syslog_udp</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/systemd/index.html">systemd (0.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/zlib/index.html">zlib (0.3.1)</a></li>
+</ul>
+</div>
+<div class="main-content">
+<h1 id="lua-systemd-module">Lua systemd Module</h1>
+<p><a href="https://github.com/daurnimator/lua-systemd/" class="uri">https://github.com/daurnimator/lua-systemd/</a></p>
+</div>
+</body>
+</html>
