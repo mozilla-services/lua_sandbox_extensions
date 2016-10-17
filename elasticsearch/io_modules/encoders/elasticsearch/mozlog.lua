@@ -38,35 +38,35 @@ local read_message   = read_message
 local pcall          = pcall
 local ipairs         = ipairs
 local cfg            = es.load_encoder_cfg()
-local getn           = require "table".getn
 local date           = require "os".date
+local getn           = require "table".getn
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
+function get_uuid(uuid)
+    return string.format("%X%X%X%X-%X%X-%X%X-%X%X-%X%X%X%X%X", string.byte(uuid, 1, 16))
+end
+
 function encode()
---  local msg = decode_message(read_message("raw"))
+    local tbl = decode_message(read_message("raw"))
 
     local ns
-    if cfg.es_index_from_timestamp then ns = read_message("Timestamp") end
+    if cfg.es_index_from_timestamp then ns = tbl.Timestamp end
     local idx_json = es.bulkapi_index_json(cfg.index, cfg.type_name, cfg.id, ns)
 
-    local tbl = {}
 
-    tbl.Timestamp  = date("!%Y-%m-%dT%XZ", ns and ns / 1e9)
-    tbl.Type       = read_message("Type")
-    tbl.Hostname   = read_message("Hostname")
-    tbl.Pid        = read_message("Pid")
-    tbl.Logger     = read_message("Logger")
-    tbl.EnvVersion = read_message("EnvVersion")
-    tbl.Severity   = read_message("Severity")
-    tbl.Payload   = read_message("Payload")
---  Uuid is not valid json
-    local msg = decode_message(read_message("raw"))
-    if msg.Fields then
-        for i, field in ipairs(msg.Fields) do
-            tbl[field.name] = read_message("Fields["..field.name.."]")
+    tbl.Timestamp = date("!%Y-%m-%dT%XZ", ns and ns / 1e9)
+    tbl.Uuid = get_uuid(tbl.Uuid)
+    if tbl.Fields then
+        for i, field in ipairs(tbl.Fields) do
+            if getn(field.value) == 1 then
+                tbl[field.name] = field.value[1]
+            else
+                tbl[field.name] = field.value
+            end
         end
+        tbl.Fields = nil
     end
     local ok, data = pcall(cjson.encode, tbl)
     return string.format("%s\n%s\n", idx_json, data)
