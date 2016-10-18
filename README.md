@@ -61,8 +61,9 @@ inject one or more Heka messages into the system.
 - data (string) - Raw data from the input sandbox that needs
   parsing/decoding/transforming
 - default_headers (optional table) - Heka message table containing the default
-  header values to use, if they are not populated by the decoder. Default
-  'Fields' cannot be provided.
+  header values to use, if they are not populated by the decoder. If 'Fields'
+  is specified it should be in the hashed based format see:
+  http://mozilla-services.github.io/lua_sandbox/heka/message.html
 
 *Return*
 - (nil, string)

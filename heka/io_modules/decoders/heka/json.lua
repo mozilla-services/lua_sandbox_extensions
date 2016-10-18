@@ -22,9 +22,10 @@ Decode and inject the resulting message
 
 *Arguments*
 - data (string) - JSON message with a Heka schema
-- default_headers (table, nil/none) - Heka message table containing the default
-  header values to use, if not populated by the decoder. Default 'Fields' cannot
-  be provided.
+- default_headers (optional table) - Heka message table containing the default
+  header values to use, if they are not populated by the decoder. If 'Fields'
+  is specified it should be in the hashed based format see:
+  http://mozilla-services.github.io/lua_sandbox/heka/message.html
 
 *Return*
 - nil - throws an error on an invalid data type, JSON parse error,
@@ -33,8 +34,12 @@ Decode and inject the resulting message
 --]]
 
 -- Imports
-local cjson             = require "cjson"
-local inject_message    = inject_message
+local cjson = require "cjson"
+
+local pairs = pairs
+local type  = type
+
+local inject_message = inject_message
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -46,12 +51,21 @@ function decode(data, dh)
         if not msg.Uuid then msg.Uuid = dh.Uuid end
         if not msg.Logger then msg.Logger = dh.Logger end
         if not msg.Hostname then msg.Hostname = dh.Hostname end
-        -- if not msg.Timestamp then msg.Timestamp = dh.Timestamp end -- always overwritten
+        if not msg.Timestamp then msg.Timestamp = dh.Timestamp end
         if not msg.Type then msg.Type = dh.Type end
         if not msg.Payload then msg.Payload = dh.Payload end
         if not msg.EnvVersion then msg.EnvVersion = dh.EnvVersion end
         if not msg.Pid then msg.Pid = dh.Pid end
         if not msg.Severity then msg.Severity = dh.Severity end
+
+        if type(dh.Fields) == "table" then
+            if not msg.Fields then msg.Fields = {} end
+            for k,v in pairs(dh.Fields) do
+                if msg.Fields[k] == nil then
+                    msg.Fields[k] = v
+                end
+            end
+        end
     end
 
     inject_message(msg)
