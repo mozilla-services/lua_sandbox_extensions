@@ -30,23 +30,21 @@ pre-formatted JSON from the message payload (a new line is added if necessary).
 --]]
 
 -- Imports
-local cjson          = require "cjson"
-local string         = require "string"
-local es             = require "encoders.elasticsearch.common"
-local decode_message = decode_message
-local read_message   = read_message
-local pcall          = pcall
-local ipairs         = ipairs
-local cfg            = es.load_encoder_cfg()
-local date           = require "os".date
-local getn           = require "table".getn
+local cjson            = require "cjson"
+local string           = require "string"
+local es               = require "encoders.elasticsearch.common"
+local msg_interpolate  = require "modules.heka.msg_interpolate"
+local get_uuid         = require msg_interpolate.get_uuid
+local get_timestamp_ms = require msg_interpolate.get_timestamp_ms
+local decode_message   = decode_message
+local read_message     = read_message
+local pcall            = pcall
+local ipairs           = ipairs
+local cfg              = es.load_encoder_cfg()
+local date             = require "os".date
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
-
-function get_uuid(uuid)
-    return string.format("%X%X%X%X-%X%X-%X%X-%X%X-%X%X%X%X%X", string.byte(uuid, 1, 16))
-end
 
 function encode()
     local tbl = decode_message(read_message("raw"))
@@ -55,12 +53,11 @@ function encode()
     if cfg.es_index_from_timestamp then ns = tbl.Timestamp end
     local idx_json = es.bulkapi_index_json(cfg.index, cfg.type_name, cfg.id, ns)
 
-
-    tbl.Timestamp = date("!%Y-%m-%dT%XZ", ns and ns / 1e9)
+    if tbl.Timestamp then tbl.Timestamp = get_timestamp(ns) end
     tbl.Uuid = get_uuid(tbl.Uuid)
     if tbl.Fields then
         for i, field in ipairs(tbl.Fields) do
-            if getn(field.value) == 1 then
+            if #field.value == 1 then
                 tbl[field.name] = field.value[1]
             else
                 tbl[field.name] = field.value
