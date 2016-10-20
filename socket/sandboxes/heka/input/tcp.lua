@@ -3,11 +3,14 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Heka Compatible TCP Input
+# TCP Input (new line delimited)
+todo: when more than line splitting is needed the file should be read in chunks
+and passed to a generic splitter buffer with a token/match specification and a
+find function similar to the Heka stream reader.
 
 ## Sample Configuration
 ```lua
-filename = "heka_tcp.lua"
+filename = "tcp.lua"
 instruction_limit = 0
 
 -- address (string) - an IP address (* for all interfaces)
@@ -16,11 +19,22 @@ instruction_limit = 0
 
 -- port (integer) - IP port to listen on (ignored for UNIX socket)
 -- Default:
--- port = 5565
+-- port = 5566
 
--- Size of the read chunks
+-- default_headers (table) - Sets the message headers to these values if they
+-- are not set by the decoder.
+-- This input will always default the Hostname header to the source IP address.
 -- Default:
--- buf_size = 1024 * 32
+-- default_headers = nil
+
+-- Specifies a module that will decode the raw data and inject the resulting message.
+-- Default:
+-- decoder_module = "decoders.payload"
+
+-- Boolean, if true, any decode failure will inject a  message of Type "error",
+-- with the Payload containing the error.
+-- Default:
+-- send_decode_failures = false
 
 ssl_params = {
   mode = "server",
@@ -39,9 +53,16 @@ local socket = require "socket"
 require "string"
 require "table"
 
-local address    = read_config("address") or "127.0.0.1"
-local port       = read_config("port") or 5565
-local buf_size   = read_config("buf_size") or 1024 * 32
+local address           = read_config("address") or "127.0.0.1"
+local port              = read_config("port") or 5566
+local default_headers   = read_config("default_headers") or {}
+assert(type(default_headers) == "table", "invalid default_headers cfg")
+local decoder_module    = read_config("decoder_module") or "decoders.payload"
+local decode            = require(decoder_module).decode
+if not decode then
+    error(decoder_module .. " does not provide a decode function")
+end
+local send_decode_failures  = read_config("send_decode_failures")
 local ssl_params = read_config("ssl_params")
 
 local ssl_ctx = nil
@@ -50,26 +71,42 @@ if ssl_params then
     ssl = require "ssl"
     ssl_ctx = assert(ssl.newcontext(ssl_params))
 end
+
 local server = assert(socket.bind(address, port))
 server:settimeout(0)
 local threads = {}
 local sockets = {server}
 local is_running = is_running
 
+local err_msg = {
+    Type    = "error",
+    Payload = nil,
+}
+
 local function handle_client(client, caddr, cport)
-    local found, consumed, need = false, 0, buf_size
-    local hsr = create_stream_reader(string.format("%s:%d -> %s:%d", caddr, cport, address, port))
+    local chunks
     client:settimeout(0)
     while client do
-        local buf, err, partial = client:receive(need)
-        if partial then buf = partial end
-        if not buf then break end
+        -- store the partial in a table instead of prefixing it in the receive buffer
+        -- if there is more than one partial concatenating them later uses less memory
+        local buf, err, partial = client:receive("*l")
+        if buf and chunks then
+            table.insert(chunks, buf)
+            buf = table.concat(chunks)
+            chunks = nil
+        elseif partial then
+            if not chunks then chunks = {} end
+            table.insert(chunks, partial)
+        end
 
-        repeat
-            found, consumed, need = hsr:find_message(buf)
-            if found then inject_message(hsr) end
-            buf = nil
-        until not found
+        if buf then
+            default_headers.Hostname = caddr
+            local ok, err1 = pcall(decode, buf, default_headers)
+            if (not ok or err1) and send_decode_failures then
+                err_msg.Payload = err1
+                pcall(inject_message, err_msg)
+            end
+        end
 
         if err == "closed" then break end
         coroutine.yield()
