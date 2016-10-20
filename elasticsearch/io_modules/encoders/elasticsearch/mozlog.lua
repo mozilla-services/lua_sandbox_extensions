@@ -33,7 +33,7 @@ pre-formatted JSON from the message payload (a new line is added if necessary).
 local cjson            = require "cjson"
 local string           = require "string"
 local es               = require "encoders.elasticsearch.common"
-local msg_interpolate  = require "modules.heka.msg_interpolate"
+local msg_interpolate  = require "heka.msg_interpolate"
 local get_uuid         = require msg_interpolate.get_uuid
 local get_timestamp_ms = require msg_interpolate.get_timestamp_ms
 local decode_message   = decode_message
