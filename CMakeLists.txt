@@ -28,7 +28,7 @@ if(LUA51) # build against installed lua 5.1
         string(REGEX REPLACE "\\.lua$" ".so" TEST_MODULE_CPATH ${TEST_MODULE_PATH})
     endif()
 else() # lua_sandbox build
-    find_package(luasandbox 1.2 REQUIRED CONFIG)
+    find_package(luasandbox 1.2.1 REQUIRED CONFIG)
     set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
     set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
     set(INSTALL_MODULE_PATH ${CMAKE_INSTALL_LIBDIR}/luasandbox/modules)

@@ -66,10 +66,10 @@ inject one or more Heka messages into the system.
   http://mozilla-services.github.io/lua_sandbox/heka/message.html
 
 *Return*
-- (nil, string)
+- err (nil, string) or throws an error on invalid data or an inject message
+  failure
     - nil - if the decode was successful
     - string - error message if the decode failed (e.g. no match)
-    - error - throws an error on invalid data or an inject message failure
 
 ## Encoder API Convention
 

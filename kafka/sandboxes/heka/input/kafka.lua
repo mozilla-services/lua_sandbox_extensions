@@ -37,7 +37,7 @@ topic_conf = {
 
 -- Specify a module that will decode the raw data and inject the resulting message.
 -- Default:
--- decoder_module = "decoders.heka.protobuf" -- default
+-- decoder_module = "decoders.heka.protobuf"
 ```
 --]]
 
