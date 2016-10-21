@@ -3,7 +3,8 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Syslog UDP and UNIX socket Input
+# [DEPRECATED] Syslog UDP and UNIX socket Input
+Use a UDP or systemd_socket input with a syslog decoder instead
 
 ## Sample Configuration #1
 ```lua
@@ -43,6 +44,7 @@ sd_fd               = 0
 ```
 --]]
 
+print("*DEPRECATED* Use a UDP or systemd_socket input with a syslog decoder instead")
 local syslog = require "lpeg.syslog"
 local socket = require "socket"
 
