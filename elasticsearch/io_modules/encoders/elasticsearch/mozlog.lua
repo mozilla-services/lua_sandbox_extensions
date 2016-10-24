@@ -39,7 +39,6 @@ local read_message   = read_message
 local pcall          = pcall
 local ipairs         = ipairs
 local cfg            = es.load_encoder_cfg()
-local date           = require "os".date
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -51,7 +50,7 @@ function encode()
     if cfg.es_index_from_timestamp then ns = tbl.Timestamp end
     local idx_json = es.bulkapi_index_json(cfg.index, cfg.type_name, cfg.id, ns)
 
-    if tbl.Timestamp then tbl.Timestamp = mi.get_timestamp(ns) end
+    tbl.Timestamp = mi.get_timestamp_ms(ns)
     tbl.Uuid = mi.get_uuid(tbl.Uuid)
     if tbl.Fields then
         for i, field in ipairs(tbl.Fields) do
