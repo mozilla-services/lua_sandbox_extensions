@@ -92,6 +92,14 @@ function get_timestamp(ns)
 end
 
 
+function get_timestamp_ms(ns)
+    local time_t = floor(ns / 1e9)
+    local frac = floor((ns - time_t * 1e9) / 1e6)
+    local ds = date("!%Y-%m-%dT%H:%M:%S", time_t)
+    return string.format("%s.%03dZ", ds, frac)
+end
+
+
 function interpolate(value, secs)
     return string.gsub(value, "%%{(.-)}", function(match) return interpolate_match(header_fields, match, secs) end)
 end
