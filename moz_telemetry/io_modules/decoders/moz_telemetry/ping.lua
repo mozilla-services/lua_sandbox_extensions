@@ -162,6 +162,10 @@ schemas["testpilottest"]                        = schemas.vacuous
 schemas["malware-addon-states"]                 = schemas.vacuous
 schemas["sync"]                                 = schemas.vacuous
 schemas["outofdate-notifications-system-addon"] = schemas.vacuous
+schemas["x-shield-studies"]                     = schemas.vacuous
+schemas["shield-study"]                         = schemas.vacuous
+schemas["x-contextual-feature-recommendation"]  = schemas.vacuous
+schemas["FirefoxOS"]                            = schemas.vacuous
 
 local uri_config = {
     telemetry = {
