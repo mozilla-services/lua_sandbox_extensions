@@ -76,6 +76,7 @@ kafka
 lfs
 lpeg
 lsb
+maxminddb
 moz_telemetry
 openssl
 postgres
