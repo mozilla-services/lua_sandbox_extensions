@@ -169,6 +169,7 @@ local extract_payload_objects = {
         "slowSQLstartup",
         "threadHangStats",
         "UIMeasurements",
+        "gc",
         },
     }
 
