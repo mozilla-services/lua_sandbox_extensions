@@ -144,28 +144,6 @@ local function load_schemas()
 end
 load_schemas()
 schemas["saved-session"]                        = schemas.main
--- apply vacuous schemas for all other known ping types
-schemas["android-anr-report"]                   = schemas.vacuous
-schemas["ftu"]                                  = schemas.vacuous
-schemas["loop"]                                 = schemas.vacuous
-schemas["flash-video"]                          = schemas.vacuous
-schemas["activation"]                           = schemas.vacuous
-schemas["deletion"]                             = schemas.vacuous
-schemas["uitour-tag"]                           = schemas.vacuous
-schemas["heartbeat"]                            = schemas.vacuous
-schemas["b2g-installer-device"]                 = schemas.vacuous
-schemas["b2g-installer-flash"]                  = schemas.vacuous
-schemas["advancedtelemetry"]                    = schemas.vacuous
-schemas["appusage"]                             = schemas.vacuous
-schemas["testpilot"]                            = schemas.vacuous
-schemas["testpilottest"]                        = schemas.vacuous
-schemas["malware-addon-states"]                 = schemas.vacuous
-schemas["sync"]                                 = schemas.vacuous
-schemas["outofdate-notifications-system-addon"] = schemas.vacuous
-schemas["x-shield-studies"]                     = schemas.vacuous
-schemas["shield-study"]                         = schemas.vacuous
-schemas["x-contextual-feature-recommendation"]  = schemas.vacuous
-schemas["FirefoxOS"]                            = schemas.vacuous
 
 local uri_config = {
     telemetry = {
@@ -296,17 +274,7 @@ local function process_uri(hsr)
         end
     end
 
-    local schema
-    if msg.Fields.docType then
-        schema = schemas[msg.Fields.docType]
-    end
-
-    if not schema then
-        inject_error(hsr, "schema", string.format("docType: %s does not have a validation schema", tostring(msg.Fields.docType)), msg.Fields)
-        return
-    end
-
-    return msg, schema
+    return msg, schemas[msg.Fields.docType] or schemas.vacuous
 end
 
 
