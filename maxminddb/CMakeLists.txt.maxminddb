@@ -1,0 +1,63 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(maxminddb VERSION 0.1.0 LANGUAGES C)
+
+set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua MaxMindDB Module")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_VENDOR        "Mozilla Services")
+set(CPACK_PACKAGE_CONTACT       "Mike Trinkala <trink@mozilla.com>")
+set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
+set(CPACK_STRIP_FILES           TRUE)
+set(CPACK_DEBIAN_FILE_NAME      "DEB-DEFAULT")
+set(CPACK_RPM_FILE_NAME         "RPM-DEFAULT")
+
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0), libmaxminddb0, libmaxminddb-dev (>=1.0.4)")
+set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
+
+if(MSVC)
+    set(CMAKE_C_FLAGS           "/W3 /WX")
+    set(CMAKE_C_FLAGS_RELEASE   "/MD /O2 /Ob2")
+else()
+    set(CMAKE_C_FLAGS           "-std=gnu99 -pedantic -Werror -Wall -Wextra -fPIC")
+    set(CMAKE_C_FLAGS_RELEASE   "-O2")
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif()
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(LUA51) # build against installed lua 5.1
+    set(CPACK_PACKAGE_NAME lua-${PROJECT_NAME})
+    find_package(Lua51)
+    find_program(LUA NAMES lua lua.bat)
+    add_test(NAME test COMMAND ${LUA} test.lua)
+else() # lua_sandbox build
+    find_package(luasandbox 1.0.2 REQUIRED CONFIG)
+    set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
+    set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
+endif()
+
+find_library(MAXMINDDB_LIBRARY maxminddb REQUIRED)
+
+file(WRITE maxminddb.def "EXPORTS\nluaopen_maxminddb")
+
+set(MAXMINDDB_SRC
+maxminddb.c
+maxminddb.def
+)
+
+include(CPack)
+include_directories(${LUA_INCLUDE_DIR})
+add_library(maxminddb SHARED ${MAXMINDDB_SRC})
+target_link_libraries(maxminddb ${LUA_LIBRARIES} ${MAXMINDDB_LIBRARY})
+
+set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)
+file(MAKE_DIRECTORY ${EMPTY_DIR})
+install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH} ${DPERMISSION})
+install(TARGETS maxminddb DESTINATION ${INSTALL_IOMODULE_PATH})
+
