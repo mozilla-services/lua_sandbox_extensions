@@ -83,7 +83,7 @@
 <li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.3)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.4)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -139,8 +139,9 @@
 </ul>
 <li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/index.html">input</a></li>
 <ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/file.html">file</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_file.html">heka_file</a></li>
 <li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_s3.html">heka_s3</a></li>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_stdin.html">heka_stdin</a></li>
 </ul>
 <li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/index.html">output</a></li>
 <ul>
@@ -156,7 +157,7 @@
 <li class="module"><a href="/lua_sandbox_extensions/hyperloglog/index.html">hyperloglog (1.0.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka (1.0.4)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka (1.0.5)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/kafka/sandboxes/index.html">sandboxes</a></li>
 <ul>
@@ -178,7 +179,7 @@
 <li class="module"><a href="/lua_sandbox_extensions/lfs/index.html">lfs (1.6.3)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg (1.0.1)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg (1.0.2)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/lpeg/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -218,7 +219,7 @@
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.0)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.1)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -304,7 +305,7 @@
 <li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy (0.1.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.3)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.4)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/socket/sandboxes/index.html">sandboxes</a></li>
 <ul>
@@ -313,6 +314,8 @@
 <li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/index.html">input</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/heka_tcp.html">heka_tcp</a></li>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/tcp.html">tcp</a></li>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/udp.html">udp</a></li>
 </ul>
 <li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/index.html">output</a></li>
 <ul>
@@ -330,8 +333,15 @@
 <li class="module"><a href="/lua_sandbox_extensions/struct/index.html">struct (0.2.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog (1.0.3)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog (1.0.4)</a></li>
 <ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/io_modules/decoders/syslog.html">syslog</a></li>
+</ul>
+</ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/syslog/modules/index.html">modules</a></li>
 <ul>
 <li ><a href="/lua_sandbox_extensions/syslog/modules/lpeg/index.html">lpeg</a></li>
@@ -405,15 +415,14 @@ nmake packages</code></pre>
 <p><em>Arguments</em></p>
 <ul>
 <li>data (string) - Raw data from the input sandbox that needs parsing/decoding/transforming</li>
-<li>default_headers (optional table) - Heka message table containing the default header values to use, if they are not populated by the decoder. Default 'Fields' cannot be provided.</li>
+<li>default_headers (optional table) - Heka message table containing the default header values to use, if they are not populated by the decoder. If 'Fields' is specified it should be in the hashed based format see: <a href="http://mozilla-services.github.io/lua_sandbox/heka/message.html" class="uri">http://mozilla-services.github.io/lua_sandbox/heka/message.html</a></li>
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>(nil, string)
+<li>err (nil, string) or throws an error on invalid data or an inject message failure
 <ul>
 <li>nil - if the decode was successful</li>
 <li>string - error message if the decode failed (e.g. no match)</li>
-<li>error - throws an error on invalid data or an inject message failure</li>
 </ul></li>
 </ul>
 <h2 id="encoder-api-convention">Encoder API Convention</h2>
