@@ -28,29 +28,35 @@ topic_conf = {
     -- ["offset.store.method"] = "broker, -- cannot be overridden
 }
 
+-- Heka message table containing the default header values to use, if they are
+-- not populated by the decoder. If 'Fields' is specified it should be in the
+-- hashed based format see:  http://mozilla-services.github.io/lua_sandbox/heka/message.html
+-- This input will always default the Type header to the Kafka topic name.
+-- Default:
+-- default_headers = nil
+
 -- Specify a module that will decode the raw data and inject the resulting message.
-decoder_module = "decoders.heka.protobuf" -- default
+-- Default:
+-- decoder_module = "decoders.heka.protobuf"
 ```
 --]]
 
 require "kafka"
 
-local brokerlist     = read_config("brokerlist") or error("brokerlist must be set")
-local topics         = read_config("topics") or error("topics must be set")
-local consumer_conf  = read_config("consumer_conf")
-local topic_conf     = read_config("topic_conf")
-local decoder_module = read_config("decoder_module") or "decoders.heka.protobuf"
-local decode         = require(decoder_module).decode
+local brokerlist      = read_config("brokerlist") or error("brokerlist must be set")
+local topics          = read_config("topics") or error("topics must be set")
+local consumer_conf   = read_config("consumer_conf")
+local topic_conf      = read_config("topic_conf")
+local default_headers = read_config("default_headers") or {}
+assert(type(default_headers) == "table", "invalid default_headers cfg")
+local decoder_module  = read_config("decoder_module") or "decoders.heka.protobuf"
+local decode          = require(decoder_module).decode
 if not decode then
     error(decoder_module .. " does not provide a decode function")
 end
 
 local is_running    = is_running
 local consumer      = kafka.consumer(brokerlist, topics, consumer_conf, topic_conf)
-
-local default_headers = {
-    Type = nil,
-}
 
 local err_msg = {
     Logger  = read_config("Logger"),

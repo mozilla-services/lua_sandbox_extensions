@@ -18,9 +18,10 @@ Decode and inject the resulting message
 
 *Arguments*
 - data (string) - Data to write to the msg.Payload
-- default_headers (table, nil/none) - Heka message table containing the default
-  header values to use, if not populated by the decoder. Default 'Fields' cannot
-  be provided.
+- default_headers (optional table) - Heka message table containing the default
+  header values to use, if they are not populated by the decoder. If 'Fields'
+  is specified it should be in the hashed based format see:
+  http://mozilla-services.github.io/lua_sandbox/heka/message.html
 
 *Return*
 - nil - throws an error on inject_message failure.
@@ -28,6 +29,9 @@ Decode and inject the resulting message
 --]]
 
 -- Imports
+local pairs = pairs
+local type  = type
+
 local inject_message = inject_message
 
 local M = {}
@@ -36,6 +40,8 @@ setfenv(1, M) -- Remove external access to contain everything in the module
 local msg = { }
 
 function decode(data, dh)
+    msg.Payload = data
+
     if dh then
         msg.Uuid        = dh.Uuid
         msg.Logger      = dh.Logger
@@ -46,8 +52,14 @@ function decode(data, dh)
         msg.EnvVersion  = dh.EnvVersion
         msg.Pid         = dh.Pid
         msg.Severity    = dh.Severity
+
+        if type(dh.Fields) == "table" then
+            msg.Fields = {}
+            for k,v in pairs(dh.Fields) do
+                msg.Fields[k] = v
+            end
+        end
     end
-    msg.Payload = data
     inject_message(msg)
 end
 
