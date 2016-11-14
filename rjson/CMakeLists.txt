@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 project(rjson VERSION 1.0.1 LANGUAGES C CXX)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RapidJSON Lua module")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RapidJSON Lua Module")
 
 include(ExternalProject)
 externalproject_add(
