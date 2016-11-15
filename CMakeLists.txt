@@ -78,6 +78,7 @@ lpeg
 lsb
 moz_telemetry
 openssl
+parquet
 postgres
 rjson
 sax

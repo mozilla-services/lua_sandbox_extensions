@@ -1,7 +1,7 @@
 # RapidJSON Lua Module
 
 ## Overview
-Lua wrapper for the RapidJSON library allowing for for JSON-Schema validation
+Lua wrapper for the RapidJSON library allowing for JSON-Schema validation
 and more efficient manipulation of large JSON structures where only a small
 amount of the data is consumed within the Lua script.  Schema pattern matching
 is restricted to a subset of regex described in the *Regular Expression* section
