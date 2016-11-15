@@ -330,6 +330,28 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
 </ul>
 <ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.1)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/parquet/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/parquet/io_modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/parquet/io_modules/lpeg/parquet.html">parquet</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/parquet/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/output/s3_parquet.html">s3_parquet</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
 <li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres (2.3.0)</a></li>
 </ul>
 <ul class="module-ul">
@@ -410,7 +432,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="main-content">
 <h1 id="rapidjson-lua-module">RapidJSON Lua Module</h1>
 <h2 id="overview">Overview</h2>
-<p>Lua wrapper for the RapidJSON library allowing for for JSON-Schema validation and more efficient manipulation of large JSON structures where only a small amount of the data is consumed within the Lua script. Schema pattern matching is restricted to a subset of regex described in the <em>Regular Expression</em> section of the <a href="http://rapidjson.org/md_doc_schema.html">RapidJSON Schema Documentation</a>.</p>
+<p>Lua wrapper for the RapidJSON library allowing for JSON-Schema validation and more efficient manipulation of large JSON structures where only a small amount of the data is consumed within the Lua script. Schema pattern matching is restricted to a subset of regex described in the <em>Regular Expression</em> section of the <a href="http://rapidjson.org/md_doc_schema.html">RapidJSON Schema Documentation</a>.</p>
 <h2 id="module">Module</h2>
 <h3 id="example-usage">Example Usage</h3>
 <div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;rjson&quot;</span>

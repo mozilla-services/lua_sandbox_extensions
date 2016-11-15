@@ -1,0 +1,602 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="/lua_sandbox_extensions/docs.css" type="text/css" />
+</head>
+<body>
+<div id="title">Lua Sandbox Extensions<hr/></div>
+<div class="menu">
+<ul>
+<li><a href="/lua_sandbox_extensions/index.html">OVERVIEW</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/bloom_filter/index.html">bloom_filter (1.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/circular_buffer/index.html">circular_buffer (1.0.1)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/cbufd.html">cbufd</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/index.html">analysis</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/throughput.html">throughput</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/output/cbuf2tsv.html">cbuf2tsv</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/cjson/index.html">cjson (2.1.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/compat/index.html">compat (0.3.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.3)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/index.html">encoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/index.html">elasticsearch</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/common.html">common</a></li>
+<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/mozlog.html">mozlog</a></li>
+<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/payload.html">payload</a></li>
+</ul>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.html">elasticsearch_bulk_api</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.4)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/index.html">heka</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/json.html">json</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/protobuf.html">protobuf</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/payload.html">payload</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/encoders/index.html">encoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/index.html">heka</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/framed_protobuf.html">framed_protobuf</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/protobuf.html">protobuf</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/payload.html">payload</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/index.html">derived_stream</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/heka_protobuf.html">heka_protobuf</a></li>
+<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/index.html">redshift</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/psv.html">psv</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/sql.html">sql</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift.html">redshift</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/tsv.html">tsv</a></li>
+</ul>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream.html">derived_stream</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/modules/heka/index.html">heka</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/modules/heka/msg_interpolate.html">msg_interpolate</a></li>
+<li><a href="/lua_sandbox_extensions/heka/modules/heka/util.html">util</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/heka/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/analysis/index.html">analysis</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/analysis/heka_message_schema.html">heka_message_schema</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/file.html">file</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_file.html">heka_file</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_s3.html">heka_s3</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_debug.html">heka_debug</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_inject_payload.html">heka_inject_payload</a></li>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/logfile_roll_by_size.html">logfile_roll_by_size</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/hyperloglog/index.html">hyperloglog (1.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka (1.0.5)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/kafka/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/kafka.html">kafka</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/kafka.html">kafka</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lfs/index.html">lfs (1.6.3)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg (1.0.2)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lpeg/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/index.html">nginx</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/access.html">access</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/error.html">error</a></li>
+</ul>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lpeg/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/common_log_format.html">common_log_format</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/date_time.html">date_time</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/ip_address.html">ip_address</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/mysql.html">mysql</a></li>
+<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/postfix.html">postfix</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/lsb/index.html">lsb (1.1.0)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lsb/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lsb/modules/lsb/index.html">lsb</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lsb/modules/lsb/stats.html">stats</a></li>
+<li><a href="/lua_sandbox_extensions/lsb/modules/lsb/util.html">util</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.1)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/ping.html">ping</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/tls.html">tls</a></li>
+</ul>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/index.html">encoders</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/index.html">elasticsearch</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.html">telemetry</a></li>
+</ul>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.html">webrtc</a></li>
+</ul>
+</ul>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/moz_telemetry/s3.html">s3</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/index.html">moz_telemetry</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/normalize.html">normalize</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/ping.html">ping</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_serverlog_s3_bootstrap.html">moz_serverlog_s3_bootstrap</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.html">moz_telemetry_s3_bootstrap</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.html">moz_telemetry_s3_landfill</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.html">moz_telemetry_s3_snappy</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.html">moz_telemetry_crash_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.html">moz_telemetry_executive_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_http.html">moz_telemetry_http</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.html">moz_telemetry_main_summary</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.html">moz_telemetry_s3</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.1)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/parquet/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/parquet/io_modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/parquet/io_modules/lpeg/parquet.html">parquet</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/parquet/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/output/s3_parquet.html">s3_parquet</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres (2.3.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.0.1)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax (0.5.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy (0.1.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.4)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/socket/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/heka_tcp.html">heka_tcp</a></li>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/tcp.html">tcp</a></li>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/udp.html">udp</a></li>
+</ul>
+<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/index.html">output</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp.html">heka_tcp</a></li>
+<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp_matcher.html">heka_tcp_matcher</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/ssl/index.html">ssl (0.6.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/struct/index.html">struct (0.2.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog (1.0.4)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/io_modules/decoders/index.html">decoders</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/io_modules/decoders/syslog.html">syslog</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/modules/lpeg/index.html">lpeg</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog.html">syslog</a></li>
+<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog_message.html">syslog_message</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/syslog/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/klog.html">klog</a></li>
+<li><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/syslog_udp.html">syslog_udp</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/systemd/index.html">systemd (0.0.0)</a></li>
+</ul>
+<ul class="module-ul">
+<li class="module"><a href="/lua_sandbox_extensions/zlib/index.html">zlib (0.3.1)</a></li>
+</ul>
+</div>
+<div class="main-content">
+<h1 id="parquet-lua-module">Parquet Lua Module</h1>
+<h2 id="overview">Overview</h2>
+<p>Lua wrapper for the parquet-cpp library allowing for Parquet file output.</p>
+<h2 id="module">Module</h2>
+<h3 id="example-usage">Example Usage</h3>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;parquet&quot;</span>
+
+<span class="kw">local</span> r1 <span class="ot">=</span> <span class="ot">{</span>
+    DocId <span class="ot">=</span> <span class="dv">10</span><span class="ot">,</span>
+    Links <span class="ot">=</span> <span class="ot">{</span>Forward <span class="ot">=</span> <span class="ot">{</span><span class="dv">20</span><span class="ot">,</span> <span class="dv">40</span><span class="ot">,</span> <span class="dv">60</span><span class="ot">}},</span>
+    Name <span class="ot">=</span> <span class="ot">{</span>
+        <span class="ot">{</span>
+            Language <span class="ot">=</span> <span class="ot">{</span>
+                <span class="ot">{</span>Code <span class="ot">=</span> <span class="st">&quot;en-us&quot;</span><span class="ot">,</span> Country <span class="ot">=</span> <span class="st">&quot;us&quot;</span><span class="ot">},</span>
+                <span class="ot">{</span>Code <span class="ot">=</span> <span class="st">&quot;en&quot;</span><span class="ot">}</span>
+            <span class="ot">},</span>
+            Url <span class="ot">=</span> <span class="st">&quot;http://A&quot;</span>
+        <span class="ot">},</span>
+        <span class="ot">{</span>
+            Url <span class="ot">=</span> <span class="st">&quot;http://B&quot;</span>
+        <span class="ot">},</span>
+        <span class="ot">{</span>
+            Language <span class="ot">=</span> <span class="ot">{</span>Code <span class="ot">=</span> <span class="st">&quot;en-gb&quot;</span><span class="ot">,</span> Country <span class="ot">=</span> <span class="st">&quot;gb&quot;</span><span class="ot">}</span>
+        <span class="ot">}</span>
+    <span class="ot">}</span>
+<span class="ot">}</span>
+
+<span class="kw">local</span> r2 <span class="ot">=</span> <span class="ot">{</span>
+    DocId <span class="ot">=</span> <span class="dv">20</span><span class="ot">,</span>
+    Links <span class="ot">=</span> <span class="ot">{</span>Backward <span class="ot">=</span> <span class="ot">{</span><span class="dv">10</span><span class="ot">,</span> <span class="dv">30</span><span class="ot">},</span> Forward <span class="ot">=</span> <span class="dv">80</span><span class="ot">},</span>
+    Name <span class="ot">=</span> <span class="ot">{</span>Url <span class="ot">=</span> <span class="st">&quot;http://C&quot;</span><span class="ot">}</span>
+<span class="ot">}</span>
+
+<span class="kw">local</span> doc <span class="ot">=</span> parquet<span class="ot">.</span>schema<span class="ot">(</span><span class="st">&quot;Document&quot;</span><span class="ot">)</span>
+doc:add_column<span class="ot">(</span><span class="st">&quot;DocId&quot;</span><span class="ot">,</span> <span class="st">&quot;required&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">)</span>
+
+<span class="kw">local</span> links <span class="ot">=</span> doc:add_group<span class="ot">(</span><span class="st">&quot;Links&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">)</span>
+links:add_column<span class="ot">(</span><span class="st">&quot;Backward&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">)</span>
+links:add_column<span class="ot">(</span><span class="st">&quot;Forward&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">)</span>
+
+<span class="kw">local</span> name <span class="ot">=</span> doc:add_group<span class="ot">(</span><span class="st">&quot;Name&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">)</span>
+<span class="kw">local</span> language <span class="ot">=</span> name:add_group<span class="ot">(</span><span class="st">&quot;Language&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">)</span>
+language:add_column<span class="ot">(</span><span class="st">&quot;Code&quot;</span><span class="ot">,</span> <span class="st">&quot;required&quot;</span><span class="ot">,</span> <span class="st">&quot;binary&quot;</span><span class="ot">)</span>
+language:add_column<span class="ot">(</span><span class="st">&quot;Country&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">,</span> <span class="st">&quot;binary&quot;</span><span class="ot">)</span>
+name:add_column<span class="ot">(</span><span class="st">&quot;Url&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">,</span> <span class="st">&quot;binary&quot;</span><span class="ot">)</span>
+doc:finalize<span class="ot">()</span>
+
+<span class="kw">local</span> writer <span class="ot">=</span> parquet<span class="ot">.</span>writer<span class="ot">(</span><span class="st">&quot;example.parquet&quot;</span><span class="ot">,</span> doc<span class="ot">,</span> <span class="ot">{</span>
+    created_by <span class="ot">=</span> <span class="st">&quot;hindsight&quot;</span><span class="ot">,</span>
+    enable_statistics <span class="ot">=</span> <span class="kw">true</span><span class="ot">,</span>
+    columns <span class="ot">=</span> <span class="ot">{</span>
+        <span class="ot">[</span><span class="st">&quot;Name.Url&quot;</span><span class="ot">]</span> <span class="ot">=</span> <span class="ot">{</span>compression <span class="ot">=</span> <span class="st">&quot;gzip&quot;</span><span class="ot">}</span>
+    <span class="ot">}</span>
+<span class="ot">})</span>
+
+writer:dissect_record<span class="ot">(</span>r1<span class="ot">)</span>
+writer:write_rowgroup<span class="ot">()</span> <span class="co">-- writes out the first row group</span>
+                        <span class="co">-- normally one would just close at the end (writing out</span>
+                        <span class="co">-- a single row group)</span>
+writer:dissect_record<span class="ot">(</span>r2<span class="ot">)</span>
+writer:<span class="fu">close</span><span class="ot">()</span> <span class="co">-- writes out a second row group with the remaining record</span></code></pre></div>
+<h3 id="functions">Functions</h3>
+<h4 id="schema">schema</h4>
+<p>Creates a parquet schema for the writer.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> doc <span class="ot">=</span> parquet<span class="ot">.</span>schema<span class="ot">(</span><span class="st">&quot;Document&quot;</span><span class="ot">)</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>name (string) - Parquet schema name</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>schema (userdata) or an error is thrown</li>
+</ul>
+<h4 id="writer">writer</h4>
+<p>Creates a Parquet writer.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> writer <span class="ot">=</span> parque<span class="ot">.</span>writer<span class="ot">(</span><span class="st">&quot;foo.parquet&quot;</span><span class="ot">,</span> schema<span class="ot">,</span> properties<span class="ot">)</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>filename (string) - Filename of the output</li>
+<li>schema (userdata) - Parquet schema</li>
+<li><p>properties (table, nil/none) - Writer properties ```lua { enable_dictionary = bool, dictionary_pagesize_limit = int64, write_batch_size = int64, data_pagesize = int64, version = string, -- (&quot;1.0&quot;, &quot;2.0&quot;) created_by = string, encoding = string, -- (&quot;plain&quot;, &quot;plain_dictionary&quot;, &quot;rle&quot;, &quot;bit_packed&quot;, -- &quot;delta_binary_packed&quot;, &quot;delta_length_byte_array&quot;, &quot;delta_byte_array&quot;, &quot;rle_dictionary&quot;) compression = string, -- (&quot;uncompressed&quot;, &quot;snappy&quot;, &quot;gzip&quot;, &quot;lzo&quot;, &quot;brotli&quot;) enable_statistics = bool,</p>
+<p>columns = { col_name1 = { enable_dictionary = bool, encoding = string, compression = string, enable_statistics = bool }, [&quot;col.nested.nameN&quot;] = {} } }</p></li>
+</ul>
+<p>```</p>
+<p><em>Return</em></p>
+<ul>
+<li>writer (userdata) or an error is thrown</li>
+</ul>
+<h4 id="version">version</h4>
+<p>Returns a string with the running version of the Parquet module.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;parquet&quot;</span>
+<span class="kw">local</span> v <span class="ot">=</span> parquet<span class="ot">.</span>version<span class="ot">()</span>
+<span class="co">-- v == &quot;0.0.1&quot;</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>Semantic version string</li>
+</ul>
+<h3 id="schemagroup-methods">Schema/Group Methods</h3>
+<h4 id="add_group">add_group</h4>
+<p>Adds a structure to the schema.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> links <span class="ot">=</span> doc:add_group<span class="ot">(</span><span class="st">&quot;Links&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">,</span> logical<span class="ot">)</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>name (string)</li>
+<li>repetition (&quot;required&quot;, &quot;optional&quot;, &quot;repeated&quot;)</li>
+<li>logical_type (string, nil/none default: &quot;none&quot;) - see add_column for the full list</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>group (userdata) or throws an error</li>
+</ul>
+<h4 id="add_column">add_column</h4>
+<p>Adds a data column to the schema.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">doc:add_column<span class="ot">(</span><span class="st">&quot;DocId&quot;</span><span class="ot">,</span> <span class="st">&quot;required&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">,</span> logical<span class="ot">,</span> flba_len<span class="ot">,</span> precision<span class="ot">,</span> scale<span class="ot">)</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>name (string)</li>
+<li>repetition (string) - &quot;requried&quot;, &quot;optional&quot;, &quot;repeated&quot;</li>
+<li>data_type (string) - &quot;boolean&quot;, &quot;int32&quot;, &quot;int64&quot;, &quot;int96&quot;, &quot;float&quot;, &quot;double&quot;, &quot;binary&quot;, &quot;fixed_len_byte_array&quot;</li>
+<li>logical_type (string, nil/none default: &quot;none&quot;) - &quot;none&quot;, &quot;utf8&quot;, &quot;map&quot;, &quot;map_key_value&quot;, &quot;list&quot;, &quot;enum&quot;, &quot;decimal&quot;, &quot;date&quot;, &quot;time_millis&quot;, &quot;time_micros&quot;, &quot;timestamp_millis&quot;, &quot;timestamp_micros&quot;, &quot;uint_8&quot;, &quot;uint_16&quot;, &quot;uint_32&quot;, &quot;uint_64&quot;, &quot;int_8&quot;, &quot;int_16&quot;, &quot;int_32&quot;, &quot;int_64&quot;, &quot;json&quot;, &quot;bson&quot;, &quot;interval&quot;</li>
+<li>flba_len (int, nil/none) - fixed length byte array length</li>
+<li>precision (int, nil/none) - decimal precision</li>
+<li>scale (int, nil/none) - decimal scale</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none</li>
+</ul>
+<h3 id="schema-methods">Schema Methods</h3>
+<h4 id="finalize">finalize</h4>
+<p>Builds the schema structure after it has been completely defined. The schema must be finalized before it is passed to the writer. Also, once the schema is finalized it cannot be modified (an error will be thrown).</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">doc:finalize<span class="ot">()</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none or throws an error</li>
+</ul>
+<h3 id="writer-methods">Writer Methods</h3>
+<h4 id="dissect_record">dissect_record</h4>
+<p>Dissects a record into columns based on the schema.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">writer:dissect_record<span class="ot">(</span>record<span class="ot">)</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>record (table) - structure matching the schema</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none or throws an error if the structure does not match the schema (fields that exist in the record but are not specified in the schema are ignored)</li>
+</ul>
+<h4 id="write_rowgroup">write_rowgroup</h4>
+<p>Writes the currently collected data out as a row group.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">writer:write_rowgroup<span class="ot">()</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none or throws an error if the write fails</li>
+</ul>
+</div>
+</body>
+</html>
