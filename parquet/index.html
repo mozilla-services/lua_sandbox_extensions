@@ -510,10 +510,30 @@ writer:<span class="fu">close</span><span class="ot">()</span> <span class="co">
 <ul>
 <li>filename (string) - Filename of the output</li>
 <li>schema (userdata) - Parquet schema</li>
-<li><p>properties (table, nil/none) - Writer properties ```lua { enable_dictionary = bool, dictionary_pagesize_limit = int64, write_batch_size = int64, data_pagesize = int64, version = string, -- (&quot;1.0&quot;, &quot;2.0&quot;) created_by = string, encoding = string, -- (&quot;plain&quot;, &quot;plain_dictionary&quot;, &quot;rle&quot;, &quot;bit_packed&quot;, -- &quot;delta_binary_packed&quot;, &quot;delta_length_byte_array&quot;, &quot;delta_byte_array&quot;, &quot;rle_dictionary&quot;) compression = string, -- (&quot;uncompressed&quot;, &quot;snappy&quot;, &quot;gzip&quot;, &quot;lzo&quot;, &quot;brotli&quot;) enable_statistics = bool,</p>
-<p>columns = { col_name1 = { enable_dictionary = bool, encoding = string, compression = string, enable_statistics = bool }, [&quot;col.nested.nameN&quot;] = {} } }</p></li>
+<li><p>properties (table, nil/none) - Writer properties</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="ot">{</span>
+    enable_dictionary <span class="ot">=</span> bool<span class="ot">,</span>
+    dictionary_pagesize_limit <span class="ot">=</span> int64<span class="ot">,</span>
+    write_batch_size <span class="ot">=</span> int64<span class="ot">,</span>
+    data_pagesize <span class="ot">=</span> int64<span class="ot">,</span>
+    version <span class="ot">=</span> string<span class="ot">,</span> <span class="co">-- (&quot;1.0&quot;, &quot;2.0&quot;)</span>
+    created_by <span class="ot">=</span> string<span class="ot">,</span>
+    encoding <span class="ot">=</span> string<span class="ot">,</span> <span class="co">-- (&quot;plain&quot;, &quot;plain_dictionary&quot;, &quot;rle&quot;, &quot;bit_packed&quot;, &quot;delta_binary_packed&quot;,</span>
+                       <span class="co">-- &quot;delta_length_byte_array&quot;, &quot;delta_byte_array&quot;, &quot;rle_dictionary&quot;)</span>
+    compression <span class="ot">=</span> string<span class="ot">,</span> <span class="co">-- (&quot;uncompressed&quot;, &quot;snappy&quot;, &quot;gzip&quot;, &quot;lzo&quot;, &quot;brotli&quot;)</span>
+    enable_statistics <span class="ot">=</span> bool<span class="ot">,</span>
+
+    columns <span class="ot">=</span> <span class="ot">{</span>
+        col_name1 <span class="ot">=</span> <span class="ot">{</span>
+            enable_dictionary <span class="ot">=</span> bool<span class="ot">,</span>
+            encoding <span class="ot">=</span> string<span class="ot">,</span>
+            compression <span class="ot">=</span> string<span class="ot">,</span>
+            enable_statistics <span class="ot">=</span> bool
+        <span class="ot">},</span>
+        <span class="ot">[</span><span class="st">&quot;col.nested.nameN&quot;</span><span class="ot">]</span> <span class="ot">=</span> <span class="ot">{}</span>
+    <span class="ot">}</span>
+<span class="ot">}</span></code></pre></div></li>
 </ul>
-<p>```</p>
 <p><em>Return</em></p>
 <ul>
 <li>writer (userdata) or an error is thrown</li>
@@ -596,6 +616,17 @@ writer:<span class="fu">close</span><span class="ot">()</span> <span class="co">
 <p><em>Return</em></p>
 <ul>
 <li>none or throws an error if the write fails</li>
+</ul>
+<h4 id="close">close</h4>
+<p>Closes the writer flushing any remaining data in the rowgroup.</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">writer:<span class="fu">close</span><span class="ot">()</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none or throws an error on failure</li>
 </ul>
 </div>
 </body>
