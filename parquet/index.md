@@ -75,8 +75,8 @@ Creates a parquet schema for the writer.
 
 ```lua
 local doc = parquet.schema("Document")
-
 ```
+
 *Arguments*
 * name (string) - Parquet schema name
 
@@ -89,37 +89,36 @@ Creates a Parquet writer.
 
 ```lua
 local writer = parque.writer("foo.parquet", schema, properties)
-
 ```
+
 *Arguments*
 * filename (string) - Filename of the output
 * schema (userdata) - Parquet schema
 * properties (table, nil/none) - Writer properties
-```lua
-{
-    enable_dictionary = bool,
-    dictionary_pagesize_limit = int64,
-    write_batch_size = int64,
-    data_pagesize = int64,
-    version = string, -- ("1.0", "2.0")
-    created_by = string,
-    encoding = string, -- ("plain", "plain_dictionary", "rle", "bit_packed",
-    -- "delta_binary_packed", "delta_length_byte_array", "delta_byte_array", "rle_dictionary")
-    compression = string, -- ("uncompressed", "snappy", "gzip", "lzo", "brotli")
-    enable_statistics = bool,
+    ```lua
+    {
+        enable_dictionary = bool,
+        dictionary_pagesize_limit = int64,
+        write_batch_size = int64,
+        data_pagesize = int64,
+        version = string, -- ("1.0", "2.0")
+        created_by = string,
+        encoding = string, -- ("plain", "plain_dictionary", "rle", "bit_packed", "delta_binary_packed",
+                           -- "delta_length_byte_array", "delta_byte_array", "rle_dictionary")
+        compression = string, -- ("uncompressed", "snappy", "gzip", "lzo", "brotli")
+        enable_statistics = bool,
 
-    columns = {
-        col_name1 = {
-            enable_dictionary = bool,
-            encoding = string,
-            compression = string,
-            enable_statistics = bool
-        },
-        ["col.nested.nameN"] = {}
+        columns = {
+            col_name1 = {
+                enable_dictionary = bool,
+                encoding = string,
+                compression = string,
+                enable_statistics = bool
+            },
+            ["col.nested.nameN"] = {}
+        }
     }
-}
-
-```
+    ```
 
 *Return*
 * writer (userdata) or an error is thrown
@@ -133,6 +132,7 @@ require "parquet"
 local v = parquet.version()
 -- v == "0.0.1"
 ```
+
 *Arguments*
 - none
 
@@ -147,8 +147,8 @@ Adds a structure to the schema.
 
 ```lua
 local links = doc:add_group("Links", "optional", logical)
-
 ```
+
 *Arguments*
 * name (string)
 * repetition ("required", "optional", "repeated")
@@ -164,8 +164,8 @@ Adds a data column to the schema.
 
 ```lua
 doc:add_column("DocId", "required", "int64", logical, flba_len, precision, scale)
-
 ```
+
 *Arguments*
 * name (string)
 * repetition (string) - "requried", "optional", "repeated"
@@ -193,8 +193,8 @@ finalized it cannot be modified (an error will be thrown).
 
 ```lua
 doc:finalize()
-
 ```
+
 *Arguments*
 * none
 
@@ -210,8 +210,8 @@ Dissects a record into columns based on the schema.
 
 ```lua
 writer:dissect_record(record)
-
 ```
+
 *Arguments*
 * record (table) - structure matching the schema
 
@@ -226,10 +226,25 @@ Writes the currently collected data out as a row group.
 
 ```lua
 writer:write_rowgroup()
-
 ```
+
 *Arguments*
 * none
 
 *Return*
 * none or throws an error if the write fails
+
+
+#### close
+
+Closes the writer flushing any remaining data in the rowgroup.
+
+```lua
+writer:close()
+```
+
+*Arguments*
+* none
+
+*Return*
+* none or throws an error on failure
