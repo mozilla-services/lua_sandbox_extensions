@@ -28,8 +28,9 @@ message environment_build {
 }
 ]=]
 
--- Heka message varible containing a JSON string. The docoded JSON record
--- is dissected based on the parquet schema.
+-- Heka message variable containing a JSON string. The decoded JSON record
+-- is dissected based on the parquet schema.  If not specified the schema is
+applied to the Heka message.
 json_variable = "Fields[environment.build]"
 
 s3_path_dimensions  = {
@@ -73,7 +74,6 @@ hive_compatible     = false
 ```
 --]]
 
-require "cjson"
 require "io"
 require "os"
 require "parquet"
@@ -88,7 +88,7 @@ local time_t        = 0
 
 local hostname              = read_config("Hostname")
 local parquet_schema        = read_config("parquet_schema") or error("parquet_schema must be specified")
-local json_variable         = read_config("json_variable") or error("json_variable must be specified")
+local json_variable         = read_config("json_variable")
 local s3_path_dimensions    = read_config("s3_path_dimensions") or error("s3_path_dimensions must be specified")
 local batch_dir             = read_config("batch_dir") or error("batch_dir must be specified")
 local max_writers           = read_config("max_writers") or 100
@@ -97,12 +97,15 @@ local max_file_size         = read_config("max_file_size") or 1024 * 1024 * 300
 local max_file_age          = read_config("max_file_age") or 60 * 60
 local hive_compatible       = read_config("hive_compatible")
 
+if json_variable then
+    require "cjson"
+end
+
 local default_nil  = "UNKNOWN"
 if hive_compatible then
     default_nil = "__HIVE_DEFAULT_PARTITION__"
-    -- todo set hive compatibility in the parquet module when available
 end
-parquet_schema = load_schema(parquet_schema)
+parquet_schema = load_schema(parquet_schema, hive_compatible)
 
 
 local function get_fqfn(path)
@@ -204,13 +207,21 @@ end
 
 
 function process_message()
-    local ok, json = pcall(cjson.decode, read_message(json_variable))
-    if not ok then return -1, json end
+    local ok, err, json
+    if json_variable then
+        ok, json = pcall(cjson.decode, read_message(json_variable))
+        if not ok then return -1, json end
+    end
 
     local path = get_s3_path(json)
     local writer = get_writer(path)
     local w = writer[1]
-    local ok, err = pcall(w.dissect_record, w, json)
+
+    if json_variable then
+        ok, err = pcall(w.dissect_record, w, json)
+    else
+        ok, err = pcall(w.dissect_message, w)
+    end
     if not ok then return -1, err end
 
     local record_cnt = writer[4] + 1
