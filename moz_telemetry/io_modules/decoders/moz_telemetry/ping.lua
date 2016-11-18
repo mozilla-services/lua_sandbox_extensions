@@ -172,6 +172,7 @@ local extract_payload_objects = {
         "gc",
         },
     }
+extract_payload_objects["saved-session"] = extract_payload_objects["main"]
 
 local environment_objects = {
     "addons",
