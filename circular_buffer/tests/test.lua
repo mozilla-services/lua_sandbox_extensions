@@ -6,7 +6,7 @@ require "circular_buffer"
 require "string"
 require "lpeg"
 local cbufd = require "lpeg.cbufd"
-assert(circular_buffer.version() == "1.0.1", circular_buffer.version())
+assert(circular_buffer.version() == "1.0.2", circular_buffer.version())
 
 local errors = {
     function() local cb = circular_buffer.new(2) end, -- new() incorrect # args
