@@ -1082,7 +1082,7 @@ static void update_levels(pq_column *c, int16_t r, int16_t d)
 
 
 static void
-add_string(pq_column *c, const char* cs, size_t cs_len, int16_t r, int16_t d)
+add_string(pq_column *c, const char *cs, size_t cs_len, int16_t r, int16_t d)
 {
   update_levels(c, r, d);
   switch (c->pn->physical_type()) {
@@ -1196,7 +1196,7 @@ static void add_number(pq_column *c, double n, int16_t r, int16_t d)
 
 static void add_null(pq_column *c, int16_t r, int16_t d)
 {
-  if (!c->dlevels) {
+  if (!c->dlevels || (c->n->dl == d && c->pn->is_required())) {
     stringstream ss;
     ss << "column '" << c->n->name << "' is required";
     throw pq::ParquetException(ss.str());

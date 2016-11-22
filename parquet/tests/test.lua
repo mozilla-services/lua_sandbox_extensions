@@ -184,6 +184,7 @@ local rtypes = {
     numbers = {1.2, 1.3},
     empty = {},
     fn = string.format,
+    Fields = {}
 }
 
 local function test_schema_errors()
@@ -198,6 +199,7 @@ local function test_schema_errors()
         {"message test { required int32 numbers; }", "column 'numbers' should not be repeated"},
         {"message test { required fixed_len_byte_array(3) string; }", "column 'string' expected FIXED_LEN_BYTE_ARRAY(3) but received 2 bytes"},
         {"message test { required int96 string; }", "column 'string' expected INT96 but received 2 bytes"},
+        {"message test { repeated group Fields { required binary foo; }}", "column 'foo' is required"},
     }
 
     for i,v in ipairs(errs) do
