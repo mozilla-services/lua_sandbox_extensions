@@ -21,11 +21,11 @@ ticker_interval = 0
 
 -- location where the payload is written (e.g. make them accessible from a web
 -- server for external consumption)
-output_dir      = "/var/www/hindsight/payload"
+output_dir      = "/var/tmp/hindsight/payload"
 ```
 --]]
 
-local output_dir    = read_config("output_dir") or "/var/tmp/hindsight"
+local output_dir    = read_config("output_dir") or "/var/tmp/hindsight/payload"
 local install_path  = read_config("sandbox_install_path")
 
 local cmd = string.format("mkdir -p %s/graphs/js", output_dir)
