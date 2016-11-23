@@ -51,6 +51,7 @@ Decode and inject the message given as argument, using a module-internal stream 
 -- Imports
 local module_name   = ...
 local string        = require "string"
+local table         = require "table"
 local module_cfg    = string.gsub(module_name, "%.", "_")
 
 local rjson  = require "rjson"
@@ -184,26 +185,40 @@ local environment_objects = {
     }
 
 --[[
-Read the raw message, annotate it with our error information,
-and attempt to inject it.
-TODO: Remove Fields[X-Forwarded-For] and Fields[RemoteAddr]
-      before injecting.
+Read the raw message, annotate it with our error information, and attempt to inject it.
 --]]
 local function inject_error(hsr, err_type, err_msg, extra_fields)
+    local len
     local raw = hsr:read_message("raw")
     local err = decode_message(raw)
     err.Logger = "telemetry"
     err.Type = "telemetry.error"
-    if type(err.Fields) ~= "table" then
+    if not err.Fields then
         err.Fields = {}
+    else
+        len = #err.Fields
+        for i = len, 1, -1  do
+            local name = err.Fields[i].name
+            if name == "X-Forwarded-For" or name == "RemoteAddr" then
+                table.remove(err.Fields, i)
+            end
+        end
     end
-    err.Fields[#err.Fields + 1] = { name="DecodeErrorType", value=err_type }
-    err.Fields[#err.Fields + 1] = { name="DecodeError",     value=err_msg }
+    len = #err.Fields
+    if not extra_fields or not extra_fields.submissionDate then
+        len = len + 1
+        err.Fields[len] = { name="submissionDate", value=os.date("%Y%m%d", err.Timestamp / 1e9) }
+    end
+    len = len + 1
+    err.Fields[len] = { name="DecodeErrorType", value=err_type }
+    len = len + 1
+    err.Fields[len] = { name="DecodeError",     value=err_msg }
 
-    if type(extra_fields) == "table" then
+    if extra_fields then
         -- Add these optional fields to the raw message.
         for k,v in pairs(extra_fields) do
-            err.Fields[#err.Fields + 1] = { name=k, value=v }
+            len = len + 1
+            err.Fields[len] = { name=k, value=v }
         end
     end
     pcall(inject_message, err)
