@@ -84,6 +84,7 @@ Constructs a parquet schema from the Parquet schema specification.
 
 *Arguments*
 - spec (string) Parquet schema spec
+* hive_compatible (bool, nil/none default: false)
 
 *Return*
 - schema (userdata) or an error is thrown
@@ -145,10 +146,10 @@ local function load_fields(spec, parent)
 end
 
 
-function load_parquet_schema(spec)
+function load_parquet_schema(spec, hive_compatible)
     local ps = grammar:match(spec)
     if not ps then error"failed parsing the spec" end
-    local root = parquet.schema(ps.name)
+    local root = parquet.schema(ps.name, hive_compatible)
     load_fields(ps, root)
     root:finalize()
     return root

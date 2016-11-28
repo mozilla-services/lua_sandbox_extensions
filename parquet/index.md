@@ -74,11 +74,13 @@ writer:close() -- writes out a second row group with the remaining record
 Creates a parquet schema for the writer.
 
 ```lua
-local doc = parquet.schema("Document")
+local doc = parquet.schema("Document", hive_compatible)
 ```
 
 *Arguments*
 * name (string) - Parquet schema name
+* hive_compatible (bool, nil/none default: false) - When true the Parquet
+  column names are coverted to snake case (alphanumeric and underscore only)
 
 *Return*
 * schema (userdata) or an error is thrown
@@ -214,6 +216,21 @@ writer:dissect_record(record)
 
 *Arguments*
 * record (table) - structure matching the schema
+
+*Return*
+* none or throws an error if the structure does not match the schema (fields
+  that exist in the record but are not specified in the schema are ignored)
+
+#### dissect_message (Heka sandbox only)
+
+Dissects a message into columns based on the schema.
+
+```lua
+writer:dissect_message()
+```
+
+*Arguments*
+* none
 
 *Return*
 * none or throws an error if the structure does not match the schema (fields

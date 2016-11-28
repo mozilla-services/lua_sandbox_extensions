@@ -2,8 +2,9 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+require "string"
 require "parquet"
-assert(parquet.version() == "0.0.1", parquet.version())
+assert(parquet.version() == "0.0.2", parquet.version())
 
 local r1 = {
     DocId = 10,
@@ -163,3 +164,50 @@ w2:dissect_record(r1)
 w2:dissect_record(r2)
 w1:close()
 w2:close()
+
+local hive = parser.load_parquet_schema(example_schema, true)
+local w1 = parquet.writer("hive_example.parquet", hive)
+w1:dissect_record(r1)
+w1:dissect_record(r2)
+w1:close()
+
+
+
+local rtypes = {
+    string = "s1",
+    strings = {"s2, s3"},
+    bool = true,
+    bools = {false, false},
+    int = 1,
+    ints = {2, 3},
+    number = 1.1,
+    numbers = {1.2, 1.3},
+    empty = {},
+    fn = string.format,
+    Fields = {}
+}
+
+local function test_schema_errors()
+    local errs = {
+        {"message test { required int64 missing; }", "column 'missing' is required"},
+        {"message test { required int64 string; }", "column 'string' data type mismatch (string)"},
+        {"message test { required int64 bool; }", "column 'bool' data type mismatch (boolean)"},
+        {"message test { required boolean int; }", "column 'int' data type mismatch (integer)"},
+        {"message test { required group missing { required int32 int; }}", "group 'missing' is required"},
+        {"message test { required binary fn; }", "column 'fn' unsupported data type: function"},
+        {"message test { required group number { required int32 int; }}", "group 'number' expected, found data"},
+        {"message test { required int32 numbers; }", "column 'numbers' should not be repeated"},
+        {"message test { required fixed_len_byte_array(3) string; }", "column 'string' expected FIXED_LEN_BYTE_ARRAY(3) but received 2 bytes"},
+        {"message test { required int96 string; }", "column 'string' expected INT96 but received 2 bytes"},
+        {"message test { repeated group Fields { required binary foo; }}", "column 'foo' is required"},
+    }
+
+    for i,v in ipairs(errs) do
+        local s = parser.load_parquet_schema(v[1])
+        local w = parquet.writer("error.parquet", s)
+        local ok, err = pcall(w.dissect_record, w, rtypes)
+        assert(err == v[2], string.format("Test: %d expected: %s received: %s", i, v[2], tostring(err)))
+    end
+end
+
+test_schema_errors()
