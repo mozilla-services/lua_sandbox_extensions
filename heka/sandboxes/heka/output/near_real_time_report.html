@@ -6,6 +6,43 @@
   <meta name="generator" content="pandoc" />
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
   <link rel="stylesheet" href="/lua_sandbox_extensions/docs.css" type="text/css" />
 </head>
 <body>
@@ -396,10 +433,21 @@
 </ul>
 </div>
 <div class="main-content">
-<h1 id="elasticsearchio_modules">elasticsearch/io_modules</h1>
-<ul>
-<li><a href="encoders/index.html">encoders</a></li>
-</ul>
+<h1 id="near-real-time-report-output-and-optional-s3-sync">Near Real-Time Report Output and Optional S3 Sync</h1>
+<p>Outputs the real-time report to the configured directory. The output filename is output_dir/Fields[day]/EnvVersion-logger.Fields[name].Fields[ext] and the contents are Fields[data].</p>
+<h2 id="sample-configuration">Sample Configuration</h2>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename        <span class="ot">=</span> <span class="st">&quot;near_real_time_report.lua&quot;</span>
+message_matcher <span class="ot">=</span> <span class="st">&quot;Type == &#39;report.daily&#39;&quot;</span>
+ticker_interval <span class="ot">=</span> <span class="dv">60</span> <span class="co">-- aggregate reports are generally output every minute</span>
+
+<span class="co">-- location where the data is written (e.g. make them accessible from a web</span>
+<span class="co">-- server for external consumption)</span>
+output_dir      <span class="ot">=</span> <span class="st">&quot;/var/tmp/hindsight/reports&quot;</span>
+
+<span class="co">-- optional</span>
+s3_uri <span class="ot">=</span> <span class="st">&quot;s3://example/reports&quot;</span>
+s3_storage_class <span class="ot">=</span> STANDARD <span class="co">-- REDUCED_REDUNDANCY or STANDARD_IA</span></code></pre></div>
+<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/sandboxes/heka/output/near_real_time_report.lua">near_real_time_report.lua</a></p>
 </div>
 </body>
 </html>
