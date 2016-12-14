@@ -7,7 +7,7 @@
 
 ## Sample Configuration
 ```lua
-filename = 'shield_study_enrollment.lua'
+filename = 'moz_shield_study_enrollment.lua'
 message_matcher = 'Type == "telemetry" && Fields[docType] == "shield-study"'
 ticker_interval = 60
 preserve_data = true

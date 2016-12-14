@@ -10,7 +10,7 @@ derived messages for reporting.
 
 ## Sample Configuration
 ```lua
-filename = "moz_telemetry_landfill_errors.lua"
+filename = "moz_telemetry_payload_size.lua"
 message_matcher = "Type == 'telemetry' && Logger == 'telemetry'"
 ```
 --]]

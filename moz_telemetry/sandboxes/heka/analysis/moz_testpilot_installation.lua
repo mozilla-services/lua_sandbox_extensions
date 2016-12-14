@@ -25,7 +25,7 @@ http://nbviewer.jupyter.org/urls/s3-us-west-2.amazonaws.com/telemetry-public-ana
 
 ## Sample Configuration
 ```lua
-filename        = "moz_testpilot_installation_counts.lua"
+filename        = "moz_testpilot_installation.lua"
 message_matcher = "Type == 'telemetry' && Fields[docType] == 'testpilot' && Fields[appName] == 'Firefox'"
 preserve_data   = true
 ticker_interval = 60
