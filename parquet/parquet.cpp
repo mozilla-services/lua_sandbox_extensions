@@ -387,7 +387,6 @@ static int pq_new_column(lua_State *lua)
 
 static pq::schema::NodePtr build_nested(pq_node *n, int16_t r, int16_t d, size_t &cid)
 {
-  int16_t d_init = d;
   vector<pq::schema::NodePtr> fields;
   size_t len = n->group->fields.size();
   if (len == 0) {
@@ -399,18 +398,17 @@ static pq::schema::NodePtr build_nested(pq_node *n, int16_t r, int16_t d, size_t
     pq_node *cn = n->group->fields[i];
     pq::Repetition::type rt = cn->node ? cn->node->repetition() : cn->group->rt;
     int16_t cr = r;
+    int16_t cd = d;
     if (rt == pq::Repetition::REPEATED) {
       cr = r + 1;
-      if (d == d_init) {
-        ++d;
-      }
-    } else if (rt == pq::Repetition::OPTIONAL && d == d_init) {
-      ++d;
+      cd = d + 1;
+    } else if (rt == pq::Repetition::OPTIONAL) {
+      cd = d + 1;
     }
     cn->rl = cr;
-    cn->dl = d;
+    cn->dl = cd;
     if (!cn->node) {
-      cn->node = build_nested(cn, cr, d, cid);
+      cn->node = build_nested(cn, cr, cd, cid);
     } else {
       cn->column = cid++;
     }

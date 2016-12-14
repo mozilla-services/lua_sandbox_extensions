@@ -4,7 +4,7 @@
 
 require "string"
 require "parquet"
-assert(parquet.version() == "0.0.2", parquet.version())
+assert(parquet.version() == "0.0.3", parquet.version())
 
 local r1 = {
     DocId = 10,
