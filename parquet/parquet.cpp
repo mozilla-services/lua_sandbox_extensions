@@ -860,6 +860,67 @@ static void write_columns(pq_writer *pw, pq::RowGroupWriter *rgw)
   }
 }
 
+
+static void clear_columns(pq_writer *pw)
+{
+  size_t len = pw->columns.size();
+  for (size_t i = 0; i < len; ++i) {
+    pq_column *c = pw->columns[i];
+    switch (c->pn->physical_type()) {
+    case pq::Type::BOOLEAN:
+      {
+        c->bytes->clear();
+      }
+      break;
+    case pq::Type::INT32:
+      {
+        c->i32->clear();
+      }
+      break;
+    case pq::Type::INT64:
+      {
+        c->i64->clear();
+      }
+      break;
+    case pq::Type::INT96:
+      {
+        c->i96->clear();
+      }
+      break;
+    case pq::Type::FLOAT:
+      {
+        c->f->clear();
+      }
+      break;
+    case pq::Type::DOUBLE:
+      {
+        c->d->clear();
+      }
+      break;
+    case pq::Type::BYTE_ARRAY:
+      c->bytes->clear();
+      c->ba->clear();
+      break;
+    case pq::Type::FIXED_LEN_BYTE_ARRAY:
+      c->bytes->clear();
+      c->flba->clear();
+      break;
+    }
+    c->num_values = 0;
+    c->rec_num = 0;
+    c->rec_v_items = 0;
+    if (c->rlevels) {
+      c->rlevels->clear();
+      c->rec_r_items = 0;
+    }
+    if (c->dlevels) {
+      c->dlevels->clear();
+      c->rec_d_items = 0;
+    }
+  }
+  pw->num_records = 0;
+}
+
 /* debugging only
 static void dump_records(pq_writer *pw)
 {
@@ -980,7 +1041,7 @@ static void dump_records(pq_writer *pw)
 
 static void write_rowgroup(pq_writer *pw)
 {
-  if (pw->num_records > 0) {
+  if (pw->writer && pw->num_records > 0) {
     //dump_records(pw);
     auto rgw = pw->writer->AppendRowGroup(pw->num_records);
     write_columns(pw, rgw);
@@ -1002,9 +1063,11 @@ static int pq_writer_rowgroup(lua_State *lua)
   try {
     write_rowgroup(pw->w);
   } catch (exception &e) {
+    clear_columns(pw->w);
     lua_pushstring(lua, e.what());
     err = true;
   } catch (...) {
+    clear_columns(pw->w);
     lua_pushstring(lua, "unknown write_rowgroup error");
     err = true;
   }
@@ -1015,7 +1078,6 @@ static int pq_writer_rowgroup(lua_State *lua)
 static void writer_close(pq_writer *pw)
 {
   if (pw->writer) {
-    write_rowgroup(pw);
     pw->writer->Close();
     pw->writer = nullptr;
   }
@@ -1029,6 +1091,17 @@ static int pq_writer_close(lua_State *lua)
 
   bool err = false;
   try {
+    try {
+      write_rowgroup(pw->w);
+    } catch (exception &e) {
+      clear_columns(pw->w);
+      lua_pushstring(lua, e.what());
+      err = true;
+    } catch (...) {
+      clear_columns(pw->w);
+      lua_pushstring(lua, "unknown write_rowgroup error");
+      err = true;
+    }
     writer_close(pw->w);
   } catch (exception &e) {
     lua_pushstring(lua, e.what());
@@ -1049,7 +1122,16 @@ static int pq_writer_gc(lua_State *lua)
 
   bool err = false;
   try {
-    writer_close(pw->w);
+    try {
+      write_rowgroup(pw->w);
+    } catch (...) {
+      clear_columns(pw->w);
+    }
+
+    try {
+      writer_close(pw->w);
+    } catch (...) {}
+
     if (--pw->w->node->ref_cnt == 0) {
       free_children(pw->w->node);
     }
@@ -1082,7 +1164,6 @@ static void update_levels(pq_column *c, int16_t r, int16_t d)
 static void
 add_string(pq_column *c, const char *cs, size_t cs_len, int16_t r, int16_t d)
 {
-  update_levels(c, r, d);
   switch (c->pn->physical_type()) {
   case pq::Type::BYTE_ARRAY:
     {
@@ -1125,13 +1206,13 @@ add_string(pq_column *c, const char *cs, size_t cs_len, int16_t r, int16_t d)
     }
     break;
   }
+  update_levels(c, r, d);
   ++c->rec_v_items;
 }
 
 
 static void add_boolean(pq_column *c, bool b, int16_t r, int16_t d)
 {
-  update_levels(c, r, d);
   switch (c->pn->physical_type()) {
   case pq::Type::BOOLEAN:
     c->bytes->push_back(b);
@@ -1144,13 +1225,13 @@ static void add_boolean(pq_column *c, bool b, int16_t r, int16_t d)
     }
     break;
   }
+  update_levels(c, r, d);
   ++c->rec_v_items;
 }
 
 
 static void add_integer(pq_column *c, long long i, int16_t r, int16_t d)
 {
-  update_levels(c, r, d);
   switch (c->pn->physical_type()) {
   case pq::Type::INT32:
     c->i32->push_back(static_cast<int32_t>(i));
@@ -1166,13 +1247,13 @@ static void add_integer(pq_column *c, long long i, int16_t r, int16_t d)
     }
     break;
   }
+  update_levels(c, r, d);
   ++c->rec_v_items;
 }
 
 
 static void add_number(pq_column *c, double n, int16_t r, int16_t d)
 {
-  update_levels(c, r, d);
   switch (c->pn->physical_type()) {
   case pq::Type::FLOAT:
     c->f->push_back(static_cast<float>(n));
@@ -1188,6 +1269,7 @@ static void add_number(pq_column *c, double n, int16_t r, int16_t d)
     }
     break;
   }
+  update_levels(c, r, d);
   ++c->rec_v_items;
 }
 
@@ -1341,7 +1423,7 @@ void rollback_record(pq_writer *pw)
       return;
     }
 
-    size_t nv = 1;
+    size_t nv = c->rec_v_items;
     if (c->rec_r_items) {
       nv = c->rec_r_items;
       c->rlevels->resize(c->rlevels->size() - c->rec_r_items);
