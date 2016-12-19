@@ -5,7 +5,7 @@
 --[[
 # UDP and UNIX Socket Input
 
-## Sample Configuration
+## Sample Configuration #1
 ```lua
 filename            = "udp.lua"
 instruction_limit   = 0
@@ -18,6 +18,10 @@ instruction_limit   = 0
 -- port (integer) - IP port to listen on (ignored for UNIX socket).
 -- Default:
 -- port = 514
+
+-- sd_fd (integer) - If set, file descriptor passed by the system manager.
+-- Default:
+-- sd_fd = nil
 
 -- default_headers (table) - Sets the message headers to these values if they
 -- are not set by the decoder.
@@ -37,6 +41,17 @@ instruction_limit   = 0
 -- msg.Fields.data = "<data that failed decode>"
 -- Default
 -- send_decode_failures = false
+
+
+## Sample Configuration #2: system syslog with systemd socket activation
+# See https://www.freedesktop.org/wiki/Software/systemd/syslog/
+filename             = "udp.lua"
+instruction_limit    = 0
+address              = "/dev/log"
+sd_fd                = 0
+decoder_module       = "decoders.syslog"
+template             = "<%PRI%>%TIMESTAMP% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%"
+send_decode_failures = true
 ```
 --]]
 local socket = require "socket"
@@ -44,6 +59,7 @@ local socket = require "socket"
 local address               = read_config("address") or "127.0.0.1"
 local is_unixsock           = address:sub(1,1) == "/"
 local port                  = read_config("port") or 514
+local sd_fd                 = read_config("sd_fd")
 local default_headers       = read_config("default_headers")
 assert(default_headers == nil or type(default_headers) == "table", "invalid default_headers cfg")
 
@@ -63,20 +79,43 @@ local err_msg = {
 }
 
 local server
-if is_unixsock then
-    socket.unix = require "socket.unix"
-    server = assert(socket.unix.udp())
-    require "os"
-    os.remove(address)
-    assert(server:bind(address))
-else
-    server = assert(socket.udp())
-    assert(server:setsockname(address, port))
-    server:settimeout(1)
-    if not default_headers then default_headers = {} end
-    local port = {value = 0, value_type = 2}
-    default_headers.Fields = { sender_port = port }
-    err_msg.Fields.sender_port = port
+if sd_fd ~= nil then
+    local systemd_ok, systemd_daemon = pcall(require, "systemd.daemon")
+    if not systemd_ok then
+        print("Unable to acquire systemd socket: " .. systemd_daemon)
+        sd_fd = nil
+    elseif not systemd_daemon.booted() then
+        print("Unable to acquire systemd socket: not running the systemd init system")
+        sd_fd = nil
+    else
+        local sd_fds = systemd_daemon.listen_fds(0)
+        if sd_fds < 1 then
+            -- This one is fatal
+            error("Unable to acquire systemd socket: no socket passed")
+        end
+        local fd = systemd_daemon.LISTEN_FDS_START + sd_fd
+        socket.unix = require "socket.unix"
+        server = assert(socket.unix.udp())
+        server:setfd(fd)
+    end
+end
+
+if sd_fd == nil then
+    if  is_unixsock then
+        socket.unix = require "socket.unix"
+        server = assert(socket.unix.udp())
+        require "os"
+        os.remove(address)
+        assert(server:bind(address))
+    else
+        server = assert(socket.udp())
+        assert(server:setsockname(address, port))
+        server:settimeout(1)
+        if not default_headers then default_headers = {} end
+        local port = {value = 0, value_type = 2}
+        default_headers.Fields = { sender_port = port }
+        err_msg.Fields.sender_port = port
+    end
 end
 
 local is_running = is_running
