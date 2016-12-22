@@ -333,7 +333,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.2)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.4)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/parquet/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -437,36 +437,64 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Batches message data into Parquet files based on the specified S3 path dimensions and copies them to S3 when they reach the maximum size or maximum age. <strong>Note:</strong> For now this plugin renames the file to &quot;*.done&quot; and a separate process takes care of the S3 upload.</p>
 <h4 id="sample-configuration">Sample Configuration</h4>
 <div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename        <span class="ot">=</span> <span class="st">&quot;s3_parquet.lua&quot;</span>
-message_matcher <span class="ot">=</span> <span class="st">&quot;Type == &#39;telemetry&#39; &amp;&amp; Fields[docType] == &#39;main&#39;&quot;</span>
+message_matcher <span class="ot">=</span> <span class="st">&quot;Type == &#39;telemetry&#39; &amp;&amp; Fields[docType] == &#39;testpilot&#39;&quot;</span>
 ticker_interval <span class="ot">=</span> <span class="dv">60</span>
 preserve_data   <span class="ot">=</span> <span class="kw">false</span>
 
 parquet_schema <span class="ot">=</span> <span class="st">[=[</span>
-<span class="st">message environment_build {</span>
-<span class="st">    required binary applicationName;</span>
-<span class="st">    required binary architecture;</span>
-<span class="st">    required binary buildId;</span>
-<span class="st">    required binary version;</span>
-<span class="st">    required binary vendor;</span>
-<span class="st">}</span>
+<span class="st">    message testpilot {</span>
+<span class="st">        required binary id;</span>
+<span class="st">        optional binary clientId;</span>
+<span class="st">        required group metadata {</span>
+<span class="st">            required int64  Timestamp;</span>
+<span class="st">            required binary submissionDate;</span>
+<span class="st">            optional binary Date;</span>
+<span class="st">            optional binary normalizedChannel;</span>
+<span class="st">            optional binary geoCountry;</span>
+<span class="st">            optional binary geoCity;</span>
+<span class="st">        }</span>
+<span class="st">        optional group application {</span>
+<span class="st">            optional binary name;</span>
+<span class="st">        }</span>
+<span class="st">        optional group environment {</span>
+<span class="st">            optional group system {</span>
+<span class="st">                optional group os {</span>
+<span class="st">                    optional binary name;</span>
+<span class="st">                    optional binary version;</span>
+<span class="st">                }</span>
+<span class="st">            }</span>
+<span class="st">        }</span>
+<span class="st">        optional group payload {</span>
+<span class="st">            optional binary version;</span>
+<span class="st">            optional binary test;</span>
+<span class="st">            repeated group events {</span>
+<span class="st">                optional int64  timestamp;</span>
+<span class="st">                optional binary event;</span>
+<span class="st">                optional binary object;</span>
+<span class="st">            }</span>
+<span class="st">        }</span>
+<span class="st">    }</span>
 <span class="st">]=]</span>
 
-<span class="co">-- Heka message variable containing a JSON string. The decoded JSON record</span>
-<span class="co">-- is dissected based on the parquet schema.  If not specified the schema is</span>
-applied to the Heka message<span class="ot">.</span>
-json_variable <span class="ot">=</span> <span class="st">&quot;Fields[environment.build]&quot;</span>
+<span class="co">-- The name of a top level parquet group used to specify additional information</span>
+<span class="co">-- to be extracted from the message (using read_message). If the column name</span>
+<span class="co">-- matches a Heka message header name the data is extracted from &#39;msg.name&#39;</span>
+<span class="co">-- otherwise the data is extracted from msg.Fields[name]</span>
+metadata_group <span class="ot">=</span> <span class="st">&quot;metadata&quot;</span>
+
+<span class="co">-- Array of Heka message variables containing JSON strings. The decoded JSON</span>
+<span class="co">-- objects are assembled into a record that is dissected based on the parquet</span>
+<span class="co">-- schema. This provides a generic way to cherry pick and re-combine the</span>
+<span class="co">-- segmented JSON structures like the Mozilla telemetry pings. A table can be</span>
+<span class="co">-- passed as the first value either empty or with some pre-seeded values.</span>
+<span class="co">-- If not specified the schema is applied directly to the Heka message.</span>
+json_objects <span class="ot">=</span> <span class="ot">{</span><span class="st">&quot;Fields[submission]&quot;</span><span class="ot">,</span> <span class="st">&quot;Fields[environment.system]&quot;</span><span class="ot">}</span>
 
 s3_path_dimensions  <span class="ot">=</span> <span class="ot">{</span>
-    <span class="ot">{</span>name <span class="ot">=</span> <span class="st">&quot;submission_date&quot;</span><span class="ot">,</span> source <span class="ot">=</span> <span class="st">&quot;Fields[submissionDate]&quot;</span><span class="ot">},</span>
-    <span class="ot">{</span>name <span class="ot">=</span> <span class="st">&quot;doc_type&quot;</span><span class="ot">,</span> source <span class="ot">=</span> <span class="st">&quot;Fields[docType]&quot;</span><span class="ot">},</span>
-    <span class="ot">{</span>name <span class="ot">=</span> <span class="st">&quot;normalized_channel&quot;</span><span class="ot">,</span> source <span class="ot">=</span> <span class="st">&quot;Fields[normalizedChannel]&quot;</span><span class="ot">},</span>
-    <span class="ot">{</span>name <span class="ot">=</span> <span class="st">&quot;os&quot;</span><span class="ot">,</span> source<span class="ot">=</span><span class="st">&quot;Fields[os]&quot;</span><span class="ot">},</span>
-    <span class="ot">{</span>name <span class="ot">=</span> <span class="st">&quot;application_name&quot;</span><span class="ot">,</span> source <span class="ot">=</span> <span class="st">&quot;Fields[appName]&quot;</span><span class="ot">},</span>
-    <span class="co">-- grabs the applicationName from the JSON structure in &quot;json_variable&quot;</span>
-    <span class="co">-- this can be used if the data does not exist in a Heka message variable.</span>
-    <span class="co">-- The source element is an array of key names/array indexes traversing the</span>
-    <span class="co">-- structure hierarchy to the leaf data node.</span>
-    <span class="co">--{name = &quot;application_name&quot;, source = {&quot;applicationName&quot;}}</span>
+    <span class="co">-- access message data with using read_message()</span>
+    <span class="ot">{</span>name <span class="ot">=</span> <span class="st">&quot;_submission_date&quot;</span><span class="ot">,</span> source <span class="ot">=</span> <span class="st">&quot;Fields[submissionDate]&quot;</span><span class="ot">},</span>
+    <span class="co">-- access the record data with a path array</span>
+    <span class="co">-- {name = &quot;_submission_date&quot;, source = {&quot;metadata&quot;, &quot;submissionDate&quot;}}</span>
 <span class="ot">}</span>
 
 <span class="co">-- directory location to store the intermediate output files</span>
@@ -492,7 +520,7 @@ max_file_size       <span class="ot">=</span> <span class="dv">1024</span> <span
 <span class="co">-- (default 1 hour).  Idle files are only checked every ticker_interval seconds.</span>
 max_file_age        <span class="ot">=</span> <span class="dv">60</span> <span class="ot">*</span> <span class="dv">60</span>
 
-hive_compatible     <span class="ot">=</span> <span class="kw">false</span></code></pre></div>
+hive_compatible     <span class="ot">=</span> <span class="kw">true</span> <span class="co">-- default false</span></code></pre></div>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/parquet/sandboxes/heka/output/s3_parquet.lua">s3_parquet.lua</a></p>
 </div>
 </body>

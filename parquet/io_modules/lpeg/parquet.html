@@ -333,7 +333,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.2)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.4)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/parquet/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -504,7 +504,8 @@ writer:<span class="fu">close</span><span class="ot">()</span></code></pre></div
 <p><em>Arguments</em></p>
 <ul>
 <li>spec (string) Parquet schema spec</li>
-<li>hive_compatible (bool, nil/none default: false)</li>
+<li>hive_compatible (bool, nil/none default: false) - column naming convention</li>
+<li>metadata_group (string, nil/none) - top level group containing message header/field names</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
