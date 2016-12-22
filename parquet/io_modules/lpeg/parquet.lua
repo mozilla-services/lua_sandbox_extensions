@@ -84,7 +84,8 @@ Constructs a parquet schema from the Parquet schema specification.
 
 *Arguments*
 - spec (string) Parquet schema spec
-* hive_compatible (bool, nil/none default: false)
+- hive_compatible (bool, nil/none default: false) - column naming convention
+- metadata_group (string, nil/none) - top level group containing message header/field names
 
 *Return*
 - schema (userdata) or an error is thrown
@@ -98,6 +99,8 @@ local l         = require "lpeg"
 l.locale(l)
 
 local error = error
+
+local read_message = read_message
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -132,9 +135,9 @@ local grammar = l.P{"message"; -- intitial rule name
 }
 
 
-local function load_fields(spec, parent)
-    for i = 1, #spec do
-        local s = spec[i]
+local function load_fields(ps, parent)
+    for i = 1, #ps do
+        local s = ps[i]
         if s.fields then
             local np = parent:add_group(s.name, s.repetition, s.logical_type)
             load_fields(s.fields, np)
@@ -146,13 +149,61 @@ local function load_fields(spec, parent)
 end
 
 
-function load_parquet_schema(spec, hive_compatible)
+local function get_metadata_function(ms)
+    if not ms then return nil end
+
+    local md = {}
+    local ms_len = #ms
+    local f = function()
+        for i = 1, ms_len do
+            md[ms[i][2]] = read_message(ms[i][1])
+        end
+        return md
+    end
+    return f
+end
+
+
+local function load_metadata_spec(ps, metadata_group)
+    local ms
+    for i = 1, #ps do
+        local s = ps[i]
+        if s.fields and s.name == metadata_group then
+            ms = {}
+            for j = 1, #s.fields do
+                local f = s.fields[j]
+                if f.name == "Timestamp"
+                or f.name == "Type"
+                or f.name == "Logger"
+                or f.name == "Hostname"
+                or f.name == "EnvVersion"
+                or f.name == "Pid"
+                or f.name == "Severity"
+                or f.name == "Payload"
+                or f.name == "Uuid" then
+                    ms[j] = {f.name, f.name}
+                else
+                    ms[j] = {string.format("Fields[%s]", f.name), f.name}
+                end
+            end
+        end
+    end
+    return get_metadata_function(ms)
+end
+
+
+function load_parquet_schema(spec, hive_compatible, metadata_group)
     local ps = grammar:match(spec)
     if not ps then error"failed parsing the spec" end
     local root = parquet.schema(ps.name, hive_compatible)
     load_fields(ps, root)
     root:finalize()
-    return root
+    local f
+    if metadata_group then
+        f = load_metadata_spec(ps, metadata_group)
+        if not f then error("no metadata_group '" .. metadata_group .. "' was found") end
+    end
+    return root, f
 end
 
 return M

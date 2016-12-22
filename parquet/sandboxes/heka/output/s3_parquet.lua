@@ -14,36 +14,64 @@ process takes care of the S3 upload.
 
 ```lua
 filename        = "s3_parquet.lua"
-message_matcher = "Type == 'telemetry' && Fields[docType] == 'main'"
+message_matcher = "Type == 'telemetry' && Fields[docType] == 'testpilot'"
 ticker_interval = 60
 preserve_data   = false
 
 parquet_schema = [=[
-message environment_build {
-    required binary applicationName;
-    required binary architecture;
-    required binary buildId;
-    required binary version;
-    required binary vendor;
-}
+    message testpilot {
+        required binary id;
+        optional binary clientId;
+        required group metadata {
+            required int64  Timestamp;
+            required binary submissionDate;
+            optional binary Date;
+            optional binary normalizedChannel;
+            optional binary geoCountry;
+            optional binary geoCity;
+        }
+        optional group application {
+            optional binary name;
+        }
+        optional group environment {
+            optional group system {
+                optional group os {
+                    optional binary name;
+                    optional binary version;
+                }
+            }
+        }
+        optional group payload {
+            optional binary version;
+            optional binary test;
+            repeated group events {
+                optional int64  timestamp;
+                optional binary event;
+                optional binary object;
+            }
+        }
+    }
 ]=]
 
--- Heka message variable containing a JSON string. The decoded JSON record
--- is dissected based on the parquet schema.  If not specified the schema is
-applied to the Heka message.
-json_variable = "Fields[environment.build]"
+-- The name of a top level parquet group used to specify additional information
+-- to be extracted from the message (using read_message). If the column name
+-- matches a Heka message header name the data is extracted from 'msg.name'
+-- otherwise the data is extracted from msg.Fields[name]
+metadata_group = "metadata"
+
+-- Array of Heka message variables containing JSON strings. The decoded JSON
+-- objects are assembled into a record that is dissected based on the parquet
+-- schema. This provides a generic way to cherry pick and re-combine the
+-- segmented JSON structures like the Mozilla telemetry pings. A table can be
+-- passed as the first value either empty or with some pre-seeded values.
+-- If not specified the schema is applied directly to the Heka message.
+json_objects = {"Fields[submission]", "Fields[environment.system]"}
 
 s3_path_dimensions  = {
-    {name = "submission_date", source = "Fields[submissionDate]"},
-    {name = "doc_type", source = "Fields[docType]"},
-    {name = "normalized_channel", source = "Fields[normalizedChannel]"},
-    {name = "os", source="Fields[os]"},
-    {name = "application_name", source = "Fields[appName]"},
-    -- grabs the applicationName from the JSON structure in "json_variable"
-    -- this can be used if the data does not exist in a Heka message variable.
-    -- The source element is an array of key names/array indexes traversing the
-    -- structure hierarchy to the leaf data node.
-    --{name = "application_name", source = {"applicationName"}}
+    -- access message data with using read_message()
+    {name = "_submission_date", source = "Fields[submissionDate]"},
+    -- access the record data with a path array
+    -- {name = "_submission_date", source = {"metadata", "submissionDate"}}
 }
 
 -- directory location to store the intermediate output files
@@ -69,7 +97,7 @@ max_file_size       = 1024 * 1024 * 300
 -- (default 1 hour).  Idle files are only checked every ticker_interval seconds.
 max_file_age        = 60 * 60
 
-hive_compatible     = false
+hive_compatible     = true -- default false
 
 ```
 --]]
@@ -87,8 +115,16 @@ local buffer_cnt    = 0
 local time_t        = 0
 
 local hostname              = read_config("Hostname")
+local metadata_group        = read_config("metadata_group")
+local json_objects          = read_config("json_objects")
+local json_objects_len      = 0
+if type(json_objects) == "table" then
+    require "cjson"
+    json_objects_len = #json_objects
+end
+if not json_objects and metadata_group then error("metadata_group cannot be configured without json_objects") end
+
 local parquet_schema        = read_config("parquet_schema") or error("parquet_schema must be specified")
-local json_variable         = read_config("json_variable")
 local s3_path_dimensions    = read_config("s3_path_dimensions") or error("s3_path_dimensions must be specified")
 local batch_dir             = read_config("batch_dir") or error("batch_dir must be specified")
 local max_writers           = read_config("max_writers") or 100
@@ -97,15 +133,11 @@ local max_file_size         = read_config("max_file_size") or 1024 * 1024 * 300
 local max_file_age          = read_config("max_file_age") or 60 * 60
 local hive_compatible       = read_config("hive_compatible")
 
-if json_variable then
-    require "cjson"
-end
-
 local default_nil  = "UNKNOWN"
 if hive_compatible then
     default_nil = "__HIVE_DEFAULT_PARTITION__"
 end
-parquet_schema = load_schema(parquet_schema, hive_compatible)
+parquet_schema, load_metadata = load_schema(parquet_schema, hive_compatible, metadata_group)
 
 
 local function get_fqfn(path)
@@ -206,19 +238,57 @@ local function get_s3_path(json)
 end
 
 
+local function load_json_objects()
+    local ok, root, record
+    for i=1, json_objects_len do
+        local k = json_objects[i]
+        if type(k) == "table" and i == 1 then
+            record = k
+        else
+            ok, record = pcall(cjson.decode, read_message(k))
+            if not ok then return nil, record end
+        end
+
+        if not root then
+            root = record
+        else
+            if k:match("^Fields%[") then
+                k = k:sub(8, #k - 1)
+            end
+            local cur = root
+            for w, more in string.gmatch(k, "([^.]+)(%.?)") do
+                if more == "." then
+                    local t = cur[w]
+                    if not t then
+                        t = {}
+                        cur[w] = t
+                    end
+                    cur = t
+                else
+                    cur[w] = record
+                end
+            end
+        end
+    end
+    return root, nil
+end
+
 function process_message()
-    local ok, err, json
-    if json_variable then
-        ok, json = pcall(cjson.decode, read_message(json_variable))
-        if not ok then return -1, json end
+    local ok, err, record
+    if json_objects then
+        record, err = load_json_objects()
+        if err then return -1, err end
+        if load_metadata then
+            record[metadata_group] = load_metadata()
+        end
     end
 
-    local path = get_s3_path(json)
+    local path = get_s3_path(record)
     local writer = get_writer(path)
     local w = writer[1]
 
-    if json_variable then
-        ok, err = pcall(w.dissect_record, w, json)
+    if json_objects then
+        ok, err = pcall(w.dissect_record, w, record)
     else
         ok, err = pcall(w.dissect_message, w)
     end
