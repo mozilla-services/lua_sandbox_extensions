@@ -101,7 +101,7 @@ endforeach()
 
 if(NOT CPACK_GENERATOR)
   if(WIN32)
-     set(CPACK_GENERATER ZIP)
+     set(CPACK_GENERATOR ZIP)
   else()
      set(CPACK_GENERATOR TGZ)
   endif()
