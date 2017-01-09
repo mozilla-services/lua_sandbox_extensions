@@ -4,7 +4,8 @@
 
 require "string"
 require "parquet"
-assert(parquet.version() == "0.0.4", parquet.version())
+assert(parquet.version() == "0.0.5", parquet.version())
+local parser = require "lpeg.parquet"
 
 local r1 = {
     DocId = 10,
@@ -74,8 +75,12 @@ local nested = empty:add_group("nested", "optional")
 local ok, err = pcall(empty.finalize, empty)
 assert(not ok)
 
+local deprecated = parquet.schema("deprecated")
+local ok, err = pcall(deprecated.add_group, deprecated, "mkv", "repeated", "map_key_value")
+assert(err == "bad argument #4 to '?' (MAP_KEY_VALUE is deprecated)", err)
+
 local finalized = parquet.schema("finalized")
-local g1 = finalized:add_group("g1", "repeated", "list")
+local g1 = finalized:add_group("g1", "repeated")
 g1:add_column("name", "required", "binary")
 g1:add_column("address", "required", "binary")
 finalized:finalize()
@@ -143,7 +148,7 @@ message Document {
     repeated int64 Backward;
     repeated int64 Forward;
   }
-  repeated group Name (LIST) {
+  repeated group Name {
     repeated group Language {
       required binary Code;
       optional binary Country;
@@ -153,7 +158,6 @@ message Document {
 }
 ]]
 
-local parser = require "lpeg.parquet"
 local shared = parser.load_parquet_schema(example_schema)
 
 local w1 = parquet.writer("shared1.parquet", shared)
@@ -187,7 +191,8 @@ local rtypes = {
     Fields = {}
 }
 
-local function test_schema_errors()
+
+local function test_schema_dissection_errors()
     local errs = {
         {"message test { required int64 missing; }", "column 'missing' is required"},
         {"message test { required int64 string; }", "column 'string' data type mismatch (string)"},
@@ -210,4 +215,153 @@ local function test_schema_errors()
     end
 end
 
-test_schema_errors()
+test_schema_dissection_errors()
+
+
+-- nested structs maps/lists
+local function test_schema_finalize_errors()
+    local errs = {
+        {"message test { required group items (MAP) { repeated group key_value { optional binary key; required int32 value; } } }", "field 'key' must be a required primitive named 'key'"},
+        {"message test { required group items (MAP) { repeated group key_value { repeated binary key; required int32 value; } } }", "field 'key' must be a required primitive named 'key'"},
+        {"message test { required group items (MAP) { repeated group key_value { required binary foo; required int32 value; } } }", "field 'foo' must be a required primitive named 'key'"},
+        {"message test { required group items (MAP) { repeated group key_value { required binary key; required int32 val; } } }", "field 'val' must be optional or required and named 'value'"},
+        {"message test { required group items (MAP) { repeated group key_value { required binary key; repeated int32 value; } } }", "field 'value' must be optional or required and named 'value'"},
+        {"message test { required group items (MAP) { repeated int32 key_value; } }", "field 'key_value' must be a repeated group named 'key_value'"},
+        {"message test { required group items (MAP) { repeated group key_value { required binary key; required int32 value; } required int32 foo; } }", "group 'items' must be required or optional and contain a single group field"},
+        {"message test { required group items (MAP) { repeated group key_value { required binary key; } } }", "group 'key_value' must have 2 fields"},
+        {"message test { required group items (LIST) { repeated group list { required int32 element; } required int32 foo; } }", "group 'items' must be required or optional and contain a single group field"},
+        {"message test { required group items (LIST) { repeated group list { required int32 foo; required int32 element; } } }", "group 'list' must have 1 field"},
+        {"message test { required group items (LIST) { repeated group foo { required int32 element; } } }", "field 'foo' must be a repeated group named 'list'"},
+        {"message test { required group items (LIST) { repeated group list { required int32 val; } } }", "field 'val' must be optional or required and named 'element'"},
+    }
+
+    for i,v in ipairs(errs) do
+        local ok, err = pcall(parser.load_parquet_schema, v[1])
+        assert(err == v[2], string.format("Test: %d expected: %s received: %s", i, v[2], tostring(err)))
+    end
+end
+
+test_schema_finalize_errors()
+
+local maps_schema = [[
+message Document {
+  required group my_map (MAP) {
+    repeated group key_value {
+      required binary key (UTF8);
+      optional int32 value;
+    }
+  }
+  optional group omap (MAP) {
+    repeated group key_value {
+      required binary key (UTF8);
+      required int32 value;
+    }
+  }
+  optional group mom (MAP) {
+    repeated group key_value {
+      required binary key (UTF8);
+      required group value (MAP) {
+        repeated group key_value {
+          required binary key (UTF8);
+          required int32 value;
+        }
+      }
+    }
+  }
+}
+]]
+
+local function test_map_dissection()
+    local recs = {
+        {my_map = {foo = 1, bar = 2}},
+        {my_map = {foo = 2}, omap = {bar = 3}},
+        {my_map = {foo = 2}, omap = {}},
+        {my_map = {foo = 99}, mom = {m1 = {nm1a = 100, nm1b = 101}, m2 = {nm2a = 200}}},
+    }
+    local s = parser.load_parquet_schema(maps_schema)
+    local w = parquet.writer("maps.parquet", s)
+    for i,v in ipairs(recs) do
+        local ok, err = pcall(w.dissect_record, w, v)
+        assert(ok, string.format("Test: %d err: %s", i, tostring(err)))
+    end
+end
+
+test_map_dissection()
+
+local function test_map_dissection_errors()
+    local s = parser.load_parquet_schema(maps_schema)
+    local errs = {
+        {{}, "group 'my_map' is required"},
+        {{my_map = {foo = "string"}}, "column 'value' data type mismatch (string)"},
+        {{my_map = {[999] = 1}}, "column 'key' data type mismatch (integer)"},
+        {{my_map = "foo"}, "group 'my_map' expected, found data"},
+        {{my_map = {{foo = 1}}}, "column 'value' should not be repeated"},
+        -- cannot test my_map optional value
+    }
+    for i,v in ipairs(errs) do
+        local w = parquet.writer("maps_error.parquet", s)
+        local ok, err = pcall(w.dissect_record, w, v[1])
+        assert(err == v[2], string.format("Test: %d expected: %s received: %s", i, v[2], tostring(err)))
+    end
+end
+
+test_map_dissection_errors()
+
+local lists_schema = [[
+message Document {
+  required group my_list (LIST) {
+    repeated group list {
+      optional int32 element;
+    }
+  }
+  optional group olist (LIST) {
+    repeated group list {
+      required int32 element;
+    }
+  }
+  optional group lol (LIST) {
+    repeated group list {
+      required group element (LIST) {
+        repeated group list {
+          required int32 element;
+        }
+      }
+    }
+  }
+}
+]]
+
+local function test_list_dissection()
+    local recs = {
+        {my_list = {1,2,3}},
+        {my_list = {1,2,3}, olist = {10}},
+        {my_list = {1,2,3}, lol = {{100, 101}, {200}}},
+        {my_list = {1,2,3}, lol = {{}}},
+    }
+    local s = parser.load_parquet_schema(lists_schema)
+    local w = parquet.writer("lists.parquet", s)
+    for i,v in ipairs(recs) do
+        local ok, err = pcall(w.dissect_record, w, v)
+        assert(ok, string.format("Test: %d err: %s", i, tostring(err)))
+    end
+end
+
+test_list_dissection()
+
+local function test_list_dissection_errors()
+    local s = parser.load_parquet_schema(lists_schema)
+    local errs = {
+        {{}, "group 'my_list' is required"},
+        {{my_list = 10}, "group 'my_list' expected, found data"},
+        {{my_list = {"foo"}}, "column 'element' data type mismatch (string)"},
+        {{my_list = {{10}}}, "column 'element' should not be repeated"},
+
+    }
+    for i,v in ipairs(errs) do
+        local w = parquet.writer("maps_error.parquet", s)
+        local ok, err = pcall(w.dissect_record, w, v[1])
+        assert(err == v[2], string.format("Test: %d expected: %s received: %s", i, v[2], tostring(err)))
+    end
+end
+
+test_list_dissection_errors()

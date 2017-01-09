@@ -132,6 +132,7 @@ local max_rowgroup_size     = read_config("max_rowgroup_size") or 10000
 local max_file_size         = read_config("max_file_size") or 1024 * 1024 * 300
 local max_file_age          = read_config("max_file_age") or 60 * 60
 local hive_compatible       = read_config("hive_compatible")
+local hindsight_admin       = read_config("hindsight_admin")
 
 local default_nil  = "UNKNOWN"
 if hive_compatible then
@@ -157,7 +158,12 @@ local function close_writer(path, writer)
     end
 
     local src = get_fqfn(path)
-    local dest = string.format("%s+%d_%d_%s.done", src, time_t, buffer_cnt, hostname)
+    local dest
+    if hindsight_admin then
+        dest = string.format("%s/%s.parquet", batch_dir, read_config("Logger")) -- only save off one for debugging
+    else
+        dest = string.format("%s+%d_%d_%s.done", src, time_t, buffer_cnt, hostname)
+    end
 
     local ok, err = os.rename(src, dest)
     if not ok then
