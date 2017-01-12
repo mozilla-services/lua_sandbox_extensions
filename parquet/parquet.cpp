@@ -332,6 +332,10 @@ static int pq_new_group(lua_State *lua)
   pq::LogicalType::type lt = static_cast<pq::LogicalType::type>(
       luaL_checkoption(lua, 4, logical_types[0], logical_types));
 
+  if (lt == pq::LogicalType::MAP_KEY_VALUE) {
+    luaL_argerror(lua, 4, "MAP_KEY_VALUE is deprecated");
+  }
+
   bool err = false;
   try {
     ud->n->group->fields.push_back(new_group(lua, name, rt, lt,
@@ -385,15 +389,72 @@ static int pq_new_column(lua_State *lua)
 }
 
 
+static void check_mapkv(pq_node *n)
+{
+  if (!n->node->is_repeated() || n->nt != pq::schema::Node::GROUP || n->name != "key_value") {
+    stringstream ss;
+    ss << "field '" << n->name << "' must be a repeated group named 'key_value'";
+    throw pq::ParquetException(ss.str());
+  }
+
+  size_t len = n->group->fields.size();
+  if (len != 2) {
+    stringstream ss;
+    ss << "group '" << n->name << "' must have 2 fields";
+    throw pq::ParquetException(ss.str());
+  }
+
+  pq_node *cn = n->group->fields[0];
+  if (!cn->node->is_required() || cn->nt != pq::schema::Node::PRIMITIVE || cn->name != "key") {
+    stringstream ss;
+    ss << "field '" << cn->name << "' must be a required primitive named 'key'";
+    throw pq::ParquetException(ss.str());
+  }
+
+  cn = n->group->fields[1];
+  if (cn->node->is_repeated() || cn->name != "value") {
+    stringstream ss;
+    ss << "field '" << cn->name << "' must be optional or required and named 'value'";
+    throw pq::ParquetException(ss.str());
+  }
+}
+
+
+static void check_list(pq_node *n)
+{
+  if (!n->node->is_repeated() || n->nt != pq::schema::Node::GROUP || n->name != "list") {
+    stringstream ss;
+    ss << "field '" << n->name << "' must be a repeated group named 'list'";
+    throw pq::ParquetException(ss.str());
+  }
+
+  size_t len = n->group->fields.size();
+  if (len != 1) {
+    stringstream ss;
+    ss << "group '" << n->name << "' must have 1 field";
+    throw pq::ParquetException(ss.str());
+  }
+
+  pq_node *cn = n->group->fields[0];
+  if (cn->node->is_repeated() || cn->name != "element") {
+    stringstream ss;
+    ss << "field '" << cn->name << "' must be optional or required and named 'element'";
+    throw pq::ParquetException(ss.str());
+  }
+}
+
+
 static pq::schema::NodePtr build_nested(pq_node *n, int16_t r, int16_t d, size_t &cid)
 {
   vector<pq::schema::NodePtr> fields;
   size_t len = n->group->fields.size();
+
   if (len == 0) {
     stringstream ss;
     ss << "group '" << n->name << "' is empty";
     throw pq::ParquetException(ss.str());
   }
+
   for (size_t i = 0; i < len; ++i) {
     pq_node *cn = n->group->fields[i];
     pq::Repetition::type rt = cn->node ? cn->node->repetition() : cn->group->rt;
@@ -409,6 +470,19 @@ static pq::schema::NodePtr build_nested(pq_node *n, int16_t r, int16_t d, size_t
     cn->dl = cd;
     if (!cn->node) {
       cn->node = build_nested(cn, cr, cd, cid);
+      auto lt = cn->node->logical_type();
+      if (lt == pq::LogicalType::MAP || lt == pq::LogicalType::LIST) {
+        if (cn->node->is_repeated() || cn->group->fields.size() != 1) {
+          stringstream ss;
+          ss << "group '" << cn->name << "' must be required or optional and contain a single group field";
+          throw pq::ParquetException(ss.str());
+        }
+        if (lt == pq::LogicalType::MAP) {
+          check_mapkv(cn->group->fields[0]);
+        } else if (lt == pq::LogicalType::LIST) {
+          check_list(cn->group->fields[0]);
+        }
+      }
     } else {
       cn->column = cid++;
     }
@@ -1328,86 +1402,164 @@ static void add_value(lua_State *lua, pq_node *n, pq_column *c, int16_t r, int16
 }
 
 
-static void dissect_record(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
+static void reset_record(pq_writer *pw, pq_column *c)
 {
+  if (c->rec_num != pw->num_records) {
+    c->rec_num = pw->num_records;
+    c->rec_r_items = 0;
+    c->rec_d_items = 0;
+    c->rec_v_items = 0;
+  }
+}
+
+
+static void dissect_null(pq_writer *pw, pq_node *n, int16_t r, int16_t d)
+{
+  if (n->dl == 0) {
+    stringstream ss;
+    ss << "group '" << n->name << "' is required";
+    throw pq::ParquetException(ss.str());
+  }
+
   size_t len = n->group->fields.size();
   for (size_t i = 0; i < len; ++i) {
     pq_column *c = NULL;
     pq_node *cn = n->group->fields[i];
     if (cn->nt == pq::schema::Node::PRIMITIVE) {
       c = pw->columns[cn->column];
-      if (c->rec_num != pw->num_records) {
-        c->rec_num = pw->num_records;
-        c->rec_r_items = 0;
-        c->rec_d_items = 0;
-        c->rec_v_items = 0;
-      }
-    }
-
-    lua_checkstack(lua, 2);
-    int t = lua_type(lua, -1);
-    if (t == LUA_TNIL) {
-      lua_pushnil(lua);
+      reset_record(pw, c);
+      add_null(c, r, d);
     } else {
-      lua_getfield(lua, -1, cn->name.c_str());
+      dissect_null(pw, cn, r, d);
     }
+  }
+}
 
-    t = lua_type(lua, -1);
-    switch (t) {
-    case LUA_TTABLE:
-      if (cn->node->is_group()) {
-        if (cn->node->is_repeated() && lua_objlen(lua, -1) > 0) { // array of groups
-          int16_t cr = 0;
-          size_t len = lua_objlen(lua, -1);
-          for (size_t i = 1; i <= len; ++i) {
-            lua_rawgeti(lua, -1, i);
-            dissect_record(pw, lua, cn, cr, cn->dl);
-            lua_pop(lua, 1);
-            cr = cn->rl;
+
+static void dissect_record(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d);
+static void dissect_map(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d);
+static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d);
+
+static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
+{
+  pq_column *c = NULL;
+  if (n->nt == pq::schema::Node::PRIMITIVE) {
+    c = pw->columns[n->column];
+    reset_record(pw, c);
+  }
+
+  switch (lua_type(lua, -1)) {
+  case LUA_TTABLE:
+    if (n->node->is_group()) {
+      if (n->node->is_repeated() && lua_objlen(lua, -1) > 0) { // array of groups
+        size_t ol = lua_objlen(lua, -1);
+        for (size_t j = 1; j <= ol; ++j) {
+          lua_rawgeti(lua, -1, j);
+          if (lua_type(lua, -1) != LUA_TTABLE) {
+            stringstream ss;
+            ss << "column '" << n->name << "' expected an array of groups";
+            throw pq::ParquetException(ss.str());
           }
-        } else {
-          dissect_record(pw, lua, cn, r, cn->dl);
+          dissect_record(pw, lua, n, r, n->dl);
+          lua_pop(lua, 1);
+          r = n->rl;
         }
-      } else { // array of values
-        if (!cn->node->is_repeated()) {
-          stringstream ss;
-          ss << "column '" << cn->name << "' should not be repeated";
-          throw pq::ParquetException(ss.str());
-        }
-        size_t len = lua_objlen(lua, -1);
-        if (len == 0) {
-          add_null(c, r, d);
+      } else {
+        auto lt = n->node->logical_type();
+        if ( lt == pq::LogicalType::MAP) {
+          dissect_map(pw, lua, n->group->fields[0], r, n->dl);
+        } else if (lt == pq::LogicalType::LIST) {
+          dissect_list(pw, lua, n->group->fields[0], r, n->dl);
         } else {
-          int16_t cr = 0;
-          for (size_t i = 1; i <= len; ++i) {
-            lua_rawgeti(lua, -1, i);
-            add_value(lua, cn, c, cr, cn->dl);
-            lua_pop(lua, 1);
-            cr = cn->rl;
-          }
+          dissect_record(pw, lua, n, r, n->dl);
         }
       }
-      break;
-    case LUA_TNIL:
-      if (cn->node->is_group()) {
-        if (cn->dl == 0) {
-          stringstream ss;
-          ss << "group '" << cn->name << "' is required";
-          throw pq::ParquetException(ss.str());
-        }
-        dissect_record(pw, lua, cn, r, d);
-      } else {
+    } else { // array of values
+      if (!n->node->is_repeated()) {
+        stringstream ss;
+        ss << "column '" << n->name << "' should not be repeated";
+        throw pq::ParquetException(ss.str());
+      }
+      size_t ol = lua_objlen(lua, -1);
+      if (ol == 0) {
         add_null(c, r, d);
-      }
-      break;
-    default:
-      if (cn->node->is_repeated()) {
-        add_value(lua, cn, c, 0, cn->dl);
       } else {
-        add_value(lua, cn, c, r, cn->dl);
+        for (size_t j = 1; j <= ol; ++j) {
+          lua_rawgeti(lua, -1, j);
+          add_value(lua, n, c, r, n->dl);
+          lua_pop(lua, 1);
+          r = n->rl;
+        }
       }
-      break;
     }
+    break;
+  case LUA_TNIL:
+    if (n->nt == pq::schema::Node::PRIMITIVE) {
+      add_null(c, r, d);
+    } else {
+      dissect_null(pw, n, r, d);
+    }
+    break;
+  default:
+    add_value(lua, n, c, r, n->dl);
+    break;
+  }
+}
+
+
+static void dissect_map(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
+{
+  pq_node *kn = n->group->fields[0];
+  pq_node *vn = n->group->fields[1];
+
+  pq_column *kc = pw->columns[kn->column];
+  reset_record(pw, kc);
+
+  int cr = r;
+  bool found = false;
+  lua_pushnil(lua);
+  while (lua_next(lua, -2) != 0) {
+    dissect_field(pw, lua, vn, cr, vn->dl);
+    lua_pop(lua, 1);
+    add_value(lua, kn, kc, cr, kn->dl);
+    cr = n->rl;
+    found = true;
+  }
+
+  if (!found) {
+    dissect_null(pw, n, r, d);
+  }
+}
+
+
+static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
+{
+  pq_node *vn = n->group->fields[0];
+
+  int cr = r;
+  bool found = false;
+  lua_pushnil(lua);
+  while (lua_next(lua, -2) != 0) {
+    dissect_field(pw, lua, vn, cr, vn->dl);
+    lua_pop(lua, 1);
+    cr = n->rl;
+    found = true;
+  }
+
+  if (!found) {
+    dissect_null(pw, n, r, d);
+  }
+}
+
+
+static void dissect_record(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
+{
+  size_t len = n->group->fields.size();
+  for (size_t i = 0; i < len; ++i) {
+    pq_node *cn = n->group->fields[i];
+    lua_checkstack(lua, 2);
+    lua_getfield(lua, -1, cn->name.c_str());
+    dissect_field(pw, lua, cn, r, d);
     lua_pop(lua, 1);
   }
 }

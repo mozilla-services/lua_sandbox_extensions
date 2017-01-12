@@ -132,7 +132,7 @@ Returns a string with the running version of the Parquet module.
 ```lua
 require "parquet"
 local v = parquet.version()
--- v == "0.0.1"
+-- v == "0.0.5"
 ```
 
 *Arguments*
@@ -174,10 +174,11 @@ doc:add_column("DocId", "required", "int64", logical, flba_len, precision, scale
 * data_type (string) - "boolean", "int32", "int64", "int96", "float", "double",
   "binary", "fixed_len_byte_array"
 * logical_type (string, nil/none default: "none") - "none", "utf8", "map",
-  "map_key_value", "list", "enum", "decimal", "date", "time_millis",
-  "time_micros", "timestamp_millis", "timestamp_micros", "uint_8", "uint_16",
-  "uint_32", "uint_64", "int_8", "int_16", "int_32", "int_64", "json", "bson",
-  "interval"
+  "list", "enum", "decimal", "date", "time_millis", "time_micros",
+  "timestamp_millis", "timestamp_micros", "uint_8", "uint_16", "uint_32",
+  "uint_64", "int_8", "int_16", "int_32", "int_64", "json", "bson", "interval"
+  see: [LogicalTypes](https://github.com/apache/parquet-format/blob/master/LogicalTypes.md)
+  (MAP_KEY_VALUE is no longer used)
 * flba_len (int, nil/none) - fixed length byte array length
 * precision (int, nil/none) - decimal precision
 * scale (int, nil/none) - decimal scale

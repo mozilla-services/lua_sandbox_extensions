@@ -99,6 +99,7 @@ local l         = require "lpeg"
 l.locale(l)
 
 local error = error
+local pcall = pcall
 
 local read_message = read_message
 
@@ -116,21 +117,28 @@ local data_type  = l.Cg(data_types, "data_type") + dt_flba
 
 local precision     = l.Cg(l.digit^1, "precision")
 local scale         = l.Cg(l.digit^1, "scale")
-local logical_types = (l.P"NONE" + "UTF8" + "MAP" + "MAP_KEY_VALUE" + "LIST"
-+ "ENUM" + "DATE" + "TIME_MILLIS" + "TIME_MICROS" + "TIMESTAMP_MILLIS"
-+ "TIMESTAMP_MICROS" + "UINT_8" + "UINT_16" + "UINT_32" + "UINT_64" + "INT_8"
-+ "INT_16" + "INT_32" + "INT_64" + "JSON" + "BSON" + "INTERVAL") / string.lower
-local lt_decimal    = l.Cg(l.P"DECIMAL" / string.lower, "logical_type") * "(" * precision * "," * scale * ")"
-local logical_type  = l.P"(" * (l.Cg(logical_types, "logical_type") + lt_decimal) * l.P")"
+
+local logical_group_types     = (l.P"MAP" +  "LIST") / string.lower -- "MAP_KEY_VALUE" is no longer used
+-- https://github.com/apache/parquet-format/blob/master/LogicalTypes.md#nested-types
+
+local logical_primitive_types = (l.P"NONE" + "UTF8" + "ENUM" + "DATE" + "TIME_MILLIS"
+                                 + "TIME_MICROS" + "TIMESTAMP_MILLIS" + "TIMESTAMP_MICROS"
+                                 + "UINT_8" + "UINT_16" + "UINT_32" + "UINT_64" + "INT_8"
+                                 + "INT_16" + "INT_32" + "INT_64" + "JSON" + "BSON"
+                                 + "INTERVAL") / string.lower
+local lt_decimal     = l.Cg(l.P"DECIMAL" / string.lower, "logical_type") * "(" * precision * "," * scale * ")"
+local logical_gtype  = l.P"(" * l.Cg(logical_group_types, "logical_type") * l.P")"
+local logical_ptype  = l.P"(" * (l.Cg(logical_primitive_types, "logical_type") + lt_decimal) * l.P")"
 local id = osp * "=" * osp * l.digit^1 * osp
 
-local name      = l.Cg((l.alnum + "_")^1, "name")
-local column    = osp * l.Ct(repetition * sp * data_type * sp * name * (sp * logical_type)^-1) * id^-1 * l.P";" * osp
+local gname     = l.Cg((l.P(1) - (l.space + "{"))^1, "name")
+local pname     = l.Cg((l.P(1) - (l.space + l.S";="))^1, "name")
+local column    = osp * l.Ct(repetition * sp * data_type * sp * pname * (sp * logical_ptype)^-1) * id^-1 * l.P";" * osp
 
 -- the data_type/logical_type combinations will be verified during load and don't need to be duplicated here
 local grammar = l.P{"message"; -- intitial rule name
-    message = osp * l.Ct(l.P"message" * sp * name * sp * "{" * l.V"fields" * "}") * osp,
-    group  = osp * l.Ct(repetition * sp * "group" * sp * name * (sp * logical_type)^-1 * osp * "{" * l.Cg(l.Ct(l.V"fields"), "fields") * "}") * osp,
+    message = osp * l.Ct(l.P"message" * sp * gname * sp * "{" * l.V"fields" * "}") * osp,
+    group  = osp * l.Ct(repetition * sp * "group" * sp * gname * (sp * logical_gtype)^-1 * osp * "{" * l.Cg(l.Ct(l.V"fields"), "fields") * "}") * osp,
     fields = l.Cg((l.V"group" + column)^1),
 }
 
@@ -194,10 +202,12 @@ end
 
 function load_parquet_schema(spec, hive_compatible, metadata_group)
     local ps = grammar:match(spec)
-    if not ps then error"failed parsing the spec" end
+    if not ps then error("failed parsing the spec", 2) end
     local root = parquet.schema(ps.name, hive_compatible)
     load_fields(ps, root)
-    root:finalize()
+    local ok, err = pcall(root.finalize, root)
+    if not ok then error(err, 2) end
+
     local f
     if metadata_group then
         f = load_metadata_spec(ps, metadata_group)
