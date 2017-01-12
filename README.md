@@ -42,6 +42,8 @@ decoupling the module and businesss logic maintenance and deployment.
     ctest
     nmake packages
 
+# Heka Sandbox
+
 ## Decoder API Convention
 
 Each decoder module should implement a decode function according to the

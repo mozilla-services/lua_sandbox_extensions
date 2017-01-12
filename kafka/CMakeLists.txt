@@ -7,11 +7,11 @@ project(kafka VERSION 1.0.5 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Kafka producer/consumer module")
 
 # todo add a more robust kafka check
-find_library(LIBRTKAFKA_LIBRARY rdkafka REQUIRED)
+find_library(LIBRDKAFKA_LIBRARY rdkafka REQUIRED)
 
 set(MODULE_SRCS kafka.c kafka.def)
 set(INSTALL_MODULE_PATH ${INSTALL_IOMODULE_PATH})
 set(INTEGRATION_TEST TRUE)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.2), librdkafka-dev (>= 0.9)")
 include(sandbox_module)
-target_link_libraries(kafka ${LIBRTKAFKA_LIBRARY})
+target_link_libraries(kafka ${LIBRDKAFKA_LIBRARY})
