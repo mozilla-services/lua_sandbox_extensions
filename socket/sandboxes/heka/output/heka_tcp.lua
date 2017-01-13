@@ -59,17 +59,18 @@ end
 
 local client, err = create_client()
 
-local function send_message(msg, i)
-    local len, err, i = client:send(msg, i)
-    if not len then
-        if err == "timeout" or err == "closed" then
-            client:close()
-            client = nil
-            return -3, err
+local function send_message(msg)
+    local i = 1
+    for retry = 1, 3 do
+        local len, err, i = client:send(msg, i)
+        if len then
+            return 0
         end
-        return send_message(msg, i)
+        i = i + 1
     end
-    return 0
+    client:close()
+    client = nil
+    return -3, err
 end
 
 function process_message()
@@ -77,8 +78,7 @@ function process_message()
         client, err = create_client()
     end
     if not client then return -3, err end -- retry indefinitely
-    local ret, err = send_message(read_message("framed"), 1)
-    return ret, err
+    return send_message(read_message("framed"))
 end
 
 function timer_event(ns)
