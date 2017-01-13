@@ -20,34 +20,34 @@ preserve_data   = false
 
 parquet_schema = [=[
     message testpilot {
-        required binary id;
-        optional binary clientId;
+        required binary id (UTF8);
+        optional binary clientId (UTF8);
         required group metadata {
             required int64  Timestamp;
-            required binary submissionDate;
-            optional binary Date;
-            optional binary normalizedChannel;
-            optional binary geoCountry;
-            optional binary geoCity;
+            required binary submissionDate (UTF8);
+            optional binary Date (UTF8);
+            optional binary normalizedChannel (UTF8);
+            optional binary geoCountry (UTF8);
+            optional binary geoCity (UTF8);
         }
         optional group application {
-            optional binary name;
+            optional binary name (UTF8);
         }
         optional group environment {
             optional group system {
                 optional group os {
-                    optional binary name;
-                    optional binary version;
+                    optional binary name (UTF8);
+                    optional binary version (UTF8);
                 }
             }
         }
         optional group payload {
-            optional binary version;
-            optional binary test;
+            optional binary version (UTF8);
+            optional binary test (UTF8);
             repeated group events {
                 optional int64  timestamp;
-                optional binary event;
-                optional binary object;
+                optional binary event (UTF8);
+                optional binary object (UTF8);
             }
         }
     }
