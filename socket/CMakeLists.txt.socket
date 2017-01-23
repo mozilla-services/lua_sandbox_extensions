@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(socket VERSION 3.0.5 LANGUAGES C)
+project(socket VERSION 3.0.6 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Socket Modules")
@@ -120,3 +120,5 @@ src/url.lua
 install(FILES  src/ltn12.lua src/mime.lua src/socket.lua DESTINATION ${INSTALL_IOMODULE_PATH})
 install(FILES ${SOCKET_MODULES} DESTINATION ${INSTALL_IOMODULE_PATH}/socket)
 install(DIRECTORY ${PARENT_SOURCE_DIR}/sandboxes/ DESTINATION ${INSTALL_SANDBOX_PATH} ${DPERMISSION})
+install(DIRECTORY ${PARENT_SOURCE_DIR}/modules/ DESTINATION ${INSTALL_MODULE_PATH} ${DPERMISSION})
+install(DIRECTORY ${PARENT_SOURCE_DIR}/io_modules/ DESTINATION ${INSTALL_IOMODULE_PATH} ${DPERMISSION})
