@@ -83,7 +83,7 @@
 <li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.5)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.6)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -125,6 +125,7 @@
 <ul>
 <li ><a href="/lua_sandbox_extensions/heka/modules/heka/index.html">heka</a></li>
 <ul>
+<li><a href="/lua_sandbox_extensions/heka/modules/heka/alert.html">alert</a></li>
 <li><a href="/lua_sandbox_extensions/heka/modules/heka/msg_interpolate.html">msg_interpolate</a></li>
 <li><a href="/lua_sandbox_extensions/heka/modules/heka/util.html">util</a></li>
 </ul>
@@ -145,6 +146,7 @@
 </ul>
 <li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/index.html">output</a></li>
 <ul>
+<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/alert.html">alert</a></li>
 <li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_debug.html">heka_debug</a></li>
 <li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_inject_payload.html">heka_inject_payload</a></li>
 <li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/logfile_roll_by_size.html">logfile_roll_by_size</a></li>
@@ -330,8 +332,25 @@
 <li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy (0.1.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.4)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.6)</a></li>
 <ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/socket/io_modules/index.html">io_modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/io_modules/alert/index.html">alert</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/io_modules/alert/email.html">email</a></li>
+</ul>
+</ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/socket/modules/index.html">modules</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/modules/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/socket/modules/heka/alert/index.html">alert</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/socket/modules/heka/alert/email.html">email</a></li>
+</ul>
+</ul>
+</ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/socket/sandboxes/index.html">sandboxes</a></li>
 <ul>
 <li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/index.html">heka</a></li>
@@ -398,6 +417,7 @@
 <div class="main-content">
 <h1 id="hekasandboxeshekaoutput">heka/sandboxes/heka/output</h1>
 <ul>
+<li><a href="alert.html">alert.lua</a> - Heka Message Alert Output</li>
 <li><a href="heka_debug.html">heka_debug.lua</a> - RST Heka Message Output</li>
 <li><a href="heka_inject_payload.html">heka_inject_payload.lua</a> - Message Payload Output</li>
 <li><a href="logfile_roll_by_size.html">logfile_roll_by_size.lua</a> - Logfile output rolled by size</li>
