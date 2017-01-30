@@ -156,7 +156,6 @@ function throttled(id)
     local time_t = time()
     local at = alert_times[id]
     if not at or time_t - at > alert_cfg.throttle then
-        alert_times[id] = time_t
         return false
     end
     return true
@@ -178,6 +177,7 @@ function send(id, summary, detail)
     end
 
     inject_message(msg)
+    alert_times[id] = time()
     return true
 end
 
