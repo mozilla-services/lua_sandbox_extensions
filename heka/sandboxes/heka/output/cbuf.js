@@ -70,11 +70,11 @@ function heka_load_cbuf_complete(cbuf) {
     }
     checkboxes.innerHTML += '<br/><input type="checkbox" id="logscale" onClick="graph.updateOptions({ logscale: this.checked })">'
         + '<label style="font-size: smaller;">Log scale</label>';
-    if (cbuf.annotations && cbuf.annotations.length > 0) {
-        for (var i = 0; i < cbuf.annotations.length; i++) {
-            cbuf.annotations[i].series = labels[cbuf.annotations[i].col];
+    if (cbuf.header.annotations && cbuf.header.annotations.length > 0) {
+        for (var i = 0; i < cbuf.header.annotations.length; i++) {
+            cbuf.header.annotations[i].series = labels[cbuf.header.annotations[i].col];
         }
-        graph.setAnnotations(cbuf.annotations);
+        graph.setAnnotations(cbuf.header.annotations);
     }
 }
 
