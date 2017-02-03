@@ -20,7 +20,8 @@ alert = {
   prefix = true,
   throttle = 90,
   modules = {
-    email = {recipients = {"trink@mozilla.com", "mreid@mozilla.com", "whd@mozilla.com", "rvitillo@mozilla.com"}},
+    email = {recipients = {"trink@mozilla.com"}},
+--    email = {recipients = {"trink@mozilla.com", "mreid@mozilla.com", "whd@mozilla.com", "rvitillo@mozilla.com"}},
   },
   thresholds = {
     ["main"] = {
@@ -75,11 +76,11 @@ local SEC_PER_ROW   = 60
 local ALERT_WINDOW  = 60
 
 
-local function diagnostic_dump(diag)
+local function diagnostic_dump(e, diag)
     local t   = {}
     local idx = 0
     for k, v in pairs(diag) do
-        local val, _ = stats.sum(v:get_range(1))
+        local val, _ = stats.sum(v:get_range(1, nil, e))
         idx = idx + 1
         t[idx] = string.format("%d\t%s", val, k)
     end
@@ -103,7 +104,7 @@ local function diagnostic_update(ns, diag)
     local de = read_message("Fields[DecodeError]") or "<none>"
     local cb = diag[de]
     if not cb then
-        cb = circular_buffer.new(ALERT_WINDOW, 1, SEC_PER_ROW)
+        cb = circular_buffer.new(ALERT_WINDOW + 1, 1, SEC_PER_ROW)
         diag[de] = cb
     end
     cb:add(ns, 1, 1)
@@ -124,7 +125,7 @@ local function get_doctype(name)
     end
     local data = doctypes[name]
     if not data then
-        local threshold = alert.get_alert_threshold(name)
+        local threshold = alert.get_threshold(name)
         if threshold.max_error_ratio then
             assert(threshold.max_error_ratio > 0 and threshold.max_error_ratio < 1,
                    name .. " max_error_ratio must be between 0 and 1")
@@ -176,7 +177,7 @@ Diagnostic (count/error)
 
 
 local function alert_check(ns, name, cb, diag)
-    local threshold = alert.get_alert_threshold(name)
+    local threshold = alert.get_threshold(name)
     local iato = threshold.inactivity_timeout
     local mer  = threshold.max_error_ratio
     if not iato and not mer or alert.throttled(name) then return end
@@ -206,7 +207,7 @@ local function alert_check(ns, name, cb, diag)
         if er > mer then
             if alert.send(name, "max_error_ratio",
                           string.format(alert_template, val, err, er, mer, alert.get_dashboard_uri(name),
-                                        diagnostic_dump(diag))) then
+                                        diagnostic_dump(e, diag))) then
                 cb:annotate(ns, VALID, "alert", string.format("%.4g exceeded %.4g", er, mer))
                 return true
             end

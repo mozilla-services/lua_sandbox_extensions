@@ -35,7 +35,7 @@ Returns the URI of the dashboard output
 *Return*
 - URI (string)
 
-### get_alert_threshold
+### get_threshold
 
 Gets the value of the threshold setting associated with the specified id. If
 the id is not found the value of the '_default_' key is returned otherwise nil
@@ -143,7 +143,7 @@ function get_dashboard_uri(id, ext)
 end
 
 
-function get_alert_threshold(id)
+function get_threshold(id)
     local at = alert_cfg.thresholds[id]
     if not at then
         at = alert_cfg.thresholds._default_

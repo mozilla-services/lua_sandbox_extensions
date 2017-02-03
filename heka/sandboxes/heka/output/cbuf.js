@@ -37,13 +37,24 @@ function heka_load_cbuf(url, callback) {
 
 function heka_load_cbuf_complete(cbuf) {
     var name = "graph";
-    var plural = "";
-    if ((cbuf.header.seconds_per_row * cbuf.header.rows) / 3600 > 1) {
-        plural = "s";
+    var duration = cbuf.header.seconds_per_row * cbuf.header.rows;
+    var sduration = "";
+    var units = "";
+    if (duration < 60) {
+        sduration = String(duration);
+        units = "seconds";
+    } else if (duration < 3600) {
+        sduration = (duration / 60).toFixed(2);
+        units = "minutes";
+    } else if (duration < 86400) {
+        sduration = (duration / 3600).toFixed(2);
+        units = "hours";
+    } else {
+        sduration = (duration / 86400).toFixed(2);
+        units = "days";
     }
     document.getElementById('range').innerHTML =
-    cbuf.header.seconds_per_row + " second aggregation for the last "
-    + String((cbuf.header.seconds_per_row * cbuf.header.rows) / 3600) + " hour" + plural;
+    cbuf.header.seconds_per_row + " second aggregation for the last " + sduration + " " + units;
     var labels = ['Date'];
     for (var i = 0; i < cbuf.header.columns; i++) {
         labels.push(cbuf.header.column_info[i].name + " (" + cbuf.header.column_info[i].unit + ")");
@@ -77,4 +88,3 @@ function heka_load_cbuf_complete(cbuf) {
         graph.setAnnotations(cbuf.header.annotations);
     }
 }
-
