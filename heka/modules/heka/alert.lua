@@ -10,16 +10,53 @@
 alert = {
     disabled = false, -- optional
     prefix   = false, -- optional prefix plugin information to the summary and detail strings
-    throttle = 60,    -- optional number of minutes before another alert with this ID will be sent
+    throttle = 90,    -- optional number of minutes to wait before another alert with this ID will be sent
     modules  = {
       -- module_name = {}, -- see the heka.alert.modules_name documentation for the configuration options
       -- e.g., email = {recipients = {"foo@example.com"}},
+    }
+    thresholds = {
+      -- alert_id = {}, -- per id alert specific configuration for an analyis plugin
     }
 }
 
 ```
 
 ## Functions
+
+### get_dashboard_uri
+
+Returns the URI of the dashboard output
+
+*Arguments*
+- id (string)
+- extension (string/nil) - defaults to cbuf
+
+*Return*
+- URI (string)
+
+### get_threshold
+
+Gets the value of the threshold setting associated with the specified id. If
+the id is not found the value of the '_default_' key is returned otherwise nil
+is returned.
+
+*Arguments*
+- id (string)
+
+*Return*
+- threshold - configuration value
+
+### throttled
+
+Check if an alert is currently throttled, this is useful to avoid running
+expensive tests.
+
+*Arguments*
+- id (string)
+
+*Return*
+- throttled (boolean) - true if the alert is currently throttled
 
 ### send
 
@@ -54,7 +91,7 @@ local alert_cfg = read_config("alert")
 assert(type(alert_cfg) == "table", "alert configuration must be a table")
 assert(type(alert_cfg.modules) == "table", "alert.modules configuration must be a table")
 
-alert_cfg.throttle = alert_cfg.throttle or 60
+alert_cfg.throttle = alert_cfg.throttle or 90
 assert(type(alert_cfg.throttle) == "number" and alert_cfg.throttle > 0, "alert.throttle configuration must be a number > 0 ")
 alert_cfg.throttle = alert_cfg.throttle * 60
 
@@ -90,15 +127,40 @@ end
 
 local alert_times = {}
 
-local function throttled(id)
+local function normalize(s)
+    return string.gsub(s, "[^%w%.]", "_")
+end
+
+
+function get_dashboard_uri(id, ext)
+    if not ext or ext == "cbuf" then
+        return string.format("https://%s/dashboard_output/graphs/%s.%s.html",
+                             hostname, normalize(logger), normalize(id))
+    else
+        return string.format("https://%s/dashboard_output/%s.%s.%s",
+                             hostname, normalize(logger), normalize(id), normalize(ext))
+    end
+end
+
+
+function get_threshold(id)
+    local at = alert_cfg.thresholds[id]
+    if not at then
+        at = alert_cfg.thresholds._default_
+    end
+    return at
+end
+
+
+function throttled(id)
     local time_t = time()
     local at = alert_times[id]
     if not at or time_t - at > alert_cfg.throttle then
-        alert_times[id] = time_t
         return false
     end
     return true
 end
+
 
 function send(id, summary, detail)
     if alert_cfg.disabled or not summary or summary == "" or throttled(id) then
@@ -115,6 +177,7 @@ function send(id, summary, detail)
     end
 
     inject_message(msg)
+    alert_times[id] = time()
     return true
 end
 

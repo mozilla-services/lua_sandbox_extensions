@@ -97,6 +97,10 @@ max_file_size       = 1024 * 1024 * 300
 -- (default 1 hour).  Idle files are only checked every ticker_interval seconds.
 max_file_age        = 60 * 60
 
+-- This option causes the field name to be converted to a hive compatible column
+-- name in the parquet output. The conversion snake cases the field name and
+-- replaces any non [-_a-z0-9] characters with an underscore.
+-- e.g. FooBar? -> foo_bar_
 hive_compatible     = true -- default false
 
 ```
