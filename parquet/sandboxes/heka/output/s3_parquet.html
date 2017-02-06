@@ -120,7 +120,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.6)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.7)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -308,6 +308,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.html">moz_shield_study_enrollment</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_error_ratio_monitor.html">moz_telemetry_doctype_error_ratio_monitor</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_sax_monitor.html">moz_telemetry_doctype_sax_monitor</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.html">moz_testpilot_installation</a></li>
@@ -539,6 +541,10 @@ max_file_size       <span class="ot">=</span> <span class="dv">1024</span> <span
 <span class="co">-- (default 1 hour).  Idle files are only checked every ticker_interval seconds.</span>
 max_file_age        <span class="ot">=</span> <span class="dv">60</span> <span class="ot">*</span> <span class="dv">60</span>
 
+<span class="co">-- This option causes the field name to be converted to a hive compatible column</span>
+<span class="co">-- name in the parquet output. The conversion snake cases the field name and</span>
+<span class="co">-- replaces any non [-_a-z0-9] characters with an underscore.</span>
+<span class="co">-- e.g. FooBar? -&gt; foo_bar_</span>
 hive_compatible     <span class="ot">=</span> <span class="kw">true</span> <span class="co">-- default false</span></code></pre></div>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/parquet/sandboxes/heka/output/s3_parquet.lua">s3_parquet.lua</a></p>
 </div>

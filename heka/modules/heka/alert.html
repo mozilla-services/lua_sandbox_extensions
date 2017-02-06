@@ -120,7 +120,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.6)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.7)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -308,6 +308,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.html">moz_shield_study_enrollment</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_error_ratio_monitor.html">moz_telemetry_doctype_error_ratio_monitor</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_sax_monitor.html">moz_telemetry_doctype_sax_monitor</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.html">moz_testpilot_installation</a></li>
@@ -457,13 +459,47 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">alert <span class="ot">=</span> <span class="ot">{</span>
     disabled <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span> <span class="co">-- optional</span>
     prefix   <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span> <span class="co">-- optional prefix plugin information to the summary and detail strings</span>
-    throttle <span class="ot">=</span> <span class="dv">60</span><span class="ot">,</span>    <span class="co">-- optional number of minutes before another alert with this ID will be sent</span>
+    throttle <span class="ot">=</span> <span class="dv">90</span><span class="ot">,</span>    <span class="co">-- optional number of minutes to wait before another alert with this ID will be sent</span>
     modules  <span class="ot">=</span> <span class="ot">{</span>
       <span class="co">-- module_name = {}, -- see the heka.alert.modules_name documentation for the configuration options</span>
       <span class="co">-- e.g., email = {recipients = {&quot;foo@example.com&quot;}},</span>
     <span class="ot">}</span>
+    thresholds <span class="ot">=</span> <span class="ot">{</span>
+      <span class="co">-- alert_id = {}, -- per id alert specific configuration for an analyis plugin</span>
+    <span class="ot">}</span>
 <span class="ot">}</span></code></pre></div>
 <h2 id="functions">Functions</h2>
+<h3 id="get_dashboard_uri">get_dashboard_uri</h3>
+<p>Returns the URI of the dashboard output</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>id (string)</li>
+<li>extension (string/nil) - defaults to cbuf</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>URI (string)</li>
+</ul>
+<h3 id="get_threshold">get_threshold</h3>
+<p>Gets the value of the threshold setting associated with the specified id. If the id is not found the value of the '<em>default</em>' key is returned otherwise nil is returned.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>id (string)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>threshold - configuration value</li>
+</ul>
+<h3 id="throttled">throttled</h3>
+<p>Check if an alert is currently throttled, this is useful to avoid running expensive tests.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>id (string)</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>throttled (boolean) - true if the alert is currently throttled</li>
+</ul>
 <h3 id="send">send</h3>
 <p>Send an alert message</p>
 <p><em>Arguments</em></p>

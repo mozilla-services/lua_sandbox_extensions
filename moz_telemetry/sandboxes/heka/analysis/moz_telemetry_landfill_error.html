@@ -120,7 +120,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.6)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.7)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -308,6 +308,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.html">moz_shield_study_enrollment</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_error_ratio_monitor.html">moz_telemetry_doctype_error_ratio_monitor</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_sax_monitor.html">moz_telemetry_doctype_sax_monitor</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.html">moz_testpilot_installation</a></li>
@@ -455,8 +457,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 id="mozilla-telemetry-stream-error-aggregator">Mozilla Telemetry Stream Error Aggregator</h1>
 <p>Simple debug tool to track the types of error in landfill processing. Used when tuning the validation schemas.</p>
 <h2 id="sample-configuration">Sample Configuration</h2>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename <span class="ot">=</span> <span class="st">&quot;moz_telemetrylandfill_errors.lua&quot;</span>
-message_matcher <span class="ot">=</span> <span class="st">&quot;Type == &#39;telemetry.error&#39;&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename <span class="ot">=</span> <span class="st">&quot;moz_telemetry_landfill_errors.lua&quot;</span>
+message_matcher <span class="ot">=</span> <span class="st">&quot;Type == &#39;telemetry.error&#39;&quot;</span>
+ticker_interval <span class="ot">=</span> <span class="dv">60</span></code></pre></div>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.lua">moz_telemetry_landfill_error.lua</a></p>
 </div>
 </body>

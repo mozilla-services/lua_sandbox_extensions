@@ -6,6 +6,43 @@
   <meta name="generator" content="pandoc" />
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
   <link rel="stylesheet" href="/lua_sandbox_extensions/docs.css" type="text/css" />
 </head>
 <body>
@@ -417,8 +454,195 @@
 </ul>
 </div>
 <div class="main-content">
-<h1 id="lua-openssl-module">Lua OpenSSL Module</h1>
-<p><a href="https://github.com/zhaozg/lua-openssl" class="uri">https://github.com/zhaozg/lua-openssl</a></p>
+<h1 id="mozilla-telemetry-doctype-submission-shape-monitor">Mozilla Telemetry docType Submission 'shape' Monitor</h1>
+<h2 id="sample-configuration">Sample Configuration</h2>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename <span class="ot">=</span> <span class="st">&quot;moz_telemetry_doctype_sax_monitor.lua&quot;</span>
+doc_type <span class="ot">=</span> <span class="st">&quot;main&quot;</span>
+message_matcher <span class="ot">=</span> <span class="st">&#39;Type == &quot;telemetry&quot; &amp;&amp; Fields[docType] == &quot;&#39;</span> <span class="ot">..</span> doc_type <span class="ot">..</span> <span class="st">&#39;&quot;&#39;</span>
+preserve_data <span class="ot">=</span> <span class="kw">true</span>
+ticker_interval <span class="ot">=</span> <span class="dv">60</span>
+
+alert <span class="ot">=</span> <span class="ot">{</span>
+  disabled <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span>
+  prefix <span class="ot">=</span> <span class="kw">true</span><span class="ot">,</span>
+  throttle <span class="ot">=</span> <span class="dv">1439</span><span class="ot">,</span>
+  modules <span class="ot">=</span> <span class="ot">{</span>
+    email <span class="ot">=</span> <span class="ot">{</span>recipients <span class="ot">=</span> <span class="ot">{</span><span class="st">&quot;trink@mozilla.com&quot;</span><span class="ot">}},</span>
+  <span class="ot">},</span>
+  thresholds <span class="ot">=</span> <span class="ot">{</span>
+    <span class="ot">[</span>doc_type<span class="ot">]</span> <span class="ot">=</span> <span class="ot">{</span>
+      <span class="st">&quot;AAAAABCEFEEEEFFFFEEDCBBB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAABCEFEEEEFFFFEEDCBBBA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAABCEFEEEEFFFFEEDCBBBAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABCEFEEEEFFFFEEDCBBBAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABCEFEEEEFFFFEEDCBBBAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BCEFEEEEFFFFEEDCBBBAAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CEFEEEEFFFFEEDCBBBAAAAAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFEEEEFFFFEEDCBBBAAAAABC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEEEFFFFEEDCBBBAAAAABCE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEFFFFEEDCBBBAAAAABCEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEFFFFEEDCBBBAAAAABCEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEFFFFEEDCBBBAAAAABCEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFFFFEEDCBBBAAAAABCEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFEEDCBBBAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFEEDCBBBAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFEEDCBBBAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEDCBBBAAAAABCEEEEEEFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEDCBBBAAAAABCEFEEEEFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EDCBBBAAAAABCEFEEEEFFFFE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DCBBBAAAAABCEFEEEEFFFFED&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CBBBAAAAABCEFEEEEFFFFEDD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BBBAAAAABCEFEEEEFFFFEDDC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BBAAAAABCEFEEEEFFFFEDDCB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BAAAAABCEFEEEEFFFFEDDCBA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAAABCEFEEEEFFFFEDDCBAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAABCEFEEEEFFFFEDDCBBBA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAABCEFEEEEFFFFEDDCBBBAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABCEFEEEEFFFFEDDCBBBAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABCEFEEEEFFFFEDDCBBBAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BDEFEEEEFFFFEDDCBBBAAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DEFEEEEFFFFEDDCBBBAAAAAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFEEEEFFFFEDDCBBBAAAAABB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEEEFFFFEEDCCBBAAAAABBB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEFFFFFEEDCCBBAAAAABBBC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEFFFFFEEDCCBCAAAAABBBCD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFFFFEDCCBCAAAAABBBDDD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFFFEDDCBCAAAAABBCDDDD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFFEEDCBCAAAAABBCDDDDD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFEEDCBCAAAAABBCDDDDDD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFEDCBCAAAAABBCDDDDDEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFEDCBCAAAAABBCDDDDDEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFEDCBCAAAAABBCEEEDEEEFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFDDBCAAAAABBCEEEEEEEFFE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEDBCAAAAABBCEEEEEEEFFEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EDCCAAAAABBCEEEEEEFFFFED&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DCDAAAAABBCEEEEEFFFFFEDC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CDAAAAABBCEEEEEFFFFFEDCB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DAAAAABBCEEEEEFFFFFEDCBB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAAABBCEEEEEFFFFFEDCBBC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAABBCEEEEEFFFFFEDCBBCA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAABCCEEEEEFFFFFEDCBBCAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABCCEEEEEFFFFFEDCCBCAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABCCEEEEEFFFFFEDCCBCAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BCCEEEEEFFFFFEDCCBCAAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CDEEEEEFFFFFEDCCBCAAAAAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DEEEEEFFFFFEDCCBCAAAAABB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEEFFFFFEDCCBCAAAAABBC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEFFFFFEDCCBCAAAAABBCD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEFFFFFEDCCBCAAAAABBCDE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEFFFFFEDCCBCAAAAABBCDEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFFFFFEDCCBCAAAAABBCDEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFFEDCCBCAAAAABBCDEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFEDCCBCAAAAABBCDEEEEF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFEDCCBCAAAAABBCEEEEEFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFEDCCBCAAAAABBCEEEEEFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEDCCBCAAAAABBCDEEEEFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EDCCBCAAAAABBCDEEEEFFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DCCBCAAAAABBCDEEEEFFFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CCBCAAAAABBCDEEEEEFFFFFE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CBCAAAAABBCDEEEEEFFFFFED&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BCAAAAABBCDEEEEEFFFFFEDC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CAAAAABBCDEEEEEFFFFFEDCB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAAABBCDEEEEEFFFFFEDCBC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAABBBDEEEEEFFFFFEDCBCA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAABBBDEEEEEFFFFFEDCBCAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABBBDEEEEEFFFFFEDCBCAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABBDEEEEFFFFFFEDCBCAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABDEEEEFFFFFFEDCBCAAAAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABDEEEEEFFFFFECCBCAAAAAD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BDDEDEEEFFFEECBACAAAAADF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CDDDDEEEFEEDCBABAAAAADFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DDDDDEEEEEDCBABAAAAADEFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DCDDDEEEDDCBABAAAAACEFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CCDDEEEDDCBABAAAAACEFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CDDDEDDCBBABAAAAACEFFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DDDDDDCBBABAAAAACDFFFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CDDDDCBBABAAAAACDFFFFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DDDCCBBABAAAAACDEFFFFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DDCCBBABAAAAACDEFFFEFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CCCBBABAAAAABDEFEEEFFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CCBBABAAAAABDEFEEEEFFFFE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CBBABAAAAABCEFEEEEFFFFEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BBABAAAAABCEFEEEEFFFFEED&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BABAAAAABCEFEEEEFFFFEEDC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABAAAAABCEEEEEEFFFFEEDCB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BAAAAABCEEEEEEFFFFEEDCBB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAAABCEEEEEEFFFFEEDCBBB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAABCEFEEEEFFFFEEDCBBBA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAABCEFEEEEFFFFEEDCBABAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABCEFEEEEFFFFEDDCBABAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABCEFEEEEFFFFEDDCBABAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BCEFEEEEFFFFEDDCBABAAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CEFEEEEFFFFEDDCBABAAAAAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFEEEEFFFFEDDCBABAAAAABC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEEEFFFFEDDCBABAAAAABCE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEFFFFEEDCBABAAAAABCEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEFFFFEEDCBABAAAAABCEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEFFFFEEDCBABAAAAABCEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFFFFEEDCBABAAAAABCEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFEEDCBABAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFEEDCBABAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFEEDCBABAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEDCBABAAAAABCEEEEEEFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEDCBABAAAAABCEEEEEEFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EDCBABAAAAABCEEEEEEFFFFE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DCBABAAAAABCEEEEEEFFFFED&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CBABAAAAABCEEEEEEFFFFEDD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BABAAAAABCEEEEEEFFFFEDDC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABAAAAABCEEEEEEFFFFEDDCB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BAAAAABCEEEEEEFFFFEDDCBA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAAABCEEEEEEFFFFEDDCBAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAABCEEEEEEFFFFEDDCBABA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAABCEEEEEEFFFFEDDCBABAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABCEEEEEEFFFFEDDCBABAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABCEEEEEEFFFFEDDCBABAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BCEEEEEEFFFFEDDCBABAAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CEEEEEEFFFFEDDCBABAAAAAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEEEFFFFEDDCBABAAAAABC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEEFFFFEEDCBABAAAAABCE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEFFFFEEDCBABAAAAABCEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEFFFFEEDCBABAAAAABCEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEFFFFEEDCBABAAAAABCEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFFFFEEDCBABAAAAABCEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFEEDCBABAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFEEDCBABAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFEEDCBABAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEDCBABAAAAABCEFEEEEFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEDCBABAAAAABCEFEEEEFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EDCBABAAAAABCEFEEEEFFFFE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DCBABAAAAABCEFEEEEFFFFED&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CBABAAAAABCEFEEEEFFFFEDD&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BABAAAAABCEFEEEEFFFFEEDC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABAAAAABCEFEEEEFFFFEEDCB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BAAAAABCEFEEEEFFFFEEDCBA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAAABCEFEEEEFFFFEEDCBAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAAABCEFEEEEFFFFEEDCBABA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AAABCEFEEEEFFFFEEDCBABAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;AABCEFEEEEFFFFEEDCBABAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;ABCEFEEEEFFFFEEDCBABAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BCEFEEEEFFFFEEDCBBBAAAAA&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CEFEEEEFFFFEEDCBBBAAAAAB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFEEEEFFFFEEDCBBBAAAAABC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEEEFFFFEEDCBBBAAAAABCE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEEFFFFEEDCBBBAAAAABCEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEEFFFFEEDCBBBAAAAABCEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEFFFFEEDCBBBAAAAABCEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EFFFFEEDCBBBAAAAABCEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFFEEDCBBBAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFFEEDCBBBAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FFEEDCBBBAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;FEEDCBBBAAAAABCEEEEEEFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EEDCBBBAAAAABCEEEEEEFFFF&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;EDCBBBAAAAABCEEEEEEFFFFE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;DCBBBAAAAABCEEEEEEFFFFEE&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;CBBBAAAAABCEFEEEEFFFFEED&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BBBAAAAABCEFEEEEFFFFEEDC&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BBAAAAABCEFEEEEFFFFEEDCB&quot;</span><span class="ot">,</span>
+      <span class="st">&quot;BAAAAABCEFEEEEFFFFEEDCBA&quot;</span>
+    <span class="ot">}</span>
+  <span class="ot">}</span>
+<span class="ot">}</span></code></pre></div>
+<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_sax_monitor.lua">moz_telemetry_doctype_sax_monitor.lua</a></p>
 </div>
 </body>
 </html>
