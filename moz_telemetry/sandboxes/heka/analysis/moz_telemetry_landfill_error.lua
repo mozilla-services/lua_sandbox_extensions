@@ -10,7 +10,7 @@ when tuning the validation schemas.
 
 ## Sample Configuration
 ```lua
-filename = "moz_telemetry_landfill_errors.lua"
+filename = "moz_telemetry_landfill_error.lua"
 message_matcher = "Type == 'telemetry.error'"
 ticker_interval = 60
 ```
