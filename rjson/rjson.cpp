@@ -64,7 +64,7 @@ static rj::Value* check_value(lua_State *lua)
   int n = lua_gettop(lua);
   luaL_argcheck(lua, n >= 1 && n <= 2, 0, "invalid number of arguments");
   rjson *j = static_cast<rjson *>
-    (luaL_checkudata(lua, 1, mozsvc_rjson));
+      (luaL_checkudata(lua, 1, mozsvc_rjson));
   rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, 2));
   if (!v) {
     int t = lua_type(lua, 2);
@@ -140,6 +140,13 @@ static int rjson_parse_schema(lua_State *lua)
 static int rjson_parse(lua_State *lua)
 {
   const char *json = luaL_checkstring(lua, 1);
+  bool validate = false;
+  int t = lua_type(lua, 2);
+  if (t == LUA_TNONE || t == LUA_TNIL || LUA_TBOOLEAN) {
+    validate = lua_toboolean(lua, 2);
+  } else {
+    luaL_typerror(lua, 2, "boolean");
+  }
   rjson *j = static_cast<rjson *>(lua_newuserdata(lua, sizeof*j));
   j->doc = new rj::Document;
   j->val = NULL;
@@ -152,11 +159,20 @@ static int rjson_parse(lua_State *lua)
     lua_pushstring(lua, "memory allocation failed");
     return lua_error(lua);
   } else {
-    if (j->doc->Parse(json).HasParseError()) {
-      lua_pushfstring(lua, "failed to parse offset:%f %s",
-                      (lua_Number)j->doc->GetErrorOffset(),
-                      rj::GetParseError_En(j->doc->GetParseError()));
-      return lua_error(lua);
+    if (validate) {
+      if (j->doc->Parse<rj::kParseValidateEncodingFlag>(json).HasParseError()) {
+        lua_pushfstring(lua, "failed to parse offset:%f %s",
+                        (lua_Number)j->doc->GetErrorOffset(),
+                        rj::GetParseError_En(j->doc->GetParseError()));
+        return lua_error(lua);
+      }
+    } else {
+      if (j->doc->Parse(json).HasParseError()) {
+        lua_pushfstring(lua, "failed to parse offset:%f %s",
+                        (lua_Number)j->doc->GetErrorOffset(),
+                        rj::GetParseError_En(j->doc->GetParseError()));
+        return lua_error(lua);
+      }
     }
   }
   j->refs->insert(j->doc);
@@ -486,7 +502,7 @@ static char* ungzip(const char *s, size_t s_len, size_t max_len, size_t *r_len)
   if (max_len && buf_len > max_len) {
     buf_len = max_len;
   }
-  unsigned char *buf = static_cast<unsigned char*>(malloc(buf_len));
+  unsigned char *buf = static_cast<unsigned char *>(malloc(buf_len));
   if (!buf) {
     return NULL;
   }
@@ -516,7 +532,7 @@ static char* ungzip(const char *s, size_t s_len, size_t max_len, size_t *r_len)
       if (max_len && buf_len > max_len) {
         buf_len = max_len;
       }
-      unsigned char *tmp = static_cast<unsigned char*>(realloc(buf, buf_len));
+      unsigned char *tmp = static_cast<unsigned char *>(realloc(buf, buf_len));
       if (!tmp) {
         ret = Z_MEM_ERROR;
         break;
@@ -546,11 +562,11 @@ public:
 #if _BullseyeCoverage
 #pragma BullseyeCoverage off
 #endif
-  Ch Peek() const { assert(false); return '\0'; }
-  Ch Take() { assert(false); return '\0'; }
+  Ch Peek() const { assert(false);return '\0'; }
+  Ch Take() { assert(false);return '\0'; }
   size_t Tell() const { return 0; }
-  Ch* PutBegin() { assert(false); return 0; }
-  size_t PutEnd(Ch *) { assert(false); return 0; }
+  Ch* PutBegin() { assert(false);return 0; }
+  size_t PutEnd(Ch *) { assert(false);return 0; }
 #if _BullseyeCoverage
 #pragma BullseyeCoverage on
 #endif
@@ -639,7 +655,7 @@ static int rjson_parse_message(lua_State *lua)
 {
   lua_getfield(lua, LUA_REGISTRYINDEX, LSB_HEKA_THIS_PTR);
   lsb_heka_sandbox *hsb =
-    static_cast<lsb_heka_sandbox *>(lua_touserdata(lua, -1));
+      static_cast<lsb_heka_sandbox *>(lua_touserdata(lua, -1));
   lua_pop(lua, 1); // remove this ptr
   if (!hsb) {
     return luaL_error(lua, "parse_message() invalid " LSB_HEKA_THIS_PTR);
@@ -649,18 +665,25 @@ static int rjson_parse_message(lua_State *lua)
 
   const lsb_heka_message *msg = NULL;
   if (lsb_heka_get_type(hsb) == 'i') {
-    luaL_argcheck(lua, n >= 2 && n <= 4, 0, "invalid number of arguments");
+    luaL_argcheck(lua, n >= 2 && n <= 5, 0, "invalid number of arguments");
     heka_stream_reader *hsr = static_cast<heka_stream_reader *>
         (luaL_checkudata(lua, 1, LSB_HEKA_STREAM_READER));
     msg = &hsr->msg;
     idx = 2;
   } else {
-    luaL_argcheck(lua, n >= 1 && n <= 3, 0, "invalid number of arguments");
+    luaL_argcheck(lua, n >= 1 && n <= 4, 0, "invalid number of arguments");
     const lsb_heka_message *hm = lsb_heka_get_message(hsb);
     if (!hm || !hm->raw.s) {
       return luaL_error(lua, "parse_message() no active message");
     }
     msg = hm;
+  }
+  bool validate = false;
+  int t = lua_type(lua, idx + 3);
+  if (t == LUA_TNONE || t == LUA_TNIL || LUA_TBOOLEAN) {
+    validate = lua_toboolean(lua, idx + 3);
+  } else {
+    luaL_typerror(lua, idx + 3, "boolean");
   }
 
   lsb_const_string json = read_message(lua, idx, msg);
@@ -693,21 +716,39 @@ static int rjson_parse_message(lua_State *lua)
   }
 
   bool err = false;
-  if (j->insitu) {
-    if (j->doc->ParseInsitu<rj::kParseStopWhenDoneFlag>(j->insitu)
-        .HasParseError()) {
-      err = true;
-      lua_pushfstring(lua, "failed to parse offset:%f %s",
-                      (lua_Number)j->doc->GetErrorOffset(),
-                      rj::GetParseError_En(j->doc->GetParseError()));
+  if (validate) {
+    if (j->insitu) {
+      if (j->doc->ParseInsitu<rj::kParseValidateEncodingFlag | rj::kParseStopWhenDoneFlag>(j->insitu).HasParseError()) {
+        err = true;
+        lua_pushfstring(lua, "failed to parse offset:%f %s",
+                        (lua_Number)j->doc->GetErrorOffset(),
+                        rj::GetParseError_En(j->doc->GetParseError()));
+      }
+    } else {
+      rj::MemoryStream ms(json.s, json.len);
+      if (j->doc->ParseStream<rj::kParseValidateEncodingFlag, rj::UTF8<> >(ms).HasParseError()) {
+        err = true;
+        lua_pushfstring(lua, "failed to parse offset:%f %s",
+                        (lua_Number)j->doc->GetErrorOffset(),
+                        rj::GetParseError_En(j->doc->GetParseError()));
+      }
     }
   } else {
-    rj::MemoryStream ms(json.s, json.len);
-    if (j->doc->ParseStream<0, rj::UTF8<> >(ms).HasParseError()) {
-      err = true;
-      lua_pushfstring(lua, "failed to parse offset:%f %s",
-                      (lua_Number)j->doc->GetErrorOffset(),
-                      rj::GetParseError_En(j->doc->GetParseError()));
+    if (j->insitu) {
+      if (j->doc->ParseInsitu<rj::kParseStopWhenDoneFlag>(j->insitu).HasParseError()) {
+        err = true;
+        lua_pushfstring(lua, "failed to parse offset:%f %s",
+                        (lua_Number)j->doc->GetErrorOffset(),
+                        rj::GetParseError_En(j->doc->GetParseError()));
+      }
+    } else {
+      rj::MemoryStream ms(json.s, json.len);
+      if (j->doc->ParseStream<0, rj::UTF8<> >(ms).HasParseError()) {
+        err = true;
+        lua_pushfstring(lua, "failed to parse offset:%f %s",
+                        (lua_Number)j->doc->GetErrorOffset(),
+                        rj::GetParseError_En(j->doc->GetParseError()));
+      }
     }
   }
 
@@ -731,7 +772,7 @@ static const struct luaL_reg iterlib_m[] =
 };
 
 
-static int rjson_version(lua_State* lua)
+static int rjson_version(lua_State *lua)
 {
   lua_pushstring(lua, DIST_VERSION);
   return 1;
