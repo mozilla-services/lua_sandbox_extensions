@@ -12,7 +12,21 @@ to inject_message so it needs to decode into a Heka message table described
 here: https://mozilla-services.github.io/lua_sandbox/heka/message.html
 
 ## Decoder Configuration Table
-* none
+
+```lua
+decoders_heka_json = {
+  -- Preserve the default_headers passed to decode by storing the json message
+  -- in Fields, after flattening the json message with a delimiter.
+  preserve_metadata = false, -- default
+
+  -- Use the Timestamp from json when preserve_metadata is true.
+  preserve_metadata_use_timestamp = false, -- default
+
+  -- Delimiter to use when flattening the Fields object of a json message.
+  -- Used only when preserve_metadata is true.
+  flatten_delimiter = ".", -- default
+}
+```
 
 ## Functions
 
@@ -34,6 +48,8 @@ Decode and inject the resulting message
 --]]
 
 -- Imports
+local module_name   = ...
+local module_cfg    = require "string".gsub(module_name, "%.", "_")
 local cjson = require "cjson"
 
 local pairs = pairs
@@ -41,11 +57,29 @@ local type  = type
 
 local inject_message = inject_message
 
+local cfg = read_config(module_cfg) or {}
+assert(type(cfg) == "table", module_cfg .. " must be a table")
+cfg.flatten_delimiter = cfg.flatten_delimiter or "."
+assert(type(cfg.flatten_delimiter) == "string", module_cfg .. ".flatten_delimiter must be a string")
+fields_prefix = "Fields" .. cfg.flatten_delimiter
+
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 function decode(data, dh)
     local msg = cjson.decode(data)
+    if cfg.preserve_metadata then
+        if type(msg.Fields) == "table" then
+            for k,v in pairs(msg.Fields.Fields) do
+                msg[fields_prefix..k] = v
+            end
+            msg.Fields = none
+        end
+        msg = {Fields=msg}
+        if cfg.preserve_metadata_use_timestamp then
+            msg.Timestamp = msg.Fields.Timestamp
+        end
+    end
 
     if dh then
         if not msg.Uuid then msg.Uuid = dh.Uuid end
