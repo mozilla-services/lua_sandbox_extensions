@@ -70,6 +70,8 @@ json_objects = {"Fields[submission]", "Fields[environment.system]"}
 s3_path_dimensions  = {
     -- access message data with using read_message()
     {name = "_submission_date", source = "Fields[submissionDate]"},
+    -- access Timestamp using read_message() and then encode it using the dateformat string
+    {name = "_submission_date", source = "Timestamp", dateformat = "%Y-%m-%d-%H"},
     -- access the record data with a path array
     -- {name = "_submission_date", source = {"metadata", "submissionDate"}}
 }
@@ -112,6 +114,8 @@ require "parquet"
 local load_schema = require "lpeg.parquet".load_parquet_schema
 require "string"
 require "table"
+local date          = require "os".date
+local floor         = require "math".floor
 
 local writers       = {}
 local writers_cnt   = 0
@@ -241,6 +245,9 @@ local function get_s3_path(json)
             v = read_message(d.source) or default_nil
         else
             v = read_json(json, d.source) or default_nil
+        end
+        if d.dateformat and type(v) == "number" then
+            v = date(d.dateformat, floor(v/1e9))
         end
         dims[i] = string.format("%s=%s", d.name, string.gsub(v, "[^%w!%-_.*'()]", "-"))
     end
