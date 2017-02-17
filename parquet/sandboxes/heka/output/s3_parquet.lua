@@ -309,14 +309,17 @@ local function load_msg_fields()
     return record
 end
 
+local load_record
+if json_objects then
+    load_record = load_json_objects
+elseif heka_msg_use_fields then
+    load_record = load_msg_fields
+end
+
 function process_message()
     local ok, err, record
-    if json_objects or heka_msg_use_fields then
-        if json_objects then
-            record, err = load_json_objects()
-        elseif heka_msg_use_fields then
-            record, err = load_msg_fields()
-        end
+    if load_record then
+        record, err = load_record()
         if err then return -1, err end
         if load_metadata then
             record[metadata_group] = load_metadata()
@@ -327,7 +330,7 @@ function process_message()
     local writer = get_writer(path)
     local w = writer[1]
 
-    if json_objects or heka_msg_use_fields then
+    if load_record then
         ok, err = pcall(w.dissect_record, w, record)
     else
         ok, err = pcall(w.dissect_message, w)
