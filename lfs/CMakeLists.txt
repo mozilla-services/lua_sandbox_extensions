@@ -9,7 +9,7 @@ externalproject_add(
     ep_lfs
     GIT_REPOSITORY https://github.com/keplerproject/luafilesystem.git
     GIT_TAG 50919ed69ff64df51d8d586d00834fde3e901785
-    CMAKE_ARGS ${EP_CMAKE_ARGS}
+    CMAKE_ARGS ${EP_CMAKE_ARGS} -DPARENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
 )
 externalproject_add_step(ep_lfs copy_cpack 
