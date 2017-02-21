@@ -26,12 +26,13 @@ str = doc:find("array", 1);
 Creates a JSON Document from a string.
 
 ```lua
-local ok, doc = pcall(lsb_json.parse, '{"foo":"bar"}')
+local ok, doc = pcall(rjson.parse, '{"foo":"bar"}')
 assert(ok, doc)
 
 ```
 *Arguments*
 * JSON (string) - JSON string to parse
+* validate_encoding (bool, default: false) - true to turn on UTF-8 validation
 
 *Return*
 * doc (userdata) - JSON document or an error is thrown
@@ -41,7 +42,7 @@ assert(ok, doc)
 Creates a JSON Schema.
 
 ```lua
-local ok, doc = pcall(lsb_json.parse_schema, '{"type":"array","minItems": 1,"oneOf": [{"items": {"type":"number"}}]}')
+local ok, doc = pcall(rjson.parse_schema, '{"type":"array","minItems": 1,"oneOf": [{"items": {"type":"number"}}]}')
 assert(ok, doc)
 
 ```
@@ -56,7 +57,7 @@ assert(ok, doc)
 Creates a JSON Document from a message variable.
 
 ```lua
-local ok, doc = pcall(lsb_json.parse_message, "Fields[myjson]")
+local ok, doc = pcall(rjson.parse_message, "Fields[myjson]")
 assert(ok, doc)
 
 ```
@@ -72,6 +73,7 @@ assert(ok, doc)
 * arrayIndex (unsigned) - optional, only used in combination with the Fields
   variableName use to retrieve a specific element out of a field containing an
   array; zero indexed
+* validate_encoding (bool, default: false) - true to turn on UTF-8 validation
 
 *Return*
 * doc (userdata) - JSON document or an error is thrown
