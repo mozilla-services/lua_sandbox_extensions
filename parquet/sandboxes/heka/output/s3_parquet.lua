@@ -131,7 +131,11 @@ if type(json_objects) == "table" then
     json_objects_len = #json_objects
 end
 local heka_msg_use_fields   = read_config("heka_message_use_fields")
-if not json_objects and not heka_msg_use_fields and metadata_group then error("metadata_group cannot be configured without json_objects") end
+if metadata_group then
+    if not json_objects and not heka_msg_use_fields then
+        error("metadata_group requires that json_objects or heka_message_use_fields be specified")
+    end
+end
 
 local parquet_schema        = read_config("parquet_schema") or error("parquet_schema must be specified")
 local s3_path_dimensions    = read_config("s3_path_dimensions") or error("s3_path_dimensions must be specified")
@@ -289,16 +293,16 @@ local function load_json_objects()
 end
 
 local function load_msg_fields()
-    local raw = decode_message(read_message("raw")).Fields
+    local fields = decode_message(read_message("raw")).Fields
 
-    if not raw then
+    if not fields then
         return nil, "message did not contain Fields"
     end
 
-    -- convert from raw message table fields to a hash
+    -- convert from raw message table's Fields to a hash
     -- http://mozilla-services.github.io/lua_sandbox/heka/message.html#array-based-message-fields
     record = {}
-    for _, field in ipairs(raw) do
+    for _, field in ipairs(fields) do
         if #field.value == 1 then
             record[field.name] = field.value[1]
         else
