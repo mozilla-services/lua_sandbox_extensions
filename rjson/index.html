@@ -216,7 +216,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/lfs/index.html">lfs (1.6.3)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/lfs/index.html">lfs (1.6.4)</a></li>
+<ul>
+<li class="exttype"><a href="/lua_sandbox_extensions/lfs/sandboxes/index.html">sandboxes</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lfs/sandboxes/heka/index.html">heka</a></li>
+<ul>
+<li ><a href="/lua_sandbox_extensions/lfs/sandboxes/heka/input/index.html">input</a></li>
+<ul>
+<li><a href="/lua_sandbox_extensions/lfs/sandboxes/heka/input/tail.html">tail</a></li>
+</ul>
+</ul>
+</ul>
+</ul>
 </ul>
 <ul class="module-ul">
 <li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg (1.0.3)</a></li>
@@ -259,7 +271,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.2)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.4)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -362,7 +374,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres (2.3.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.0.1)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.0.2)</a></li>
 </ul>
 <ul class="module-ul">
 <li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax (0.5.0)</a></li>
@@ -468,11 +480,12 @@ str <span class="ot">=</span> doc:find<span class="ot">(</span><span class="st">
 <h3 id="functions">Functions</h3>
 <h4 id="parse">parse</h4>
 <p>Creates a JSON Document from a string.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> ok<span class="ot">,</span> doc <span class="ot">=</span> <span class="fu">pcall</span><span class="ot">(</span>lsb_json<span class="ot">.</span>parse<span class="ot">,</span> <span class="st">&#39;{&quot;foo&quot;:&quot;bar&quot;}&#39;</span><span class="ot">)</span>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> ok<span class="ot">,</span> doc <span class="ot">=</span> <span class="fu">pcall</span><span class="ot">(</span>rjson<span class="ot">.</span>parse<span class="ot">,</span> <span class="st">&#39;{&quot;foo&quot;:&quot;bar&quot;}&#39;</span><span class="ot">)</span>
 <span class="fu">assert</span><span class="ot">(</span>ok<span class="ot">,</span> doc<span class="ot">)</span></code></pre></div>
 <p><em>Arguments</em></p>
 <ul>
 <li>JSON (string) - JSON string to parse</li>
+<li>validate_encoding (bool, default: false) - true to turn on UTF-8 validation</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
@@ -480,7 +493,7 @@ str <span class="ot">=</span> doc:find<span class="ot">(</span><span class="st">
 </ul>
 <h4 id="parse_schema">parse_schema</h4>
 <p>Creates a JSON Schema.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> ok<span class="ot">,</span> doc <span class="ot">=</span> <span class="fu">pcall</span><span class="ot">(</span>lsb_json<span class="ot">.</span>parse_schema<span class="ot">,</span> <span class="st">&#39;{&quot;type&quot;:&quot;array&quot;,&quot;minItems&quot;: 1,&quot;oneOf&quot;: [{&quot;items&quot;: {&quot;type&quot;:&quot;number&quot;}}]}&#39;</span><span class="ot">)</span>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> ok<span class="ot">,</span> doc <span class="ot">=</span> <span class="fu">pcall</span><span class="ot">(</span>rjson<span class="ot">.</span>parse_schema<span class="ot">,</span> <span class="st">&#39;{&quot;type&quot;:&quot;array&quot;,&quot;minItems&quot;: 1,&quot;oneOf&quot;: [{&quot;items&quot;: {&quot;type&quot;:&quot;number&quot;}}]}&#39;</span><span class="ot">)</span>
 <span class="fu">assert</span><span class="ot">(</span>ok<span class="ot">,</span> doc<span class="ot">)</span></code></pre></div>
 <p><em>Arguments</em></p>
 <ul>
@@ -492,7 +505,7 @@ str <span class="ot">=</span> doc:find<span class="ot">(</span><span class="st">
 </ul>
 <h4 id="parse_message-heka-sandbox-only">parse_message (Heka sandbox only)</h4>
 <p>Creates a JSON Document from a message variable.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> ok<span class="ot">,</span> doc <span class="ot">=</span> <span class="fu">pcall</span><span class="ot">(</span>lsb_json<span class="ot">.</span>parse_message<span class="ot">,</span> <span class="st">&quot;Fields[myjson]&quot;</span><span class="ot">)</span>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> ok<span class="ot">,</span> doc <span class="ot">=</span> <span class="fu">pcall</span><span class="ot">(</span>rjson<span class="ot">.</span>parse_message<span class="ot">,</span> <span class="st">&quot;Fields[myjson]&quot;</span><span class="ot">)</span>
 <span class="fu">assert</span><span class="ot">(</span>ok<span class="ot">,</span> doc<span class="ot">)</span></code></pre></div>
 <p><em>Arguments</em></p>
 <ul>
@@ -504,6 +517,7 @@ str <span class="ot">=</span> doc:find<span class="ot">(</span><span class="st">
 </ul></li>
 <li>fieldIndex (unsigned) - optional, only used in combination with the Fields variableName use to retrieve a specific instance of a repeated field name; zero indexed</li>
 <li>arrayIndex (unsigned) - optional, only used in combination with the Fields variableName use to retrieve a specific element out of a field containing an array; zero indexed</li>
+<li>validate_encoding (bool, default: false) - true to turn on UTF-8 validation</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
