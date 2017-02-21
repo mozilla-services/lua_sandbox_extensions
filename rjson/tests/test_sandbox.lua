@@ -33,6 +33,15 @@ assert("field not found" == err, err)
 ok, doc = pcall(rjson.parse_message, hsr, "Fields[json]")
 assert(ok, doc)
 
+ok, doc = pcall(rjson.parse_message, hsr, "Fields[json]", nil, nil, true)
+assert(ok, doc)
+
+hsr:decode_message("\10\16\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\16\4\82\23\10\4\106\115\111\110\16\1\42\13\123\34\102\246\111\34\58\34\98\97\114\34\125")
+ok, doc = pcall(rjson.parse_message, hsr, "Fields[json]")
+assert(ok, doc)
+ok, doc = pcall(rjson.parse_message, hsr, "Fields[json]", nil, nil, true)
+assert(doc == "failed to parse offset:3 Invalid encoding in string.")
+
 if read_config("have_zlib") then
     gz_nested = "\10\16\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\16\99\50\66\31\139\8\0\0\0\0\0\0\3\171\86\202\77\204\204\83\178\170\86\202\53\84\178\50\172\213\81\80\42\72\172\204\201\79\76\1\137\149\37\230\148\166\22\43\89\69\27\234\24\233\24\199\214\214\114\1\0\64\251\6\210\48\0\0\0"
     hsr:decode_message(gz_nested)
@@ -40,6 +49,17 @@ if read_config("have_zlib") then
     assert(ok, json)
     values = json:find("payload", "values")
     assert(values)
+
+    ok, json = pcall(rjson.parse_message, hsr, "Payload", nil, nil, true)
+    assert(ok, json)
+    values = json:find("payload", "values")
+    assert(values)
+
+    hsr:decode_message("\10\16\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\16\99\50\33\031\139\008\000\000\000\000\000\000\003\171\086\074\251\150\175\100\165\148\148\088\164\084\011\000\204\086\149\195\013\000\000\000")
+    ok, json = pcall(rjson.parse_message, hsr, "Payload")
+    assert(ok, json)
+    ok, json = pcall(rjson.parse_message, hsr, "Payload", nil, nil, true)
+    assert(json == "failed to parse offset:3 Invalid encoding in string.", json)
 
     gz_too_large = "\10\16\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\16\99\50\51\31\139\8\0\0\0\0\0\0\3\237\193\49\13\0\0\8\3\176\31\25\147\129\178\201\71\7\73\219\52\155\2\0\0\0\0\0\0\0\0\255\100\14\116\172\116\102\0\36\0\0"
     hsr:decode_message(gz_too_large)
