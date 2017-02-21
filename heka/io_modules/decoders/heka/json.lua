@@ -70,7 +70,7 @@ function decode(data, dh)
     local msg = cjson.decode(data)
     if cfg.preserve_metadata then
         if type(msg.Fields) == "table" then
-            for k,v in pairs(msg.Fields.Fields) do
+            for k,v in pairs(msg.Fields) do
                 msg[fields_prefix..k] = v
             end
             msg.Fields = none
