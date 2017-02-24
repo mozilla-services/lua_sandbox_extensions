@@ -143,31 +143,47 @@ local function send_batch()
 end
 
 batch_count = 0
-retry       = false
+for _ in io.lines(batch_file) do
+    batch_count = batch_count + 1
+end
+batch_count = batch_count / 2
+
+function send_batch2()
+    local ret, err = send_batch()
+    if ret == 0 then
+        batch_count = 0
+        batch:close()
+        batch = assert(io.open(batch_file, "w"))
+    elseif discard then
+        client = nil
+        err = "Discarding "..batch_count.." messages, ret="..ret.." err="..err
+        ret = -1
+        batch_count = 0
+        batch:close()
+        batch = assert(io.open(batch_file, "w"))
+    else
+        client = nil
+        err = "Error sending "..batch_count.." messages, ret="..ret.." err="..err
+        ret = -3
+    end
+    return ret, err
+end
 
 function process_message()
-    if not retry then
-        local ok, data = pcall(encode)
-        if not ok then return -1, data end
-        if not data then return -2 end
-        batch:write(data)
-        batch_count = batch_count + 1
+    if batch_count >= flush_count then
+        local ret, err = send_batch2()
+        if ret < 0 then return ret, err end
     end
 
-    if batch_count == flush_count then
-        local ret, err = send_batch()
-        if ret == 0 or discard then
-            ret = 0
-            err = nil
-            retry = false
-            batch_count = 0
-            batch:close()
-            batch = assert(io.open(batch_file, "w"))
-        elseif ret == -3 then
-            retry = true
-            client = nil
-        end
-        return ret, err
+    local ok, data = pcall(encode)
+    if not ok then return -1, data end
+    if not data then return -2 end
+    batch:write(data)
+    batch_count = batch_count + 1
+
+    if batch_count >= flush_count then
+        local ret, err = send_batch2()
+        if ret < 0 then return ret, err end
     end
     return 0
 end
@@ -176,15 +192,9 @@ end
 function timer_event(ns, shutdown)
     local timedout = (ns / 1e9 - last_flush) >= ticker_interval
     if (timedout or (shutdown and flush_on_shutdown)) and batch_count > 0 then
-        local ret, err = send_batch()
-        if ret == 0 or discard then
-            retry = false
-            batch_count = 0
-            batch:close()
-            batch = assert(io.open(batch_file, "w"))
-            if shutdown then
-                batch:close()
-            end
-        end
+        send_batch2()
+    end
+    if shutdown then
+        batch:close()
     end
 end
