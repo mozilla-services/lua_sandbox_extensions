@@ -182,9 +182,9 @@ function timer_event(ns, shutdown)
             batch_count = 0
             batch:close()
             batch = assert(io.open(batch_file, "w"))
-            if shutdown then
-                batch:close()
-            end
         end
+    end
+    if shutdown then
+        batch:close()
     end
 end
