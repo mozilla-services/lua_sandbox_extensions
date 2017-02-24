@@ -143,6 +143,10 @@ local function send_batch()
 end
 
 batch_count = 0
+for _ in io.lines(batch_file) do
+    batch_count = batch_count + 1
+end
+batch_count = batch_count / 2
 retry       = false
 
 function process_message()
@@ -154,7 +158,7 @@ function process_message()
         batch_count = batch_count + 1
     end
 
-    if batch_count == flush_count then
+    if batch_count >= flush_count then
         local ret, err = send_batch()
         if ret == 0 or discard then
             ret = 0
