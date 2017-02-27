@@ -19,6 +19,8 @@ flush_count         = 50000
 flush_on_shutdown   = false
 preserve_data       = not flush_on_shutdown --in most cases this should be the inverse of flush_on_shutdown
 discard_on_error    = false
+abort_on_error      = false
+max_retry           = 0
 
 -- See the elasticsearch module directory for the various encoders and configuration documentation.
 encoder_module  = "encoders.elasticsearch.payload"
@@ -41,6 +43,8 @@ local address   = read_config("address") or "127.0.0.1"
 local port      = read_config("port") or 9200
 local timeout   = read_config("timeout") or 10
 local discard   = read_config("discard_on_error")
+local abort     = read_config("abort_on_error")
+local maxretry  = read_config("max_retry") or 0
 
 local encoder_module = read_config("encoder_module") or "encoders.elasticsearch.payload"
 local encode = require(encoder_module).encode
@@ -144,6 +148,37 @@ end
 
 batch_count = 0
 retry       = false
+local try_count = 0
+
+local function send_batch2()
+    try_count = try_count + 1
+    local ret, err = send_batch()
+    if ret < 0 then client = nil end -- always use a new connection after an error
+
+    if ret == 0 then
+        retry = false
+    elseif discard and try_count > maxretry then
+        retry = false
+        err = "Discarding "..batch_count.." messages after "..try_count.." attemps, ret="..ret.." err="..err
+        ret = -1
+    elseif abort and try_count > maxretry then
+        retry = true -- not saved by preserve_data for now
+        error("Abort sending "..batch_count.." messages after "..try_count.." attemps, ret="..ret.." err="..err)
+    else
+        retry = true
+        err = "Error sending "..batch_count.." messages, attemps "..try_count..", ret="..ret.." err="..err
+        ret = -3
+    end
+
+    if not retry then
+        batch_count = 0
+        try_count   = 0
+        batch:close()
+        batch = assert(io.open(batch_file, "w"))
+    end
+
+    return ret, err
+end
 
 function process_message()
     if not retry then
@@ -154,20 +189,8 @@ function process_message()
         batch_count = batch_count + 1
     end
 
-    if batch_count == flush_count then
-        local ret, err = send_batch()
-        if ret == 0 or discard then
-            ret = 0
-            err = nil
-            retry = false
-            batch_count = 0
-            batch:close()
-            batch = assert(io.open(batch_file, "w"))
-        elseif ret == -3 then
-            retry = true
-            client = nil
-        end
-        return ret, err
+    if batch_count >= flush_count then
+        return send_batch2()
     end
     return 0
 end
@@ -176,15 +199,6 @@ end
 function timer_event(ns, shutdown)
     local timedout = (ns / 1e9 - last_flush) >= ticker_interval
     if (timedout or (shutdown and flush_on_shutdown)) and batch_count > 0 then
-        local ret, err = send_batch()
-        if ret == 0 or discard then
-            retry = false
-            batch_count = 0
-            batch:close()
-            batch = assert(io.open(batch_file, "w"))
-            if shutdown then
-                batch:close()
-            end
-        end
+        send_batch2()
     end
 end
