@@ -73,7 +73,7 @@ function decode(data, dh)
             for k,v in pairs(msg.Fields) do
                 msg[fields_prefix..k] = v
             end
-            msg.Fields = none
+            msg.Fields = nil
         end
         msg = {Fields=msg}
         if cfg.preserve_metadata_use_timestamp then
