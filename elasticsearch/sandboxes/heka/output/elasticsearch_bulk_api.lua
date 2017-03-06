@@ -17,8 +17,12 @@ port                = 9200
 timeout             = 10
 flush_count         = 50000
 flush_on_shutdown   = false
-preserve_data       = not flush_on_shutdown --in most cases this should be the inverse of flush_on_shutdown
-discard_on_error    = false
+-- preserve_data       = false -- we don't rely on preserve data anymore
+max_retry           = 0
+discard_on_error    = false -- discard the batch after max_retry+1 failed attemps to send the batch
+abort_on_error      = false -- stop this plugin after max_retry+1 failed attemps to send the batch
+-- when setting abort_on_error=true, consider also settings shutdown_on_terminate or remove_checkpoints_on_terminate
+
 
 -- See the elasticsearch module directory for the various encoders and configuration documentation.
 encoder_module  = "encoders.elasticsearch.payload"
@@ -41,6 +45,8 @@ local address   = read_config("address") or "127.0.0.1"
 local port      = read_config("port") or 9200
 local timeout   = read_config("timeout") or 10
 local discard   = read_config("discard_on_error")
+local abort     = read_config("abort_on_error")
+local maxretry  = read_config("max_retry") or 0
 
 local encoder_module = read_config("encoder_module") or "encoders.elasticsearch.payload"
 local encode = require(encoder_module).encode
@@ -142,8 +148,46 @@ local function send_batch()
     return ret, err
 end
 
-batch_count = 0
-retry       = false
+local batch_count = 0
+local retry       = false
+local try_count   = 0
+
+for _ in io.lines(batch_file) do
+    batch_count = batch_count + 1
+end
+batch_count = batch_count / 2
+if batch_count >= flush_count then
+    retry = true
+end
+
+local function send_batch2()
+    try_count = try_count + 1
+    local ret, err = send_batch()
+    if ret < 0 then client = nil end -- always use a new connection after an error
+
+    if ret == 0 then
+        retry = false
+    elseif discard and try_count > maxretry then
+        retry = false
+        err = string.format("Discarding %d messages after %d attemps, ret=%d err=%s", batch_count, try_count, ret, err)
+        ret = -1
+    elseif abort and try_count > maxretry then
+        error(string.format("Abort sending %d messages after %d attemps, ret=%d err=%s", batch_count, try_count, ret, err))
+    else
+        retry = true
+        err = string.format("Error sending %d messages, attemps nb %d, ret=%d err=%s", batch_count, try_count, ret, err)
+        ret = -3
+    end
+
+    if not retry then
+        batch_count = 0
+        try_count   = 0
+        batch:close()
+        batch = assert(io.open(batch_file, "w"))
+    end
+
+    return ret, err
+end
 
 function process_message()
     if not retry then
@@ -154,20 +198,8 @@ function process_message()
         batch_count = batch_count + 1
     end
 
-    if batch_count == flush_count then
-        local ret, err = send_batch()
-        if ret == 0 or discard then
-            ret = 0
-            err = nil
-            retry = false
-            batch_count = 0
-            batch:close()
-            batch = assert(io.open(batch_file, "w"))
-        elseif ret == -3 then
-            retry = true
-            client = nil
-        end
-        return ret, err
+    if batch_count >= flush_count then
+        return send_batch2()
     end
     return 0
 end
@@ -176,15 +208,6 @@ end
 function timer_event(ns, shutdown)
     local timedout = (ns / 1e9 - last_flush) >= ticker_interval
     if (timedout or (shutdown and flush_on_shutdown)) and batch_count > 0 then
-        local ret, err = send_batch()
-        if ret == 0 or discard then
-            retry = false
-            batch_count = 0
-            batch:close()
-            batch = assert(io.open(batch_file, "w"))
-            if shutdown then
-                batch:close()
-            end
-        end
+        send_batch2()
     end
 end
