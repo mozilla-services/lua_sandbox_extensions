@@ -21,7 +21,7 @@ static char* test_core()
 {
   lsb_lua_sandbox *sb =
       lsb_create(NULL, "test.lua", TEST_MODULE_PATH
-                 "instruction_limit = 0\n", NULL);
+                 "memory_limit = 0\ninstruction_limit = 0\n", NULL);
   mu_assert(sb, "lsb_create() received: NULL");
 
   lsb_err_value ret = lsb_init(sb, NULL);
@@ -99,14 +99,93 @@ static char* test_sandbox()
   lsb_test_report(sb, 98);
   mu_assert(strcmp("2", lsb_test_output) == 0, "test: delete received: %s",
             lsb_test_output);
-  // tst clear
+  // test clear
   lsb_test_report(sb, 99);
   mu_assert(strcmp("0", lsb_test_output) == 0, "test: clear received: %s",
             lsb_test_output);
 
   e = lsb_destroy(sb);
   mu_assert(!e, "lsb_destroy() received: %s", e);
-  return NULL;}
+  return NULL;
+}
+
+
+static char* test_sandbox_expire()
+{
+  const char *output_file = "cuckoo_filter_expire.preserve";
+  const char *tests[] = {
+    "1",
+    "2",
+    "3",
+    NULL
+  };
+
+  remove(output_file);
+  lsb_lua_sandbox *sb = lsb_create(NULL, "test_sandbox_expire.lua",
+                                   TEST_MODULE_PATH, NULL);
+  mu_assert(sb, "lsb_create() received: NULL");
+
+  lsb_err_value ret = lsb_init(sb, output_file);
+  mu_assert(!ret, "lsb_init() received: %s %s", ret, lsb_get_error(sb));
+  lsb_add_function(sb, &lsb_test_write_output, "write_output");
+
+  int i = 0;
+  for (; tests[i]; ++i) {
+    int result = lsb_test_process(sb, i);
+    mu_assert(result == 0, "process() received: %d %s", result,
+              lsb_get_error(sb));
+    result = lsb_test_report(sb, 0);
+    mu_assert(result == 0, "report() received: %d", result);
+    mu_assert(strcmp(tests[i], lsb_test_output) == 0, "test: %d received: %s",
+              i, lsb_test_output);
+  }
+
+  int result = lsb_test_process(sb, 0);
+  mu_assert(result == 0, "process() received: %d %s", result,
+            lsb_get_error(sb));
+  result = lsb_test_report(sb, 0);
+  mu_assert(result == 0, "report() received: %d", result);
+  mu_assert(strcmp(tests[i - 1], lsb_test_output) == 0, "test: %d received: %s",
+            i, lsb_test_output); // count should remain the same
+
+  e = lsb_destroy(sb);
+  mu_assert(!e, "lsb_destroy() received: %s", e);
+
+  // re-load to test the preserved data
+  sb = lsb_create(NULL, "test_sandbox_expire.lua", TEST_MODULE_PATH, NULL);
+  mu_assert(sb, "lsb_create() received: NULL");
+
+  ret = lsb_init(sb, output_file);
+  mu_assert(!ret, "lsb_init() received: %s %s", ret, lsb_get_error(sb));
+  lsb_add_function(sb, &lsb_test_write_output, "write_output");
+
+  lsb_test_report(sb, 0);
+  mu_assert(strcmp("3", lsb_test_output) == 0, "test: count received: %s",
+            lsb_test_output);
+
+  for (int i = 0; tests[i]; ++i) {
+    result = lsb_test_process(sb, i);
+    mu_assert(result == 0, "process() received: %d %s", result,
+              lsb_get_error(sb));
+  }
+  result = lsb_test_report(sb, 0);
+  mu_assert(result == 0, "report() received: %d", result);
+  mu_assert(strcmp(tests[i - 1], lsb_test_output) == 0, "test: %d received: %s",
+            i, lsb_test_output); // count should remain the same
+
+  // test deletion
+  lsb_test_report(sb, 98);
+  mu_assert(strcmp("2", lsb_test_output) == 0, "test: delete received: %s",
+            lsb_test_output);
+  // test clear
+  lsb_test_report(sb, 99);
+  mu_assert(strcmp("0", lsb_test_output) == 0, "test: clear received: %s",
+            lsb_test_output);
+
+  e = lsb_destroy(sb);
+  mu_assert(!e, "lsb_destroy() received: %s", e);
+  return NULL;
+}
 
 
 static char* benchmark()
@@ -126,7 +205,7 @@ static char* benchmark()
   }
   t = clock() - t;
   lsb_test_report(sb, 0);
-  mu_assert(strcmp("999985", lsb_test_output) == 0, "received: %s",
+  mu_assert(strcmp("999983", lsb_test_output) == 0, "received: %s",
             lsb_test_output);
   mu_assert(lsb_get_state(sb) == LSB_RUNNING, "benchmark failed %s",
             lsb_get_error(sb));
@@ -141,6 +220,7 @@ static char* all_tests()
 {
   mu_run_test(test_core);
   mu_run_test(test_sandbox);
+  mu_run_test(test_sandbox_expire);
   mu_run_test(benchmark);
   return NULL;
 }
