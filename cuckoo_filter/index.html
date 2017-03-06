@@ -87,10 +87,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/compat/index.html">compat (0.3.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.0.0)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.1.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.3)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.4)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -120,7 +120,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.7)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.8)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -129,6 +129,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/index.html">heka</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/json.html">json</a></li>
+<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/json_mutate.html">json_mutate</a></li>
 <li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/protobuf.html">protobuf</a></li>
 </ul>
 <li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/payload.html">payload</a></li>
@@ -271,7 +272,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.4)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.5)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -495,7 +496,7 @@ found <span class="ot">=</span> cf:query<span class="ot">(</span><span class="st
 <h4 id="version">version</h4>
 <div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;cuckoo_filter&quot;</span>
 <span class="kw">local</span> v <span class="ot">=</span> cuckoo_filter<span class="ot">.</span>version<span class="ot">()</span>
-<span class="co">-- v == &quot;0.1.0&quot;</span></code></pre></div>
+<span class="co">-- v == &quot;1.0.1&quot;</span></code></pre></div>
 <p>Returns a string with the running version of cuckoo_filter.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -515,7 +516,7 @@ found <span class="ot">=</span> cf:query<span class="ot">(</span><span class="st
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>True if the key was added, false if it already existed.</li>
+<li>True if the key was added, false if it already existed, throws an error if the filter is full.</li>
 </ul>
 <h4 id="delete">delete</h4>
 <div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> deleted <span class="ot">=</span> cf:delete<span class="ot">(</span>key<span class="ot">)</span></code></pre></div>
@@ -560,6 +561,117 @@ found <span class="ot">=</span> cf:query<span class="ot">(</span><span class="st
 <p><em>Return</em></p>
 <ul>
 <li>none</li>
+</ul>
+<h1 id="lua-cuckoo-filter-expire-module">Lua Cuckoo Filter Expire Module</h1>
+<h2 id="overview-1">Overview</h2>
+<p>A cuckoo filter with automatic entry expiration. It supports a window of 256 minutes, hours, or days after which time entries expire. If the cuckoo filter reaches 80% capacity then the least recently used interval is expired.</p>
+<h2 id="module-1">Module</h2>
+<h3 id="example-usage-1">Example Usage</h3>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;cuckoo_filter_expire&quot;</span>
+
+<span class="kw">local</span> cf <span class="ot">=</span> cuckoo_filter_expire<span class="ot">.</span>new<span class="ot">(</span><span class="dv">1000</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span> <span class="co">-- this will be rounded up to 1024</span>
+<span class="kw">local</span> found <span class="ot">=</span> cf:query<span class="ot">(</span><span class="st">&quot;test&quot;</span><span class="ot">)</span>
+<span class="co">-- found == false</span>
+cf:add<span class="ot">(</span><span class="st">&quot;test&quot;</span><span class="ot">,</span> ns<span class="ot">)</span>
+found <span class="ot">=</span> cf:query<span class="ot">(</span><span class="st">&quot;test&quot;</span><span class="ot">)</span>
+<span class="co">-- found == true</span></code></pre></div>
+<h3 id="functions-1">Functions</h3>
+<h4 id="new-1">new</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;cuckoo_filter_expire&quot;</span>
+<span class="kw">local</span> cf <span class="ot">=</span> cuckoo_filter_expire<span class="ot">.</span>new<span class="ot">(</span><span class="dv">1024</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">)</span></code></pre></div>
+<p>Import the Lua <em>cuckoo_filter_expire</em> via the Lua 'require' function. The module is globally registered and returned by the require function.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>items (unsigned) The maximum number of items to be inserted into the filter (must be &gt; 256). Items are grouped into buckets of four and the number of buckets will be rounded up to the closest power of two if necessary. The fingerprint size is currently fixed at thirty two bits so the false positive rate is 0.0000000019.</li>
+<li>interval_size (number) The size (1-1440 minutes) of the 256 intervals in the cuckoo filter</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>cuckoo_filter_expire userdata object.</li>
+</ul>
+<h4 id="version-1">version</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;cuckoo_filter_expire&quot;</span>
+<span class="kw">local</span> v <span class="ot">=</span> cuckoo_filter_expire<span class="ot">.</span>version<span class="ot">()</span>
+<span class="co">-- v == &quot;1.0.1&quot;</span></code></pre></div>
+<p>Returns a string with the running version of cuckoo_filter.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>Semantic version string</li>
+</ul>
+<h3 id="methods-1">Methods</h3>
+<h4 id="add-1">add</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> added <span class="ot">=</span> cf:add<span class="ot">(</span>key<span class="ot">,</span> nanoseconds<span class="ot">)</span></code></pre></div>
+<p>Adds an item to the cuckoo filter. This method works a little differently than the standard algorithm; a lookup is performed first. Since we must handle duplicates we consider any collision within the bucket to be a duplicate.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>key (string/number) The key to add in the cuckoo filter.</li>
+<li>nanoseconds (unsigned) The number of nanosecond since the UNIX epoch. The value is used to set the expiration interval.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>True if the key was added, false if it already existed</li>
+</ul>
+<h4 id="delete-1">delete</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> deleted <span class="ot">=</span> cf:delete<span class="ot">(</span>key<span class="ot">)</span></code></pre></div>
+<p>Deletes an item to the cuckoo filter.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>key (string/number) The key to delete in the cuckoo filter.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>True if the key was deleted, false if it didn't exist.</li>
+</ul>
+<h4 id="query-1">query</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> found <span class="ot">=</span> cf:query<span class="ot">(</span>key<span class="ot">)</span></code></pre></div>
+<p>Checks for the existence of the key in the cuckoo filter.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>key (string/number) The key to lookup in the cuckoo filter.</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>True if the key exists, false if it doesn't.</li>
+</ul>
+<h4 id="count-1">count</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> total <span class="ot">=</span> cf:count<span class="ot">()</span></code></pre></div>
+<p>Returns the number of items in the cuckoo filter.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>Returns the number of distinct items currently in the set.</li>
+</ul>
+<h4 id="clear-1">clear</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">cf:clear<span class="ot">()</span></code></pre></div>
+<p>Resets the cuckoo filter to an empty set.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>none</li>
+</ul>
+<h4 id="current_interval">current_interval</h4>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">ns<span class="ot">,</span> interval <span class="ot">=</span> cf:current_interval<span class="ot">()</span>
+<span class="co">-- ns == 1488402235000000000</span>
+<span class="co">-- interval = 0</span></code></pre></div>
+<p>Returns the timestamp and index of the most recent interval</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>none</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>The time of the most current interval (nanoseconds)</li>
+<li>The index of the most current interval</li>
 </ul>
 </div>
 </body>

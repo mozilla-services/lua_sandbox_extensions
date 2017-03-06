@@ -467,216 +467,47 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 <div class="main-content">
-<h1 id="parquet-lua-module">Parquet Lua Module</h1>
-<h2 id="overview">Overview</h2>
-<p>Lua wrapper for the parquet-cpp library allowing for Parquet file output.</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;parquet&quot;</span>
+<h1 id="heka-json-message-decoder-module-with-mutate-capabilities">Heka JSON Message Decoder Module with Mutate capabilities</h1>
+<p><a href="https://wiki.mozilla.org/Firefox/Services/Logging" class="uri">https://wiki.mozilla.org/Firefox/Services/Logging</a></p>
+<h2 id="decoder-configuration-table">Decoder Configuration Table</h2>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">decoders_heka_json_mutate <span class="ot">=</span> <span class="ot">{</span>
+  <span class="co">-- Preserve the default_headers passed to decode by storing the json message</span>
+  <span class="co">-- in Fields, after flattening the json message with a delimiter.</span>
+  preserve_metadata <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span> <span class="co">-- default</span>
 
-<span class="kw">local</span> r1 <span class="ot">=</span> <span class="ot">{</span>
-    DocId <span class="ot">=</span> <span class="dv">10</span><span class="ot">,</span>
-    Links <span class="ot">=</span> <span class="ot">{</span>Forward <span class="ot">=</span> <span class="ot">{</span><span class="dv">20</span><span class="ot">,</span> <span class="dv">40</span><span class="ot">,</span> <span class="dv">60</span><span class="ot">}},</span>
-    Name <span class="ot">=</span> <span class="ot">{</span>
-        <span class="ot">{</span>
-            Language <span class="ot">=</span> <span class="ot">{</span>
-                <span class="ot">{</span>Code <span class="ot">=</span> <span class="st">&quot;en-us&quot;</span><span class="ot">,</span> Country <span class="ot">=</span> <span class="st">&quot;us&quot;</span><span class="ot">},</span>
-                <span class="ot">{</span>Code <span class="ot">=</span> <span class="st">&quot;en&quot;</span><span class="ot">}</span>
-            <span class="ot">},</span>
-            Url <span class="ot">=</span> <span class="st">&quot;http://A&quot;</span>
-        <span class="ot">},</span>
-        <span class="ot">{</span>
-            Url <span class="ot">=</span> <span class="st">&quot;http://B&quot;</span>
-        <span class="ot">},</span>
-        <span class="ot">{</span>
-            Language <span class="ot">=</span> <span class="ot">{</span>Code <span class="ot">=</span> <span class="st">&quot;en-gb&quot;</span><span class="ot">,</span> Country <span class="ot">=</span> <span class="st">&quot;gb&quot;</span><span class="ot">}</span>
-        <span class="ot">}</span>
-    <span class="ot">}</span>
-<span class="ot">}</span>
+  <span class="co">-- Use the Timestamp from json when preserve_metadata is true.</span>
+  preserve_metadata_use_timestamp <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span> <span class="co">-- default</span>
 
-<span class="kw">local</span> r2 <span class="ot">=</span> <span class="ot">{</span>
-    DocId <span class="ot">=</span> <span class="dv">20</span><span class="ot">,</span>
-    Links <span class="ot">=</span> <span class="ot">{</span>Backward <span class="ot">=</span> <span class="ot">{</span><span class="dv">10</span><span class="ot">,</span> <span class="dv">30</span><span class="ot">},</span> Forward <span class="ot">=</span> <span class="dv">80</span><span class="ot">},</span>
-    Name <span class="ot">=</span> <span class="ot">{</span>Url <span class="ot">=</span> <span class="st">&quot;http://C&quot;</span><span class="ot">}</span>
-<span class="ot">}</span>
+  <span class="co">-- Delimiter to use when flattening the Fields object of the json message.</span>
+  <span class="co">-- Used only when preserve_metadata is true.</span>
+  flatten_delimiter <span class="ot">=</span> <span class="st">&quot;.&quot;</span><span class="ot">,</span> <span class="co">-- default</span>
 
-<span class="kw">local</span> doc <span class="ot">=</span> parquet<span class="ot">.</span>schema<span class="ot">(</span><span class="st">&quot;Document&quot;</span><span class="ot">)</span>
-doc:add_column<span class="ot">(</span><span class="st">&quot;DocId&quot;</span><span class="ot">,</span> <span class="st">&quot;required&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">)</span>
+  <span class="co">-- Remove these fields from the json message</span>
+  scrub_fields <span class="ot">=</span> <span class="ot">{},</span> <span class="co">-- default</span>
 
-<span class="kw">local</span> links <span class="ot">=</span> doc:add_group<span class="ot">(</span><span class="st">&quot;Links&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">)</span>
-links:add_column<span class="ot">(</span><span class="st">&quot;Backward&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">)</span>
-links:add_column<span class="ot">(</span><span class="st">&quot;Forward&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">)</span>
+  <span class="co">-- For key, value in user_agent_transforms</span>
+  <span class="co">-- transform Fields[key] into Fields[value..&quot;browser&quot;], Fields[value..&quot;version&quot;], Fields[value..&quot;os&quot;].</span>
+  user_agent_transforms <span class="ot">=</span> <span class="ot">{</span>agent <span class="ot">=</span> <span class="st">&quot;user_agent_&quot;</span><span class="ot">},</span> <span class="co">-- default {}</span>
 
-<span class="kw">local</span> name <span class="ot">=</span> doc:add_group<span class="ot">(</span><span class="st">&quot;Name&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">)</span>
-<span class="kw">local</span> language <span class="ot">=</span> name:add_group<span class="ot">(</span><span class="st">&quot;Language&quot;</span><span class="ot">,</span> <span class="st">&quot;repeated&quot;</span><span class="ot">)</span>
-language:add_column<span class="ot">(</span><span class="st">&quot;Code&quot;</span><span class="ot">,</span> <span class="st">&quot;required&quot;</span><span class="ot">,</span> <span class="st">&quot;binary&quot;</span><span class="ot">)</span>
-language:add_column<span class="ot">(</span><span class="st">&quot;Country&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">,</span> <span class="st">&quot;binary&quot;</span><span class="ot">)</span>
-name:add_column<span class="ot">(</span><span class="st">&quot;Url&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">,</span> <span class="st">&quot;binary&quot;</span><span class="ot">)</span>
-doc:finalize<span class="ot">()</span>
+  <span class="co">-- Always preserve the original fields if user_agent_transforms occur.</span>
+  user_agent_keep <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span> <span class="co">-- default</span>
 
-<span class="kw">local</span> writer <span class="ot">=</span> parquet<span class="ot">.</span>writer<span class="ot">(</span><span class="st">&quot;example.parquet&quot;</span><span class="ot">,</span> doc<span class="ot">,</span> <span class="ot">{</span>
-    created_by <span class="ot">=</span> <span class="st">&quot;hindsight&quot;</span><span class="ot">,</span>
-    enable_statistics <span class="ot">=</span> <span class="kw">true</span><span class="ot">,</span>
-    columns <span class="ot">=</span> <span class="ot">{</span>
-        <span class="ot">[</span><span class="st">&quot;Name.Url&quot;</span><span class="ot">]</span> <span class="ot">=</span> <span class="ot">{</span>compression <span class="ot">=</span> <span class="st">&quot;gzip&quot;</span><span class="ot">}</span>
-    <span class="ot">}</span>
-<span class="ot">})</span>
-
-writer:dissect_record<span class="ot">(</span>r1<span class="ot">)</span>
-writer:write_rowgroup<span class="ot">()</span> <span class="co">-- writes out the first row group</span>
-                        <span class="co">-- normally one would just close at the end (writing out</span>
-                        <span class="co">-- a single row group)</span>
-writer:dissect_record<span class="ot">(</span>r2<span class="ot">)</span>
-writer:<span class="fu">close</span><span class="ot">()</span> <span class="co">-- writes out a second row group with the remaining record</span></code></pre></div>
-<h3 id="functions">Functions</h3>
-<h4 id="schema">schema</h4>
-<p>Creates a parquet schema for the writer.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> doc <span class="ot">=</span> parquet<span class="ot">.</span>schema<span class="ot">(</span><span class="st">&quot;Document&quot;</span><span class="ot">,</span> hive_compatible<span class="ot">)</span></code></pre></div>
+  <span class="co">-- Only preserve the original fields if user_agent_transforms occur and fail.</span>
+  user_agent_conditional <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span> <span class="co">-- default</span>
+<span class="ot">}</span></code></pre></div>
+<h2 id="functions">Functions</h2>
+<h3 id="decode">decode</h3>
+<p>Decode and inject the resulting message</p>
 <p><em>Arguments</em></p>
 <ul>
-<li>name (string) - Parquet schema name</li>
-<li>hive_compatible (bool, nil/none default: false) - When true the Parquet column names are coverted to snake case (alphanumeric and underscore only)</li>
+<li>data (string) - JSON message with a Heka schema</li>
+<li>default_headers (optional table) - Heka message table containing the default header values to use, if they are not populated by the decoder. If 'Fields' is specified it should be in the hashed based format see: <a href="http://mozilla-services.github.io/lua_sandbox/heka/message.html" class="uri">http://mozilla-services.github.io/lua_sandbox/heka/message.html</a></li>
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>schema (userdata) or an error is thrown</li>
+<li>nil - throws an error on an invalid data type, JSON parse error, inject_message failure etc.</li>
 </ul>
-<h4 id="writer">writer</h4>
-<p>Creates a Parquet writer.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> writer <span class="ot">=</span> parque<span class="ot">.</span>writer<span class="ot">(</span><span class="st">&quot;foo.parquet&quot;</span><span class="ot">,</span> schema<span class="ot">,</span> properties<span class="ot">)</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>filename (string) - Filename of the output</li>
-<li>schema (userdata) - Parquet schema</li>
-<li><p>properties (table, nil/none) - Writer properties</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="ot">{</span>
-    enable_dictionary <span class="ot">=</span> bool<span class="ot">,</span>
-    dictionary_pagesize_limit <span class="ot">=</span> int64<span class="ot">,</span>
-    write_batch_size <span class="ot">=</span> int64<span class="ot">,</span>
-    data_pagesize <span class="ot">=</span> int64<span class="ot">,</span>
-    version <span class="ot">=</span> string<span class="ot">,</span> <span class="co">-- (&quot;1.0&quot;, &quot;2.0&quot;)</span>
-    created_by <span class="ot">=</span> string<span class="ot">,</span>
-    encoding <span class="ot">=</span> string<span class="ot">,</span> <span class="co">-- (&quot;plain&quot;, &quot;plain_dictionary&quot;, &quot;rle&quot;, &quot;bit_packed&quot;, &quot;delta_binary_packed&quot;,</span>
-                       <span class="co">-- &quot;delta_length_byte_array&quot;, &quot;delta_byte_array&quot;, &quot;rle_dictionary&quot;)</span>
-    compression <span class="ot">=</span> string<span class="ot">,</span> <span class="co">-- (&quot;uncompressed&quot;, &quot;snappy&quot;, &quot;gzip&quot;, &quot;lzo&quot;, &quot;brotli&quot;)</span>
-    enable_statistics <span class="ot">=</span> bool<span class="ot">,</span>
-
-    columns <span class="ot">=</span> <span class="ot">{</span>
-        col_name1 <span class="ot">=</span> <span class="ot">{</span>
-            enable_dictionary <span class="ot">=</span> bool<span class="ot">,</span>
-            encoding <span class="ot">=</span> string<span class="ot">,</span>
-            compression <span class="ot">=</span> string<span class="ot">,</span>
-            enable_statistics <span class="ot">=</span> bool
-        <span class="ot">},</span>
-        <span class="ot">[</span><span class="st">&quot;col.nested.nameN&quot;</span><span class="ot">]</span> <span class="ot">=</span> <span class="ot">{}</span>
-    <span class="ot">}</span>
-<span class="ot">}</span></code></pre></div></li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>writer (userdata) or an error is thrown</li>
-</ul>
-<h4 id="version">version</h4>
-<p>Returns a string with the running version of the Parquet module.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="fu">require</span> <span class="st">&quot;parquet&quot;</span>
-<span class="kw">local</span> v <span class="ot">=</span> parquet<span class="ot">.</span>version<span class="ot">()</span>
-<span class="co">-- v == &quot;0.0.5&quot;</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>none</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>Semantic version string</li>
-</ul>
-<h3 id="schemagroup-methods">Schema/Group Methods</h3>
-<h4 id="add_group">add_group</h4>
-<p>Adds a structure to the schema.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> links <span class="ot">=</span> doc:add_group<span class="ot">(</span><span class="st">&quot;Links&quot;</span><span class="ot">,</span> <span class="st">&quot;optional&quot;</span><span class="ot">,</span> logical<span class="ot">)</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>name (string)</li>
-<li>repetition (&quot;required&quot;, &quot;optional&quot;, &quot;repeated&quot;)</li>
-<li>logical_type (string, nil/none default: &quot;none&quot;) - see add_column for the full list</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>group (userdata) or throws an error</li>
-</ul>
-<h4 id="add_column">add_column</h4>
-<p>Adds a data column to the schema.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">doc:add_column<span class="ot">(</span><span class="st">&quot;DocId&quot;</span><span class="ot">,</span> <span class="st">&quot;required&quot;</span><span class="ot">,</span> <span class="st">&quot;int64&quot;</span><span class="ot">,</span> logical<span class="ot">,</span> flba_len<span class="ot">,</span> precision<span class="ot">,</span> scale<span class="ot">)</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>name (string)</li>
-<li>repetition (string) - &quot;requried&quot;, &quot;optional&quot;, &quot;repeated&quot;</li>
-<li>data_type (string) - &quot;boolean&quot;, &quot;int32&quot;, &quot;int64&quot;, &quot;int96&quot;, &quot;float&quot;, &quot;double&quot;, &quot;binary&quot;, &quot;fixed_len_byte_array&quot;</li>
-<li>logical_type (string, nil/none default: &quot;none&quot;) - &quot;none&quot;, &quot;utf8&quot;, &quot;map&quot;, &quot;list&quot;, &quot;enum&quot;, &quot;decimal&quot;, &quot;date&quot;, &quot;time_millis&quot;, &quot;time_micros&quot;, &quot;timestamp_millis&quot;, &quot;timestamp_micros&quot;, &quot;uint_8&quot;, &quot;uint_16&quot;, &quot;uint_32&quot;, &quot;uint_64&quot;, &quot;int_8&quot;, &quot;int_16&quot;, &quot;int_32&quot;, &quot;int_64&quot;, &quot;json&quot;, &quot;bson&quot;, &quot;interval&quot; see: <a href="https://github.com/apache/parquet-format/blob/master/LogicalTypes.md">LogicalTypes</a> (MAP_KEY_VALUE is no longer used)</li>
-<li>flba_len (int, nil/none) - fixed length byte array length</li>
-<li>precision (int, nil/none) - decimal precision</li>
-<li>scale (int, nil/none) - decimal scale</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>none</li>
-</ul>
-<h3 id="schema-methods">Schema Methods</h3>
-<h4 id="finalize">finalize</h4>
-<p>Builds the schema structure after it has been completely defined. The schema must be finalized before it is passed to the writer. Also, once the schema is finalized it cannot be modified (an error will be thrown).</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">doc:finalize<span class="ot">()</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>none</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>none or throws an error</li>
-</ul>
-<h3 id="writer-methods">Writer Methods</h3>
-<h4 id="dissect_record">dissect_record</h4>
-<p>Dissects a record into columns based on the schema.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">writer:dissect_record<span class="ot">(</span>record<span class="ot">)</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>record (table) - structure matching the schema</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>none or throws an error if the structure does not match the schema (fields that exist in the record but are not specified in the schema are ignored)</li>
-</ul>
-<h4 id="dissect_message-heka-sandbox-only">dissect_message (Heka sandbox only)</h4>
-<p>Dissects a message into columns based on the schema.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">writer:dissect_message<span class="ot">()</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>none</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>none or throws an error if the structure does not match the schema (fields that exist in the record but are not specified in the schema are ignored)</li>
-</ul>
-<h4 id="write_rowgroup">write_rowgroup</h4>
-<p>Writes the currently collected data out as a row group.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">writer:write_rowgroup<span class="ot">()</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>none</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>none or throws an error if the write fails</li>
-</ul>
-<h4 id="close">close</h4>
-<p>Closes the writer flushing any remaining data in the rowgroup.</p>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">writer:<span class="fu">close</span><span class="ot">()</span></code></pre></div>
-<p><em>Arguments</em></p>
-<ul>
-<li>none</li>
-</ul>
-<p><em>Return</em></p>
-<ul>
-<li>none or throws an error on failure</li>
-</ul>
+<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/io_modules/decoders/heka/json_mutate.lua">json_mutate.lua</a></p>
 </div>
 </body>
 </html>
