@@ -22,6 +22,12 @@ decoders_moz_telemetry_ping = {
 
     -- Boolean used to determine whether to inject the raw message in addition to the decoded one.
     inject_raw = false, -- optional, if not specified the raw message is not injected
+
+    -- number of items in the de-duping cuckoo filter
+    cf_items = 30e6, -- optional, if not provided de-duping is disabled
+
+    -- interval size in minutes for cuckoo filter pruning
+    cf_interval_size = 1, -- optional, default 1
 }
 ```
 
@@ -76,6 +82,7 @@ local tostring             = tostring
 local pcall                = pcall
 local geoip
 local city_db
+local dedupe
 
 -- create before the environment is locked down since it conditionally includes a module
 local function load_decoder_cfg()
@@ -88,6 +95,13 @@ local function load_decoder_cfg()
     if not cfg.uri_field then cfg.uri_field = "Fields[uri]" end
     if not cfg.inject_raw then cfg.inject_raw = false end
     assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
+
+    if cfg.cf_items then
+        if not cf_interval_size then cfg.cf_interval_size = 1 end
+        cfg.interval_representation = tostring(cfg.cf_interval_size) .. "m"
+        local cfe = require "cuckoo_filter_expire"
+        dedupe = cfe.new(cfg.cf_items, cfg.cf_interval_size)
+    end
 
     if cfg.city_db_file then
         geoip = require "geoip.city"
@@ -467,6 +481,13 @@ function transform_message(hsr)
             local remote_addr = hsr:read_message("Fields[RemoteAddr]")
             msg.Fields.geoCountry = get_geo_country(xff, remote_addr)
             msg.Fields.geoCity = get_geo_city(xff, remote_addr)
+        end
+
+        if dedupe then
+            local added, delta = dedupe:add(msg.Fields.documentId, msg.Timestamp)
+            if not added then
+                msg.Fields.duplicate_delta = {value_type = 2, value = delta, representation = cfg.interval_representation}
+            end
         end
 
         if process_json(hsr, msg, schema) then
