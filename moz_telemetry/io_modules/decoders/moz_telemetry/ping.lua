@@ -98,7 +98,6 @@ local function load_decoder_cfg()
 
     if cfg.cf_items then
         if not cf_interval_size then cfg.cf_interval_size = 1 end
-        cfg.interval_representation = tostring(cfg.cf_interval_size) .. "m"
         local cfe = require "cuckoo_filter_expire"
         dedupe = cfe.new(cfg.cf_items, cfg.cf_interval_size)
     end
@@ -442,6 +441,9 @@ local function process_json(hsr, msg, schema)
     return true
 end
 
+
+local duplicateDelta = {value_type = 2, value = 0, representation = tostring(cfg.cf_interval_size) .. "m"}
+
 function transform_message(hsr)
     if cfg.inject_raw then
         -- duplicate the raw message
@@ -486,7 +488,8 @@ function transform_message(hsr)
         if dedupe then
             local added, delta = dedupe:add(msg.Fields.documentId, msg.Timestamp)
             if not added then
-                msg.Fields.duplicate_delta = {value_type = 2, value = delta, representation = cfg.interval_representation}
+                duplicateDelta.value = delta
+                msg.Fields.duplicateDelta = duplicateDelta
             end
         end
 
