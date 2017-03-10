@@ -392,11 +392,13 @@ static int cf_current_interval(lua_State *lua)
 #ifdef LUA_SANDBOX
 static int cf_fromstring(lua_State *lua)
 {
-  cuckoo_filter *cf = check_cuckoo_filter(lua, 4);
+  if (lua_gettop(lua) == 4) {
+    lua_remove(lua, 3); // interval_size was removed from the API
+  }
+  cuckoo_filter *cf = check_cuckoo_filter(lua, 3);
   cf->cnt = (size_t)luaL_checknumber(lua, 2);
-  cf->interval_size = luaL_checkint(lua, 3);
   size_t len = 0;
-  const char *values = luaL_checklstring(lua, 4, &len);
+  const char *values = luaL_checklstring(lua, 3, &len);
   if (len != cf->bytes) {
     luaL_error(lua, "fromstring() bytes found: %d, expected %d", len,
                cf->bytes);
@@ -426,8 +428,7 @@ static int serialize_cuckoo_filter(lua_State *lua)
     return 1;
   }
 
-  if (lsb_outputf(ob, "%s:fromstring(%u, %d, \"", key, (unsigned)cf->cnt,
-                  cf->interval_size / 60)) {
+  if (lsb_outputf(ob, "%s:fromstring(%u, \"", key, (unsigned)cf->cnt)) {
     return 1;
   }
   if (lsb_serialize_binary(ob, cf->buckets, cf->bytes)) return 1;
