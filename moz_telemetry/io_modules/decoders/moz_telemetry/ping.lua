@@ -303,6 +303,7 @@ local function process_uri(hsr)
             return
         end
     end
+    msg.Fields.normalizedChannel = mtn.channel(msg.Fields.appUpdateChannel)
 
     return msg, schemas[msg.Fields.docType] or schemas.vacuous
 end
@@ -343,12 +344,6 @@ local function process_json(hsr, msg, schema)
             -- Special case for FxOS FTU pings
             msg.Fields.submission = doc
             msg.Fields.sourceVersion = tostring(ver)
-
-            -- Get some more dimensions.
-            local channel = msg.Fields.appUpdateChannel
-            if channel and type(channel) == "string" then
-                msg.Fields.normalizedChannel = mtn.channel(channel)
-            end
         else
             -- Old-style telemetry.
             local info = doc:find(info)
@@ -397,7 +392,6 @@ local function process_json(hsr, msg, schema)
         msg.Fields.appVersion           = doc:value(doc:find(app, "version"))
         msg.Fields.appBuildId           = doc:value(doc:find(app, "buildId"))
         msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
-        msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
         msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
 
         remove_objects(msg, doc, "environment", environment_objects)
