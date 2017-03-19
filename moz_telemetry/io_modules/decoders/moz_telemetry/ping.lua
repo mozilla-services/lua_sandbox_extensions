@@ -317,20 +317,22 @@ local function remove_objects(msg, doc, section, objects)
 
     for i, name in ipairs(objects) do
         local fieldname = string.format("%s.%s", section, name)
-        msg.Fields[fieldname] = doc:remove(v, name)
+        msg.Fields[fieldname] = doc:make_field(doc:remove_shallow(v, name))
     end
 end
 
 
+local submissionField = {value = nil, representation = "json"}
+local doc = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
 local function process_json(hsr, msg, schema)
-    local ok, doc = pcall(rjson.parse_message, hsr, cfg.content_field, nil, nil, true)
+    local ok, err = pcall(doc.parse_message, doc, hsr, cfg.content_field, nil, nil, true)
     if not ok then
         -- TODO: check for gzip errors and classify them properly
-        inject_error(hsr, "json", string.format("invalid submission: %s", doc), msg.Fields)
+        inject_error(hsr, "json", string.format("invalid submission: %s", err), msg.Fields)
         return false
     end
 
-    local ok, err = doc:validate(schema)
+    ok, err = doc:validate(schema)
     if not ok then
         inject_error(hsr, "json", string.format("%s schema validation error: %s", msg.Fields.docType, err), msg.Fields)
         return false
@@ -342,7 +344,8 @@ local function process_json(hsr, msg, schema)
     if ver then
         if ver == 3 then
             -- Special case for FxOS FTU pings
-            msg.Fields.submission = doc
+            submissionField.value = doc
+            msg.Fields.submission = submissionField
             msg.Fields.sourceVersion = tostring(ver)
         else
             -- Old-style telemetry.
@@ -351,7 +354,8 @@ local function process_json(hsr, msg, schema)
             -- if type(info) == nil then
             --     inject_error(hsr, "schema", string.format("missing info object"), msg.Fields)
             -- end
-            msg.Fields.submission = doc
+            submissionField.value = doc
+            msg.Fields.submission = submissionField
             msg.Fields.sourceVersion = tostring(ver)
 
             -- Get some more dimensions.
@@ -374,7 +378,8 @@ local function process_json(hsr, msg, schema)
         end
     elseif doc:value(doc:find("version")) then
         -- new code
-        msg.Fields.submission           = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
         local cts = doc:value(doc:find("creationDate"))
         if cts then
             msg.Fields.creationTimestamp = dt.time_to_ns(dt.rfc3339:match(cts))
@@ -399,7 +404,8 @@ local function process_json(hsr, msg, schema)
         -- /new code
     elseif doc:value(doc:find("deviceinfo")) ~= nil then
         -- Old 'appusage' ping, see Bug 982663
-        msg.Fields.submission           = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
 
         -- Special version for this old format
         msg.Fields.sourceVersion = "3"
@@ -422,10 +428,12 @@ local function process_json(hsr, msg, schema)
         msg.Fields.sourceVersion = tostring(doc:value(doc:find("v")))
         clientId = doc:value(doc:find("clientId"))
         msg.Fields.clientId = clientId
-        msg.Fields.submission = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
     else
         -- Everything else. Just store the submission in the submission field by default.
-        msg.Fields.submission = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
     end
 
     if type(msg.Fields.clientId) == "string" then
