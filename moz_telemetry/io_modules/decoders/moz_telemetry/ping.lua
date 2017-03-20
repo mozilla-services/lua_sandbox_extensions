@@ -98,7 +98,6 @@ local function load_decoder_cfg()
 
     if cfg.cf_items then
         if not cf_interval_size then cfg.cf_interval_size = 1 end
-        cfg.interval_representation = tostring(cfg.cf_interval_size) .. "m"
         local cfe = require "cuckoo_filter_expire"
         dedupe = cfe.new(cfg.cf_items, cfg.cf_interval_size)
     end
@@ -304,6 +303,7 @@ local function process_uri(hsr)
             return
         end
     end
+    msg.Fields.normalizedChannel = mtn.channel(msg.Fields.appUpdateChannel)
 
     return msg, schemas[msg.Fields.docType] or schemas.vacuous
 end
@@ -317,20 +317,22 @@ local function remove_objects(msg, doc, section, objects)
 
     for i, name in ipairs(objects) do
         local fieldname = string.format("%s.%s", section, name)
-        msg.Fields[fieldname] = doc:remove(v, name)
+        msg.Fields[fieldname] = doc:make_field(doc:remove_shallow(v, name))
     end
 end
 
 
+local submissionField = {value = nil, representation = "json"}
+local doc = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
 local function process_json(hsr, msg, schema)
-    local ok, doc = pcall(rjson.parse_message, hsr, cfg.content_field, nil, nil, true)
+    local ok, err = pcall(doc.parse_message, doc, hsr, cfg.content_field, nil, nil, true)
     if not ok then
         -- TODO: check for gzip errors and classify them properly
-        inject_error(hsr, "json", string.format("invalid submission: %s", doc), msg.Fields)
+        inject_error(hsr, "json", string.format("invalid submission: %s", err), msg.Fields)
         return false
     end
 
-    local ok, err = doc:validate(schema)
+    ok, err = doc:validate(schema)
     if not ok then
         inject_error(hsr, "json", string.format("%s schema validation error: %s", msg.Fields.docType, err), msg.Fields)
         return false
@@ -342,14 +344,9 @@ local function process_json(hsr, msg, schema)
     if ver then
         if ver == 3 then
             -- Special case for FxOS FTU pings
-            msg.Fields.submission = doc
+            submissionField.value = doc
+            msg.Fields.submission = submissionField
             msg.Fields.sourceVersion = tostring(ver)
-
-            -- Get some more dimensions.
-            local channel = msg.Fields.appUpdateChannel
-            if channel and type(channel) == "string" then
-                msg.Fields.normalizedChannel = mtn.channel(channel)
-            end
         else
             -- Old-style telemetry.
             local info = doc:find(info)
@@ -357,7 +354,8 @@ local function process_json(hsr, msg, schema)
             -- if type(info) == nil then
             --     inject_error(hsr, "schema", string.format("missing info object"), msg.Fields)
             -- end
-            msg.Fields.submission = doc
+            submissionField.value = doc
+            msg.Fields.submission = submissionField
             msg.Fields.sourceVersion = tostring(ver)
 
             -- Get some more dimensions.
@@ -380,7 +378,8 @@ local function process_json(hsr, msg, schema)
         end
     elseif doc:value(doc:find("version")) then
         -- new code
-        msg.Fields.submission           = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
         local cts = doc:value(doc:find("creationDate"))
         if cts then
             msg.Fields.creationTimestamp = dt.time_to_ns(dt.rfc3339:match(cts))
@@ -398,7 +397,6 @@ local function process_json(hsr, msg, schema)
         msg.Fields.appVersion           = doc:value(doc:find(app, "version"))
         msg.Fields.appBuildId           = doc:value(doc:find(app, "buildId"))
         msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
-        msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
         msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
 
         remove_objects(msg, doc, "environment", environment_objects)
@@ -406,7 +404,8 @@ local function process_json(hsr, msg, schema)
         -- /new code
     elseif doc:value(doc:find("deviceinfo")) ~= nil then
         -- Old 'appusage' ping, see Bug 982663
-        msg.Fields.submission           = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
 
         -- Special version for this old format
         msg.Fields.sourceVersion = "3"
@@ -429,10 +428,12 @@ local function process_json(hsr, msg, schema)
         msg.Fields.sourceVersion = tostring(doc:value(doc:find("v")))
         clientId = doc:value(doc:find("clientId"))
         msg.Fields.clientId = clientId
-        msg.Fields.submission = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
     else
         -- Everything else. Just store the submission in the submission field by default.
-        msg.Fields.submission = doc
+        submissionField.value = doc
+        msg.Fields.submission = submissionField
     end
 
     if type(msg.Fields.clientId) == "string" then
@@ -441,6 +442,9 @@ local function process_json(hsr, msg, schema)
 
     return true
 end
+
+
+local duplicateDelta = {value_type = 2, value = 0, representation = tostring(cfg.cf_interval_size) .. "m"}
 
 function transform_message(hsr)
     if cfg.inject_raw then
@@ -486,7 +490,8 @@ function transform_message(hsr)
         if dedupe then
             local added, delta = dedupe:add(msg.Fields.documentId, msg.Timestamp)
             if not added then
-                msg.Fields.duplicate_delta = {value_type = 2, value = delta, representation = cfg.interval_representation}
+                duplicateDelta.value = delta
+                msg.Fields.duplicateDelta = duplicateDelta
             end
         end
 

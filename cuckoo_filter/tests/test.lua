@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "cuckoo_filter"
-assert(cuckoo_filter.version() == "1.1.0", cuckoo_filter.version())
+assert(cuckoo_filter.version() == "1.1.1", cuckoo_filter.version())
 
 local errors = {
     function() local cf = cuckoo_filter.new(2, 99) end, -- new() incorrect # args
@@ -103,7 +103,7 @@ end
 
 
 require "cuckoo_filter_expire"
-assert(cuckoo_filter_expire.version() == "1.1.0", cuckoo_filter_expire.version())
+assert(cuckoo_filter_expire.version() == "1.1.1", cuckoo_filter_expire.version())
 
 local errors = {
     function() local cf = cuckoo_filter_expire.new(1024, 1, 3) end, -- new() incorrect # args

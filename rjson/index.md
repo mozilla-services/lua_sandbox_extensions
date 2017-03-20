@@ -95,6 +95,11 @@ Returns a string with the running version of rjson.
 
 ### JSON Document Methods
 
+#### parse
+#### parse_message (Heka sandbox only)
+Re-uses the document object to avoid GC costs/lag. Same arguments/returns as the
+rjson functions.
+
 #### validate
 
 Checks that the JSON document conforms to the specified schema.
@@ -131,8 +136,8 @@ assert(v, "not found")
 
 #### remove
 
-Searches for and NULL's out the resulting value in the JSON structure returning
-the extracted Heka JSON document.
+Searches for and removes the resulting value in the JSON structure returning
+the removed value in new document (full copy).
 
 ```lua
 local rv = doc:remove("obj", "arr")
@@ -147,7 +152,27 @@ rv:size() -- number of elements in the extracted array
 * keyN (string, number) - final object key, or array index
 
 *Return*
-* doc (userdata) - the object removed from the original JSON or nil
+* doc (userdata) - new document containing the removed value or nil
+
+#### remove_shallow
+
+Searches for and removes the resulting value in the JSON structure returning
+a reference to extracted JSON value (shallow copy).
+
+```lua
+local rv = doc:remove_shallow("obj", "arr")
+assert(rv, "not found")
+doc:size(rv) -- number of elements in the extracted array
+
+```
+*Arguments*
+* value (lightuserdata) - optional, when not specified the function is applied
+  to document
+* key (string, number) - object key, or array index
+* keyN (string, number) - final object key, or array index
+
+*Return*
+* value (lightuserdata) - value reference or nil
 
 #### value
 
@@ -239,4 +264,4 @@ inject_message(msg)
   inner expression)
 
 *Return*
-* field (table, nil) - i.e., `{value = v, userdata = doc}`
+* field (table, nil) - i.e., `{value = v, userdata = doc, representation = "json"}`
