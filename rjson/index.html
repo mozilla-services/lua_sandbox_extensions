@@ -87,7 +87,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/compat/index.html">compat (0.3.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.1.0)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.1.1)</a></li>
 </ul>
 <ul class="module-ul">
 <li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.4)</a></li>
@@ -272,7 +272,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.5)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.6)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -375,7 +375,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres (2.3.0)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.0.2)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.1.0)</a></li>
 </ul>
 <ul class="module-ul">
 <li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax (0.5.0)</a></li>
@@ -538,6 +538,9 @@ str <span class="ot">=</span> doc:find<span class="ot">(</span><span class="st">
 <li>Semantic version string</li>
 </ul>
 <h3 id="json-document-methods">JSON Document Methods</h3>
+<h4 id="parse-1">parse</h4>
+<h4 id="parse_message-heka-sandbox-only-1">parse_message (Heka sandbox only)</h4>
+<p>Re-uses the document object to avoid GC costs/lag. Same arguments/returns as the rjson functions.</p>
 <h4 id="validate">validate</h4>
 <p>Checks that the JSON document conforms to the specified schema.</p>
 <div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> ok<span class="ot">,</span> err <span class="ot">=</span> doc:validate<span class="ot">(</span>schema<span class="ot">)</span>
@@ -566,7 +569,7 @@ str <span class="ot">=</span> doc:find<span class="ot">(</span><span class="st">
 <li>value (lightuserdata) - handle to be passed to other methods, nil if not found</li>
 </ul>
 <h4 id="remove">remove</h4>
-<p>Searches for and NULL's out the resulting value in the JSON structure returning the extracted Heka JSON document.</p>
+<p>Searches for and removes the resulting value in the JSON structure returning the removed value in new document (full copy).</p>
 <div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> rv <span class="ot">=</span> doc:<span class="fu">remove</span><span class="ot">(</span><span class="st">&quot;obj&quot;</span><span class="ot">,</span> <span class="st">&quot;arr&quot;</span><span class="ot">)</span>
 <span class="fu">assert</span><span class="ot">(</span>rv<span class="ot">,</span> <span class="st">&quot;not found&quot;</span><span class="ot">)</span>
 rv:size<span class="ot">()</span> <span class="co">-- number of elements in the extracted array</span></code></pre></div>
@@ -578,7 +581,22 @@ rv:size<span class="ot">()</span> <span class="co">-- number of elements in the 
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>doc (userdata) - the object removed from the original JSON or nil</li>
+<li>doc (userdata) - new document containing the removed value or nil</li>
+</ul>
+<h4 id="remove_shallow">remove_shallow</h4>
+<p>Searches for and removes the resulting value in the JSON structure returning a reference to extracted JSON value (shallow copy).</p>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> rv <span class="ot">=</span> doc:remove_shallow<span class="ot">(</span><span class="st">&quot;obj&quot;</span><span class="ot">,</span> <span class="st">&quot;arr&quot;</span><span class="ot">)</span>
+<span class="fu">assert</span><span class="ot">(</span>rv<span class="ot">,</span> <span class="st">&quot;not found&quot;</span><span class="ot">)</span>
+doc:size<span class="ot">(</span>rv<span class="ot">)</span> <span class="co">-- number of elements in the extracted array</span></code></pre></div>
+<p><em>Arguments</em></p>
+<ul>
+<li>value (lightuserdata) - optional, when not specified the function is applied to document</li>
+<li>key (string, number) - object key, or array index</li>
+<li>keyN (string, number) - final object key, or array index</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>value (lightuserdata) - value reference or nil</li>
 </ul>
 <h4 id="value">value</h4>
 <p>Returns the primitive value of the JSON element.</p>
@@ -643,7 +661,7 @@ inject_message<span class="ot">(</span>msg<span class="ot">)</span></code></pre>
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>field (table, nil) - i.e., <code>{value = v, userdata = doc}</code></li>
+<li>field (table, nil) - i.e., <code>{value = v, userdata = doc, representation = &quot;json&quot;}</code></li>
 </ul>
 </div>
 </body>
