@@ -13,7 +13,7 @@
 #include <rapidjson/schema.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
-#include <set>
+#include <unordered_map>
 
 extern "C"
 {
@@ -35,12 +35,21 @@ int luaopen_rjson(lua_State *lua);
 
 namespace rj = rapidjson;
 
+typedef struct rjson_buffer
+{
+  unsigned char *buf;
+  size_t         len;
+  size_t         capacity;
+} rjson_buffer;
+
+
 typedef struct rjson
 {
-  rapidjson::Document           *doc;
-  rapidjson::Value              *val;
-  char                          *insitu;
-  std::set<rapidjson::Value *>  *refs;
+  rj::MemoryPoolAllocator<>             *mpa;
+  rj::Document                          *doc;
+  rj::Value                             *val;
+  std::unordered_map<rj::Value *, bool> *refs;
+  rjson_buffer                          insitu;
 } rjson;
 
 typedef struct rjson_schema
@@ -59,12 +68,29 @@ static const char *mozsvc_rjson_schema      = "mozsvc.rjson_schema";
 static const char *mozsvc_rjson_object_iter = "mozsvc.rjson_object_iter";
 
 
+static void init_rjson_buffer(rjson_buffer *b)
+{
+  b->buf = NULL;
+  b->len = 0;
+  b->capacity = 0;
+}
+
+
+static void init_rjson(rjson *j)
+{
+  j->mpa = new rj::MemoryPoolAllocator<>;
+  j->doc = new rj::Document(j->mpa);
+  j->val = NULL;
+  j->refs = new std::unordered_map<rj::Value *, bool>;
+  init_rjson_buffer(&j->insitu);
+}
+
+
 static rj::Value* check_value(lua_State *lua)
 {
   int n = lua_gettop(lua);
   luaL_argcheck(lua, n >= 1 && n <= 2, 0, "invalid number of arguments");
-  rjson *j = static_cast<rjson *>
-      (luaL_checkudata(lua, 1, mozsvc_rjson));
+  rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
   rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, 2));
   if (!v) {
     int t = lua_type(lua, 2);
@@ -80,6 +106,7 @@ static rj::Value* check_value(lua_State *lua)
   }
   return v;
 }
+
 
 static int schema_gc(lua_State *lua)
 {
@@ -99,14 +126,27 @@ static int iter_gc(lua_State *lua)
 }
 
 
+static void delete_owned_refs(std::unordered_map<rj::Value *, bool> *refs)
+{
+  auto end = refs->end();
+  for (auto it = refs->begin(); it != end; ++it) {
+    if (it->second) {
+      delete(it->first);
+      it->second = false;
+    }
+  }
+}
+
+
 static int rjson_gc(lua_State *lua)
 {
-  rjson *j = static_cast<rjson *>
-      (luaL_checkudata(lua, 1, mozsvc_rjson));
+  rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
+  delete_owned_refs(j->refs);
   delete(j->refs);
-  delete(j->doc);
   delete(j->val);
-  free(j->insitu);
+  delete(j->doc);
+  RAPIDJSON_DELETE(j->mpa);
+  free(j->insitu.buf);
   return 0;
 }
 
@@ -148,10 +188,7 @@ static int rjson_parse(lua_State *lua)
     luaL_typerror(lua, 2, "boolean");
   }
   rjson *j = static_cast<rjson *>(lua_newuserdata(lua, sizeof*j));
-  j->doc = new rj::Document;
-  j->val = NULL;
-  j->insitu = NULL;
-  j->refs = new std::set<rj::Value *>;
+  init_rjson(j);
   luaL_getmetatable(lua, mozsvc_rjson);
   lua_setmetatable(lua, -2);
 
@@ -175,7 +212,47 @@ static int rjson_parse(lua_State *lua)
       }
     }
   }
-  j->refs->insert(j->doc);
+  j->refs->insert(std::make_pair(j->doc, false));
+  return 1;
+}
+
+
+static int rjson_dparse(lua_State *lua)
+{
+  rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
+  delete(j->val);
+  j->val = NULL;
+  j->insitu.len = 0;
+  delete_owned_refs(j->refs);
+  j->refs->clear();
+  j->mpa->Clear();
+
+  const char *json = luaL_checkstring(lua, 2);
+  bool validate = false;
+  int t = lua_type(lua, 3);
+  if (t == LUA_TNONE || t == LUA_TNIL || LUA_TBOOLEAN) {
+    validate = lua_toboolean(lua, 3);
+  } else {
+    luaL_typerror(lua, 3, "boolean");
+  }
+
+  if (validate) {
+    if (j->doc->Parse<rj::kParseValidateEncodingFlag>(json).HasParseError()) {
+      lua_pushfstring(lua, "failed to parse offset:%f %s",
+                      (lua_Number)j->doc->GetErrorOffset(),
+                      rj::GetParseError_En(j->doc->GetParseError()));
+      return lua_error(lua);
+    }
+  } else {
+    if (j->doc->Parse(json).HasParseError()) {
+      lua_pushfstring(lua, "failed to parse offset:%f %s",
+                      (lua_Number)j->doc->GetErrorOffset(),
+                      rj::GetParseError_En(j->doc->GetParseError()));
+      return lua_error(lua);
+    }
+  }
+  j->refs->insert(std::make_pair(j->doc, false));
+  lua_pushvalue(lua, 1);
   return 1;
 }
 
@@ -211,9 +288,7 @@ static int rjson_validate(lua_State *lua)
 
 static int rjson_find(lua_State *lua)
 {
-  rjson *j = static_cast<rjson *>
-      (luaL_checkudata(lua, 1, mozsvc_rjson));
-
+  rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
   int start = 3;
   rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, 2));
   if (!v) {
@@ -259,7 +334,7 @@ static int rjson_find(lua_State *lua)
       return 1;
     }
   }
-  j->refs->insert(v);
+  j->refs->insert(std::make_pair(v, false));
   lua_pushlightuserdata(lua, v);
   return 1;
 }
@@ -341,7 +416,7 @@ static int rjson_object_iter(lua_State *lua)
 
   if (*hoi->it != *hoi->end) {
     rj::Value *next = &(*hoi->it)->value;
-    j->refs->insert(next);
+    j->refs->insert(std::make_pair(next, false));
     lua_pushlstring(lua, (*hoi->it)->name.GetString(),
                     (size_t)(*hoi->it)->name.GetStringLength());
     lua_pushlightuserdata(lua, next);
@@ -367,7 +442,7 @@ static int rjson_array_iter(lua_State *lua)
 
   if (it != end) {
     rj::Value *next = &(*v)[it];
-    j->refs->insert(next);
+    j->refs->insert(std::make_pair(next, false));
     lua_pushnumber(lua, (lua_Number)it);
     lua_pushlightuserdata(lua, next);
 
@@ -459,52 +534,137 @@ static int rjson_iter(lua_State *lua)
 }
 
 
+static rj::Value* remove_value(lua_State *lua, bool shallow)
+{
+  rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
+  rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, 2));
+  rj::Value *rv = NULL;
+
+  int n = lua_gettop(lua);
+  int start = 3;
+  if (!v) {
+    start = 2;
+    v = j->doc ? j->doc : j->val;
+  } else if (j->refs->find(v) == j->refs->end()) {
+    luaL_error(lua, "invalid value");
+  }
+  if (n == start - 1) {
+    luaL_error(lua, "cannot remove the root");
+  }
+
+  for (int i = start; i <= n; ++i) {
+    switch (lua_type(lua, i)) {
+    case LUA_TSTRING:
+      {
+        if (!v->IsObject()) {
+          return rv;
+        }
+        rj::Value::MemberIterator itr = v->FindMember(lua_tostring(lua, i));
+        if (itr == v->MemberEnd()) {
+          return rv;
+        }
+        if (i == n) {
+          j->refs->erase(&itr->value);
+          rv = new rj::Value;
+          if (shallow) {
+            j->refs->insert(std::make_pair(rv, true));
+          }
+          *rv = itr->value; // move the value out replacing the original with NULL
+          v->RemoveMember(itr);
+        } else {
+          v = &itr->value;
+        }
+      }
+      break;
+    case LUA_TNUMBER:
+      {
+        if (!v->IsArray()) {
+          return rv;
+        }
+        rj::SizeType idx = static_cast<rj::SizeType>(lua_tonumber(lua, i));
+        if (idx >= v->Size()) {
+          return rv;
+        }
+        if (i == n) {
+          j->refs->erase(&(*v)[idx]);
+          rv = new rj::Value;
+          if (shallow) {
+            j->refs->insert(std::make_pair(rv, true));
+          }
+          *rv = (*v)[idx]; // move the value out replacing the original with NULL
+          v->Erase(v->Begin() + idx);
+        } else {
+          v = &(*v)[idx];
+        }
+      }
+      break;
+    default:
+      break;
+    }
+  }
+  return rv;
+}
+
+
 static int rjson_remove(lua_State *lua)
 {
-  rjson_find(lua);
-  rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, -1));
+  rj::Value *v = remove_value(lua, false);
   if (!v) {
     lua_pushnil(lua);
     return 1;
   }
-
-  rjson *j = static_cast<rjson *>
-      (luaL_checkudata(lua, 1, mozsvc_rjson));
-
   rjson *nv = static_cast<rjson *>(lua_newuserdata(lua, sizeof*nv));
+  nv->mpa = new rj::MemoryPoolAllocator<>;
   nv->doc = NULL;
-  nv->val = new rj::Value;
-  nv->insitu = NULL;
-  nv->refs = new std::set<rj::Value *>;
+  nv->val = new rj::Value(*v, *nv->mpa); // deep copy
+  nv->refs = new std::unordered_map<rj::Value *, bool>;
+  init_rjson_buffer(&nv->insitu);
   luaL_getmetatable(lua, mozsvc_rjson);
   lua_setmetatable(lua, -2);
+  delete(v);
 
   if (!nv->val || !nv->refs) {
     lua_pushstring(lua, "memory allocation failed");
     return lua_error(lua);
   }
+  nv->refs->insert(std::make_pair(nv->val, false));
+  return 1;
+}
 
-  *nv->val = *v; // move the value out replacing the original with NULL
-  j->refs->erase(v);
-  nv->refs->insert(nv->val);
+
+static int rjson_remove_shallow(lua_State *lua)
+{
+  rj::Value *v = remove_value(lua, true);
+  if (!v) {
+    lua_pushnil(lua);
+    return 1;
+  }
+  lua_pushlightuserdata(lua, v);
   return 1;
 }
 
 
 #ifdef LUA_SANDBOX
 #ifdef HAVE_ZLIB
-static char* ungzip(const char *s, size_t s_len, size_t max_len, size_t *r_len)
+bool ungzip(const char *s, size_t s_len, size_t max_len, rjson_buffer *b)
 {
   if (!s || (max_len && s_len > max_len)) {
-    return NULL;
+    return false;
   }
-  size_t buf_len = 2 * s_len;
-  if (max_len && buf_len > max_len) {
-    buf_len = max_len;
+
+  size_t len = s_len * 2;
+  if (max_len && len > max_len) {
+    len = max_len;
   }
-  unsigned char *buf = static_cast<unsigned char *>(malloc(buf_len));
-  if (!buf) {
-    return NULL;
+  b->len = 0;
+  if (b->capacity < len) {
+    unsigned char *tmp = static_cast<unsigned char *>(realloc(b->buf, len));
+    if (tmp) {
+      b->buf = tmp;
+      b->capacity = len;
+    } else {
+      return false;
+    }
   }
 
   z_stream strm;
@@ -513,33 +673,33 @@ static char* ungzip(const char *s, size_t s_len, size_t max_len, size_t *r_len)
   strm.opaque     = Z_NULL;
   strm.avail_in   = s_len;
   strm.next_in    = (unsigned char *)s;
-  strm.avail_out  = buf_len;
-  strm.next_out   = buf;
+  strm.avail_out  = b->capacity;
+  strm.next_out   = b->buf;
 
   int ret = inflateInit2(&strm, 16 + MAX_WBITS);
   if (ret != Z_OK) {
-    free(buf);
-    return NULL;
+    return false;
   }
 
   do {
     if (ret == Z_BUF_ERROR) {
-      if (max_len && buf_len == max_len) {
+      if (max_len && b->capacity == max_len) {
         ret = Z_MEM_ERROR;
         break;
       }
-      buf_len *= 2;
-      if (max_len && buf_len > max_len) {
-        buf_len = max_len;
+      len = b->capacity * 2;
+      if (max_len && len > max_len) {
+        len = max_len;
       }
-      unsigned char *tmp = static_cast<unsigned char *>(realloc(buf, buf_len));
-      if (!tmp) {
-        ret = Z_MEM_ERROR;
-        break;
+      unsigned char *tmp = static_cast<unsigned char *>(realloc(b->buf, len));
+      if (tmp) {
+        b->buf = tmp;
+        b->capacity = len;
+        strm.avail_out = b->capacity - strm.total_out;
+        strm.next_out = b->buf + strm.total_out;
       } else {
-        buf = tmp;
-        strm.avail_out = buf_len - strm.total_out;
-        strm.next_out = buf + strm.total_out;
+        ret = Z_MEM_ERROR;
+        break;
       }
     }
     ret = inflate(&strm, Z_FINISH);
@@ -547,11 +707,10 @@ static char* ungzip(const char *s, size_t s_len, size_t max_len, size_t *r_len)
 
   inflateEnd(&strm);
   if (ret != Z_STREAM_END) {
-    free(buf);
-    return NULL;
+    return false;
   }
-  if (r_len) *r_len = strm.total_out;
-  return (char *)buf;
+  b->len = strm.total_out;
+  return true;
 }
 #endif
 
@@ -592,11 +751,13 @@ static int rjson_make_field(lua_State *lua)
     return 1;
   }
 
-  lua_createtable(lua, 0, 2);
+  lua_createtable(lua, 0, 3);
   lua_pushlightuserdata(lua, (void *)v);
   lua_setfield(lua, -2, "value");
   lua_pushvalue(lua, 1);
   lua_setfield(lua, -2, "userdata");
+  lua_pushstring(lua, "json");
+  lua_setfield(lua, -2, "representation");
   return 1;
 }
 
@@ -651,6 +812,62 @@ static lsb_const_string read_message(lua_State *lua, int idx,
 }
 
 
+static void json_decode(lua_State *lua, rjson *j, lsb_const_string *json,
+                        bool validate)
+{
+  unsigned char *inflated = NULL;
+#ifdef HAVE_ZLIB
+  // automatically handle gzipped strings
+  // (optimization for Mozilla telemetry messages)
+  if (json->len > 2) {
+    if (json->s[0] == 0x1f && (unsigned char)json->s[1] == 0x8b) {
+      size_t mms = (size_t)lua_tointeger(lua, lua_upvalueindex(1));
+      if (!ungzip(json->s, json->len, mms, &j->insitu)) {
+        luaL_error(lua, "ungzip failed");
+      }
+      inflated = j->insitu.buf;
+    }
+  }
+#endif
+
+  if (!inflated) {
+    size_t len = json->len + 1;
+    if (j->insitu.capacity < len) {
+      unsigned char *tmp = static_cast<unsigned char *>(realloc(j->insitu.buf, len));
+      if (tmp) {
+        j->insitu.buf = tmp;
+        j->insitu.capacity = len;
+      } else {
+        lua_pushstring(lua, "memory allocation failed");
+        lua_error(lua);
+      }
+    }
+    memcpy(j->insitu.buf, json->s, len);
+    j->insitu.len = len - 1;
+  }
+
+  bool err = false;
+  if (validate) {
+    if (j->doc->ParseInsitu < rj::kParseValidateEncodingFlag | rj::kParseStopWhenDoneFlag > (reinterpret_cast<char *>(j->insitu.buf)).HasParseError()) {
+      err = true;
+      lua_pushfstring(lua, "failed to parse offset:%f %s",
+                      (lua_Number)j->doc->GetErrorOffset(),
+                      rj::GetParseError_En(j->doc->GetParseError()));
+    }
+  } else {
+    if (j->doc->ParseInsitu<rj::kParseStopWhenDoneFlag>(reinterpret_cast<char *>(j->insitu.buf)).HasParseError()) {
+      err = true;
+      lua_pushfstring(lua, "failed to parse offset:%f %s",
+                      (lua_Number)j->doc->GetErrorOffset(),
+                      rj::GetParseError_En(j->doc->GetParseError()));
+    }
+  }
+
+  if (err) lua_error(lua);
+  j->refs->insert(std::make_pair(j->doc, false));
+}
+
+
 static int rjson_parse_message(lua_State *lua)
 {
   lua_getfield(lua, LUA_REGISTRYINDEX, LSB_HEKA_THIS_PTR);
@@ -689,24 +906,8 @@ static int rjson_parse_message(lua_State *lua)
   lsb_const_string json = read_message(lua, idx, msg);
   if (!json.s) return luaL_error(lua, "field not found");
 
-  char *inflated = NULL;
-#ifdef HAVE_ZLIB
-  // automatically handle gzipped strings (optimization for Mozilla telemetry
-  // messages)
-  if (json.len > 2) {
-    if (json.s[0] == 0x1f && (unsigned char)json.s[1] == 0x8b) {
-      size_t mms = (size_t)lua_tointeger(lua, lua_upvalueindex(1));
-      inflated = ungzip(json.s, json.len, mms, NULL);
-      if (!inflated) return luaL_error(lua, "ungzip failed");
-    }
-  }
-#endif
-
   rjson *j = static_cast<rjson *>(lua_newuserdata(lua, sizeof*j));
-  j->doc = new rj::Document;
-  j->val = NULL;
-  j->insitu = inflated;
-  j->refs =  new std::set<rj::Value *>;
+  init_rjson(j);
   luaL_getmetatable(lua, mozsvc_rjson);
   lua_setmetatable(lua, -2);
 
@@ -714,46 +915,59 @@ static int rjson_parse_message(lua_State *lua)
     lua_pushstring(lua, "memory allocation failed");
     return lua_error(lua);
   }
+  json_decode(lua, j, &json, validate);
+  return 1;
+}
 
-  bool err = false;
-  if (validate) {
-    if (j->insitu) {
-      if (j->doc->ParseInsitu<rj::kParseValidateEncodingFlag | rj::kParseStopWhenDoneFlag>(j->insitu).HasParseError()) {
-        err = true;
-        lua_pushfstring(lua, "failed to parse offset:%f %s",
-                        (lua_Number)j->doc->GetErrorOffset(),
-                        rj::GetParseError_En(j->doc->GetParseError()));
-      }
-    } else {
-      rj::MemoryStream ms(json.s, json.len);
-      if (j->doc->ParseStream<rj::kParseValidateEncodingFlag, rj::UTF8<> >(ms).HasParseError()) {
-        err = true;
-        lua_pushfstring(lua, "failed to parse offset:%f %s",
-                        (lua_Number)j->doc->GetErrorOffset(),
-                        rj::GetParseError_En(j->doc->GetParseError()));
-      }
-    }
+
+static int rjson_dparse_message(lua_State *lua)
+{
+  lua_getfield(lua, LUA_REGISTRYINDEX, LSB_HEKA_THIS_PTR);
+  lsb_heka_sandbox *hsb =
+      static_cast<lsb_heka_sandbox *>(lua_touserdata(lua, -1));
+  lua_pop(lua, 1); // remove this ptr
+  if (!hsb) {
+    return luaL_error(lua, "parse_message() invalid " LSB_HEKA_THIS_PTR);
+  }
+  int n = lua_gettop(lua);
+  int idx = 2;
+
+  rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
+  delete(j->val);
+  j->val = NULL;
+  j->insitu.len = 0;
+  delete_owned_refs(j->refs);
+  j->refs->clear();
+  j->mpa->Clear();
+
+  const lsb_heka_message *msg = NULL;
+  if (lsb_heka_get_type(hsb) == 'i') {
+    luaL_argcheck(lua, n >= 3 && n <= 6, 0, "invalid number of arguments");
+    heka_stream_reader *hsr = static_cast<heka_stream_reader *>
+        (luaL_checkudata(lua, 2, LSB_HEKA_STREAM_READER));
+    msg = &hsr->msg;
+    idx = 3;
   } else {
-    if (j->insitu) {
-      if (j->doc->ParseInsitu<rj::kParseStopWhenDoneFlag>(j->insitu).HasParseError()) {
-        err = true;
-        lua_pushfstring(lua, "failed to parse offset:%f %s",
-                        (lua_Number)j->doc->GetErrorOffset(),
-                        rj::GetParseError_En(j->doc->GetParseError()));
-      }
-    } else {
-      rj::MemoryStream ms(json.s, json.len);
-      if (j->doc->ParseStream<0, rj::UTF8<> >(ms).HasParseError()) {
-        err = true;
-        lua_pushfstring(lua, "failed to parse offset:%f %s",
-                        (lua_Number)j->doc->GetErrorOffset(),
-                        rj::GetParseError_En(j->doc->GetParseError()));
-      }
+    luaL_argcheck(lua, n >= 2 && n <= 5, 0, "invalid number of arguments");
+    const lsb_heka_message *hm = lsb_heka_get_message(hsb);
+    if (!hm || !hm->raw.s) {
+      return luaL_error(lua, "parse_message() no active message");
     }
+    msg = hm;
+  }
+  bool validate = false;
+  int t = lua_type(lua, idx + 3);
+  if (t == LUA_TNONE || t == LUA_TNIL || LUA_TBOOLEAN) {
+    validate = lua_toboolean(lua, idx + 3);
+  } else {
+    luaL_typerror(lua, idx + 3, "boolean");
   }
 
-  if (err) return lua_error(lua);
-  j->refs->insert(j->doc);
+  lsb_const_string json = read_message(lua, idx, msg);
+  if (!json.s) return luaL_error(lua, "field not found");
+
+  json_decode(lua, j, &json, validate);
+  lua_pushvalue(lua, 1);
   return 1;
 }
 #endif
@@ -790,6 +1004,7 @@ static const struct luaL_reg rjsonlib_f[] =
 
 static const struct luaL_reg rjsonlib_m[] =
 {
+  { "parse", rjson_dparse },
   { "validate", rjson_validate },
   { "type", rjson_type },
   { "find", rjson_find },
@@ -797,6 +1012,7 @@ static const struct luaL_reg rjsonlib_m[] =
   { "iter", rjson_iter },
   { "size", rjson_size },
   { "remove", rjson_remove },
+  { "remove_shallow", rjson_remove_shallow },
   { "__gc", rjson_gc },
   { NULL, NULL }
 };
@@ -843,7 +1059,12 @@ int luaopen_rjson(lua_State *lua)
     }
     lua_getfield(lua, -1, LSB_HEKA_MAX_MESSAGE_SIZE);
     lua_pushcclosure(lua, rjson_parse_message, 1);
-    lua_setfield(lua, -3, "parse_message");
+    lua_setfield(lua, -3, "parse_message"); // add to the rjson API
+
+    lua_getfield(lua, -1, LSB_HEKA_MAX_MESSAGE_SIZE);
+    lua_pushcclosure(lua, rjson_dparse_message, 1);
+    lua_setfield(lua, -4, "parse_message"); // add to the document API
+
     lua_pop(lua, 1); // remove LSB_CONFIG_TABLE
   }
 #endif

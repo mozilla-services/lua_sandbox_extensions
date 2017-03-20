@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "rjson"
-assert(rjson.version() == "1.0.2", rjson.version())
+assert(rjson.version() == "1.1.0", rjson.version())
 
 schema_json = [[{
     "type":"object",
@@ -187,14 +187,28 @@ assert(not ok)
 assert("invalid value" == err, err)
 
 assert("object" == doc:type(), doc:type());
-rdoc = doc:remove()
-assert("null" == doc:type(), doc:type());
-foo = rdoc:find("foo")
-assert("bar" == rdoc:value(foo), tostring(doc:value(foo)))
+assert(doc:size() == 1, doc:size())
+ok, err = pcall(doc.remove, doc)
+assert(err == "cannot remove the root", err)
+rdoc = doc:remove("foo")
+assert("object" == doc:type(), doc:type());
+assert(doc:size() == 0, doc:size())
+assert("bar" == rdoc:value(), tostring(rdoc:value()))
 
-assert("object" == rdoc:type(), rdoc:type());
+assert("string" == rdoc:type(), rdoc:type());
 nrdoc = rdoc:remove("foo")
-assert("object" == rdoc:type(), rdoc:type());
+assert("string" == rdoc:type(), rdoc:type());
+
+ok, doc = pcall(rjson.parse, "{\"foo\":\"bar\"}")
+assert(ok, doc)
+assert("object" == doc:type(), doc:type());
+assert(doc:size() == 1, doc:size())
+rdoc = doc:remove_shallow("foo")
+assert("object" == doc:type(), doc:type());
+assert(doc:size() == 0, doc:size())
+ok, err = pcall(doc.remove, doc, rdoc)
+assert(err == "cannot remove the root", err)
+assert("bar" == doc:value(rdoc), tostring(doc:value(rdoc)))
 
 nested = '{"main":{"m1":1}, "payload":{"values":[1,2,3]}}'
 json = rjson.parse(nested)
@@ -229,6 +243,7 @@ assert(json)
 values = json:find("payload", "values")
 vit = json:iter(values)
 rvalues = json:remove("payload", "values")
+assert(2 == rvalues:value(rvalues:find(1)))
 ok, err = pcall(vit)
 assert(err == "iterator has been invalidated")
 schema_array = [[{
@@ -239,6 +254,11 @@ schema_array = [[{
 sa = rjson.parse_schema(schema_array)
 assert(sa)
 assert(rvalues:validate(sa))
+
+json = json:parse(nested) -- re-use the object
+assert(json)
+assert(json:size() == 2, json:size())
+assert(2 == rvalues:value(rvalues:find(1))) -- use an object extracted from the old doc
 
 assert(nil == doc:find(nil))
 assert(nil == doc:find(nil))
