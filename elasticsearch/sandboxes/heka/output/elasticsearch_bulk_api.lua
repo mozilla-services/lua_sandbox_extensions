@@ -73,6 +73,7 @@ local pcreate_client = socket.protect(create_client);
 
 local req_headers = {
     ["user-agent"]      = http.USERAGENT,
+    ["content-type"]    = "application/x-ndjson",
     ["content-length"]  = 0,
     ["host"]            = address .. ":" .. port,
     ["accept"]          = "application/json",
