@@ -13,6 +13,8 @@ Sum an array of numbers ignoring NaN.
 
 *Arguments*
 - array (table)
+- start (number, nil) - start index in the array (if nil 1)
+- end (number, nil) - end index in the array (if nil #array)
 
 *Return*
 - sum (number)
@@ -24,6 +26,8 @@ Average an array of numbers ignoring NaN.
 
 *Arguments*
 - array (table)
+- start (number, nil) - start index in the array (if nil 1)
+- end (number, nil) - end index in the array (if nil #array)
 
 *Return*
 - avg (number)
@@ -35,6 +39,8 @@ Return the minimum value in an array of numbers.
 
 *Arguments*
 - array (table)
+- start (number, nil) - start index in the array (if nil 1)
+- end (number, nil) - end index in the array (if nil #array)
 
 *Return*
 - min (number)
@@ -46,6 +52,8 @@ Return the maximum value in an array of numbers.
 
 *Arguments*
 - array (table)
+- start (number, nil) - start index in the array (if nil 1)
+- end (number, nil) - end index in the array (if nil #array)
 
 *Return*
 - max (number)
@@ -57,6 +65,8 @@ Return the variance of an array of numbers.
 
 *Arguments*
 - array (table)
+- start (number, nil) - start index in the array (if nil 1)
+- end (number, nil) - end index in the array (if nil #array)
 
 *Return*
 - variance (number)
@@ -68,6 +78,8 @@ Return the standard deviation of an array of numbers.
 
 *Arguments*
 - array (table)
+- start (number, nil) - start index in the array (if nil 1)
+- end (number, nil) - end index in the array (if nil #array)
 
 *Return*
 - sd (number)
@@ -125,11 +137,14 @@ local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 
-function sum(a)
+function sum(a, s, e)
+    if not s then s = 1 end
+    if not e then e = #a end
     local sum = 0
     local count = 0
-    for i,v in ipairs(a) do
-        if v == v then -- test for NaN
+    for i = s, e do
+        local v = a[i]
+        if v and v == v then -- test for NaN
             sum = sum + v
             count = count + 1
         end
@@ -138,18 +153,21 @@ function sum(a)
 end
 
 
-function avg(a)
-    local sum, count = sum(a)
+function avg(a, s, e)
+    local sum, count = sum(a, s, e)
     if count == 0 then return 0, 0 end
     return sum / count, count
 end
 
 
-function min(a)
+function min(a, s, e)
+    if not s then s = 1 end
+    if not e then e = #a end
     local mv = huge
     local count = 0
-    for i,v in ipairs(a) do
-        if v == v then -- test for NaN
+    for i = s, e do
+        local v = a[i]
+        if v and v == v then -- test for NaN
             if v < mv then mv = v end
             count = count + 1
         end
@@ -159,11 +177,15 @@ function min(a)
 end
 
 
-function max(a)
+function max(a, s, e)
+    if not s then s = 1 end
+    if not e then e = #a end
+
     local mv = -huge
     local count = 0
-    for i,v in ipairs(a) do
-        if v == v then -- test for NaN
+    for i = s, e do
+        local v = a[i]
+        if v and v == v then -- test for NaN
             if v > mv then mv = v end
             count = count + 1
         end
@@ -173,13 +195,17 @@ function max(a)
 end
 
 
-function variance(a)
-    local avg, count = avg(a)
+function variance(a, s, e)
+    if not s then s = 1 end
+    if not e then e = #a end
+
+    local avg, count = avg(a, s, e)
     if count == 0 then return avg, count end
 
     local sos = 0
-    for i,v in ipairs(a) do
-        if v == v then -- test for NaN
+    for i = s, e do
+        local v = a[i]
+        if v and v == v then -- test for NaN
             v = v - avg
             sos = sos + v * v
         end
@@ -188,8 +214,8 @@ function variance(a)
 end
 
 
-function sd(a)
-    local v, c = variance(a)
+function sd(a, s, e)
+    local v, c = variance(a, s, e)
     return sqrt(v), c
 end
 
