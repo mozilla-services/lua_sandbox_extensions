@@ -27,6 +27,27 @@ local function test_basic_stats()
 end
 
 
+local range_tests = {
+    {sum = 6, avg = 2, min = 1, max = 3, variance = 2/3, sd = math.sqrt(2/3), array = {0/0,1,2,3,4}, size = 3},
+    {sum = 0, avg = 0, min = 0/0, max = 0/0, variance = 0, sd = 0, array = {0/0,0/0,0/0}, size = 0}
+}
+
+local function test_range_stats()
+    for i,v in ipairs(range_tests) do
+        for m, stat in ipairs({"sum", "avg", "min", "max", "variance", "sd"}) do
+            local d, c = stats[stat](v.array, 2, 4)
+            local expected = v[stat]
+            if expected == expected then
+                assert(d == v[stat], string.format("test: %d stat: %s received: %s", i, stat, tostring(d)))
+            else
+                assert(d ~= d, string.format("test: %d stat: %s received: %s", i, stat, tostring(d)))
+            end
+            assert(c == v.size, string.format("test: %d stat: %s size: %s", i, stat, tostring(c)))
+        end
+    end
+end
+
+
 local ndtr_tests = {
     {d = 0/0, x = 0/0},
     {d = 0.841344, x = 1},
@@ -81,5 +102,6 @@ end
 
 
 test_basic_stats()
+test_range_stats()
 test_ndtr()
 test_mannwhitneyu()

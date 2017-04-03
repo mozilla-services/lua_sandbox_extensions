@@ -478,6 +478,7 @@ function transform_message(hsr)
         msg.Fields.geoCity         = hsr:read_message("Fields[geoCity]")
         msg.Fields.submissionDate  = os.date("%Y%m%d", hsr:read_message("Timestamp") / 1e9)
         msg.Fields.sourceName      = "telemetry"
+        msg.Fields["X-PingSender-Version"] = hsr:read_message("Fields[X-PingSender-Version]")
 
         -- insert geo info if necessary
         if city_db and not msg.Fields.geoCountry then
