@@ -241,6 +241,23 @@ prog_grammar["dhcpd"] = l.Ct(
                         * l.Cg(l.P(1)^1, "dhcp_message")
                       ))
 
+-- programname=groupadd
+prog_grammar["groupadd"] = l.Ct(
+                        (
+                            l.P"new group: name="
+                          * capture_followed_by("group_name", ", GID=")
+                          * l.Cg(l.digit^1 / tonumber, "gid")
+                          * l.P(-1)
+                        ))
+
+-- programname=groupdel
+prog_grammar["groupdel"] = l.Ct(
+                        (
+                            l.P"group '"
+                          * capture_followed_by("group_name", "' removed")
+                          * (l.P" from " * l.Cg(l.P(1)^1, "group_dbname"))^-1
+                        ))
+
 -- programname=login
 prog_grammar["login"] = l.Ct(
                       (
@@ -260,23 +277,6 @@ prog_grammar["login"] = l.Ct(
                         * (l.P" from '" * capture_followed_by("from", "'"))^-1
                         * l.P(-1)
                       ))
-
--- programname=groupadd
-prog_grammar["groupadd"] = l.Ct(
-                        (
-                            l.P"new group: name="
-                          * capture_followed_by("group_name", ", GID=")
-                          * l.Cg(l.digit^1 / tonumber, "gid")
-                          * l.P(-1)
-                        ))
-
--- programname=groupdel
-prog_grammar["groupdel"] = l.Ct(
-                        (
-                            l.P"group '"
-                          * capture_followed_by("group_name", "' removed")
-                          * (l.P" from " * l.Cg(l.P(1)^1, "group_dbname"))^-1
-                        ))
 
 -- programname=named
 prog_grammar["named"] = l.Ct(
