@@ -14,7 +14,7 @@
 ### encode
 
 Creates the ElasticSearch bulk API index JSON and combines it with the
-pre-formatted JSON from the message payload (a new line is added if necessary).
+JSON created by iterating the Heka message Fields.
 
 *Arguments*
 - none
