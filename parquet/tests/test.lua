@@ -4,7 +4,7 @@
 
 require "string"
 require "parquet"
-assert(parquet.version() == "0.0.5", parquet.version())
+assert(parquet.version() == "0.0.6", parquet.version())
 local parser = require "lpeg.parquet"
 
 local r1 = {
@@ -365,3 +365,39 @@ local function test_list_dissection_errors()
 end
 
 test_list_dissection_errors()
+
+
+local tuple_schema = [[
+message Document {
+  required group element (TUPLE) {
+    required int64 timestamp;
+    required binary category (UTF8);
+    required binary method (UTF8);
+    required binary object (UTF8);
+    optional binary value (UTF8);
+    optional group extra (MAP) {
+      repeated group key_value {
+        required binary key (UTF8);
+        required binary value (UTF8);
+      }
+    }
+  }
+}
+]]
+
+local function test_tuple_dissection()
+    local recs = {
+        {element = {123450, "cat", "met", "obj"}},
+        {element = {123451, "cat1", "met1", "obj1", "val1"}},
+        {element = {123452, "cat2", "met2", "obj2", "val2", {foo = "bar2"}}},
+        {element = {123453, "cat3", "met3", "obj3",  nil, {foo = "bar3"}}},
+    }
+    local s =  parser.load_parquet_schema(tuple_schema)
+    local w = parquet.writer("tuple.parquet", s)
+    for i,v in ipairs(recs) do
+        local ok, err = pcall(w.dissect_record, w, v)
+        assert(ok, string.format("Test: %d err: %s", i, tostring(err)))
+    end
+end
+
+test_tuple_dissection()
