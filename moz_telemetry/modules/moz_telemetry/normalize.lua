@@ -167,6 +167,7 @@ local normalize_channel_grammar =
 l.C"release" * -1 +
 l.C"beta" +
 (l.P("nightly") * -1 + "nightly-cck-") / "nightly" +
+l.C"esr" * -1 +
 l.C"aurora" * -1 +
 l.Cc"Other"
 
@@ -229,7 +230,7 @@ function country(name)
     return name
 end
 
-local channel_names = {"Other", "release", "beta", "nightly", "aurora"}
+local channel_names = {"Other", "release", "beta", "nightly", "aurora", "esr"}
 local channel_ids = {}
 for i, v in ipairs(channel_names) do
     channel_ids[v] = i - 1
