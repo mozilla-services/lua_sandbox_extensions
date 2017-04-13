@@ -11,7 +11,7 @@ find_library(LIBRDKAFKA_LIBRARY rdkafka REQUIRED)
 
 set(MODULE_SRCS kafka.c kafka.def)
 set(INSTALL_MODULE_PATH ${INSTALL_IOMODULE_PATH})
-set(INTEGRATION_TEST TRUE)
+set(TEST_CONFIGURATION "kafka")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.2), librdkafka-dev (>= 0.9)")
 include(sandbox_module)
 target_link_libraries(kafka ${LIBRDKAFKA_LIBRARY})
