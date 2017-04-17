@@ -54,6 +54,8 @@ expensive tests.
 
 *Arguments*
 - id (string)
+- throttle (integer, nil) - override the throttle value (nil uses the configured
+  value)
 
 *Return*
 - throttled (boolean) - true if the alert is currently throttled
@@ -66,6 +68,8 @@ Send an alert message
 - id (string) - unique id for alert throttling
 - summary (string) - alert summary
 - detail (string) - alert detail
+- throttle (integer, nil) - override the throttle value (nil uses the configured
+  value)
 
 *Return*
 - sent (boolean) - true if sent, false if throttled/disabled/empty
@@ -80,6 +84,7 @@ local ipairs    = ipairs
 local pairs     = pairs
 local pcall     = pcall
 local require   = require
+local type      = type
 
 local logger    = read_config("Logger")
 local hostname  = read_config("Hostname")
@@ -152,18 +157,24 @@ function get_threshold(id)
 end
 
 
-function throttled(id)
+function throttled(id, throttle)
+    if type(throttle) == "number" then
+        throttle = throttle * 60
+    else
+        throttle = alert_cfg.throttle
+    end
+
     local time_t = time()
     local at = alert_times[id]
-    if not at or time_t - at > alert_cfg.throttle then
+    if not at or time_t - at > throttle then
         return false
     end
     return true
 end
 
 
-function send(id, summary, detail)
-    if alert_cfg.disabled or not summary or summary == "" or throttled(id) then
+function send(id, summary, detail, throttle)
+    if alert_cfg.disabled or not summary or summary == "" or throttled(id, throttle) then
         return false
     end
 

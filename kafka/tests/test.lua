@@ -4,7 +4,7 @@
 
 require "kafka"
 require "string"
-assert(kafka.version() == "1.0.4", kafka.version())
+assert(kafka.version() == "1.0.5", kafka.version())
 
 local producer = kafka.producer("localhost:9092",
                                     {

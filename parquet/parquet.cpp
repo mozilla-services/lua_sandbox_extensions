@@ -44,7 +44,7 @@ static const char *logical_types[] = { "none", "utf8", "map", "map_key_value",
   "list", "enum", "decimal", "date", "time_millis", "time_micros",
   "timestamp_millis", "timestamp_micros", "uint_8", "uint_16", "uint_32",
   "uint_64", "int_8", "int_16", "int_32", "int_64", "json", "bson", "interval",
-  NULL };
+  "tuple", NULL };
 
 typedef struct pq_node pg_node;
 
@@ -489,7 +489,8 @@ static pq::schema::NodePtr build_nested(pq_node *n, int16_t r, int16_t d, size_t
     fields.push_back(cn->node);
   }
   return pq::schema::GroupNode::Make(n->hive_compatible ? hive_name(n->name) : n->name,
-                                     n->group->rt, fields, n->group->lt);
+                                     n->group->rt, fields,
+                                     n->group->lt > pq::LogicalType::INTERVAL ? pq::LogicalType::NONE : n->group->lt);
 }
 
 
@@ -1439,6 +1440,7 @@ static void dissect_null(pq_writer *pw, pq_node *n, int16_t r, int16_t d)
 static void dissect_record(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d);
 static void dissect_map(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d);
 static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d);
+static void dissect_tuple(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d);
 
 static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
 {
@@ -1465,11 +1467,13 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
           r = n->rl;
         }
       } else {
-        auto lt = n->node->logical_type();
-        if ( lt == pq::LogicalType::MAP) {
+        auto lt = n->group->lt;
+        if (lt == pq::LogicalType::MAP) {
           dissect_map(pw, lua, n->group->fields[0], r, n->dl);
         } else if (lt == pq::LogicalType::LIST) {
           dissect_list(pw, lua, n->group->fields[0], r, n->dl);
+        } else if (lt == pq::LogicalType::INTERVAL + 1) {
+          dissect_tuple(pw, lua, n, r, n->dl);
         } else {
           dissect_record(pw, lua, n, r, n->dl);
         }
@@ -1548,6 +1552,19 @@ static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, i
 
   if (!found) {
     dissect_null(pw, n, r, d);
+  }
+}
+
+
+static void dissect_tuple(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
+{
+  size_t len = n->group->fields.size();
+  for (size_t i = 0; i < len; ++i) {
+    pq_node *cn = n->group->fields[i];
+    lua_checkstack(lua, 2);
+    lua_rawgeti(lua, -1, i + 1);
+    dissect_field(pw, lua, cn, r, d);
+    lua_pop(lua, 1);
   }
 }
 
