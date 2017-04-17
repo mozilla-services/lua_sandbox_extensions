@@ -118,7 +118,7 @@ local data_type  = l.Cg(data_types, "data_type") + dt_flba
 local precision     = l.Cg(l.digit^1, "precision")
 local scale         = l.Cg(l.digit^1, "scale")
 
-local logical_group_types     = (l.P"MAP" +  "LIST") / string.lower -- "MAP_KEY_VALUE" is no longer used
+local logical_group_types     = (l.P"MAP" +  "LIST" + "TUPLE") / string.lower -- "MAP_KEY_VALUE" is no longer used
 -- https://github.com/apache/parquet-format/blob/master/LogicalTypes.md#nested-types
 
 local logical_primitive_types = (l.P"NONE" + "UTF8" + "ENUM" + "DATE" + "TIME_MILLIS"
