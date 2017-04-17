@@ -90,7 +90,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.1.1)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.4)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.5)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -120,7 +120,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.8)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.9)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -272,7 +272,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.7)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.8)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -321,8 +321,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
 <ul>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.html">moz_shield_study_enrollment</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_error_ratio_monitor.html">moz_telemetry_doctype_error_ratio_monitor</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_sax_monitor.html">moz_telemetry_doctype_sax_monitor</a></li>
+<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_monitor.html">moz_telemetry_doctype_monitor</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
 <li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.html">moz_testpilot_installation</a></li>
@@ -350,7 +349,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
 </ul>
 <ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.5)</a></li>
+<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.6)</a></li>
 <ul>
 <li class="exttype"><a href="/lua_sandbox_extensions/parquet/io_modules/index.html">io_modules</a></li>
 <ul>
@@ -467,195 +466,60 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 <div class="main-content">
-<h1 id="mozilla-telemetry-doctype-submission-shape-monitor">Mozilla Telemetry docType Submission 'shape' Monitor</h1>
+<h1 id="mozilla-telemetry-doctype-error-ratio-monitor">Mozilla Telemetry docType Error Ratio Monitor</h1>
+<p>Monitors a docType volume, shape, size, duplicates, ingestion_error and latency.</p>
+<ul>
+<li><p>volume - monitors for inactivity (no data) and optionally a percent change in the number of submissions compared to the same 24 hour time period of the previous week</p></li>
+<li><p>shape - SAX analysis comparing the same 24 hour time period of the previous week for a shape exceeding the configured mindist</p></li>
+<li><p>size - monitors the previous 24 hours for a percent change in the average submission size compared to the configured value</p></li>
+<li><p>duplicate - monitors the previous 24 hours for a duplicate rate exceeding the configured value</p></li>
+<li><p>ingestion_error - monitors the last hour for an ingestion error rate exceeding the configured value</p></li>
+<li><p>latency - monitors a one hour tumbling window of latency distributions where X% of submissions are not greater than Y hours latent</p></li>
+</ul>
 <h2 id="sample-configuration">Sample Configuration</h2>
-<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename <span class="ot">=</span> <span class="st">&quot;moz_telemetry_doctype_sax_monitor.lua&quot;</span>
-doc_type <span class="ot">=</span> <span class="st">&quot;main&quot;</span>
-message_matcher <span class="ot">=</span> <span class="st">&#39;Type == &quot;telemetry&quot; &amp;&amp; Fields[docType] == &quot;&#39;</span> <span class="ot">..</span> doc_type <span class="ot">..</span> <span class="st">&#39;&quot;&#39;</span>
-preserve_data <span class="ot">=</span> <span class="kw">true</span>
+<div class="sourceCode"><pre class="sourceCode lua"><code class="sourceCode lua">filename <span class="ot">=</span> <span class="st">&#39;moz_telemetry_doctype_monitor.lua&#39;</span>
+docType <span class="ot">=</span> <span class="st">&quot;main&quot;</span>
+message_matcher <span class="ot">=</span> <span class="st">&#39;Fields[docType] == &quot;&#39;</span><span class="ot">..</span> docType <span class="ot">..</span> <span class="st">&#39;&quot; &amp;&amp; (Type == &quot;telemetry&quot; || Type == &quot;telemetry.error&quot;)&#39;</span>
 ticker_interval <span class="ot">=</span> <span class="dv">60</span>
+preserve_data <span class="ot">=</span> <span class="kw">true</span>
 
 alert <span class="ot">=</span> <span class="ot">{</span>
   disabled <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span>
   prefix <span class="ot">=</span> <span class="kw">true</span><span class="ot">,</span>
-  throttle <span class="ot">=</span> <span class="dv">1439</span><span class="ot">,</span>
+  throttle <span class="ot">=</span> <span class="dv">1440</span><span class="ot">,</span> <span class="co">-- default to once a day (inactivity and ingestion_error default to 90)</span>
   modules <span class="ot">=</span> <span class="ot">{</span>
     email <span class="ot">=</span> <span class="ot">{</span>recipients <span class="ot">=</span> <span class="ot">{</span><span class="st">&quot;trink@mozilla.com&quot;</span><span class="ot">}},</span>
   <span class="ot">},</span>
-  thresholds <span class="ot">=</span> <span class="ot">{</span>
-    <span class="ot">[</span>doc_type<span class="ot">]</span> <span class="ot">=</span> <span class="ot">{</span>
-      <span class="st">&quot;AAAAABCEFEEEEFFFFEEDCBBB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAABCEFEEEEFFFFEEDCBBBA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAABCEFEEEEFFFFEEDCBBBAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABCEFEEEEFFFFEEDCBBBAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABCEFEEEEFFFFEEDCBBBAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BCEFEEEEFFFFEEDCBBBAAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CEFEEEEFFFFEEDCBBBAAAAAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFEEEEFFFFEEDCBBBAAAAABC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEEEFFFFEEDCBBBAAAAABCE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEFFFFEEDCBBBAAAAABCEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEFFFFEEDCBBBAAAAABCEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEFFFFEEDCBBBAAAAABCEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFFFFEEDCBBBAAAAABCEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFEEDCBBBAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFEEDCBBBAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFEEDCBBBAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEDCBBBAAAAABCEEEEEEFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEDCBBBAAAAABCEFEEEEFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EDCBBBAAAAABCEFEEEEFFFFE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DCBBBAAAAABCEFEEEEFFFFED&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CBBBAAAAABCEFEEEEFFFFEDD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BBBAAAAABCEFEEEEFFFFEDDC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BBAAAAABCEFEEEEFFFFEDDCB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BAAAAABCEFEEEEFFFFEDDCBA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAAABCEFEEEEFFFFEDDCBAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAABCEFEEEEFFFFEDDCBBBA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAABCEFEEEEFFFFEDDCBBBAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABCEFEEEEFFFFEDDCBBBAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABCEFEEEEFFFFEDDCBBBAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BDEFEEEEFFFFEDDCBBBAAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DEFEEEEFFFFEDDCBBBAAAAAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFEEEEFFFFEDDCBBBAAAAABB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEEEFFFFEEDCCBBAAAAABBB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEFFFFFEEDCCBBAAAAABBBC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEFFFFFEEDCCBCAAAAABBBCD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFFFFEDCCBCAAAAABBBDDD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFFFEDDCBCAAAAABBCDDDD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFFEEDCBCAAAAABBCDDDDD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFEEDCBCAAAAABBCDDDDDD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFEDCBCAAAAABBCDDDDDEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFEDCBCAAAAABBCDDDDDEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFEDCBCAAAAABBCEEEDEEEFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFDDBCAAAAABBCEEEEEEEFFE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEDBCAAAAABBCEEEEEEEFFEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EDCCAAAAABBCEEEEEEFFFFED&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DCDAAAAABBCEEEEEFFFFFEDC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CDAAAAABBCEEEEEFFFFFEDCB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DAAAAABBCEEEEEFFFFFEDCBB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAAABBCEEEEEFFFFFEDCBBC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAABBCEEEEEFFFFFEDCBBCA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAABCCEEEEEFFFFFEDCBBCAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABCCEEEEEFFFFFEDCCBCAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABCCEEEEEFFFFFEDCCBCAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BCCEEEEEFFFFFEDCCBCAAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CDEEEEEFFFFFEDCCBCAAAAAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DEEEEEFFFFFEDCCBCAAAAABB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEEFFFFFEDCCBCAAAAABBC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEFFFFFEDCCBCAAAAABBCD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEFFFFFEDCCBCAAAAABBCDE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEFFFFFEDCCBCAAAAABBCDEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFFFFFEDCCBCAAAAABBCDEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFFEDCCBCAAAAABBCDEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFEDCCBCAAAAABBCDEEEEF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFEDCCBCAAAAABBCEEEEEFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFEDCCBCAAAAABBCEEEEEFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEDCCBCAAAAABBCDEEEEFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EDCCBCAAAAABBCDEEEEFFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DCCBCAAAAABBCDEEEEFFFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CCBCAAAAABBCDEEEEEFFFFFE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CBCAAAAABBCDEEEEEFFFFFED&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BCAAAAABBCDEEEEEFFFFFEDC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CAAAAABBCDEEEEEFFFFFEDCB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAAABBCDEEEEEFFFFFEDCBC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAABBBDEEEEEFFFFFEDCBCA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAABBBDEEEEEFFFFFEDCBCAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABBBDEEEEEFFFFFEDCBCAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABBDEEEEFFFFFFEDCBCAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABDEEEEFFFFFFEDCBCAAAAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABDEEEEEFFFFFECCBCAAAAAD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BDDEDEEEFFFEECBACAAAAADF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CDDDDEEEFEEDCBABAAAAADFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DDDDDEEEEEDCBABAAAAADEFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DCDDDEEEDDCBABAAAAACEFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CCDDEEEDDCBABAAAAACEFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CDDDEDDCBBABAAAAACEFFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DDDDDDCBBABAAAAACDFFFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CDDDDCBBABAAAAACDFFFFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DDDCCBBABAAAAACDEFFFFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DDCCBBABAAAAACDEFFFEFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CCCBBABAAAAABDEFEEEFFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CCBBABAAAAABDEFEEEEFFFFE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CBBABAAAAABCEFEEEEFFFFEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BBABAAAAABCEFEEEEFFFFEED&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BABAAAAABCEFEEEEFFFFEEDC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABAAAAABCEEEEEEFFFFEEDCB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BAAAAABCEEEEEEFFFFEEDCBB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAAABCEEEEEEFFFFEEDCBBB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAABCEFEEEEFFFFEEDCBBBA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAABCEFEEEEFFFFEEDCBABAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABCEFEEEEFFFFEDDCBABAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABCEFEEEEFFFFEDDCBABAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BCEFEEEEFFFFEDDCBABAAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CEFEEEEFFFFEDDCBABAAAAAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFEEEEFFFFEDDCBABAAAAABC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEEEFFFFEDDCBABAAAAABCE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEFFFFEEDCBABAAAAABCEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEFFFFEEDCBABAAAAABCEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEFFFFEEDCBABAAAAABCEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFFFFEEDCBABAAAAABCEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFEEDCBABAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFEEDCBABAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFEEDCBABAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEDCBABAAAAABCEEEEEEFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEDCBABAAAAABCEEEEEEFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EDCBABAAAAABCEEEEEEFFFFE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DCBABAAAAABCEEEEEEFFFFED&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CBABAAAAABCEEEEEEFFFFEDD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BABAAAAABCEEEEEEFFFFEDDC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABAAAAABCEEEEEEFFFFEDDCB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BAAAAABCEEEEEEFFFFEDDCBA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAAABCEEEEEEFFFFEDDCBAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAABCEEEEEEFFFFEDDCBABA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAABCEEEEEEFFFFEDDCBABAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABCEEEEEEFFFFEDDCBABAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABCEEEEEEFFFFEDDCBABAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BCEEEEEEFFFFEDDCBABAAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CEEEEEEFFFFEDDCBABAAAAAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEEEFFFFEDDCBABAAAAABC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEEFFFFEEDCBABAAAAABCE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEFFFFEEDCBABAAAAABCEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEFFFFEEDCBABAAAAABCEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEFFFFEEDCBABAAAAABCEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFFFFEEDCBABAAAAABCEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFEEDCBABAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFEEDCBABAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFEEDCBABAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEDCBABAAAAABCEFEEEEFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEDCBABAAAAABCEFEEEEFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EDCBABAAAAABCEFEEEEFFFFE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DCBABAAAAABCEFEEEEFFFFED&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CBABAAAAABCEFEEEEFFFFEDD&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BABAAAAABCEFEEEEFFFFEEDC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABAAAAABCEFEEEEFFFFEEDCB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BAAAAABCEFEEEEFFFFEEDCBA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAAABCEFEEEEFFFFEEDCBAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAAABCEFEEEEFFFFEEDCBABA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AAABCEFEEEEFFFFEEDCBABAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;AABCEFEEEEFFFFEEDCBABAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;ABCEFEEEEFFFFEEDCBABAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BCEFEEEEFFFFEEDCBBBAAAAA&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CEFEEEEFFFFEEDCBBBAAAAAB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFEEEEFFFFEEDCBBBAAAAABC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEEEFFFFEEDCBBBAAAAABCE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEEFFFFEEDCBBBAAAAABCEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEEFFFFEEDCBBBAAAAABCEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEFFFFEEDCBBBAAAAABCEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EFFFFEEDCBBBAAAAABCEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFFEEDCBBBAAAAABCEEEEEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFFEEDCBBBAAAAABCEEEEEEF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FFEEDCBBBAAAAABCEEEEEEFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;FEEDCBBBAAAAABCEEEEEEFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EEDCBBBAAAAABCEEEEEEFFFF&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;EDCBBBAAAAABCEEEEEEFFFFE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;DCBBBAAAAABCEEEEEEFFFFEE&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;CBBBAAAAABCEFEEEEFFFFEED&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BBBAAAAABCEFEEEEFFFFEEDC&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BBAAAAABCEFEEEEFFFFEEDCB&quot;</span><span class="ot">,</span>
-      <span class="st">&quot;BAAAAABCEFEEEEFFFFEEDCBA&quot;</span>
+
+  thresholds <span class="ot">=</span> <span class="ot">{</span> <span class="co">-- map of normalized channel names</span>
+    release <span class="ot">=</span> <span class="ot">{</span>
+      volume <span class="ot">=</span> <span class="ot">{</span>
+        inactivity_timeout <span class="ot">=</span> <span class="dv">5</span><span class="ot">,</span> <span class="co">-- minutes</span>
+        percent_delta <span class="ot">=</span> <span class="dv">10</span><span class="ot">,</span> <span class="co">-- optional</span>
+      <span class="ot">},</span>
+      size <span class="ot">=</span> <span class="ot">{</span>
+        average <span class="ot">=</span> <span class="dv">15529</span><span class="ot">,</span> <span class="co">-- bytes</span>
+        percent_delta <span class="ot">=</span> <span class="dv">10</span><span class="ot">,</span>
+      <span class="ot">},</span>
+      ingestion_error <span class="ot">=</span> <span class="ot">{</span>
+        percent <span class="ot">=</span> <span class="dv">0.5</span><span class="ot">,</span>
+      <span class="ot">},</span>
+      duplicate <span class="ot">=</span> <span class="ot">{</span>
+        percent <span class="ot">=</span> <span class="dv">2</span><span class="ot">,</span>
+      <span class="ot">},</span>
+      shape <span class="ot">=</span> <span class="ot">{</span>
+        mindist <span class="ot">=</span> <span class="dv">0</span><span class="ot">,</span>
+      <span class="ot">},</span>
+      latency <span class="ot">=</span> <span class="ot">{</span>
+        hours <span class="ot">=</span> <span class="dv">24</span><span class="ot">,</span>     <span class="co">-- 1 - 192</span>
+                        <span class="co">-- everything in the future is added to the first bucket</span>
+                        <span class="co">-- everything in the past is added to the last bucket</span>
+        percent <span class="ot">=</span> <span class="dv">33</span><span class="ot">,</span>   <span class="co">-- alerts if more than 33% of submission are greater than 24 hours latent</span>
+      <span class="ot">}</span>
     <span class="ot">}</span>
   <span class="ot">}</span>
 <span class="ot">}</span></code></pre></div>
-<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_sax_monitor.lua">moz_telemetry_doctype_sax_monitor.lua</a></p>
+<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_monitor.lua">moz_telemetry_doctype_monitor.lua</a></p>
 </div>
 </body>
 </html>
