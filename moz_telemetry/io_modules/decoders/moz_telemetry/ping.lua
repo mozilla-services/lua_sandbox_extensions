@@ -191,6 +191,7 @@ extract_payload_objects["saved-session"] = extract_payload_objects["main"]
 local environment_objects = {
     "addons",
     "build",
+    "experiments",
     "partner",
     "profile",
     "settings",
