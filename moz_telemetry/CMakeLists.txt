@@ -13,4 +13,4 @@ include(sandbox_module)
 add_test(NAME ${PROJECT_NAME}_hindsight
   COMMAND run.sh
   CONFIGURATIONS hindsight
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/hindsight)
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/hindsight)
