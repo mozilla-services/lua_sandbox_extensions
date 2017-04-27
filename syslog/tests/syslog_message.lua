@@ -397,6 +397,11 @@ local function systemd_logind()
     fields = grammar:match(log)
     assert(fields.sd_message == 'SESSION_STOP', fields.sd_message)
     assert(fields.session_id == 42, fields.session_id)
+
+    log = "New session c43046 of user root."
+    fields = grammar:match(log)
+    assert(fields.sd_message == 'SESSION_START', fields.sd_message)
+    assert(fields.session_id == 43046, fields.session_id)
 end
 
 local function pam()

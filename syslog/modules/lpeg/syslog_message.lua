@@ -732,13 +732,13 @@ prog_grammar["sudo"] = l.Ct(
 prog_grammar["systemd-logind"] = l.Ct(
                                (
                                  l.P"New session "
-                               * l.Cg(integer, "session_id")
+                               * l.P"c"^-1 * l.Cg(integer, "session_id")
                                * l.P" of user "
                                * capture_followed_by("user_id", "." * l.P(-1))
                                * l.Cg(l.Cc("SESSION_START"), "sd_message")
                                ) + (
                                  l.P"Removed session "
-                               * l.Cg(integer, "session_id")
+                               * l.P"c"^-1 * l.Cg(integer, "session_id")
                                * l.P"."
                                * l.Cg(l.Cc("SESSION_STOP"), "sd_message")
                                * l.P(-1)
