@@ -8,8 +8,13 @@
 ## Decoder Configuration Table
 ```lua
 decoders_moz_telemetry_ping = {
-    -- String used to specify the schema location on disk.
-    schema_path = "/mnt/work/schemas",
+    -- String used to specify the schema location on disk. The path should
+    -- contain one directory for each docType and the files in the directory
+    -- must be named <docType>.<version>.schema.json. If the schema file is not
+    -- found for a docType/version combination, the default schema is used to
+    -- verify the document is a valid json object.
+    -- e.g., main/main.4.schema.json
+    schema_path = "/mnt/work/mozilla-pipeline-schemas/schemas/telemetry",
 
     -- String used to specify the message field containing the user submitted telemetry ping.
     content_field = "Fields[content]", -- optional, default shown
@@ -62,6 +67,7 @@ local module_cfg    = string.gsub(module_name, "%.", "_")
 
 local rjson  = require "rjson"
 local io     = require "io"
+local lfs    = require "lfs"
 local lpeg   = require "lpeg"
 local table  = require "table"
 local os     = require "os"
@@ -78,6 +84,7 @@ local create_stream_reader = create_stream_reader
 local decode_message       = decode_message
 local inject_message       = inject_message
 local type                 = type
+local tonumber             = tonumber
 local tostring             = tostring
 local pcall                = pcall
 local geoip
@@ -143,21 +150,40 @@ local function get_geo_city(xff, remote_addr)
 end
 
 local schemas = {}
+local default_schema = rjson.parse_schema([[
+{
+  "$schema" : "http://json-schema.org/draft-04/schema#",
+  "type" : "object",
+  "name" : "default_schema",
+  "properties" : {
+  },
+  "required" : []
+}
+]])
+
 local function load_schemas()
-    local schema_files = {
-        ["main"]    = string.format("%s/telemetry/main.schema.json", cfg.schema_path),
-        ["crash"]   = string.format("%s/telemetry/crash.schema.json", cfg.schema_path),
-        ["core"]    = string.format("%s/telemetry/core.schema.json", cfg.schema_path),
-        ["vacuous"] = string.format("%s/telemetry/vacuous.schema.json", cfg.schema_path),
-    }
-    for k,v in pairs(schema_files) do
-        local fh = assert(io.input(v))
-        local schema = fh:read("*a")
-        schemas[k] = rjson.parse_schema(schema)
+    for dn in lfs.dir(cfg.schema_path) do
+        local fqdn = string.format("%s/%s", cfg.schema_path, dn)
+        local mode = lfs.attributes(fqdn, "mode")
+        if mode == "directory" and not dn:match("^%.") then
+            for fn in lfs.dir(fqdn) do
+                local name, version = fn:match("(.+)%.(%d+).schema%.json$")
+                if name then
+                    local fh = assert(io.input(string.format("%s/%s", fqdn, fn)))
+                    local schema = fh:read("*a")
+                    local s = schemas[name]
+                    if not s then
+                        s = {}
+                        schemas[name] = s
+                    end
+                    s[tonumber(version)] = rjson.parse_schema(schema)
+                end
+            end
+        end
     end
+    schemas["saved-session"] = schemas.main -- todo remove when the saved-session schema is auto-generated
 end
 load_schemas()
-schemas["saved-session"]                        = schemas.main
 
 local uri_config = {
     telemetry = {
@@ -306,7 +332,7 @@ local function process_uri(hsr)
     end
     msg.Fields.normalizedChannel = mtn.channel(msg.Fields.appUpdateChannel)
 
-    return msg, schemas[msg.Fields.docType] or schemas.vacuous
+    return msg
 end
 
 
@@ -323,9 +349,27 @@ local function remove_objects(msg, doc, section, objects)
 end
 
 
+local function validate_schema(hsr, msg, doc, version)
+    local schema = default_schema
+    local dt = schemas[msg.Fields.docType or ""]
+    if dt then
+        version = tonumber(version)
+        if not version then version = 1 end
+        schema = dt[version] or default_schema
+    end
+
+    ok, err = doc:validate(schema)
+    if not ok then
+        inject_error(hsr, "json", string.format("%s schema version %s validation error: %s", msg.Fields.docType, tostring(version), err), msg.Fields)
+        return false
+    end
+    return true
+end
+
+
 local submissionField = {value = nil, representation = "json"}
 local doc = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
-local function process_json(hsr, msg, schema)
+local function process_json(hsr, msg)
     local ok, err = pcall(doc.parse_message, doc, hsr, cfg.content_field, nil, nil, true)
     if not ok then
         -- TODO: check for gzip errors and classify them properly
@@ -333,16 +377,11 @@ local function process_json(hsr, msg, schema)
         return false
     end
 
-    ok, err = doc:validate(schema)
-    if not ok then
-        inject_error(hsr, "json", string.format("%s schema validation error: %s", msg.Fields.docType, err), msg.Fields)
-        return false
-    end
-
     local clientId
     local ver = doc:value(doc:find("ver"))
 
     if ver then
+        if not validate_schema(hsr, msg, doc, ver) then return false end
         if ver == 3 then
             -- Special case for FxOS FTU pings
             submissionField.value = doc
@@ -379,6 +418,8 @@ local function process_json(hsr, msg, schema)
         end
     elseif doc:value(doc:find("version")) then
         -- new code
+        local sourceVersion = doc:value(doc:find("version"))
+        if not validate_schema(hsr, msg, doc, sourceVersion) then return false end
         submissionField.value = doc
         msg.Fields.submission = submissionField
         local cts = doc:value(doc:find("creationDate"))
@@ -390,7 +431,7 @@ local function process_json(hsr, msg, schema)
         msg.Fields.telemetryEnabled     = doc:value(doc:find("environment", "settings", "telemetryEnabled"))
         msg.Fields.activeExperimentId   = doc:value(doc:find("environment", "addons", "activeExperiment", "id"))
         msg.Fields.clientId             = doc:value(doc:find("clientId"))
-        msg.Fields.sourceVersion        = doc:value(doc:find("version"))
+        msg.Fields.sourceVersion        = sourceVersion
         msg.Fields.docType              = doc:value(doc:find("type"))
 
         local app = doc:find("application")
@@ -405,6 +446,8 @@ local function process_json(hsr, msg, schema)
         -- /new code
     elseif doc:value(doc:find("deviceinfo")) ~= nil then
         -- Old 'appusage' ping, see Bug 982663
+        msg.Fields.docType = "appusage"
+        if not validate_schema(hsr, msg, doc, 3) then return false end
         submissionField.value = doc
         msg.Fields.submission = submissionField
 
@@ -416,7 +459,6 @@ local function process_json(hsr, msg, schema)
         local abi = doc:value(doc:find("deviceinfo", "platform_build_id"))
 
         -- Get some more dimensions.
-        msg.Fields.docType = "appusage"
         msg.Fields.appName = "FirefoxOS"
         msg.Fields.appVersion = av or UNK_DIM
         msg.Fields.appUpdateChannel = auc or UNK_DIM
@@ -426,13 +468,16 @@ local function process_json(hsr, msg, schema)
         -- The "telemetryEnabled" flag does not apply to this type of ping.
     elseif doc:value(doc:find("v")) then
         -- This is a Fennec "core" ping
-        msg.Fields.sourceVersion = tostring(doc:value(doc:find("v")))
+        local sourceVersion = doc:value(doc:find("v"))
+        if not validate_schema(hsr, msg, doc, sourceVersion) then return false end
+        msg.Fields.sourceVersion = tostring(sourceVersion)
         clientId = doc:value(doc:find("clientId"))
         msg.Fields.clientId = clientId
         submissionField.value = doc
         msg.Fields.submission = submissionField
     else
         -- Everything else. Just store the submission in the submission field by default.
+        if not validate_schema(hsr, msg, doc, 1) then return false end
         submissionField.value = doc
         msg.Fields.submission = submissionField
     end
@@ -462,8 +507,7 @@ function transform_message(hsr)
             hour = current_hour
         end
     end
-
-    local msg, schema = process_uri(hsr)
+    local msg = process_uri(hsr)
     if msg then
         msg.Type        = "telemetry"
         msg.Timestamp   = hsr:read_message("Timestamp")
@@ -497,7 +541,7 @@ function transform_message(hsr)
             end
         end
 
-        if process_json(hsr, msg, schema) then
+        if process_json(hsr, msg) then
             local ok, err = pcall(inject_message, msg)
             if not ok then
                 -- Note: we do NOT pass the extra message fields here,
