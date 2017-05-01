@@ -42,6 +42,27 @@ decoupling the module and businesss logic maintenance and deployment.
     ctest
     nmake packages
 
+## Releases
+
+* The master branch is the current release and is considered stable at all
+  times.
+* New versions can be released as frequently as every two weeks (our sprint
+  cycle). The only exception would be for a high priority patch.
+* All active work is flagged with the sprint milestone and tracked in the
+  project dashboard.
+* New releases occur the day after the sprint finishes.
+  * The version in the dev branch is updated
+  * The changes are merged into master
+  * A new tag is created
+
+## Contributions
+
+* All pull requests must be made against the dev branch, direct commits to
+  master are not permitted.
+* All non trivial contributions should start with an issue being filed (if it is
+  a new feature please propose your design/approach before doing any work as not
+  all feature requests are accepted).
+
 # Heka Sandbox
 
 ## Decoder API Convention
