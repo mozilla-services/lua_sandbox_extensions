@@ -4,10 +4,10 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Mozilla Telemetry docType Error Ratio Monitor
+# Mozilla Telemetry docType Monitor
 
-Monitors a docType volume, shape, size, duplicates, ingestion_error and
-latency.
+Monitors a specific docType for volume, shape, size, duplicate, ingestion_error
+and latency issues by normalied channel name.
 
 * volume - monitors for inactivity (no data) and optionally a percent change in
   the number of submissions compared to the same 24 hour time period of the

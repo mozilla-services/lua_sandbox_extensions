@@ -363,6 +363,16 @@ local function apache_vhost_combined()
     verify_result(fields, result)
 end
 
+local function apache_custom_method()
+    local grammar = clf.build_apache_grammar('%v %h %l %u %t \"%m %f %H\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"')
+    local log = '127.0.1.1 127.0.0.1 - - [20/Mar/2014:12:38:34 -0700] "Get_Script2 / HTTP/1.1" 404 492 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:27.0) Gecko/20100101 Firefox/27.0"'
+    local fields = grammar:match(log)
+    local result = {
+		request_method      = "Get_Script2"
+    }
+    verify_result(fields, result)
+end
+
 local function apache_combined()
     local grammar = clf.build_apache_grammar('%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"')
     local fields = grammar:match(combined_log)
@@ -496,6 +506,7 @@ apache_formats()
 apache_custom()
 apache_clf()
 apache_vhost_combined()
+apache_custom_method()
 apache_combined()
 apache_referer()
 nginx_error()
