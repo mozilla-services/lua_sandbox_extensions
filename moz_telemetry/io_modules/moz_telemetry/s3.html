@@ -1,474 +1,3068 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta name="generator" content="pandoc" />
-  <title></title>
-  <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-  </style>
-  <link rel="stylesheet" href="/lua_sandbox_extensions/docs.css" type="text/css" />
-</head>
-<body>
-<div id="title">Lua Sandbox Extensions<hr/></div>
-<div class="menu">
-<ul>
-<li><a href="/lua_sandbox_extensions/index.html">OVERVIEW</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/bloom_filter/index.html">bloom_filter (1.0.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/circular_buffer/index.html">circular_buffer (1.0.2)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/modules/index.html">modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/index.html">lpeg</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/circular_buffer/modules/lpeg/cbufd.html">cbufd</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/index.html">analysis</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/analysis/throughput.html">throughput</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/output/index.html">output</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/circular_buffer/sandboxes/heka/output/cbuf2tsv.html">cbuf2tsv</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/cjson/index.html">cjson (2.1.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/compat/index.html">compat (0.3.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/cuckoo_filter/index.html">cuckoo_filter (1.1.1)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/elasticsearch/index.html">elasticsearch (1.0.5)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/io_modules/index.html">io_modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/index.html">encoders</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/index.html">elasticsearch</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/common.html">common</a></li>
-<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/mozlog.html">mozlog</a></li>
-<li><a href="/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/payload.html">payload</a></li>
-</ul>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/index.html">output</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.html">elasticsearch_bulk_api</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/geoip/index.html">geoip (0.1.2)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/heka/index.html">heka (1.1.9)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/heka/io_modules/index.html">io_modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/heka/io_modules/decoders/index.html">decoders</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/index.html">heka</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/json.html">json</a></li>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/json_mutate.html">json_mutate</a></li>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/heka/protobuf.html">protobuf</a></li>
-</ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/decoders/payload.html">payload</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/heka/io_modules/encoders/index.html">encoders</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/index.html">heka</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/framed_protobuf.html">framed_protobuf</a></li>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/heka/protobuf.html">protobuf</a></li>
-</ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/encoders/payload.html">payload</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/index.html">derived_stream</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/heka_protobuf.html">heka_protobuf</a></li>
-<li ><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/index.html">redshift</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/psv.html">psv</a></li>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift/sql.html">sql</a></li>
-</ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/redshift.html">redshift</a></li>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream/tsv.html">tsv</a></li>
-</ul>
-<li><a href="/lua_sandbox_extensions/heka/io_modules/heka/derived_stream.html">derived_stream</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/heka/modules/index.html">modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/heka/modules/heka/index.html">heka</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/modules/heka/alert.html">alert</a></li>
-<li><a href="/lua_sandbox_extensions/heka/modules/heka/msg_interpolate.html">msg_interpolate</a></li>
-<li><a href="/lua_sandbox_extensions/heka/modules/heka/util.html">util</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/heka/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/analysis/index.html">analysis</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/analysis/heka_message_schema.html">heka_message_schema</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/index.html">input</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/file.html">file</a></li>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_file.html">heka_file</a></li>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/input/heka_s3.html">heka_s3</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/index.html">output</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/alert.html">alert</a></li>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_debug.html">heka_debug</a></li>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/heka_inject_payload.html">heka_inject_payload</a></li>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/logfile_roll_by_size.html">logfile_roll_by_size</a></li>
-<li><a href="/lua_sandbox_extensions/heka/sandboxes/heka/output/near_real_time_report.html">near_real_time_report</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/hyperloglog/index.html">hyperloglog (1.0.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/kafka/index.html">kafka (1.0.5)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/kafka/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/index.html">input</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/input/kafka.html">kafka</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/index.html">output</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/kafka/sandboxes/heka/output/kafka.html">kafka</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/lfs/index.html">lfs (1.6.4)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/lfs/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/lfs/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/lfs/sandboxes/heka/input/index.html">input</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/lfs/sandboxes/heka/input/tail.html">tail</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/lpeg/index.html">lpeg (1.0.4)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/lpeg/io_modules/index.html">io_modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/index.html">decoders</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/index.html">nginx</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/access.html">access</a></li>
-<li><a href="/lua_sandbox_extensions/lpeg/io_modules/decoders/nginx/error.html">error</a></li>
-</ul>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/lpeg/modules/index.html">modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/index.html">lpeg</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/common_log_format.html">common_log_format</a></li>
-<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/date_time.html">date_time</a></li>
-<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/ip_address.html">ip_address</a></li>
-<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/mysql.html">mysql</a></li>
-<li><a href="/lua_sandbox_extensions/lpeg/modules/lpeg/postfix.html">postfix</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/lsb/index.html">lsb (1.1.1)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/lsb/modules/index.html">modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/lsb/modules/lsb/index.html">lsb</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/lsb/modules/lsb/stats.html">stats</a></li>
-<li><a href="/lua_sandbox_extensions/lsb/modules/lsb/util.html">util</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/moz_telemetry/index.html">moz_telemetry (1.2.9)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/index.html">io_modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/index.html">decoders</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/index.html">moz_telemetry</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/ping.html">ping</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/decoders/moz_telemetry/tls.html">tls</a></li>
-</ul>
-</ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/index.html">encoders</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/index.html">elasticsearch</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/index.html">moz_telemetry</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.html">telemetry</a></li>
-</ul>
-</ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/moz_telemetry/index.html">moz_telemetry</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.html">webrtc</a></li>
-</ul>
-</ul>
-</ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/moz_telemetry/index.html">moz_telemetry</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/io_modules/moz_telemetry/s3.html">s3</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/modules/index.html">modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/index.html">moz_telemetry</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/normalize.html">normalize</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/modules/moz_telemetry/ping.html">ping</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/index.html">analysis</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.html">moz_shield_study_enrollment</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_monitor.html">moz_telemetry_doctype_monitor</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.html">moz_telemetry_landfill_error</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.html">moz_telemetry_payload_size</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.html">moz_testpilot_installation</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/index.html">input</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_serverlog_s3_bootstrap.html">moz_serverlog_s3_bootstrap</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.html">moz_telemetry_s3_bootstrap</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.html">moz_telemetry_s3_landfill</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.html">moz_telemetry_s3_snappy</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/index.html">output</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.html">moz_telemetry_crash_summary</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.html">moz_telemetry_executive_summary</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_http.html">moz_telemetry_http</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.html">moz_telemetry_main_summary</a></li>
-<li><a href="/lua_sandbox_extensions/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.html">moz_telemetry_s3</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/openssl/index.html">openssl (0.5.1)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/parquet/index.html">parquet (0.0.6)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/parquet/io_modules/index.html">io_modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/parquet/io_modules/lpeg/index.html">lpeg</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/parquet/io_modules/lpeg/parquet.html">parquet</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/parquet/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/output/index.html">output</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/parquet/sandboxes/heka/output/s3_parquet.html">s3_parquet</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/postgres/index.html">postgres (2.3.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/rjson/index.html">rjson (1.1.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/sax/index.html">sax (0.5.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/snappy/index.html">snappy (0.1.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/socket/index.html">socket (3.0.6)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/socket/io_modules/index.html">io_modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/socket/io_modules/alert/index.html">alert</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/socket/io_modules/alert/email.html">email</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/socket/modules/index.html">modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/socket/modules/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/socket/modules/heka/alert/index.html">alert</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/socket/modules/heka/alert/email.html">email</a></li>
-</ul>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/socket/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/index.html">input</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/heka_tcp.html">heka_tcp</a></li>
-<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/tcp.html">tcp</a></li>
-<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/input/udp.html">udp</a></li>
-</ul>
-<li ><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/index.html">output</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp.html">heka_tcp</a></li>
-<li><a href="/lua_sandbox_extensions/socket/sandboxes/heka/output/heka_tcp_matcher.html">heka_tcp_matcher</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/ssl/index.html">ssl (0.7.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/struct/index.html">struct (0.2.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/syslog/index.html">syslog (1.0.5)</a></li>
-<ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/syslog/io_modules/index.html">io_modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/syslog/io_modules/decoders/index.html">decoders</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/syslog/io_modules/decoders/syslog.html">syslog</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/syslog/modules/index.html">modules</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/syslog/modules/lpeg/index.html">lpeg</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog.html">syslog</a></li>
-<li><a href="/lua_sandbox_extensions/syslog/modules/lpeg/syslog_message.html">syslog_message</a></li>
-</ul>
-</ul>
-<li class="exttype"><a href="/lua_sandbox_extensions/syslog/sandboxes/index.html">sandboxes</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/index.html">heka</a></li>
-<ul>
-<li ><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/index.html">input</a></li>
-<ul>
-<li><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/klog.html">klog</a></li>
-<li><a href="/lua_sandbox_extensions/syslog/sandboxes/heka/input/syslog_udp.html">syslog_udp</a></li>
-</ul>
-</ul>
-</ul>
-</ul>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/systemd/index.html">systemd (0.0.0)</a></li>
-</ul>
-<ul class="module-ul">
-<li class="module"><a href="/lua_sandbox_extensions/zlib/index.html">zlib (0.3.1)</a></li>
-</ul>
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>s3 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../../modules/" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
 </div>
-<div class="main-content">
-<h1 id="telemetry-s3-path-dimension-specification-parservalidator">Telemetry S3 Path Dimension Specification Parser/Validator</h1>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../../">
+            
+                <a href="../../../">
+            
+                    
+                    Lua Sandbox Extensions
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../../bloom_filter/">
+            
+                <a href="../../../bloom_filter/">
+            
+                    
+                    bloom_filter (1.0.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../../../circular_buffer/">
+            
+                <a href="../../../circular_buffer/">
+            
+                    
+                    circular_buffer (1.0.2)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../../../circular_buffer/modules/">
+            
+                <a href="../../../circular_buffer/modules/">
+            
+                    
+                    modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1.1" data-path="../../../circular_buffer/modules/lpeg/">
+            
+                <a href="../../../circular_buffer/modules/lpeg/">
+            
+                    
+                    lpeg
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1.1.1" data-path="../../../circular_buffer/modules/lpeg/cbufd.html">
+            
+                <a href="../../../circular_buffer/modules/lpeg/cbufd.html">
+            
+                    
+                    cbufd
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../../../circular_buffer/sandboxes/">
+            
+                <a href="../../../circular_buffer/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.1" data-path="../../../circular_buffer/sandboxes/heka/">
+            
+                <a href="../../../circular_buffer/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.1.1" data-path="../../../circular_buffer/sandboxes/heka/analysis/">
+            
+                <a href="../../../circular_buffer/sandboxes/heka/analysis/">
+            
+                    
+                    analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.1.1.1" data-path="../../../circular_buffer/sandboxes/heka/analysis/throughput.html">
+            
+                <a href="../../../circular_buffer/sandboxes/heka/analysis/throughput.html">
+            
+                    
+                    throughput
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.1.2" data-path="../../../circular_buffer/sandboxes/heka/output/">
+            
+                <a href="../../../circular_buffer/sandboxes/heka/output/">
+            
+                    
+                    output
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.1.2.1" data-path="../../../circular_buffer/sandboxes/heka/output/cbuf2tsv.html">
+            
+                <a href="../../../circular_buffer/sandboxes/heka/output/cbuf2tsv.html">
+            
+                    
+                    cbuf2tsv
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../../../cjson/">
+            
+                <a href="../../../cjson/">
+            
+                    
+                    cjson (2.1.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../../../compat/">
+            
+                <a href="../../../compat/">
+            
+                    
+                    compat (0.3.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../../../cuckoo_filter/">
+            
+                <a href="../../../cuckoo_filter/">
+            
+                    
+                    cuckoo_filter (1.1.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../../../elasticsearch/">
+            
+                <a href="../../../elasticsearch/">
+            
+                    
+                    elasticsearch (1.0.5)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1" data-path="../../../elasticsearch/io_modules/">
+            
+                <a href="../../../elasticsearch/io_modules/">
+            
+                    
+                    io_modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1.1" data-path="../../../elasticsearch/io_modules/encoders/">
+            
+                <a href="../../../elasticsearch/io_modules/encoders/">
+            
+                    
+                    encoders
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1.1.1" data-path="../../../elasticsearch/io_modules/encoders/elasticsearch/">
+            
+                <a href="../../../elasticsearch/io_modules/encoders/elasticsearch/">
+            
+                    
+                    elasticsearch
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1.1.1.1" data-path="../../../elasticsearch/io_modules/encoders/elasticsearch/common.html">
+            
+                <a href="../../../elasticsearch/io_modules/encoders/elasticsearch/common.html">
+            
+                    
+                    common
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.1.1.1.2" data-path="../../../elasticsearch/io_modules/encoders/elasticsearch/mozlog.html">
+            
+                <a href="../../../elasticsearch/io_modules/encoders/elasticsearch/mozlog.html">
+            
+                    
+                    mozlog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.1.1.1.3" data-path="../../../elasticsearch/io_modules/encoders/elasticsearch/payload.html">
+            
+                <a href="../../../elasticsearch/io_modules/encoders/elasticsearch/payload.html">
+            
+                    
+                    payload
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.2" data-path="../../../elasticsearch/sandboxes/">
+            
+                <a href="../../../elasticsearch/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.2.1" data-path="../../../elasticsearch/sandboxes/heka/">
+            
+                <a href="../../../elasticsearch/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.2.1.1" data-path="../../../elasticsearch/sandboxes/heka/output/">
+            
+                <a href="../../../elasticsearch/sandboxes/heka/output/">
+            
+                    
+                    output
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.2.1.1.1" data-path="../../../elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.html">
+            
+                <a href="../../../elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.html">
+            
+                    
+                    elasticsearch_bulk_api
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../../../geoip/">
+            
+                <a href="../../../geoip/">
+            
+                    
+                    geoip (0.1.2)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../../../heka/">
+            
+                <a href="../../../heka/">
+            
+                    
+                    heka (1.1.10)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1" data-path="../../../heka/io_modules/">
+            
+                <a href="../../../heka/io_modules/">
+            
+                    
+                    io_modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.1" data-path="../../../heka/io_modules/decoders/">
+            
+                <a href="../../../heka/io_modules/decoders/">
+            
+                    
+                    decoders
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.1.1" data-path="../../../heka/io_modules/decoders/heka/">
+            
+                <a href="../../../heka/io_modules/decoders/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.1.1.1" data-path="../../../heka/io_modules/decoders/heka/json.html">
+            
+                <a href="../../../heka/io_modules/decoders/heka/json.html">
+            
+                    
+                    json
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.1.1.2" data-path="../../../heka/io_modules/decoders/heka/json_mutate.html">
+            
+                <a href="../../../heka/io_modules/decoders/heka/json_mutate.html">
+            
+                    
+                    json_mutate
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.1.1.3" data-path="../../../heka/io_modules/decoders/heka/protobuf.html">
+            
+                <a href="../../../heka/io_modules/decoders/heka/protobuf.html">
+            
+                    
+                    protobuf
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.1.2" data-path="../../../heka/io_modules/decoders/payload.html">
+            
+                <a href="../../../heka/io_modules/decoders/payload.html">
+            
+                    
+                    payload
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.2" data-path="../../../heka/io_modules/encoders/">
+            
+                <a href="../../../heka/io_modules/encoders/">
+            
+                    
+                    encoders
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.2.1" data-path="../../../heka/io_modules/encoders/heka/">
+            
+                <a href="../../../heka/io_modules/encoders/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.2.1.1" data-path="../../../heka/io_modules/encoders/heka/framed_protobuf.html">
+            
+                <a href="../../../heka/io_modules/encoders/heka/framed_protobuf.html">
+            
+                    
+                    framed_protobuf
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.2.1.2" data-path="../../../heka/io_modules/encoders/heka/protobuf.html">
+            
+                <a href="../../../heka/io_modules/encoders/heka/protobuf.html">
+            
+                    
+                    protobuf
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.2.2" data-path="../../../heka/io_modules/encoders/payload.html">
+            
+                <a href="../../../heka/io_modules/encoders/payload.html">
+            
+                    
+                    payload
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.3" data-path="../../../heka/io_modules/heka/">
+            
+                <a href="../../../heka/io_modules/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.3.1" data-path="../../../heka/io_modules/heka/derived_stream/">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream/">
+            
+                    
+                    derived_stream
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.3.1.1" data-path="../../../heka/io_modules/heka/derived_stream/heka_protobuf.html">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream/heka_protobuf.html">
+            
+                    
+                    heka_protobuf
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.3.1.2" data-path="../../../heka/io_modules/heka/derived_stream/redshift/">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream/redshift/">
+            
+                    
+                    redshift
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1.3.1.2.1" data-path="../../../heka/io_modules/heka/derived_stream/redshift/psv.html">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream/redshift/psv.html">
+            
+                    
+                    psv
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.3.1.2.2" data-path="../../../heka/io_modules/heka/derived_stream/redshift/sql.html">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream/redshift/sql.html">
+            
+                    
+                    sql
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.3.1.3" data-path="../../../heka/io_modules/heka/derived_stream/redshift.html">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream/redshift.html">
+            
+                    
+                    redshift
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.3.1.4" data-path="../../../heka/io_modules/heka/derived_stream/tsv.html">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream/tsv.html">
+            
+                    
+                    tsv
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.1.3.2" data-path="../../../heka/io_modules/heka/derived_stream.html">
+            
+                <a href="../../../heka/io_modules/heka/derived_stream.html">
+            
+                    
+                    derived_stream
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.2" data-path="../../../heka/modules/">
+            
+                <a href="../../../heka/modules/">
+            
+                    
+                    modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.2.1" data-path="../../../heka/modules/heka/">
+            
+                <a href="../../../heka/modules/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.2.1.1" data-path="../../../heka/modules/heka/alert.html">
+            
+                <a href="../../../heka/modules/heka/alert.html">
+            
+                    
+                    alert
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.2.1.2" data-path="../../../heka/modules/heka/msg_interpolate.html">
+            
+                <a href="../../../heka/modules/heka/msg_interpolate.html">
+            
+                    
+                    msg_interpolate
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.2.1.3" data-path="../../../heka/modules/heka/util.html">
+            
+                <a href="../../../heka/modules/heka/util.html">
+            
+                    
+                    util
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3" data-path="../../../heka/sandboxes/">
+            
+                <a href="../../../heka/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.3.1" data-path="../../../heka/sandboxes/heka/">
+            
+                <a href="../../../heka/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.3.1.1" data-path="../../../heka/sandboxes/heka/analysis/">
+            
+                <a href="../../../heka/sandboxes/heka/analysis/">
+            
+                    
+                    analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.3.1.1.1" data-path="../../../heka/sandboxes/heka/analysis/heka_message_schema.html">
+            
+                <a href="../../../heka/sandboxes/heka/analysis/heka_message_schema.html">
+            
+                    
+                    heka_message_schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.2" data-path="../../../heka/sandboxes/heka/input/">
+            
+                <a href="../../../heka/sandboxes/heka/input/">
+            
+                    
+                    input
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.3.1.2.1" data-path="../../../heka/sandboxes/heka/input/file.html">
+            
+                <a href="../../../heka/sandboxes/heka/input/file.html">
+            
+                    
+                    file
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.2.2" data-path="../../../heka/sandboxes/heka/input/heka_file.html">
+            
+                <a href="../../../heka/sandboxes/heka/input/heka_file.html">
+            
+                    
+                    heka_file
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.2.3" data-path="../../../heka/sandboxes/heka/input/heka_s3.html">
+            
+                <a href="../../../heka/sandboxes/heka/input/heka_s3.html">
+            
+                    
+                    heka_s3
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.3" data-path="../../../heka/sandboxes/heka/output/">
+            
+                <a href="../../../heka/sandboxes/heka/output/">
+            
+                    
+                    output
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.3.1.3.1" data-path="../../../heka/sandboxes/heka/output/alert.html">
+            
+                <a href="../../../heka/sandboxes/heka/output/alert.html">
+            
+                    
+                    alert
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.3.2" data-path="../../../heka/sandboxes/heka/output/heka_debug.html">
+            
+                <a href="../../../heka/sandboxes/heka/output/heka_debug.html">
+            
+                    
+                    heka_debug
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.3.3" data-path="../../../heka/sandboxes/heka/output/heka_inject_payload.html">
+            
+                <a href="../../../heka/sandboxes/heka/output/heka_inject_payload.html">
+            
+                    
+                    heka_inject_payload
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.3.4" data-path="../../../heka/sandboxes/heka/output/logfile_roll_by_size.html">
+            
+                <a href="../../../heka/sandboxes/heka/output/logfile_roll_by_size.html">
+            
+                    
+                    logfile_roll_by_size
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3.1.3.5" data-path="../../../heka/sandboxes/heka/output/near_real_time_report.html">
+            
+                <a href="../../../heka/sandboxes/heka/output/near_real_time_report.html">
+            
+                    
+                    near_real_time_report
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="../../../hyperloglog/">
+            
+                <a href="../../../hyperloglog/">
+            
+                    
+                    hyperloglog (1.0.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="../../../kafka/">
+            
+                <a href="../../../kafka/">
+            
+                    
+                    kafka (1.0.5)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.11.1" data-path="../../../kafka/sandboxes/">
+            
+                <a href="../../../kafka/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.11.1.1" data-path="../../../kafka/sandboxes/heka/">
+            
+                <a href="../../../kafka/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.11.1.1.1" data-path="../../../kafka/sandboxes/heka/input/">
+            
+                <a href="../../../kafka/sandboxes/heka/input/">
+            
+                    
+                    input
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.11.1.1.1.1" data-path="../../../kafka/sandboxes/heka/input/kafka.html">
+            
+                <a href="../../../kafka/sandboxes/heka/input/kafka.html">
+            
+                    
+                    kafka
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11.1.1.2" data-path="../../../kafka/sandboxes/heka/output/">
+            
+                <a href="../../../kafka/sandboxes/heka/output/">
+            
+                    
+                    output
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.11.1.1.2.1" data-path="../../../kafka/sandboxes/heka/output/kafka.html">
+            
+                <a href="../../../kafka/sandboxes/heka/output/kafka.html">
+            
+                    
+                    kafka
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="../../../lfs/">
+            
+                <a href="../../../lfs/">
+            
+                    
+                    lfs (1.6.4)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.12.1" data-path="../../../lfs/sandboxes/">
+            
+                <a href="../../../lfs/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.12.1.1" data-path="../../../lfs/sandboxes/heka/">
+            
+                <a href="../../../lfs/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.12.1.1.1" data-path="../../../lfs/sandboxes/heka/input/">
+            
+                <a href="../../../lfs/sandboxes/heka/input/">
+            
+                    
+                    input
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.12.1.1.1.1" data-path="../../../lfs/sandboxes/heka/input/tail.html">
+            
+                <a href="../../../lfs/sandboxes/heka/input/tail.html">
+            
+                    
+                    tail
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="../../../lpeg/">
+            
+                <a href="../../../lpeg/">
+            
+                    
+                    lpeg (1.0.4)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.13.1" data-path="../../../lpeg/io_modules/">
+            
+                <a href="../../../lpeg/io_modules/">
+            
+                    
+                    io_modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.13.1.1" data-path="../../../lpeg/io_modules/decoders/">
+            
+                <a href="../../../lpeg/io_modules/decoders/">
+            
+                    
+                    decoders
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.13.1.1.1" data-path="../../../lpeg/io_modules/decoders/nginx/">
+            
+                <a href="../../../lpeg/io_modules/decoders/nginx/">
+            
+                    
+                    nginx
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.13.1.1.1.1" data-path="../../../lpeg/io_modules/decoders/nginx/access.html">
+            
+                <a href="../../../lpeg/io_modules/decoders/nginx/access.html">
+            
+                    
+                    access
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.1.1.1.2" data-path="../../../lpeg/io_modules/decoders/nginx/error.html">
+            
+                <a href="../../../lpeg/io_modules/decoders/nginx/error.html">
+            
+                    
+                    error
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.2" data-path="../../../lpeg/modules/">
+            
+                <a href="../../../lpeg/modules/">
+            
+                    
+                    modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.13.2.1" data-path="../../../lpeg/modules/lpeg/">
+            
+                <a href="../../../lpeg/modules/lpeg/">
+            
+                    
+                    lpeg
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.13.2.1.1" data-path="../../../lpeg/modules/lpeg/common_log_format.html">
+            
+                <a href="../../../lpeg/modules/lpeg/common_log_format.html">
+            
+                    
+                    common_log_format
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.2.1.2" data-path="../../../lpeg/modules/lpeg/date_time.html">
+            
+                <a href="../../../lpeg/modules/lpeg/date_time.html">
+            
+                    
+                    date_time
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.2.1.3" data-path="../../../lpeg/modules/lpeg/ip_address.html">
+            
+                <a href="../../../lpeg/modules/lpeg/ip_address.html">
+            
+                    
+                    ip_address
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.2.1.4" data-path="../../../lpeg/modules/lpeg/mysql.html">
+            
+                <a href="../../../lpeg/modules/lpeg/mysql.html">
+            
+                    
+                    mysql
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.2.1.5" data-path="../../../lpeg/modules/lpeg/postfix.html">
+            
+                <a href="../../../lpeg/modules/lpeg/postfix.html">
+            
+                    
+                    postfix
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14" data-path="../../../lsb/">
+            
+                <a href="../../../lsb/">
+            
+                    
+                    lsb (1.1.1)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.14.1" data-path="../../../lsb/modules/">
+            
+                <a href="../../../lsb/modules/">
+            
+                    
+                    modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.14.1.1" data-path="../../../lsb/modules/lsb/">
+            
+                <a href="../../../lsb/modules/lsb/">
+            
+                    
+                    lsb
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.14.1.1.1" data-path="../../../lsb/modules/lsb/stats.html">
+            
+                <a href="../../../lsb/modules/lsb/stats.html">
+            
+                    
+                    stats
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14.1.1.2" data-path="../../../lsb/modules/lsb/util.html">
+            
+                <a href="../../../lsb/modules/lsb/util.html">
+            
+                    
+                    util
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    moz_telemetry (1.2.10)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    io_modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.1" data-path="../decoders/">
+            
+                <a href="../decoders/">
+            
+                    
+                    decoders
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.1.1" data-path="../decoders/moz_telemetry/">
+            
+                <a href="../decoders/moz_telemetry/">
+            
+                    
+                    moz_telemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.1.1.1" data-path="../decoders/moz_telemetry/ping.html">
+            
+                <a href="../decoders/moz_telemetry/ping.html">
+            
+                    
+                    ping
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.1.1.1.2" data-path="../decoders/moz_telemetry/tls.html">
+            
+                <a href="../decoders/moz_telemetry/tls.html">
+            
+                    
+                    tls
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.1.2" data-path="../encoders/">
+            
+                <a href="../encoders/">
+            
+                    
+                    encoders
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.2.1" data-path="../encoders/elasticsearch/">
+            
+                <a href="../encoders/elasticsearch/">
+            
+                    
+                    elasticsearch
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.2.1.1" data-path="../encoders/elasticsearch/moz_telemetry/">
+            
+                <a href="../encoders/elasticsearch/moz_telemetry/">
+            
+                    
+                    moz_telemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.2.1.1.1" data-path="../encoders/elasticsearch/moz_telemetry/telemetry.html">
+            
+                <a href="../encoders/elasticsearch/moz_telemetry/telemetry.html">
+            
+                    
+                    telemetry
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.1.2.2" data-path="../encoders/heka/">
+            
+                <a href="../encoders/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.2.2.1" data-path="../encoders/heka/moz_telemetry/">
+            
+                <a href="../encoders/heka/moz_telemetry/">
+            
+                    
+                    moz_telemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.2.2.1.1" data-path="../encoders/heka/moz_telemetry/webrtc.html">
+            
+                <a href="../encoders/heka/moz_telemetry/webrtc.html">
+            
+                    
+                    webrtc
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.1.3" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    moz_telemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.15.1.3.1" data-path="s3.html">
+            
+                <a href="s3.html">
+            
+                    
+                    s3
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.2" data-path="../../modules/">
+            
+                <a href="../../modules/">
+            
+                    
+                    modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.2.1" data-path="../../modules/moz_telemetry/">
+            
+                <a href="../../modules/moz_telemetry/">
+            
+                    
+                    moz_telemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.2.1.1" data-path="../../modules/moz_telemetry/normalize.html">
+            
+                <a href="../../modules/moz_telemetry/normalize.html">
+            
+                    
+                    normalize
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.2.1.2" data-path="../../modules/moz_telemetry/ping.html">
+            
+                <a href="../../modules/moz_telemetry/ping.html">
+            
+                    
+                    ping
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3" data-path="../../sandboxes/">
+            
+                <a href="../../sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.3.1" data-path="../../sandboxes/heka/">
+            
+                <a href="../../sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.3.1.1" data-path="../../sandboxes/heka/analysis/">
+            
+                <a href="../../sandboxes/heka/analysis/">
+            
+                    
+                    analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.3.1.1.1" data-path="../../sandboxes/heka/analysis/moz_shield_study_enrollment.html">
+            
+                <a href="../../sandboxes/heka/analysis/moz_shield_study_enrollment.html">
+            
+                    
+                    moz_shield_study_enrollment
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.1.2" data-path="../../sandboxes/heka/analysis/moz_telemetry_doctype_monitor.html">
+            
+                <a href="../../sandboxes/heka/analysis/moz_telemetry_doctype_monitor.html">
+            
+                    
+                    moz_telemetry_doctype_monitor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.1.3" data-path="../../sandboxes/heka/analysis/moz_telemetry_landfill_error.html">
+            
+                <a href="../../sandboxes/heka/analysis/moz_telemetry_landfill_error.html">
+            
+                    
+                    moz_telemetry_landfill_error
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.1.4" data-path="../../sandboxes/heka/analysis/moz_telemetry_payload_size.html">
+            
+                <a href="../../sandboxes/heka/analysis/moz_telemetry_payload_size.html">
+            
+                    
+                    moz_telemetry_payload_size
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.1.5" data-path="../../sandboxes/heka/analysis/moz_testpilot_installation.html">
+            
+                <a href="../../sandboxes/heka/analysis/moz_testpilot_installation.html">
+            
+                    
+                    moz_testpilot_installation
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.2" data-path="../../sandboxes/heka/input/">
+            
+                <a href="../../sandboxes/heka/input/">
+            
+                    
+                    input
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.3.1.2.1" data-path="../../sandboxes/heka/input/moz_serverlog_s3_bootstrap.html">
+            
+                <a href="../../sandboxes/heka/input/moz_serverlog_s3_bootstrap.html">
+            
+                    
+                    moz_serverlog_s3_bootstrap
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.2.2" data-path="../../sandboxes/heka/input/moz_telemetry_s3_bootstrap.html">
+            
+                <a href="../../sandboxes/heka/input/moz_telemetry_s3_bootstrap.html">
+            
+                    
+                    moz_telemetry_s3_bootstrap
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.2.3" data-path="../../sandboxes/heka/input/moz_telemetry_s3_landfill.html">
+            
+                <a href="../../sandboxes/heka/input/moz_telemetry_s3_landfill.html">
+            
+                    
+                    moz_telemetry_s3_landfill
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.2.4" data-path="../../sandboxes/heka/input/moz_telemetry_s3_snappy.html">
+            
+                <a href="../../sandboxes/heka/input/moz_telemetry_s3_snappy.html">
+            
+                    
+                    moz_telemetry_s3_snappy
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.3" data-path="../../sandboxes/heka/output/">
+            
+                <a href="../../sandboxes/heka/output/">
+            
+                    
+                    output
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.3.1.3.1" data-path="../../sandboxes/heka/output/moz_telemetry_crash_summary.html">
+            
+                <a href="../../sandboxes/heka/output/moz_telemetry_crash_summary.html">
+            
+                    
+                    moz_telemetry_crash_summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.3.2" data-path="../../sandboxes/heka/output/moz_telemetry_executive_summary.html">
+            
+                <a href="../../sandboxes/heka/output/moz_telemetry_executive_summary.html">
+            
+                    
+                    moz_telemetry_executive_summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.3.3" data-path="../../sandboxes/heka/output/moz_telemetry_http.html">
+            
+                <a href="../../sandboxes/heka/output/moz_telemetry_http.html">
+            
+                    
+                    moz_telemetry_http
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.3.4" data-path="../../sandboxes/heka/output/moz_telemetry_main_summary.html">
+            
+                <a href="../../sandboxes/heka/output/moz_telemetry_main_summary.html">
+            
+                    
+                    moz_telemetry_main_summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3.1.3.5" data-path="../../sandboxes/heka/output/moz_telemetry_s3.html">
+            
+                <a href="../../sandboxes/heka/output/moz_telemetry_s3.html">
+            
+                    
+                    moz_telemetry_s3
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.16" data-path="../../../openssl/">
+            
+                <a href="../../../openssl/">
+            
+                    
+                    openssl (0.5.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.17" data-path="../../../parquet/">
+            
+                <a href="../../../parquet/">
+            
+                    
+                    parquet (0.0.6)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.17.1" data-path="../../../parquet/io_modules/">
+            
+                <a href="../../../parquet/io_modules/">
+            
+                    
+                    io_modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.17.1.1" data-path="../../../parquet/io_modules/lpeg/">
+            
+                <a href="../../../parquet/io_modules/lpeg/">
+            
+                    
+                    lpeg
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.17.1.1.1" data-path="../../../parquet/io_modules/lpeg/parquet.html">
+            
+                <a href="../../../parquet/io_modules/lpeg/parquet.html">
+            
+                    
+                    parquet
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.17.2" data-path="../../../parquet/sandboxes/">
+            
+                <a href="../../../parquet/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.17.2.1" data-path="../../../parquet/sandboxes/heka/">
+            
+                <a href="../../../parquet/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.17.2.1.1" data-path="../../../parquet/sandboxes/heka/output/">
+            
+                <a href="../../../parquet/sandboxes/heka/output/">
+            
+                    
+                    output
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.17.2.1.1.1" data-path="../../../parquet/sandboxes/heka/output/s3_parquet.html">
+            
+                <a href="../../../parquet/sandboxes/heka/output/s3_parquet.html">
+            
+                    
+                    s3_parquet
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.18" data-path="../../../postgres/">
+            
+                <a href="../../../postgres/">
+            
+                    
+                    postgres (2.3.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.19" data-path="../../../rjson/">
+            
+                <a href="../../../rjson/">
+            
+                    
+                    rjson (1.1.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20" data-path="../../../sax/">
+            
+                <a href="../../../sax/">
+            
+                    
+                    sax (0.5.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.21" data-path="../../../snappy/">
+            
+                <a href="../../../snappy/">
+            
+                    
+                    snappy (0.1.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22" data-path="../../../socket/">
+            
+                <a href="../../../socket/">
+            
+                    
+                    socket (3.0.6)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.1" data-path="../../../socket/io_modules/">
+            
+                <a href="../../../socket/io_modules/">
+            
+                    
+                    io_modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.1.1" data-path="../../../socket/io_modules/alert/">
+            
+                <a href="../../../socket/io_modules/alert/">
+            
+                    
+                    alert
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.1.1.1" data-path="../../../socket/io_modules/alert/email.html">
+            
+                <a href="../../../socket/io_modules/alert/email.html">
+            
+                    
+                    email
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22.2" data-path="../../../socket/modules/">
+            
+                <a href="../../../socket/modules/">
+            
+                    
+                    modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.2.1" data-path="../../../socket/modules/heka/">
+            
+                <a href="../../../socket/modules/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.2.1.1" data-path="../../../socket/modules/heka/alert/">
+            
+                <a href="../../../socket/modules/heka/alert/">
+            
+                    
+                    alert
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.2.1.1.1" data-path="../../../socket/modules/heka/alert/email.html">
+            
+                <a href="../../../socket/modules/heka/alert/email.html">
+            
+                    
+                    email
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22.3" data-path="../../../socket/sandboxes/">
+            
+                <a href="../../../socket/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.3.1" data-path="../../../socket/sandboxes/heka/">
+            
+                <a href="../../../socket/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.3.1.1" data-path="../../../socket/sandboxes/heka/input/">
+            
+                <a href="../../../socket/sandboxes/heka/input/">
+            
+                    
+                    input
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.3.1.1.1" data-path="../../../socket/sandboxes/heka/input/heka_tcp.html">
+            
+                <a href="../../../socket/sandboxes/heka/input/heka_tcp.html">
+            
+                    
+                    heka_tcp
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22.3.1.1.2" data-path="../../../socket/sandboxes/heka/input/tcp.html">
+            
+                <a href="../../../socket/sandboxes/heka/input/tcp.html">
+            
+                    
+                    tcp
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22.3.1.1.3" data-path="../../../socket/sandboxes/heka/input/udp.html">
+            
+                <a href="../../../socket/sandboxes/heka/input/udp.html">
+            
+                    
+                    udp
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22.3.1.2" data-path="../../../socket/sandboxes/heka/output/">
+            
+                <a href="../../../socket/sandboxes/heka/output/">
+            
+                    
+                    output
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.22.3.1.2.1" data-path="../../../socket/sandboxes/heka/output/heka_tcp.html">
+            
+                <a href="../../../socket/sandboxes/heka/output/heka_tcp.html">
+            
+                    
+                    heka_tcp
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22.3.1.2.2" data-path="../../../socket/sandboxes/heka/output/heka_tcp_matcher.html">
+            
+                <a href="../../../socket/sandboxes/heka/output/heka_tcp_matcher.html">
+            
+                    
+                    heka_tcp_matcher
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.23" data-path="../../../ssl/">
+            
+                <a href="../../../ssl/">
+            
+                    
+                    ssl (0.7.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.24" data-path="../../../struct/">
+            
+                <a href="../../../struct/">
+            
+                    
+                    struct (0.2.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25" data-path="../../../syslog/">
+            
+                <a href="../../../syslog/">
+            
+                    
+                    syslog (1.0.6)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.1" data-path="../../../syslog/io_modules/">
+            
+                <a href="../../../syslog/io_modules/">
+            
+                    
+                    io_modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.1.1" data-path="../../../syslog/io_modules/decoders/">
+            
+                <a href="../../../syslog/io_modules/decoders/">
+            
+                    
+                    decoders
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.1.1.1" data-path="../../../syslog/io_modules/decoders/syslog.html">
+            
+                <a href="../../../syslog/io_modules/decoders/syslog.html">
+            
+                    
+                    syslog
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25.2" data-path="../../../syslog/modules/">
+            
+                <a href="../../../syslog/modules/">
+            
+                    
+                    modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.2.1" data-path="../../../syslog/modules/lpeg/">
+            
+                <a href="../../../syslog/modules/lpeg/">
+            
+                    
+                    lpeg
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.2.1.1" data-path="../../../syslog/modules/lpeg/syslog.html">
+            
+                <a href="../../../syslog/modules/lpeg/syslog.html">
+            
+                    
+                    syslog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25.2.1.2" data-path="../../../syslog/modules/lpeg/syslog_message.html">
+            
+                <a href="../../../syslog/modules/lpeg/syslog_message.html">
+            
+                    
+                    syslog_message
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25.3" data-path="../../../syslog/sandboxes/">
+            
+                <a href="../../../syslog/sandboxes/">
+            
+                    
+                    sandboxes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.3.1" data-path="../../../syslog/sandboxes/heka/">
+            
+                <a href="../../../syslog/sandboxes/heka/">
+            
+                    
+                    heka
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.3.1.1" data-path="../../../syslog/sandboxes/heka/input/">
+            
+                <a href="../../../syslog/sandboxes/heka/input/">
+            
+                    
+                    input
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.25.3.1.1.1" data-path="../../../syslog/sandboxes/heka/input/klog.html">
+            
+                <a href="../../../syslog/sandboxes/heka/input/klog.html">
+            
+                    
+                    klog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25.3.1.1.2" data-path="../../../syslog/sandboxes/heka/input/syslog_udp.html">
+            
+                <a href="../../../syslog/sandboxes/heka/input/syslog_udp.html">
+            
+                    
+                    syslog_udp
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26" data-path="../../../systemd/">
+            
+                <a href="../../../systemd/">
+            
+                    
+                    systemd (0.0.0)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.27" data-path="../../../zlib/">
+            
+                <a href="../../../zlib/">
+            
+                    
+                    zlib (0.3.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../../.." >s3</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="telemetry-s3-path-dimension-specification-parservalidator">Telemetry S3 Path Dimension Specification Parser/Validator</h1>
 <h2 id="functions">Functions</h2>
-<h3 id="validate_dimensions">validate_dimensions</h3>
+<h3 id="validatedimensions">validate_dimensions</h3>
 <p>Loads and validates the dimension specification from disk.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -476,12 +3070,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>table - contains the parsed/validated dimensions array with the following modifications</li>
-<li><code>header_name</code> is re-mapped to <code>field_name</code> and and field_name values are expanded to 'Fields[<code>name</code>]'</li>
+<li>table - contains the parsed/validated dimensions array with the following modifications<ul>
+<li><code>header_name</code> is re-mapped to <code>field_name</code> and and field_name values are expanded to &apos;Fields[<code>name</code>]&apos;</li>
 <li><code>matcher_type</code> string is added (wildcard|string|list|minmax)</li>
 <li><code>matcher</code> function is added (returns true if a value matches the specification)</li>
 </ul>
-<h3 id="sanitize_dimension">sanitize_dimension</h3>
+</li>
+</ul>
+<h3 id="sanitizedimension">sanitize_dimension</h3>
 <p>Returns a string suitable for use as an S3 path component.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -493,26 +3089,108 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <h2 id="dimension-specification">Dimension Specification</h2>
 <h3 id="sample-dimension-specification">Sample Dimension Specification</h3>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json">  <span class="fu">{</span>
-    <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-    <span class="dt">&quot;dimensions&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-      <span class="fu">{</span><span class="dt">&quot;header_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Type&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="st">&quot;telemetry&quot;</span><span class="fu">}</span><span class="ot">,</span>
+<pre><code class="lang-json">  {
+    <span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-string">&quot;dimensions&quot;</span>: [
+      {<span class="hljs-string">&quot;header_name&quot;</span>: <span class="hljs-string">&quot;Type&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: <span class="hljs-string">&quot;telemetry&quot;</span>},
 
-      <span class="fu">{</span><span class="dt">&quot;field_name&quot;</span><span class="fu">:</span> <span class="st">&quot;submissionDate&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;min&quot;</span><span class="fu">:</span> <span class="st">&quot;20140120&quot;</span><span class="fu">,</span> <span class="dt">&quot;max&quot;</span><span class="fu">:</span> <span class="st">&quot;20140125&quot;</span><span class="fu">}}</span><span class="ot">,</span>
-      <span class="fu">{</span><span class="dt">&quot;field_name&quot;</span><span class="fu">:</span> <span class="st">&quot;sourceName&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="st">&quot;*&quot;</span><span class="fu">}</span><span class="ot">,</span>
-      <span class="fu">{</span><span class="dt">&quot;field_name&quot;</span><span class="fu">:</span> <span class="st">&quot;sourceVersion&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="st">&quot;*&quot;</span><span class="fu">}</span><span class="ot">,</span>
-      <span class="fu">{</span><span class="dt">&quot;field_name&quot;</span><span class="fu">:</span> <span class="st">&quot;reason&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;idle-daily&quot;</span><span class="ot">,</span> <span class="st">&quot;saved-session&quot;</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span>
-      <span class="fu">{</span><span class="dt">&quot;field_name&quot;</span><span class="fu">:</span> <span class="st">&quot;appName&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Firefox&quot;</span><span class="ot">,</span> <span class="st">&quot;Fennec&quot;</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span>
-      <span class="fu">{</span><span class="dt">&quot;field_name&quot;</span><span class="fu">:</span> <span class="st">&quot;appUpdateChannel&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;nightly&quot;</span><span class="ot">,</span> <span class="st">&quot;beta&quot;</span><span class="ot">,</span> <span class="st">&quot;release&quot;</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span>
-      <span class="fu">{</span><span class="dt">&quot;field_name&quot;</span><span class="fu">:</span> <span class="st">&quot;appVersion&quot;</span><span class="fu">,</span> <span class="dt">&quot;allowed_values&quot;</span><span class="fu">:</span> <span class="st">&quot;*&quot;</span><span class="fu">}</span>
-    <span class="ot">]</span>
-  <span class="fu">}</span></code></pre></div>
+      {<span class="hljs-string">&quot;field_name&quot;</span>: <span class="hljs-string">&quot;submissionDate&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: {<span class="hljs-string">&quot;min&quot;</span>: <span class="hljs-string">&quot;20140120&quot;</span>, <span class="hljs-string">&quot;max&quot;</span>: <span class="hljs-string">&quot;20140125&quot;</span>}},
+      {<span class="hljs-string">&quot;field_name&quot;</span>: <span class="hljs-string">&quot;sourceName&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: <span class="hljs-string">&quot;*&quot;</span>},
+      {<span class="hljs-string">&quot;field_name&quot;</span>: <span class="hljs-string">&quot;sourceVersion&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: <span class="hljs-string">&quot;*&quot;</span>},
+      {<span class="hljs-string">&quot;field_name&quot;</span>: <span class="hljs-string">&quot;reason&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: [<span class="hljs-string">&quot;idle-daily&quot;</span>, <span class="hljs-string">&quot;saved-session&quot;</span>]},
+      {<span class="hljs-string">&quot;field_name&quot;</span>: <span class="hljs-string">&quot;appName&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: [<span class="hljs-string">&quot;Firefox&quot;</span>, <span class="hljs-string">&quot;Fennec&quot;</span>]},
+      {<span class="hljs-string">&quot;field_name&quot;</span>: <span class="hljs-string">&quot;appUpdateChannel&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: [<span class="hljs-string">&quot;nightly&quot;</span>, <span class="hljs-string">&quot;beta&quot;</span>, <span class="hljs-string">&quot;release&quot;</span>]},
+      {<span class="hljs-string">&quot;field_name&quot;</span>: <span class="hljs-string">&quot;appVersion&quot;</span>, <span class="hljs-string">&quot;allowed_values&quot;</span>: <span class="hljs-string">&quot;*&quot;</span>}
+    ]
+  }
+</code></pre>
 <p>Note: This specification does not include:</p>
 <ul>
 <li>field/array index support</li>
 <li>pattern matches</li>
 </ul>
-<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/io_modules/moz_telemetry/s3.lua">s3.lua</a></p>
+<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/io_modules/moz_telemetry/s3.lua" target="_blank">s3.lua</a></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
 </div>
-</body>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: moz_telemetry">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../../modules/" class="navigation navigation-next " aria-label="Next page: modules">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"s3","level":"1.15.1.3.1","depth":4,"next":{"title":"modules","level":"1.15.2","depth":2,"path":"moz_telemetry/modules/README.md","ref":"moz_telemetry/modules/README.md","articles":[{"title":"moz_telemetry","level":"1.15.2.1","depth":3,"path":"moz_telemetry/modules/moz_telemetry/README.md","ref":"moz_telemetry/modules/moz_telemetry/README.md","articles":[{"title":"normalize","level":"1.15.2.1.1","depth":4,"path":"moz_telemetry/modules/moz_telemetry/normalize.md","ref":"moz_telemetry/modules/moz_telemetry/normalize.md","articles":[]},{"title":"ping","level":"1.15.2.1.2","depth":4,"path":"moz_telemetry/modules/moz_telemetry/ping.md","ref":"moz_telemetry/modules/moz_telemetry/ping.md","articles":[]}]}]},"previous":{"title":"moz_telemetry","level":"1.15.1.3","depth":3,"path":"moz_telemetry/io_modules/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/moz_telemetry/README.md","articles":[{"title":"s3","level":"1.15.1.3.1","depth":4,"path":"moz_telemetry/io_modules/moz_telemetry/s3.md","ref":"moz_telemetry/io_modules/moz_telemetry/s3.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/io_modules/moz_telemetry/s3.md","mtime":"2017-05-15T14:57:51.331Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-05-15T14:57:56.672Z"},"basePath":"../../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../../gitbook/gitbook.js"></script>
+    <script src="../../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../../gitbook/gitbook-plugin-collapsible-menu/plugin.js"></script>
+        
+    
+        
+        <script src="../../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
 </html>
+
