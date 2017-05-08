@@ -78,6 +78,7 @@ local dt     = require "lpeg.date_time"
 
 local read_config          = read_config
 local assert               = assert
+local error                = error
 local pairs                = pairs
 local ipairs               = ipairs
 local create_stream_reader = create_stream_reader
@@ -176,7 +177,9 @@ local function load_schemas()
                         s = {}
                         schemas[name] = s
                     end
-                    s[tonumber(version)] = rjson.parse_schema(schema)
+                    local ok, rjs = pcall(rjson.parse_schema, schema)
+                    if not ok then error(string.format("%s: %s", fn, rjs)) end
+                    s[tonumber(version)] = rjs
                 end
             end
         end
