@@ -39,9 +39,9 @@ graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor
 [[
 Duplicate Data for the Last Hour
 ================================
-total                : 24000
-duplicate            : 1080
-percent_duplicate    : 4.5
+unique               : 24000
+duplicate            : 1074
+percent_duplicate    : 4.28332
 max_percent_duplicate: 4
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.duplicate.html
