@@ -123,4 +123,4 @@ if(PACKAGE_COMMANDS STREQUAL "")
 endif()
 
 add_custom_target(packages ${PACKAGE_COMMANDS})
-add_custom_target(docs lua gen_gh_pages.lua WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+add_custom_target(docs lua gen_gh_pages.lua "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
