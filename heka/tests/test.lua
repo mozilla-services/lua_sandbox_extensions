@@ -22,7 +22,4 @@ local function table_to_fields()
     assert(fb["struct_item2"] == '{"nested":"n1"}', fb["struct_item2"])
 end
 
-function process_message ()
-    table_to_fields()
-    return 0
-end
+table_to_fields()
