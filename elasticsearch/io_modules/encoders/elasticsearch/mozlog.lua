@@ -7,7 +7,7 @@
 
 ## Encoder Configuration Table
 
-[Common Options](common.html)
+[Common Options](common.md)
 
 ## Functions
 

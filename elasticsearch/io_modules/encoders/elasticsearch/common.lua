@@ -48,7 +48,7 @@ Returns a simple JSON 'index' structure satisfying the [ElasticSearch BulkAPI](h
 * JSON - String suitable for use as ElasticSearch BulkAPI index directive.
 
 *See*
-[Field Interpolation](/lua_sandbox_extensions/heka/modules/heka/msg_interpolate.html)
+[Field Interpolation](/heka/modules/heka/msg_interpolate.md)
 
 ### load_encoder_cfg
 
