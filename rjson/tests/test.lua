@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "rjson"
-assert(rjson.version() == "1.1.0", rjson.version())
+assert(rjson.version() == "1.1.1", rjson.version())
 
 schema_json = [[{
     "type":"object",
@@ -91,7 +91,8 @@ assert(err == "failed to parse offset:1 Missing a name for object member.", err)
 
 doc = rjson.parse(json)
 assert(doc)
-assert(doc:validate(schema))
+ok, err = doc:validate(schema)
+assert(ok and type(ok) == "boolean" and err == nil)
 doc1 = rjson.parse(json)
 
 json = [[{"Timestamp":-1, "Type":"foo", "Logger":"bar"}]]
