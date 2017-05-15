@@ -7,7 +7,7 @@
 
 ## Encoder Configuration Table
 
-[Common Options](/lua_sandbox_extensions/elasticsearch/io_modules/encoders/elasticsearch/common.html)
+[Common Options](/elasticsearch/io_modules/encoders/elasticsearch/common.md)
 ```lua
 encoders_elasticsearch_common = {
     -- Common Options

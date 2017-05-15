@@ -80,7 +80,7 @@ header_fields = {
 
 
 function get_uuid(uuid)
-    return string.format("%X%X%X%X-%X%X-%X%X-%X%X-%X%X%X%X%X", string.byte(uuid, 1, 16))
+    return string.format("%X%X%X%X-%X%X-%X%X-%X%X-%X%X%X%X%X%X", string.byte(uuid, 1, 16))
 end
 
 

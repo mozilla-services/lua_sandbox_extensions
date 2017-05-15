@@ -732,7 +732,7 @@ prog_grammar["sudo"] = l.Ct(
 prog_grammar["systemd-logind"] = l.Ct(
                                (
                                  l.P"New session "
-                               * l.Cg(integer, "session_id")
+                               * l.Cg(l.P"c" , "session_type")^-1 * l.Cg(integer, "session_id")
                                * l.P" of user "
                                * capture_followed_by("user_id", "." * l.P(-1))
                                * l.Cg(l.Cc("SESSION_START"), "sd_message")

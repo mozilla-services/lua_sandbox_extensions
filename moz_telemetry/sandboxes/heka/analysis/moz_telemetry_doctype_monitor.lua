@@ -32,7 +32,7 @@ and latency issues by normalied channel name.
 ```lua
 filename = 'moz_telemetry_doctype_monitor.lua'
 docType = "main"
-message_matcher = 'Fields[docType] == "'.. docType .. '" && (Type == "telemetry" || Type == "telemetry.error")'
+message_matcher = 'Fields[docType] == "'.. docType .. '" && (Type == "telemetry" || Type == "telemetry.error"  || Type == "telemetry.duplicate")'
 ticker_interval = 60
 preserve_data = true
 
@@ -154,7 +154,8 @@ function process_message()
         channel = DEFAULT_CHANNEL
     end
 
-    if read_message("Type") == "telemetry" then
+    local mtype = read_message("Type")
+    if mtype == "telemetry" then
         volume:add(ns, col, 1)
         size:add(ns, col, read_message("size"))
         local cns = read_message("Fields[creationTimestamp]") or ns
@@ -162,12 +163,11 @@ function process_message()
         if delta < 0 then delta = 0 end
         if delta >= 3600e9 * 192 then delta = 3600e9 * (192 - 1) end
         latency:add(delta, col, 1)
-        if read_message("Fields[duplicateDelta]") then
-            duplicate:add(ns, col, 1)
-        end
-    else
+    elseif mtype == "telemetry.error" then
         ingestion_error:add(ns, col, 1)
         diagnostic_update(ns, diagnostics[channel])
+    elseif mtype == "telemetry.duplicate" then
+        duplicate:add(ns, col, 1)
     end
     return 0
 end
@@ -338,7 +338,7 @@ end
 local duplicate_template = [[
 Duplicate Data for the Last Hour
 ================================
-total                : %d
+unique               : %d
 duplicate            : %d
 percent_duplicate    : %g
 max_percent_duplicate: %g
@@ -347,11 +347,13 @@ graph: %s
 ]]
 local function alert_check_duplicate(ns, channel, cfg, args)
     if not args.day.array then get_array(args.col, args.day) end
-    if args.day.sum < 24000 or alert.throttled(channel) then return false end
+    if alert.throttled(channel) then return false end
+
+    local dupes = stats.sum(duplicate:get_range(args.col, args.day.s, args.day.e))
+    if args.day.sum < 24000 and dupes < 24000 then return false end
 
     local mde = cfg.percent
-    local dupes = stats.sum(duplicate:get_range(args.col, args.day.s, args.day.e))
-    local de  = dupes / args.day.sum * 100
+    local de  = dupes / (args.day.sum + dupes) * 100
     if de > mde then
         if alert.send(channel, "duplicate",
                       string.format(duplicate_template, args.day.sum, dupes, de, mde,
