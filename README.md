@@ -18,7 +18,7 @@ decoupling the module and businesss logic maintenance and deployment.
 * Module specific (i.e. if buiding the ssl module openssl will be required)
 
 #### Optional (used for documentation)
-* pandoc (1.17) - http://pandoc.org/
+* gitbook (2.3) - https://www.gitbook.com/
 * lua (5.1) - https://www.lua.org/download.html
 
 ### CMake Build Instructions

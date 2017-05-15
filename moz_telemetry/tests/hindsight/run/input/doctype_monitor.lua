@@ -43,14 +43,14 @@ function process_message()
        end
 
        tm.Fields.normalizedChannel = "esr"
-       for j=1, 19 do
+       for j=1, 20 do
            inject_message(tm)
        end
        if i >= 120 then
-           tm.Fields.duplicateDelta = 0
+           tm.Type = "telemetry.duplicate"
        end
        inject_message(tm)
-       tm.Fields.duplicateDelta = nil
+       tm.Type = "telemetry"
 
        tm.Fields.normalizedChannel = "aurora"
        for j=1, 19 do

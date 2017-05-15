@@ -78,6 +78,7 @@ local dt     = require "lpeg.date_time"
 
 local read_config          = read_config
 local assert               = assert
+local error                = error
 local pairs                = pairs
 local ipairs               = ipairs
 local create_stream_reader = create_stream_reader
@@ -90,6 +91,7 @@ local pcall                = pcall
 local geoip
 local city_db
 local dedupe
+local duplicateDelta
 
 -- create before the environment is locked down since it conditionally includes a module
 local function load_decoder_cfg()
@@ -107,6 +109,7 @@ local function load_decoder_cfg()
         if not cf_interval_size then cfg.cf_interval_size = 1 end
         local cfe = require "cuckoo_filter_expire"
         dedupe = cfe.new(cfg.cf_items, cfg.cf_interval_size)
+        duplicateDelta = {value_type = 2, value = 0, representation = tostring(cfg.cf_interval_size) .. "m"}
     end
 
     if cfg.city_db_file then
@@ -176,7 +179,9 @@ local function load_schemas()
                         s = {}
                         schemas[name] = s
                     end
-                    s[tonumber(version)] = rjson.parse_schema(schema)
+                    local ok, rjs = pcall(rjson.parse_schema, schema)
+                    if not ok then error(string.format("%s: %s", fn, rjs)) end
+                    s[tonumber(version)] = rjs
                 end
             end
         end
@@ -314,9 +319,22 @@ local function process_uri(hsr)
     end
 
     local msg = {
-        Logger = ucfg.logger or namespace,
-        Fields = {documentId = table.remove(components, 1)},
+        Timestamp = hsr:read_message("Timestamp"),
+        Logger    = ucfg.logger or namespace,
+        Fields    = {
+            documentId  = table.remove(components, 1),
+            geoCountry  = hsr:read_message("Fields[geoCountry]"),
+            geoCity     = hsr:read_message("Fields[geoCity]")
+            }
         }
+
+    -- insert geo info if necessary
+    if city_db and not msg.Fields.geoCountry then
+        local xff = hsr:read_message("Fields[X-Forwarded-For]")
+        local remote_addr = hsr:read_message("Fields[RemoteAddr]")
+        msg.Fields.geoCountry = get_geo_country(xff, remote_addr)
+        msg.Fields.geoCity = get_geo_city(xff, remote_addr)
+    end
 
     local num_components = #components
     if num_components > 0 then
@@ -331,6 +349,17 @@ local function process_uri(hsr)
         end
     end
     msg.Fields.normalizedChannel = mtn.channel(msg.Fields.appUpdateChannel)
+
+    if dedupe then
+        local added, delta = dedupe:add(msg.Fields.documentId, msg.Timestamp)
+        if not added then
+            msg.Type = "telemetry.duplicate"
+            duplicateDelta.value = delta
+            msg.Fields.duplicateDelta = duplicateDelta
+            pcall(inject_message, msg)
+            return
+        end
+    end
 
     return msg
 end
@@ -490,8 +519,6 @@ local function process_json(hsr, msg)
 end
 
 
-local duplicateDelta = {value_type = 2, value = 0, representation = tostring(cfg.cf_interval_size) .. "m"}
-
 function transform_message(hsr)
     if cfg.inject_raw then
         -- duplicate the raw message
@@ -510,7 +537,6 @@ function transform_message(hsr)
     local msg = process_uri(hsr)
     if msg then
         msg.Type        = "telemetry"
-        msg.Timestamp   = hsr:read_message("Timestamp")
         msg.EnvVersion  = hsr:read_message("EnvVersion")
         msg.Hostname    = hsr:read_message("Hostname")
         -- Note: 'Hostname' is the host name of the server that received the
@@ -519,27 +545,9 @@ function transform_message(hsr)
         msg.Fields.Host            = hsr:read_message("Fields[Host]")
         msg.Fields.DNT             = hsr:read_message("Fields[DNT]")
         msg.Fields.Date            = hsr:read_message("Fields[Date]")
-        msg.Fields.geoCountry      = hsr:read_message("Fields[geoCountry]")
-        msg.Fields.geoCity         = hsr:read_message("Fields[geoCity]")
-        msg.Fields.submissionDate  = os.date("%Y%m%d", hsr:read_message("Timestamp") / 1e9)
+        msg.Fields.submissionDate  = os.date("%Y%m%d", msg.Timestamp / 1e9)
         msg.Fields.sourceName      = "telemetry"
         msg.Fields["X-PingSender-Version"] = hsr:read_message("Fields[X-PingSender-Version]")
-
-        -- insert geo info if necessary
-        if city_db and not msg.Fields.geoCountry then
-            local xff = hsr:read_message("Fields[X-Forwarded-For]")
-            local remote_addr = hsr:read_message("Fields[RemoteAddr]")
-            msg.Fields.geoCountry = get_geo_country(xff, remote_addr)
-            msg.Fields.geoCity = get_geo_city(xff, remote_addr)
-        end
-
-        if dedupe then
-            local added, delta = dedupe:add(msg.Fields.documentId, msg.Timestamp)
-            if not added then
-                duplicateDelta.value = delta
-                msg.Fields.duplicateDelta = duplicateDelta
-            end
-        end
 
         if process_json(hsr, msg) then
             local ok, err = pcall(inject_message, msg)
