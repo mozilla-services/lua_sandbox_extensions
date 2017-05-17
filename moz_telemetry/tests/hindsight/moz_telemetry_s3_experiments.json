@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "dimensions": [
+    {
+      "field_name": "docType",
+      "allowed_values": "*"
+    },
+    {
+      "field_name": "experimentId",
+      "allowed_values": "*",
+      "is_variable": true
+    },
+    {
+      "field_name": "experimentBranch",
+      "allowed_values": "*",
+      "is_variable": true
+    }
+  ]
+}

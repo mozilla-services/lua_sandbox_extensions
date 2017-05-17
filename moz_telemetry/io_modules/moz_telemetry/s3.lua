@@ -30,6 +30,17 @@ Returns a string suitable for use as an S3 path component.
 *Return*
 * string - nil if the value was not convertible to a string
 
+### read_dimension
+
+Returns a sanitized value for a particular dimension
+
+*Arguments*
+* dimension (table) - dimension entry
+* variables (table, nil) - optional table containing data for `is_variable` dimensions
+
+*Return*
+* string - If the dimension is not found UNKNOWN is returned.  If the dimension
+does not match the `allowed_values` then OTHER is returned.
 
 ## Dimension Specification
 
@@ -47,6 +58,7 @@ Returns a string suitable for use as an S3 path component.
       {"field_name": "appName", "allowed_values": ["Firefox", "Fennec"]},
       {"field_name": "appUpdateChannel", "allowed_values": ["nightly", "beta", "release"]},
       {"field_name": "appVersion", "allowed_values": "*"}
+      {"field_name": "experimentId", "allowed_values": "*", "is_variable": true}
     ]
   }
 ```
@@ -62,13 +74,14 @@ local ipairs    = ipairs
 local tostring  = tostring
 local type      = type
 
+local read_message = read_message
+
 local cjson     = require "cjson"
 local io        = require "io"
 local string    = require "string"
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
-
 
 local function is_in_list(v, av)
     for i, j in ipairs(av) do
@@ -94,6 +107,9 @@ function validate_dimensions(fn)
     for i,d in ipairs(df.dimensions) do
         local name
         if d.header_name then
+            if d.is_variable ~= nil then
+                error("is_variable flag cannot be set on headers")
+            end
             name = d.header_name
             if name ~= "Uuid" and name ~= "Timestamp" and name ~= "Type"
             and name ~= "Logger" and name ~= "Severity" and name ~= "Payload"
@@ -102,7 +118,11 @@ function validate_dimensions(fn)
             end
             d.header_name = nil
         else
-            name = string.format("Fields[%s]", d.field_name)
+            if d.is_variable then
+                name = d.field_name
+            else
+                name = string.format("Fields[%s]", d.field_name)
+            end
         end
         d.field_name = name
         local av = d.allowed_values
@@ -144,10 +164,28 @@ function validate_dimensions(fn)
 end
 
 
-function sanitize_dimension(d)
-    if d ~= nil then
-        return string.gsub(tostring(d), "[^a-zA-Z0-9_.]", "_")
+function sanitize_dimension(v)
+    if v ~= nil then
+        return string.gsub(tostring(v), "[^a-zA-Z0-9_.]", "_")
     end
+end
+
+
+function read_dimension(d, vars)
+    local v
+    if d.is_variable then
+        if type(vars) == "table" then
+            v = sanitize_dimension(vars[d.field_name])
+        end
+    else
+        v = sanitize_dimension(read_message(d.field_name))
+    end
+
+    if v then
+        if d.matcher(v) then return v end
+        return "OTHER"
+    end
+    return "UNKNOWN"
 end
 
 return M
