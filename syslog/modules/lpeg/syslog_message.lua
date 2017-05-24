@@ -5,7 +5,7 @@
 -- Copyright 2015 Mathieu Parent <math.parent@gmail.com>
 
 --[[
-# Syslog Message Module
+# [DEPRECATED] Syslog Message Module
 
 
 ## Functions
@@ -30,6 +30,7 @@ Retrieves the parser for a particular program.
 --]]
 
 
+print("*DEPRECATED* Use the syslog sub_decoder functionality instead")
 local string = require "string"
 local ip = require "lpeg.ip_address"
 local l = require "lpeg"

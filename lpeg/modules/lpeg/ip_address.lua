@@ -12,6 +12,8 @@
 * `hostname` - URI reg-name
 * `host`     - v6 | v4 | hostname
 * `host_field` - returns the host as a Heka message field table `{value="127.0.0.1", representation="ipv4"}`
+* 'v4_field' - converts a version 4 ip address into a Heka message field
+* `v6_field` - converts a version 6 ip address into a Heka message field
 --]]
 
 -- Imports
@@ -52,8 +54,11 @@ local sub_delims    = l.S"!$&'()*+,;="
 
 hostname    = (unreserved + pct_encoded + sub_delims)^1 / string.lower
 host        = v6 + v4 + hostname
-host_field  = l.Ct(l.Cg(v6, "value") * l.Cg(l.Cc"ipv6", "representation"))
-            + l.Ct(l.Cg(v4, "value") * l.Cg(l.Cc"ipv4", "representation"))
+
+v4_field    = l.Ct(l.Cg(v4, "value") * l.Cg(l.Cc"ipv4", "representation"))
+v6_field    = l.Ct(l.Cg(v6, "value") * l.Cg(l.Cc"ipv6", "representation"))
+host_field  = v6_field
+            + v4_field
             + l.Ct(l.Cg(hostname, "value") * l.Cg(l.Cc"hostname", "representation"))
 
 return M

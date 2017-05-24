@@ -93,9 +93,9 @@ function decode(data, dh)
         msg.Uuid        = dh.Uuid
         msg.Logger      = dh.Logger
         msg.Hostname    = dh.Hostname
-        -- msg.Timestamp   = dh.Timestamp -- always overwritten
+        if not msg.Timestamp then msg.Timestamp = dh.Timestamp end
         msg.Type        = dh.Type
-        msg.Payload     = dh.Payload
+        if not msg.Payload then msg.Payload = dh.Payload end
         msg.EnvVersion  = dh.EnvVersion
         msg.Pid         = dh.Pid
         msg.Severity    = dh.Severity
