@@ -40,7 +40,15 @@ build_lua_sandbox_extensions() {
                 cmake_args="$cmake_args -DEXT_$ext=false"
                 ;;
             kafka)
-                cmake_args="$cmake_args -DEXT_$ext=false"
+                if [ "$CPACK_GENERATOR" = "DEB" ]; then
+                    # requires ubuntu 16.06 yakkety or greater for librdkafka 0.9.x
+                    packages="$packages librdkafka-dev"
+                elif [ "$CPACK_GENERATOR" = "RPM" ]; then
+                    # available from confluent http://docs.confluent.io/3.1.0/installation.html#rpm-packages-via-yum
+                    packages="$packages librdkafka-devel"
+                else
+                    cmake_args="$cmake_args -DEXT_$ext=false"
+                fi
                 ;;
             openssl)
                 cmake_args="$cmake_args -DEXT_$ext=false"
