@@ -14,6 +14,8 @@ memory_limit    = 200e6
 
 address             = "127.0.0.1"
 port                = 9200
+username            = "" -- The username to use for HTTP authentication against the ElasticSearch host. Defaults to "" (i. e. no authentication).
+password            = "" -- The password to use for HTTP authentication against the ElasticSearch host. Defaults to "" (i. e. no authentication).
 timeout             = 10
 flush_count         = 50000
 flush_on_shutdown   = false
@@ -41,8 +43,11 @@ local ltn12     = require "ltn12"
 local time      = require "os".time
 local socket    = require "socket"
 local http      = require("socket.http")
+local mime      = require "mime"
 local address   = read_config("address") or "127.0.0.1"
 local port      = read_config("port") or 9200
+local username  = read_config("username") or ""
+local password  = read_config("password") or ""
 local timeout   = read_config("timeout") or 10
 local discard   = read_config("discard_on_error")
 local abort     = read_config("abort_on_error")
@@ -78,6 +83,8 @@ local req_headers = {
     ["host"]            = address .. ":" .. port,
     ["accept"]          = "application/json",
     ["connection"]      = "keep-alive",
+    ["authorization"]   = "Basic "..mime.b64(username..":"..password)
+
 }
 
 local function send_request() -- hand coded since socket.http doesn't support keep-alive connections
