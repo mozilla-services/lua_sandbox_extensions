@@ -67,6 +67,10 @@ metadata_group = "metadata"
 -- If not specified the schema is applied directly to the Heka message.
 json_objects = {"Fields[submission]", "Fields[environment.system]"}
 
+-- When json_objects is not specified, apply the schema to Fields instead of
+-- the entire heka message.
+heka_message_use_fields = true -- default false
+
 s3_path_dimensions  = {
     -- access message data with using read_message()
     {name = "_submission_date", source = "Fields[submissionDate]"},
@@ -131,7 +135,12 @@ if type(json_objects) == "table" then
     require "cjson"
     json_objects_len = #json_objects
 end
-if not json_objects and metadata_group then error("metadata_group cannot be configured without json_objects") end
+local heka_msg_use_fields   = read_config("heka_message_use_fields")
+if metadata_group then
+    if not json_objects and not heka_msg_use_fields then
+        error("metadata_group requires that json_objects or heka_message_use_fields be specified")
+    end
+end
 
 local parquet_schema        = read_config("parquet_schema") or error("parquet_schema must be specified")
 local s3_path_dimensions    = read_config("s3_path_dimensions") or error("s3_path_dimensions must be specified")
@@ -291,10 +300,38 @@ local function load_json_objects()
     return root, nil
 end
 
+local function load_msg_fields()
+    local fields = decode_message(read_message("raw")).Fields
+
+    if not fields then
+        return nil, "message did not contain Fields"
+    end
+
+    -- convert from raw message table's Fields to a hash
+    -- http://mozilla-services.github.io/lua_sandbox/heka/message.html#array-based-message-fields
+    record = {}
+    for _, field in ipairs(fields) do
+        if #field.value == 1 then
+            record[field.name] = field.value[1]
+        else
+            record[field.name] = field.value
+        end
+    end
+
+    return record
+end
+
+local load_record
+if json_objects then
+    load_record = load_json_objects
+elseif heka_msg_use_fields then
+    load_record = load_msg_fields
+end
+
 function process_message()
     local ok, err, record
-    if json_objects then
-        record, err = load_json_objects()
+    if load_record then
+        record, err = load_record()
         if err then return -1, err end
         if load_metadata then
             record[metadata_group] = load_metadata()
@@ -305,7 +342,7 @@ function process_message()
     local writer = get_writer(path)
     local w = writer[1]
 
-    if json_objects then
+    if load_record then
         ok, err = pcall(w.dissect_record, w, record)
     else
         ok, err = pcall(w.dissect_message, w)
