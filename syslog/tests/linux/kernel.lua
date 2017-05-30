@@ -1,0 +1,103 @@
+-- This Source Code Form is subject to the terms of the Mozilla Public
+-- License, v. 2.0. If a copy of the MPL was not distributed with this
+-- file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+local grammar = require "lpeg.linux.kernel".syslog_grammar
+local log
+local fields
+
+-- TCP Output with uid+gid
+log = "[2948936.567854] OUTPUT reject: IN= OUT=eth0 SRC=10.11.12.13 DST=10.11.12.14 LEN=83 TOS=0x00 PREC=0x00 TTL=64 ID=62592 DF PROTO=TCP SPT=54252 DPT=8140 WINDOW=946 RES=0x00 ACK PSH URGP=0 UID=0 GID=0 "
+fields = grammar:match(log)
+assert(fields.monotonic_timestamp == 2948936.567854, fields.monotonic_timestamp)
+assert(fields.nf_prefix == 'OUTPUT reject: ', fields.nf_prefix)
+assert(fields.nf_in_interface == '', fields.nf_in_interface)
+assert(fields.nf_out_interface == 'eth0', fields.nf_out_interface)
+assert(fields.nf_src_ip.value == '10.11.12.13', fields.nf_src_ip)
+assert(fields.nf_src_ip.representation == 'ipv4', fields.nf_src_ip)
+assert(fields.nf_dst_ip.value == '10.11.12.14', fields.nf_dst_ip)
+assert(fields.nf_dst_ip.representation == 'ipv4', fields.nf_dst_ip)
+assert(fields.nf_len == 83, fields.nf_len)
+assert(fields.nf_tos == '0x00', fields.nf_tos)
+assert(fields.nf_prec == '0x00', fields.nf_prec)
+assert(fields.nf_ttl == 64, fields.nf_ttl)
+assert(fields.nf_id == 62592, fields.nf_id)
+assert(fields.nf_df == true, fields.nf_df)
+assert(fields.nf_protocol == 'TCP', fields.nf_protocol)
+assert(fields.nf_spt == 54252, fields.nf_spt)
+assert(fields.nf_dpt == 8140, fields.nf_dpt)
+assert(fields.nf_window == 946, fields.nf_window)
+assert(fields.nf_res == '0x00', fields.nf_res)
+assert(fields.nf_tcp_ack == true, fields.nf_tcp_ack)
+assert(fields.nf_tcp_psh == true, fields.nf_tcp_psh)
+assert(fields.nf_urgp == 0, fields.nf_urgp)
+assert(fields.nf_uid == 0, fields.nf_uid)
+assert(fields.nf_gid == 0, fields.nf_gid)
+
+-- UDP Input
+log = "[2441463.764698] INPUT reject: IN=eth0 OUT= MAC=ff:ff:ff:ff:ff:ff:00:50:56:a3:36:b6:08:00 SRC=10.11.12.13 DST=255.255.255.255 LEN=68 TOS=0x00 PREC=0x00 TTL=128 ID=51 PROTO=UDP SPT=54989 DPT=1947 LEN=48 "
+fields = grammar:match(log)
+assert(fields.monotonic_timestamp == 2441463.764698, fields.monotonic_timestamp)
+assert(fields.nf_prefix == 'INPUT reject: ', fields.nf_prefix)
+assert(fields.nf_in_interface == 'eth0', fields.nf_in_interface)
+assert(fields.nf_out_interface == '', fields.nf_out_interface)
+assert(fields.nf_dst_mac == 'ff:ff:ff:ff:ff:ff:00', fields.nf_dst_mac)
+assert(fields.nf_src_mac == '50:56:a3:36:b6:08:00', fields.nf_src_mac)
+assert(fields.nf_src_ip.value == '10.11.12.13', fields.nf_src_ip)
+assert(fields.nf_src_ip.representation == 'ipv4', fields.nf_src_ip)
+assert(fields.nf_dst_ip.value == '255.255.255.255', fields.nf_dst_ip)
+assert(fields.nf_dst_ip.representation == 'ipv4', fields.nf_dst_ip)
+assert(fields.nf_len == 68, fields.nf_len)
+assert(fields.nf_tos == '0x00', fields.nf_tos)
+assert(fields.nf_prec == '0x00', fields.nf_prec)
+assert(fields.nf_ttl == 128, fields.nf_ttl)
+assert(fields.nf_id == 51, fields.nf_id)
+assert(fields.nf_protocol == 'UDP', fields.nf_protocol)
+assert(fields.nf_spt == 54989, fields.nf_spt)
+assert(fields.nf_dpt == 1947, fields.nf_dpt)
+assert(fields.nf_udp_len == 48, fields.nf_udp_len)
+
+-- ICMP Prerouting
+log = "[31925184.693562] TRACE: raw:PREROUTING:policy:3 IN=wlan0 OUT= MAC=00:0b:81:84:37:27:7c:d1:c3:e7:e1:d3:08:00 SRC=192.168.8.103 DST=217.23.9.18 LEN=84 TOS=0x00 PREC=0x00 TTL=64 ID=2018 PROTO=ICMP TYPE=8 CODE=0 ID=48650 SEQ=0 "
+fields = grammar:match(log)
+assert(fields.monotonic_timestamp == 31925184.693562, fields.monotonic_timestamp)
+assert(fields.nf_prefix == 'TRACE: raw:PREROUTING:policy:3 ', fields.nf_prefix)
+assert(fields.nf_in_interface == 'wlan0', fields.nf_in_interface)
+assert(fields.nf_out_interface == '', fields.nf_out_interface)
+assert(fields.nf_dst_mac == '00:0b:81:84:37:27:7c', fields.nf_dst_mac)
+assert(fields.nf_src_mac == 'd1:c3:e7:e1:d3:08:00', fields.nf_src_mac)
+assert(fields.nf_src_ip.value == '192.168.8.103', fields.nf_src_ip)
+assert(fields.nf_src_ip.representation == 'ipv4', fields.nf_src_ip)
+assert(fields.nf_dst_ip.value == '217.23.9.18', fields.nf_dst_ip)
+assert(fields.nf_dst_ip.representation == 'ipv4', fields.nf_dst_ip)
+assert(fields.nf_len == 84, fields.nf_len)
+assert(fields.nf_tos == '0x00', fields.nf_tos)
+assert(fields.nf_prec == '0x00', fields.nf_prec)
+assert(fields.nf_ttl == 64, fields.nf_ttl)
+assert(fields.nf_id == 2018, fields.nf_id)
+assert(fields.nf_protocol == 'ICMP', fields.nf_protocol)
+assert(fields.nf_icmp_type == 8, fields.nf_icmp_type)
+assert(fields.nf_icmp_code == 0, fields.nf_icmp_code)
+assert(fields.nf_icmp_id == 48650, fields.nf_icmp_id)
+assert(fields.nf_icmp_seq == 0, fields.nf_icmp_seq)
+
+-- ICMPv6 Input
+log = "[333021.138558] [UFW BLOCK] IN=eth0 OUT= MAC=33:33:00:00:00:01:80:3f:5d:87:e2:93:86:dd SRC=fe80:0000:0000:0000:823f:5dff:fe87:e293 DST=ff02:0000:0000:0000:0000:0000:0000:0001 LEN=76 TC=0 HOPLIMIT=1 FLOWLBL=0 PROTO=ICMPv6 TYPE=130 CODE=0 "
+fields = grammar:match(log)
+assert(fields.monotonic_timestamp == 333021.138558, fields.monotonic_timestamp)
+assert(fields.nf_prefix == '[UFW BLOCK] ', fields.nf_prefix)
+assert(fields.nf_in_interface == 'eth0', fields.nf_in_interface)
+assert(fields.nf_out_interface == '', fields.nf_out_interface)
+assert(fields.nf_dst_mac == '33:33:00:00:00:01:80', fields.nf_dst_mac)
+assert(fields.nf_src_mac == '3f:5d:87:e2:93:86:dd', fields.nf_src_mac)
+assert(fields.nf_src_ip.value == 'fe80:0000:0000:0000:823f:5dff:fe87:e293', fields.nf_src_ip)
+assert(fields.nf_src_ip.representation == 'ipv6', fields.nf_src_ip)
+assert(fields.nf_dst_ip.value == 'ff02:0000:0000:0000:0000:0000:0000:0001', fields.nf_dst_ip)
+assert(fields.nf_dst_ip.representation == 'ipv6', fields.nf_dst_ip)
+assert(fields.nf_len == 76, fields.nf_len)
+assert(fields.nf_tc == 0, fields.nf_tc)
+assert(fields.nf_hoplimit == 1, fields.nf_hoplimit)
+assert(fields.nf_flowlbl == 0, fields.nf_flowlbl)
+assert(fields.nf_protocol == 'ICMPv6', fields.nf_protocol)
+assert(fields.nf_icmpv6_type == 130, fields.nf_icmpv6_type)
+assert(fields.nf_icmpv6_code == 0, fields.nf_icmpv6_code)

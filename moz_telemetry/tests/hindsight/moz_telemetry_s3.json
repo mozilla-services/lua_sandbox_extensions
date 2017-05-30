@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "dimensions": [
+    {
+      "field_name": "docType",
+      "allowed_values": "*"
+    }
+  ]
+}
