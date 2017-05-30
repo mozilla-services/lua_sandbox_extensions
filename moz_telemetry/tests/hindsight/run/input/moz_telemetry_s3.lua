@@ -38,13 +38,18 @@ function process_message()
     end
 
     for i = 1, 10 do
-        local ph = assert(io.popen("sleep 1; ls output/moz_telemetry_s3"))
-        local dir = ph:read("*a")
-        ph:close()
-        if dir:match("main\n") and dir:match("main%+foo%+123") and dir:match("main%+bar%+456") then
+        local oh = assert(io.popen("sleep 1; ls output/moz_telemetry_s3"))
+        local od = oh:read("*a")
+        oh:close()
+
+        local eh = assert(io.popen("ls output/moz_experiments_s3"))
+        local ed = eh:read("*a")
+        eh:close()
+
+        if od:match("main\n") and ed:match("main%+foo%+123") and ed:match("main%+bar%+456") then
             check_message_count("output/moz_telemetry_s3/main", 3)
-            check_message_count("output/moz_telemetry_s3/main+foo+123", 2)
-            check_message_count("output/moz_telemetry_s3/main+bar+456", 1)
+            check_message_count("output/moz_experiments_s3/main+foo+123", 2)
+            check_message_count("output/moz_experiments_s3/main+bar+456", 1)
             return 0
         end
     end

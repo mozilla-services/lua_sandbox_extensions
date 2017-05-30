@@ -22,8 +22,11 @@ dimension_file  = "test.json"
 -- https://bugzilla.mozilla.org/show_bug.cgi?id=1353110
 experiment_dimension_file  = "test_experiments.json" -- optional
 
--- directory location to store the intermediate output files
+-- directory location to store the intermediate standard output files
 batch_dir       = "/var/tmp/foobar"
+
+-- directory location to store the intermediate experiment output files
+experiment_batch_dir       = "/var/tmp/experiment"
 
 -- Specifies how many data files to keep open at once. If there are more
 -- "current" files than this, the least-recently used file will be closed
@@ -63,6 +66,7 @@ local buffer_cnt    = 0
 
 local hostname          = read_config("Hostname")
 local batch_dir         = read_config("batch_dir") or error("batch_dir must be specified")
+local experiment_batch_dir
 local max_file_handles  = read_config("max_file_handles") or 1000
 local max_file_size     = read_config("max_file_size") or 1024 * 1024 * 300
 local max_file_age      = read_config("max_file_age") or 60 * 60
@@ -78,12 +82,13 @@ end
 local dimensions = mts3.validate_dimensions(read_config("dimension_file"))
 local experiment_dimensions = read_config("experiment_dimension_file")
 if experiment_dimensions then
-   experiment_dimensions = mts3.validate_dimensions(experiment_dimensions)
+    experiment_batch_dir  = read_config("experiment_batch_dir") or error("experiment_batch_dir must be specified")
+    experiment_dimensions = mts3.validate_dimensions(experiment_dimensions)
 end
 
 
-local function get_fqfn(path)
-    return string.format("%s/%s", batch_dir, path)
+local function get_fqfn(dir, path)
+    return string.format("%s/%s", dir, path)
 end
 
 
@@ -106,7 +111,7 @@ local function rename_file(path, entry)
         buffer_cnt = 0
     end
 
-    local src = get_fqfn(path)
+    local src = get_fqfn(entry[4], path)
     local dest = string.format("%s+%d_%d_%s.done", src, time_t, buffer_cnt, hostname)
 
     local ok, err = os.rename(src, dest)
@@ -117,12 +122,12 @@ local function rename_file(path, entry)
 end
 
 
-local function get_entry(path)
+local function get_entry(dir, path)
     local ct = os.time()
     local t = files[path]
     if not t then
-        -- last active, file handle, creation time
-        t = {ct, nil, ct}
+        -- last active, file handle, creation time, output_dir
+        t = {ct, nil, ct, dir}
         files[path] = t
     else
         t[1] = ct
@@ -144,23 +149,28 @@ local function get_entry(path)
                 if entry then close_fh(entry) end
             end
         end
-        t[2] = assert(io.open(get_fqfn(path), "a"))
+        t[2] = assert(io.open(get_fqfn(dir, path), "a"))
         fh_cnt = fh_cnt + 1
     end
     return t
 end
 
--- create the batch directory if it does not exist
-local cmd = string.format("mkdir -p %s", batch_dir)
-local ret = os.execute(cmd)
-if ret ~= 0 then
-    error(string.format("ret: %d, cmd: %s", ret, cmd))
+
+local function mkdir(dir)
+    local cmd = string.format("mkdir -p %s", dir)
+    local ret = os.execute(cmd)
+    if ret ~= 0 then
+        error(string.format("ret: %d, cmd: %s", ret, cmd))
+    end
 end
 
+mkdir(batch_dir)
+if experiment_batch_dir then mkdir(experiment_batch_dir) end
 
-local function output_dimension(dims, data)
+
+local function output_dimension(dir, dims, data)
     local path = table.concat(dims, "+") -- the plus will be converted to a path separator '/' on copy
-    local entry = get_entry(path)
+    local entry = get_entry(dir, path)
     local fh = entry[2]
 
     fh:write(data)
@@ -176,7 +186,7 @@ local function process_standard_dimensions(data)
     for i,d in ipairs(dimensions) do
         dims[i] = mts3.read_dimension(d)
     end
-    output_dimension(dims, data)
+    output_dimension(batch_dir, dims, data)
 end
 
 
@@ -192,7 +202,7 @@ local function process_experiment_dimensions(data, experiments)
         for i,d in ipairs(experiment_dimensions) do
             dims[i] = mts3.read_dimension(d, vars)
         end
-        output_dimension(dims, data)
+        output_dimension(experiment_batch_dir, dims, data)
     end
 end
 
