@@ -14,7 +14,6 @@ local tm = {
         docType = "main",
         creationTimestamp = nil,
         normalizedChannel = nil,
-        duplicateDelta    = nil,
         extra             = nil,
         }
     }
@@ -81,5 +80,5 @@ function process_message()
            inject_message(tm)
        end
    end
-    return 0
+   return 0
 end

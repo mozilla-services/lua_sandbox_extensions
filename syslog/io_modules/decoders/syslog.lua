@@ -3,14 +3,25 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Syslog Basic Decoder Module
+# Syslog Decoder Module
 
 ## Decoder Configuration Table
 ```lua
--- template (string) - The 'template' configuration string from rsyslog.conf
--- see http://rsyslog-5-8-6-doc.neocities.org/rsyslog_conf_templates.html
--- Default:
--- template = "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%" -- RSYSLOG_TraditionalForwardFormat
+decoders_syslog = {
+  -- template (string) - The 'template' configuration string from rsyslog.conf
+  -- see http://rsyslog-5-8-6-doc.neocities.org/rsyslog_conf_templates.html
+  -- Default:
+  -- template = "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%" -- RSYSLOG_TraditionalForwardFormat
+
+  -- sub_decoders = {
+    -- _programname_ (string) - Decoder module name or grammar module name
+    -- kernel = "lpeg.linux.kernel", -- exports an lpeg grammar named 'syslog_grammar'
+    -- nginx  = "decoders.nginx.access", -- decoder module name
+  -- }
+
+  -- When using sub decoders this stores the original log line in the message payload.
+  -- payload_keep = false, -- default
+}
 ```
 
 ## Functions
@@ -33,10 +44,39 @@ Decode and inject the resulting message
 --]]
 
 -- Imports
-local syslog = require "lpeg.syslog"
 
-local template  = read_config("template") or "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%"
-local grammar   = syslog.build_rsyslog_grammar(template)
+local module_name   = ...
+local module_cfg    = require "string".gsub(module_name, "%.", "_")
+local syslog        = require "lpeg.syslog"
+
+local cfg = read_config(module_cfg) or {}
+assert(type(cfg) == "table", module_cfg .. " must be a table")
+local template      = cfg.template or "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%"
+local grammar       = syslog.build_rsyslog_grammar(template)
+local sub_decoders  = {}
+
+for k,v in pairs(cfg.sub_decoders or {}) do
+    if type(v) == "string" then
+        if v:match("^decoders%.") then
+            local decode = require(v).decode
+            assert(type(decode) == "function", "sub_decoders, no decode function defined: " .. k)
+            sub_decoders[k] = decode
+        else
+            local grammar = require(v).syslog_grammar
+            assert(type(grammar) == "userdata", "sub_decoders, no grammar defined: " .. k)
+            sub_decoders[k] = function(data, dh) -- dh will contain the original parsed syslog message
+                local fields = grammar:match(data)
+                if not fields then return "parse failed" end
+                for k,v in pairs(fields) do
+                    dh.Fields[k] = v
+                end
+                inject_message(dh)
+            end
+        end
+    else
+        error("sub_decoder, invalid type: " .. k)
+    end
+end
 
 local pairs = pairs
 local type  = type
@@ -51,6 +91,7 @@ local msg = {}
 function decode(data, dh)
     local fields = grammar:match(data)
     if not fields then return "parse failed" end
+    local programname = ""
 
     if fields.pri then
         msg.Severity = fields.pri.severity
@@ -67,10 +108,14 @@ function decode(data, dh)
     end
 
     if fields.syslogtag then
-        fields.programname = fields.syslogtag.programname
+        programname = fields.syslogtag.programname
+        fields.programname = programname
         msg.Pid = fields.syslogtag.pid
         fields.syslogtag = nil
     end
+
+    msg.Timestamp = fields.timestamp
+    fields.timestamp = nil
 
     msg.Hostname = fields.hostname or fields.source
     fields.hostname = nil
@@ -82,13 +127,13 @@ function decode(data, dh)
     msg.Fields = fields
 
     if dh then
-        if not msg.Uuid then msg.Uuid = dh.Uuid end
-        if not msg.Logger then msg.Logger = dh.Logger end
+        msg.Uuid        = dh.Uuid
+        msg.Logger      = dh.Logger
         if not msg.Hostname then msg.Hostname = dh.Hostname end
         if not msg.Timestamp then msg.Timestamp = dh.Timestamp end
-        if not msg.Type then msg.Type = dh.Type end
+        msg.Type        = dh.Type
         if not msg.Payload then msg.Payload = dh.Payload end
-        if not msg.EnvVersion then msg.EnvVersion = dh.EnvVersion end
+        msg.EnvVersion  = dh.EnvVersion
         if not msg.Pid then msg.Pid = dh.Pid end
         if not msg.Severity then msg.Severity = dh.Severity end
 
@@ -101,6 +146,12 @@ function decode(data, dh)
         end
     end
 
+    local df = sub_decoders[programname]
+    if df then
+        local payload = msg.Payload
+        if not cfg.payload_keep then msg.Payload = nil end
+        return df(payload, msg)
+    end
     inject_message(msg)
 end
 

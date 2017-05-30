@@ -6,8 +6,12 @@
 # Syslog Module
 
 ## Variables
-
+### LPEG Grammars
 * `severity` - LPEG grammar to parse a syslog severity string and return the numeric value
+* `integer` - converts an integer string to a number
+* `float` - converts a floating point string to a number
+* `notspace` - consumes everything that is not a space
+* `commonmac` - matches a MAC address string
 
 ## Functions
 
@@ -20,6 +24,30 @@ Constructs an LPEG grammar based on the rsyslog template configuration string.
 
 *Return*
 - grammar (LPEG user data object) or an error is thrown
+
+### capture_until
+
+Captures all data up to 'match' without consuming the match
+
+*Arguments*
+- name (string) - name of the capture group variable
+- match (string) - value to match up to
+
+*Return*
+- grammar (LPEG user data object) or an error is thrown
+
+
+### capture_followed_by
+
+Captures all data up to 'match' and consumes the match
+
+*Arguments*
+- name (string) - name of the capture group variable
+- match (string) - value to match up to
+
+*Return*
+- grammar (LPEG user data object) or an error is thrown
+
 --]]
 
 
@@ -276,6 +304,26 @@ function build_rsyslog_grammar(template)
     return l.Ct(grammar)
 end
 
-severity = syslog_severity_text
+
+function capture_until(name, match)
+    return l.Cg((l.P(1) - l.P(match))^0, name)
+end
+
+
+function capture_followed_by(name, match)
+    return capture_until(name, match) * l.P(match)
+end
+
+severity    = syslog_severity_text
+integer     = (l.P"-"^-1 * l.digit^1) / tonumber
+float       = (l.P"-"^-1 * l.digit^1 * (l.P"." * l.digit^1)^1) / tonumber
+notspace    = (l.P(1)-l.P" ")^0
+commonmac   = l.xdigit * l.xdigit
+            * l.P":" * l.xdigit * l.xdigit
+            * l.P":" * l.xdigit * l.xdigit
+            * l.P":" * l.xdigit * l.xdigit
+            * l.P":" * l.xdigit * l.xdigit
+            * l.P":" * l.xdigit * l.xdigit
+            * l.P":" * l.xdigit * l.xdigit
 
 return M
