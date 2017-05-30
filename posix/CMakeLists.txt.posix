@@ -1,0 +1,108 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(posix VERSION 33.4.0 LANGUAGES C)
+
+set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua bindings for POSIX APIs")
+
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_VENDOR        "luaposix project")
+set(CPACK_PACKAGE_CONTACT       "Mathieu Parent <math.parent@gmail.com")
+set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
+set(CPACK_STRIP_FILES           TRUE)
+
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0)")
+set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
+
+if(MSVC)
+    set(CMAKE_C_FLAGS           "/W3")
+    set(CMAKE_C_FLAGS_RELEASE   "/MD /O2 /Ob2")
+else()
+    set(CMAKE_C_FLAGS           "-D_GNU_SOURCE -fPIC -Wall -Wno-return-type")
+    set(CMAKE_C_FLAGS_RELEASE   "-O2")
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif()
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(LUA51) # build against installed lua 5.1
+    set(CPACK_PACKAGE_NAME lua-${PROJECT_NAME})
+    find_package(Lua51)
+    find_program(LUA NAMES lua lua.bat)
+    add_test(NAME test COMMAND ${LUA} test.lua)
+else() # lua_sandbox build
+    find_package(luasandbox 1.0.2 REQUIRED CONFIG)
+    set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
+    set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
+endif()
+
+include(CPack)
+include_directories(${LUA_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/ext/include")
+
+add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/config.h"
+    COMMAND LUA_INCLUDE=-I${LUA_INCLUDE_DIR} ./configure
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_custom_target(config_h
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
+
+set(SRC_POSIX
+ctype
+dirent
+errno
+fcntl
+fnmatch
+getopt
+glob
+grp
+libgen
+poll
+pwd
+sched
+signal
+stdio
+stdlib
+sys/msg
+sys/resource
+sys/socket
+sys/stat
+sys/statvfs
+sys/time
+sys/times
+sys/utsname
+sys/wait
+syslog
+termio
+time
+unistd
+utime
+)
+
+foreach(src ${SRC_POSIX})
+    string(REPLACE "/" "_" src_module ${src})
+    string(REGEX REPLACE "[^/]+$" "" dst_dir ${src})
+    string(REGEX REPLACE "^(.*/)([^/]+)$" "\\2" dst_name ${src})
+    file(WRITE "posix_${src_module}.def" "EXPORTS\nluaopen_posix_${src_module}\n")
+
+    add_library("posix_${src_module}" SHARED "ext/posix/${src}" "posix_${src_module}.def")
+    set_target_properties("posix_${src_module}" PROPERTIES OUTPUT_NAME ${dst_name} LIBRARY_OUTPUT_DIRECTORY posix/${dst_dir})
+    if(${src_module} STREQUAL unistd)
+        target_link_libraries("posix_${src_module}" crypt)
+    endif()
+    add_dependencies("posix_${src_module}" config_h)
+
+    install(TARGETS "posix_${src_module}" DESTINATION ${INSTALL_IOMODULE_PATH}/posix/${dst_dir})
+endforeach(src)
+
+set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)
+file(MAKE_DIRECTORY ${EMPTY_DIR})
+set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH} ${DPERMISSION})
+install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH}/posix ${DPERMISSION})
+
+install(FILES lib/posix/init.lua RENAME posix.lua DESTINATION ${INSTALL_IOMODULE_PATH})
+install(FILES lib/posix/compat.lua DESTINATION ${INSTALL_IOMODULE_PATH}/posix)

@@ -79,6 +79,7 @@ lsb
 moz_telemetry
 openssl
 parquet
+posix
 postgres
 rjson
 sax
