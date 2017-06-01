@@ -5,5 +5,4 @@
 cmake_minimum_required(VERSION 3.0)
 project(lsb VERSION 1.1.1 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Utility modules for lua_sandbox")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.2)")
 include(sandbox_module)
