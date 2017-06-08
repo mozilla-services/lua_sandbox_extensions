@@ -72,6 +72,7 @@ elasticsearch
 geoip
 heka
 hyperloglog
+jose
 kafka
 lfs
 lpeg

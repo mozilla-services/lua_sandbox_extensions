@@ -32,11 +32,14 @@ build_lua_sandbox_extensions() {
     packages="git c++-compiler"
     cmake_args="-DENABLE_ALL_EXT=true"
     for ext in bloom_filter circular_buffer cjson compat cuckoo_filter \
-            elasticsearch geoip heka hyperloglog kafka lfs lpeg lsb moz_telemetry \
+            elasticsearch jose geoip heka hyperloglog kafka lfs lpeg lsb moz_telemetry \
             openssl parquet postgres rjson sax snappy socket ssl struct syslog \
             systemd zlib; do
         case "$ext" in
             geoip)
+                cmake_args="$cmake_args -DEXT_$ext=false"
+                ;;
+            jose)
                 cmake_args="$cmake_args -DEXT_$ext=false"
                 ;;
             kafka)
