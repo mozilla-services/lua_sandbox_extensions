@@ -77,6 +77,7 @@ kafka
 lfs
 lpeg
 lsb
+moz_pioneer
 moz_telemetry
 openssl
 parquet
