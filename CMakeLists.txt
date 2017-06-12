@@ -19,7 +19,7 @@ if(LUA51) # build against installed lua 5.1
     set(INSTALL_MODULE_PATH ${CMAKE_INSTALL_LIBDIR}/lua)
     set(INSTALL_IOMODULE_PATH ${CMAKE_INSTALL_LIBDIR}/lua)
     set(INSTALL_SANDBOX_PATH ${CMAKE_INSTALL_DATAROOTDIR}/lua)
-    set(PACKAGE_PREFIX lua)
+    set(PACKAGE_PREFIX lua51)
     if(WIN32)
         string(REPLACE "\\" "\\\\" TEST_MODULE_PATH "${CMAKE_BINARY_DIR}\\install\\${CMAKE_INSTALL_LIBDIR}\\${PACKAGE_PREFIX}\\?.lua")
         string(REGEX REPLACE "\\.lua$" ".dll" TEST_MODULE_CPATH ${TEST_MODULE_PATH})
@@ -72,10 +72,12 @@ elasticsearch
 geoip
 heka
 hyperloglog
+jose
 kafka
 lfs
 lpeg
 lsb
+moz_pioneer
 moz_telemetry
 openssl
 parquet

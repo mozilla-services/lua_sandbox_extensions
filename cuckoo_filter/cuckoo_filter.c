@@ -24,7 +24,6 @@
 
 static const char *module_name  = "mozsvc.cuckoo_filter";
 static const char *module_table = "cuckoo_filter";
-static int binary_version = 1;
 
 typedef struct cuckoo_bucket
 {
@@ -267,6 +266,8 @@ static int cf_version(lua_State *lua)
 
 
 #ifdef LUA_SANDBOX
+static int binary_version = 1;
+
 static int cf_fromstring(lua_State *lua)
 {
   cuckoo_filter *cf = check_cuckoo_filter(lua, 4);
@@ -343,6 +344,6 @@ int luaopen_cuckoo_filter(lua_State *lua)
   lua_pushvalue(lua, -1);
   lua_setfield(lua, -2, "__index");
   luaL_register(lua, NULL, cuckoo_filterlib_m);
-  luaL_register(lua, "cuckoo_filter", cuckoo_filterlib_f);
+  luaL_register(lua, module_table, cuckoo_filterlib_f);
   return 1;
 }

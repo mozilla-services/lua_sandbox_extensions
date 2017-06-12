@@ -6,7 +6,6 @@ cmake_minimum_required(VERSION 3.0)
 project(cuckoo-filter VERSION 1.1.1 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua cuckoo filter module (membership test with deletion support)")
 set(MODULE_SRCS cuckoo_filter.c common.c ../common/xxhash.c cuckoo_filter.def)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0)")
 include(sandbox_module)
 
 include_directories(${LUA_INCLUDE_DIR})

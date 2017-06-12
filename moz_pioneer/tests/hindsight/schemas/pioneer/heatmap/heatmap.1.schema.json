@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "pioneer_heatmap",
+  "properties": {
+    "sessions": {
+      "items": {
+        "properties": {
+          "duration": {
+            "description": "Time in milliseconds, max 1 year",
+            "maximum": 31536000000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "start_time": {
+            "description": "Seconds since the UNIX epoch, range year 2000-2100",
+            "maximum": 4102441200,
+            "minimum": 946681200,
+            "type": "integer"
+          },
+          "tab_id": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "url": {
+            "description": "Full URL starting with <protocol>://",
+            "maxLength": 4096,
+            "minLength": 8,
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_time",
+          "url"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "user": {
+      "description": "Custom user id, UUID-like",
+      "maxLength": 36,
+      "minLength": 3,
+      "type": "string"
+    }
+  },
+  "required": [
+    "user",
+    "sessions"
+  ],
+  "type": "object"
+}

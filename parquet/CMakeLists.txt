@@ -9,8 +9,6 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Parquet Lua Module")
 find_package(parquet-cpp 0.0.1 REQUIRED CONFIG)
 
 set(MODULE_SRCS parquet.cpp parquet.def)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0), parquet-cpp (>= 0.0.1), luasandbox-lpeg (>= 1.0), libc6 (>= 2.14), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1)")
-
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "parquet-cpp (>= 0.0.1), ${PACKAGE_PREFIX}-lpeg (>= 1.0), libc6 (>= 2.14), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1)")
 include(sandbox_module)
-
 target_link_libraries(parquet ${PARQUET-CPP_LIBRARIES})

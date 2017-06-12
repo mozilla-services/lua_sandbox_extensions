@@ -15,7 +15,6 @@ set(CPACK_PACKAGE_CONTACT       "Mike Trinkala <trink@mozilla.com>")
 set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
 set(CPACK_STRIP_FILES           TRUE)
 
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.1)")
 set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
 
 if(MSVC)
@@ -34,11 +33,13 @@ endif()
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
 if(LUA51) # build against installed lua 5.1
-    set(CPACK_PACKAGE_NAME lua-${PROJECT_NAME})
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "lua5.1")
+    set(CPACK_PACKAGE_NAME lua51-${PROJECT_NAME})
     find_package(Lua51)
     find_program(LUA NAMES lua lua.bat)
     add_test(NAME test COMMAND ${LUA} test.lua)
 else() # lua_sandbox build
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0.2)")
     find_package(luasandbox 1.0.2 REQUIRED CONFIG)
     set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
     set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
