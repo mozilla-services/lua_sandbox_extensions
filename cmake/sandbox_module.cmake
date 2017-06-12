@@ -53,7 +53,12 @@ ${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${CMAKE_BINARY_DIR})
 if(LUA51) # build against the installed Lua 5.1
-    set(CPACK_PACKAGE_NAME "lua-${PROJECT_NAME}")
+    if(CPACK_DEBIAN_PACKAGE_DEPENDS)
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, lua5.1")
+    else()
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "lua5.1")
+    endif()
+    set(CPACK_PACKAGE_NAME "lua51-${PROJECT_NAME}")
     find_program(LUA NAMES lua lua.bat)
     if(TEST_CONFIGURATION)
         add_test(NAME ${MODULE_NAME}_test COMMAND ${LUA} test.lua CONFIGURATIONS ${TEST_CONFIGURATION})
@@ -64,6 +69,11 @@ if(LUA51) # build against the installed Lua 5.1
     "LUA_PATH=${TEST_MODULE_PATH}" "LUA_CPATH=${TEST_MODULE_CPATH}" TZ=UTC
     )
 else() # build against the installed lua_sandbox
+    if(CPACK_DEBIAN_PACKAGE_DEPENDS)
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, luasandbox (>= 1.2)")
+    else()
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.2)")
+    endif()
     add_executable(${MODULE_NAME}_test_sandbox test_sandbox.c)
     target_link_libraries(${MODULE_NAME}_test_sandbox ${LUASANDBOX_TEST_LIBRARY} ${LUASANDBOX_LIBRARIES})
     if(TEST_CONFIGURATION)
