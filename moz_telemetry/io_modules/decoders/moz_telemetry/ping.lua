@@ -28,11 +28,16 @@ decoders_moz_telemetry_ping = {
     -- Boolean used to determine whether to inject the raw message in addition to the decoded one.
     inject_raw = false, -- optional, if not specified the raw message is not injected
 
-    -- number of items in the de-duping cuckoo filter
-    cf_items = 30e6, -- optional, if not provided de-duping is disabled
+    -- WARNING if the cuckoo filter settings are altered the plugin's
+    -- `preservation_version` should be incremented
+    -- number of items in each de-duping cuckoo filter partition
+    cf_items = 32e6, -- optional, if not provided de-duping is disabled
+
+    -- number of partitions, each containing `cf_items`
+    -- cf_partitions = 4 -- optional default 4 (1, 2, 4, 8, 16)
 
     -- interval size in minutes for cuckoo filter pruning
-    cf_interval_size = 1, -- optional, default 1
+    -- cf_interval_size = 6, -- optional, default 6 (25.6 hours)
 }
 ```
 
@@ -58,6 +63,8 @@ Decode and inject the message given as argument, using a module-internal stream 
 *Return*
 - none, injects an error message on decode failure
 --]]
+
+_PRESERVATION_VERSION = read_config("preservation_version") or _PRESERVATION_VERSION or 0
 
 -- Imports
 local module_name   = ...
@@ -106,9 +113,22 @@ local function load_decoder_cfg()
     assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
 
     if cfg.cf_items then
-        if not cf_interval_size then cfg.cf_interval_size = 1 end
+        if not cfg.cf_interval_size then cfg.cf_interval_size = 6 end
+        if cfg.cf_partitions then
+            local x = cfg.cf_partitions
+            assert(type(cfg.cf_partitions) == "number" and x == 1 or x == 2 or x == 4 or x == 8 or x == 16,
+                    "cf_partitions [1,2,4,8,16]")
+        else
+            cfg.cf_partitions = 4
+        end
         local cfe = require "cuckoo_filter_expire"
-        dedupe = cfe.new(cfg.cf_items, cfg.cf_interval_size)
+        dedupe = {}
+        for i=1, cfg.cf_partitions do
+            local name = "g_mtp_dedupe" .. tostring(i)
+            _G[name] = cfe.new(cfg.cf_items, cfg.cf_interval_size) -- global scope so they can be preserved
+            dedupe[i] = _G[name] -- use a local array for access
+                                 -- optimization to reduce the restoration memory allocation and time
+        end
         duplicateDelta = {value_type = 2, value = 0, representation = tostring(cfg.cf_interval_size) .. "m"}
     end
 
@@ -351,7 +371,15 @@ local function process_uri(hsr)
     msg.Fields.normalizedChannel = mtn.channel(msg.Fields.appUpdateChannel)
 
     if dedupe then
-        local added, delta = dedupe:add(msg.Fields.documentId, msg.Timestamp)
+        local int = string.byte(msg.Fields.documentId)
+        if int > 96 then
+            int = int - 39
+        elseif int > 64 then
+            int = int - 7
+        end
+        local idx = int % cfg.cf_partitions + 1
+        local cf = dedupe[idx]
+        local added, delta = cf:add(msg.Fields.documentId, msg.Timestamp)
         if not added then
             msg.Type = "telemetry.duplicate"
             duplicateDelta.value = delta
