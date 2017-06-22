@@ -177,7 +177,7 @@ local default_schema = rjson.parse_schema([[
 {
   "$schema" : "http://json-schema.org/draft-04/schema#",
   "type" : "object",
-  "name" : "default_schema",
+  "title" : "default_schema",
   "properties" : {
   },
   "required" : []
@@ -206,7 +206,6 @@ local function load_schemas()
             end
         end
     end
-    schemas["saved-session"] = schemas.main -- todo remove when the saved-session schema is auto-generated
 end
 load_schemas()
 
