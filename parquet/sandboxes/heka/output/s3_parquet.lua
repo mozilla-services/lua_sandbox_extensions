@@ -53,6 +53,9 @@ parquet_schema = [=[
     }
 ]=]
 
+-- optionally load the schema from disk instead of specifying `parquet_schema` (not allowed from the admin UI)
+-- parquet_schema_file = "/usr/share/mozilla-pipeline-schemas/telemetry/new-profile/new-profile.4.parquetmr.txt"
+
 -- The name of a top level parquet group used to specify additional information
 -- to be extracted from the message (using read_message). If the column name
 -- matches a Heka message header name the data is extracted from 'msg.name'
@@ -123,6 +126,7 @@ local writers_cnt   = 0
 local buffer_cnt    = 0
 local time_t        = 0
 
+local hindsight_admin       = read_config("hindsight_admin")
 local hostname              = read_config("Hostname")
 local metadata_group        = read_config("metadata_group")
 local json_objects          = read_config("json_objects")
@@ -133,7 +137,20 @@ if type(json_objects) == "table" then
 end
 if not json_objects and metadata_group then error("metadata_group cannot be configured without json_objects") end
 
-local parquet_schema        = read_config("parquet_schema") or error("parquet_schema must be specified")
+local function load_schema_file()
+    local schema
+    if not hindsight_admin then
+        local psf = read_config("parquet_schema_file") or error("parquet_schema_file must be specified")
+        if psf then
+            local fh = assert(io.open(psf))
+            schema = fh:read("*a")
+            fh:close()
+        end
+    end
+    return schema
+end
+
+local parquet_schema        = read_config("parquet_schema") or load_schema_file() or error("parquet_schema must be specified")
 local s3_path_dimensions    = read_config("s3_path_dimensions") or error("s3_path_dimensions must be specified")
 local batch_dir             = read_config("batch_dir") or error("batch_dir must be specified")
 local max_writers           = read_config("max_writers") or 100
@@ -141,7 +158,6 @@ local max_rowgroup_size     = read_config("max_rowgroup_size") or 10000
 local max_file_size         = read_config("max_file_size") or 1024 * 1024 * 300
 local max_file_age          = read_config("max_file_age") or 60 * 60
 local hive_compatible       = read_config("hive_compatible")
-local hindsight_admin       = read_config("hindsight_admin")
 
 local default_nil  = "UNKNOWN"
 if hive_compatible then
