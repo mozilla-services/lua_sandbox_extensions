@@ -1771,7 +1771,7 @@
                 <a href="../../../../moz_telemetry/">
             
                     
-                    moz_telemetry (1.2.11)
+                    moz_telemetry (1.2.12)
             
                 </a>
             
@@ -2380,7 +2380,7 @@
                 <a href="../../../">
             
                     
-                    parquet (0.0.6)
+                    parquet (0.0.7)
             
                 </a>
             
@@ -3441,6 +3441,9 @@ parquet_schema = <span class="hljs-string">[=[
     }
 ]=]</span>
 
+<span class="hljs-comment">-- optionally load the schema from disk instead of specifying `parquet_schema` (not allowed from the admin UI)</span>
+<span class="hljs-comment">-- parquet_schema_file = &quot;/usr/share/mozilla-pipeline-schemas/telemetry/new-profile/new-profile.4.parquetmr.txt&quot;</span>
+
 <span class="hljs-comment">-- The name of a top level parquet group used to specify additional information</span>
 <span class="hljs-comment">-- to be extracted from the message (using read_message). If the column name</span>
 <span class="hljs-comment">-- matches a Heka message header name the data is extracted from &apos;msg.name&apos;</span>
@@ -3539,7 +3542,7 @@ hive_compatible     = <span class="hljs-keyword">true</span> <span class="hljs-c
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"next":{"title":"postgres (2.3.0)","level":"1.20","depth":1,"path":"postgres/README.md","ref":"postgres/README.md","articles":[]},"previous":{"title":"output","level":"1.19.2.1.1","depth":4,"path":"parquet/sandboxes/heka/output/README.md","ref":"parquet/sandboxes/heka/output/README.md","articles":[{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"path":"parquet/sandboxes/heka/output/s3_parquet.md","ref":"parquet/sandboxes/heka/output/s3_parquet.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/sandboxes/heka/output/s3_parquet.md","mtime":"2017-06-12T14:35:48.795Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-12T14:35:54.157Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"next":{"title":"postgres (2.3.0)","level":"1.20","depth":1,"path":"postgres/README.md","ref":"postgres/README.md","articles":[]},"previous":{"title":"output","level":"1.19.2.1.1","depth":4,"path":"parquet/sandboxes/heka/output/README.md","ref":"parquet/sandboxes/heka/output/README.md","articles":[{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"path":"parquet/sandboxes/heka/output/s3_parquet.md","ref":"parquet/sandboxes/heka/output/s3_parquet.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/sandboxes/heka/output/s3_parquet.md","mtime":"2017-06-26T14:37:03.241Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>
