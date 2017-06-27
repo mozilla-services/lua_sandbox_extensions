@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(elasticsearch VERSION 1.0.5 LANGUAGES C)
+project(elasticsearch VERSION 1.0.6 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Elasticsearch encoders and outputs")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-heka (>= 1.0), ${PACKAGE_PREFIX}-rjson (>= 1.0), ${PACKAGE_PREFIX}-cjson (>= 2.1), ${PACKAGE_PREFIX}-socket (>= 3.0)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
