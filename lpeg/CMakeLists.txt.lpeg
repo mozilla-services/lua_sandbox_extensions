@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(lpeg VERSION 1.0.5 LANGUAGES C)
+project(lpeg VERSION 1.0.6 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua LPeg Module (Parsing Expression Grammars)")
@@ -34,7 +34,7 @@ if(LUA51) # build against installed lua 5.1
     find_program(LUA NAMES lua lua.bat)
     add_test(NAME test COMMAND ${LUA} test.lua)
 else() # lua_sandbox build
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, luasandbox (>= 1.0.2)")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.0.2)")
     find_package(luasandbox 1.0.2 REQUIRED CONFIG)
     set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
     set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
