@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,16 +3419,16 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="jose-module">JOSE Module</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="JOSE_Module">JOSE Module</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>A lua wrapper for cjose, a C library implementing Javascript Object Signing and
 Encryption (JOSE).</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">2. Module</h2>
+<h3 id="Example_Usage">2.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="version">version</h4>
+<h3 id="Functions">2.2. Functions</h3>
+<h4 id="version">2.2.1. version</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 <span class="hljs-keyword">local</span> v = jose.version()
 <span class="hljs-comment">-- v == &quot;0.0.1&quot;</span>
@@ -3418,7 +3442,7 @@ Encryption (JOSE).</p>
 <ul>
 <li>version (string) Semantic version</li>
 </ul>
-<h4 id="header">header</h4>
+<h4 id="header">2.2.2. header</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 <span class="hljs-keyword">local</span> hdr = jose.header({alg = <span class="hljs-string">&quot;HS256&quot;</span>})
 </code></pre>
@@ -3431,7 +3455,7 @@ Encryption (JOSE).</p>
 <ul>
 <li>header (userdata) header object</li>
 </ul>
-<h4 id="jwkimport">jwk_import</h4>
+<h4 id="jwk_import">2.2.3. jwk_import</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 <span class="hljs-keyword">local</span> jwk = jose.jwk_import([{<span class="hljs-string">&quot;kty&quot;</span>:<span class="hljs-string">&quot;oct&quot;</span>, <span class="hljs-string">&quot;k&quot;</span>:<span class="hljs-string">&quot;GawgguFyGrWKav7AX4VKUg&quot;</span>}]])
 </code></pre>
@@ -3445,7 +3469,7 @@ Web Key (JWK) IETF ID draft-ietf-jose-json-web-key.</p>
 <ul>
 <li>jwk (userdata) JSON Web Key or throws on error</li>
 </ul>
-<h4 id="jwsimport">jws_import</h4>
+<h4 id="jws_import">2.2.4. jws_import</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 <span class="hljs-keyword">local</span> jws = jose.jws_import(cs)
 </code></pre>
@@ -3458,7 +3482,7 @@ Web Key (JWK) IETF ID draft-ietf-jose-json-web-key.</p>
 <ul>
 <li>jws (userdata) JSON Web Signature or throws on error</li>
 </ul>
-<h4 id="jwssign">jws_sign</h4>
+<h4 id="jws_sign">2.2.5. jws_sign</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 <span class="hljs-keyword">local</span> hdr = jose.header({alg = <span class="hljs-string">&quot;HS256&quot;</span>})
 <span class="hljs-keyword">local</span> jws = jose.jws_sign(jwk, <span class="hljs-string">&quot;data to sign&quot;</span>, hdr)
@@ -3476,7 +3500,7 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>jws (userdata) JSON Web Signature or throws on error</li>
 </ul>
-<h4 id="jweimport">jwe_import</h4>
+<h4 id="jwe_import">2.2.6. jwe_import</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 <span class="hljs-keyword">local</span> jws = jose.jwe_import(cs)
 </code></pre>
@@ -3489,7 +3513,7 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>jwe (userdata) JSON Web Encryption or throws on error</li>
 </ul>
-<h4 id="jweencrypt">jwe_encrypt</h4>
+<h4 id="jwe_encrypt">2.2.7. jwe_encrypt</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;jose&quot;</span>
 <span class="hljs-keyword">local</span> hdr = jose.header({alg = <span class="hljs-string">&quot;RSA-OAEP&quot;</span>, enc =<span class="hljs-string">&quot;A256GCM&quot;</span>})
 <span class="hljs-keyword">local</span> jws = jose.jwe_encrypt(jwk, <span class="hljs-string">&quot;data to encrypt&quot;</span>, hdr)
@@ -3506,8 +3530,8 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>jwe (userdata) JSON Web Encryption or throws on error</li>
 </ul>
-<h3 id="header-methods">Header Methods</h3>
-<h4 id="get">get</h4>
+<h3 id="Header_Methods">2.3. Header Methods</h3>
+<h4 id="get">2.3.1. get</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> hdr = jose.header({alg = <span class="hljs-string">&quot;RSA-OAEP&quot;</span>, enc =<span class="hljs-string">&quot;A256GCM&quot;</span>})
 <span class="hljs-keyword">local</span> v = hdr:get(<span class="hljs-string">&quot;alg&quot;</span>)
 <span class="hljs-comment">-- v == &quot;RSA-OAEP&quot;</span>
@@ -3521,8 +3545,8 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>value (string) Attribute value or NIL</li>
 </ul>
-<h3 id="jws-methods">JWS Methods</h3>
-<h4 id="verify">verify</h4>
+<h3 id="JWS_Methods">2.4. JWS Methods</h3>
+<h4 id="verify">2.4.1. verify</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> ok = jws:verify(jwk)
 </code></pre>
 <p>Verifies the JWS object using the given JWK.</p>
@@ -3534,7 +3558,7 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>ok (bool) True on success</li>
 </ul>
-<h4 id="export">export</h4>
+<h4 id="export">2.4.2. export</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> cs = jws:export()
 </code></pre>
 <p>Creates a compact serialization of the given JWS object.</p>
@@ -3546,7 +3570,7 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>cs (string) Compact serialization of this JWS or throws on error</li>
 </ul>
-<h4 id="plaintext">plaintext</h4>
+<h4 id="plaintext">2.4.3. plaintext</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> txt = jws:plaintext()
 </code></pre>
 <p>Returns the plaintext data of the JWS payload.</p>
@@ -3558,7 +3582,7 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>plaintext (string) Text of the JWS or throws on error</li>
 </ul>
-<h4 id="header">header</h4>
+<h4 id="header">2.4.4. header</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> hdr = jws:header()
 </code></pre>
 <p>Returns the protected header of the JWS payload.</p>
@@ -3570,8 +3594,8 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>header (userdata) Protected JWS header</li>
 </ul>
-<h3 id="jwe-methods">JWE Methods</h3>
-<h4 id="export">export</h4>
+<h3 id="JWE_Methods">2.5. JWE Methods</h3>
+<h4 id="export">2.5.1. export</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> cs = jwe:export()
 </code></pre>
 <p>Creates a compact serialization of the given JWE object.</p>
@@ -3583,7 +3607,7 @@ signing see: <a href="https://github.com/cisco/cjose/blob/master/src/header.c#L1
 <ul>
 <li>cs (string) Compact serialization of this JWE or throws on error</li>
 </ul>
-<h4 id="decrypt">decrypt</h4>
+<h4 id="decrypt">2.5.2. decrypt</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> txt = jwe:decrypt(jwk)
 </code></pre>
 <p>Decrypts the JWE object using the given JWK. Returns the plaintext data of the
@@ -3596,7 +3620,7 @@ JWE payload.</p>
 <ul>
 <li>plaintext (string) The decrypted content or throws on error</li>
 </ul>
-<h4 id="header">header</h4>
+<h4 id="header">2.5.3. header</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> hdr = jwe:header()
 </code></pre>
 <p>Returns the protected header of the JWE object.</p>
@@ -3608,7 +3632,7 @@ JWE payload.</p>
 <ul>
 <li>header (userdata) Protected JWE header</li>
 </ul>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#JOSE_Module">JOSE Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#version">2.2.1. version</a></li><li><a href="#header">2.2.2. header</a></li><li><a href="#jwk_import">2.2.3. jwk_import</a></li><li><a href="#jws_import">2.2.4. jws_import</a></li><li><a href="#jws_sign">2.2.5. jws_sign</a></li><li><a href="#jwe_import">2.2.6. jwe_import</a></li><li><a href="#jwe_encrypt">2.2.7. jwe_encrypt</a></li></ul><li><a href="#Header_Methods">2.3. Header Methods</a></li><ul><li><a href="#get">2.3.1. get</a></li></ul><li><a href="#JWS_Methods">2.4. JWS Methods</a></li><ul><li><a href="#verify">2.4.1. verify</a></li><li><a href="#export">2.4.2. export</a></li><li><a href="#plaintext">2.4.3. plaintext</a></li><li><a href="#header">2.4.4. header</a></li></ul><li><a href="#JWE_Methods">2.5. JWE Methods</a></li><ul><li><a href="#export">2.5.1. export</a></li><li><a href="#decrypt">2.5.2. decrypt</a></li><li><a href="#header">2.5.3. header</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3651,7 +3675,7 @@ JWE payload.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"jose (0.0.1)","level":"1.11","depth":1,"next":{"title":"kafka (1.0.5)","level":"1.12","depth":1,"path":"kafka/README.md","ref":"kafka/README.md","articles":[{"title":"sandboxes","level":"1.12.1","depth":2,"path":"kafka/sandboxes/README.md","ref":"kafka/sandboxes/README.md","articles":[{"title":"heka","level":"1.12.1.1","depth":3,"path":"kafka/sandboxes/heka/README.md","ref":"kafka/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.12.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},{"title":"output","level":"1.12.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.12.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]}]}]}]},"previous":{"title":"hyperloglog (1.0.0)","level":"1.10","depth":1,"path":"hyperloglog/README.md","ref":"hyperloglog/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"jose/README.md","mtime":"2017-06-26T14:37:03.041Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"jose (0.0.1)","level":"1.11","depth":1,"next":{"title":"kafka (1.0.5)","level":"1.12","depth":1,"path":"kafka/README.md","ref":"kafka/README.md","articles":[{"title":"sandboxes","level":"1.12.1","depth":2,"path":"kafka/sandboxes/README.md","ref":"kafka/sandboxes/README.md","articles":[{"title":"heka","level":"1.12.1.1","depth":3,"path":"kafka/sandboxes/heka/README.md","ref":"kafka/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.12.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},{"title":"output","level":"1.12.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.12.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]}]}]}]},"previous":{"title":"hyperloglog (1.0.0)","level":"1.10","depth":1,"path":"hyperloglog/README.md","ref":"hyperloglog/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"jose/README.md","mtime":"2017-07-11T20:38:49.000Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,8 +3419,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="parquet-schema-parserloader">Parquet Schema Parser/Loader</h1>
-<h3 id="example-usage">Example Usage</h3>
+                                <h1 id="Parquet_Schema_Parser_Loader">Parquet Schema Parser/Loader</h1>
+<h3 id="Example_Usage">0.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;parquet&quot;</span>
 <span class="hljs-keyword">local</span> parser = <span class="hljs-built_in">require</span> <span class="hljs-string">&quot;lpeg.parquet&quot;</span>
 
@@ -3449,7 +3473,7 @@ writer:dissect_record(r1)
 writer:dissect_record(r2)
 writer:close()
 </code></pre>
-<h3 id="example-schema-with-additional-attributes">Example Schema with Additional Attributes</h3>
+<h3 id="Example_Schema_with_Additional_Attributes">0.2. Example Schema with Additional Attributes</h3>
 <pre><code>message one_of_each {
   required boolean b;
   required int32 i32;
@@ -3461,8 +3485,8 @@ writer:close()
   required binary ba = 8;
   required fixed_len_byte_array(5) flba;
 }
-</code></pre><h2 id="functions">Functions</h2>
-<h3 id="loadparquetschema">load_parquet_schema</h3>
+</code></pre><h2 id="Functions">1. Functions</h2>
+<h3 id="load_parquet_schema">1.1. load_parquet_schema</h3>
 <p>Constructs a parquet schema from the Parquet schema specification.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3475,7 +3499,7 @@ writer:close()
 <li>schema (userdata) or an error is thrown</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/parquet/io_modules/lpeg/parquet.lua" target="_blank">parquet.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Parquet_Schema_Parser_Loader">Parquet Schema Parser/Loader</a></p><li><a href="#">none</a></li><ul><li><a href="#Example_Usage">0.1. Example Usage</a></li><li><a href="#Example_Schema_with_Additional_Attributes">0.2. Example Schema with Additional Attributes</a></li></ul><li><a href="#Functions">1. Functions</a></li><ul><li><a href="#load_parquet_schema">1.1. load_parquet_schema</a></li></ul></ul></div><a href="#" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3518,7 +3542,7 @@ writer:close()
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"parquet","level":"1.19.1.1.1","depth":4,"next":{"title":"sandboxes","level":"1.19.2","depth":2,"path":"parquet/sandboxes/README.md","ref":"parquet/sandboxes/README.md","articles":[{"title":"heka","level":"1.19.2.1","depth":3,"path":"parquet/sandboxes/heka/README.md","ref":"parquet/sandboxes/heka/README.md","articles":[{"title":"output","level":"1.19.2.1.1","depth":4,"path":"parquet/sandboxes/heka/output/README.md","ref":"parquet/sandboxes/heka/output/README.md","articles":[{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"path":"parquet/sandboxes/heka/output/s3_parquet.md","ref":"parquet/sandboxes/heka/output/s3_parquet.md","articles":[]}]}]}]},"previous":{"title":"lpeg","level":"1.19.1.1","depth":3,"path":"parquet/io_modules/lpeg/README.md","ref":"parquet/io_modules/lpeg/README.md","articles":[{"title":"parquet","level":"1.19.1.1.1","depth":4,"path":"parquet/io_modules/lpeg/parquet.md","ref":"parquet/io_modules/lpeg/parquet.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/io_modules/lpeg/parquet.md","mtime":"2017-06-26T14:37:03.245Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"parquet","level":"1.19.1.1.1","depth":4,"next":{"title":"sandboxes","level":"1.19.2","depth":2,"path":"parquet/sandboxes/README.md","ref":"parquet/sandboxes/README.md","articles":[{"title":"heka","level":"1.19.2.1","depth":3,"path":"parquet/sandboxes/heka/README.md","ref":"parquet/sandboxes/heka/README.md","articles":[{"title":"output","level":"1.19.2.1.1","depth":4,"path":"parquet/sandboxes/heka/output/README.md","ref":"parquet/sandboxes/heka/output/README.md","articles":[{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"path":"parquet/sandboxes/heka/output/s3_parquet.md","ref":"parquet/sandboxes/heka/output/s3_parquet.md","articles":[]}]}]}]},"previous":{"title":"lpeg","level":"1.19.1.1","depth":3,"path":"parquet/io_modules/lpeg/README.md","ref":"parquet/io_modules/lpeg/README.md","articles":[{"title":"parquet","level":"1.19.1.1.1","depth":4,"path":"parquet/io_modules/lpeg/parquet.md","ref":"parquet/io_modules/lpeg/parquet.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/io_modules/lpeg/parquet.md","mtime":"2017-07-11T20:38:49.156Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

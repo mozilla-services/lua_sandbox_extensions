@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,11 +3419,11 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="lua-kafka-module">Lua Kafka Module</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="Lua_Kafka_Module">Lua Kafka Module</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>A Kafka producer/consumer library for Lua</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">2. Module</h2>
+<h3 id="Example_Usage">2.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;kafka&quot;</span>
 <span class="hljs-keyword">local</span> consumer = kafka.consumer(<span class="hljs-string">&quot;localhost:9092&quot;</span>,
                                 {<span class="hljs-string">&quot;test&quot;</span>},
@@ -3411,8 +3435,8 @@ msg, topic, partition, key = consumer:receive()
     <span class="hljs-comment">-- consume msg</span>
 <span class="hljs-keyword">end</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="producer">producer</h4>
+<h3 id="Functions">2.2. Functions</h3>
+<h4 id="producer">2.2.1. producer</h4>
 <p>Creates a Kafka producer.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> brokerlist    = <span class="hljs-string">&quot;localhost:9092&quot;</span>
 <span class="hljs-keyword">local</span> producer_conf = {
@@ -3433,7 +3457,7 @@ msg, topic, partition, key = consumer:receive()
 <ul>
 <li>producer (userdata) - Kafka producer or an error is thrown</li>
 </ul>
-<h4 id="consumer">consumer</h4>
+<h4 id="consumer">2.2.2. consumer</h4>
 <p>Creates a Kafka consumer.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> brokerlist    = <span class="hljs-string">&quot;localhost:9092&quot;</span>
 <span class="hljs-keyword">local</span> topics        = {<span class="hljs-string">&quot;test&quot;</span>}
@@ -3454,7 +3478,7 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <ul>
 <li>consumer (userdata) - Kafka consumer or an error is thrown</li>
 </ul>
-<h4 id="version">version</h4>
+<h4 id="version">2.2.3. version</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;kafka&quot;</span>
 <span class="hljs-keyword">local</span> v = kafka.version()
 <span class="hljs-comment">-- v == &quot;1.0.0&quot;</span>
@@ -3468,8 +3492,8 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <ul>
 <li>Semantic version string</li>
 </ul>
-<h3 id="producer-methods">Producer Methods</h3>
-<h4 id="createtopic">create_topic</h4>
+<h3 id="Producer_Methods">2.3. Producer Methods</h3>
+<h4 id="create_topic">2.3.1. create_topic</h4>
 <p>Creates a topic to be used by a producer, no-op if the topic already exists.</p>
 <pre><code class="lang-lua">producer:create_topic(topic) <span class="hljs-comment">-- creates the topic if it does not exist</span>
 </code></pre>
@@ -3481,7 +3505,7 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <ul>
 <li>none</li>
 </ul>
-<h4 id="hastopic">has_topic</h4>
+<h4 id="has_topic">2.3.2. has_topic</h4>
 <p>Tests if a producer is managing a topic.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> b = producer:has_topic(topic)
 </code></pre>
@@ -3493,7 +3517,7 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <ul>
 <li>bool - True if the producer is managing a topic with the specificed name</li>
 </ul>
-<h4 id="destroytopic">destroy_topic</h4>
+<h4 id="destroy_topic">2.3.3. destroy_topic</h4>
 <p>Removes a topic from the producer.</p>
 <pre><code class="lang-lua">producer:destroy_topic(topic)
 </code></pre>
@@ -3505,7 +3529,7 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <ul>
 <li>none - no-op on non-existent topic</li>
 </ul>
-<h4 id="send">send</h4>
+<h4 id="send">2.3.4. send</h4>
 <p>Sends a message using the specified topic.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> ret = producer:send(topic, <span class="hljs-number">-1</span>, sequence_id, message)
 </code></pre>
@@ -3538,7 +3562,7 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 </ul>
 </li>
 </ul>
-<h4 id="poll">poll</h4>
+<h4 id="poll">2.3.5. poll</h4>
 <p>Polls the provided Kafka producer for events and invokes callback.  This should
 be called after every send.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> failures, sequence_id = producer:poll()
@@ -3556,8 +3580,8 @@ be called after every send.</p>
     * failures (number) - number of messages that failed
 * heka_sandbox
     * none - the checkpoint and error counts are automatically updated
-</code></pre><h3 id="consumer-methods">Consumer Methods</h3>
-<h4 id="receive">receive</h4>
+</code></pre><h3 id="Consumer_Methods">2.4. Consumer Methods</h3>
+<h4 id="receive">2.4.1. receive</h4>
 <p>Receives a message from the specified Kafka topic(s).</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> msg, topic, partition, key = consumer:receive()
 </code></pre>
@@ -3572,7 +3596,7 @@ be called after every send.</p>
 <li>partition (number) - Topic partition the message was received from</li>
 <li>key (string) - Message key (if available)</li>
 </ul>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Lua_Kafka_Module">Lua Kafka Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#producer">2.2.1. producer</a></li><li><a href="#consumer">2.2.2. consumer</a></li><li><a href="#version">2.2.3. version</a></li></ul><li><a href="#Producer_Methods">2.3. Producer Methods</a></li><ul><li><a href="#create_topic">2.3.1. create_topic</a></li><li><a href="#has_topic">2.3.2. has_topic</a></li><li><a href="#destroy_topic">2.3.3. destroy_topic</a></li><li><a href="#send">2.3.4. send</a></li><li><a href="#poll">2.3.5. poll</a></li></ul><li><a href="#Consumer_Methods">2.4. Consumer Methods</a></li><ul><li><a href="#receive">2.4.1. receive</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3615,7 +3639,7 @@ be called after every send.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"kafka (1.0.5)","level":"1.12","depth":1,"next":{"title":"sandboxes","level":"1.12.1","depth":2,"path":"kafka/sandboxes/README.md","ref":"kafka/sandboxes/README.md","articles":[{"title":"heka","level":"1.12.1.1","depth":3,"path":"kafka/sandboxes/heka/README.md","ref":"kafka/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.12.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},{"title":"output","level":"1.12.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.12.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]}]}]},"previous":{"title":"jose (0.0.1)","level":"1.11","depth":1,"path":"jose/README.md","ref":"jose/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kafka/README.md","mtime":"2017-06-26T14:37:03.073Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"kafka (1.0.5)","level":"1.12","depth":1,"next":{"title":"sandboxes","level":"1.12.1","depth":2,"path":"kafka/sandboxes/README.md","ref":"kafka/sandboxes/README.md","articles":[{"title":"heka","level":"1.12.1.1","depth":3,"path":"kafka/sandboxes/heka/README.md","ref":"kafka/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.12.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},{"title":"output","level":"1.12.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.12.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]}]}]},"previous":{"title":"jose (0.0.1)","level":"1.11","depth":1,"path":"jose/README.md","ref":"jose/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kafka/README.md","mtime":"2017-07-11T20:38:49.016Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

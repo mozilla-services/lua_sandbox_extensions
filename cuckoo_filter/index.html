@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,11 +3419,11 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="lua-cuckoo-filter-module">Lua Cuckoo Filter Module</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="Lua_Cuckoo_Filter_Module">Lua Cuckoo Filter Module</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>A bloom filter alternative for approximate set membership tests with deletion support.</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">2. Module</h2>
+<h3 id="Example_Usage">2.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;cuckoo_filter&quot;</span>
 
 <span class="hljs-keyword">local</span> cf = cuckoo_filter.new(<span class="hljs-number">1000</span>) <span class="hljs-comment">-- this will be rounded up to 1024</span>
@@ -3409,8 +3433,8 @@ cf:add(<span class="hljs-string">&quot;test&quot;</span>)
 found = cf:query(<span class="hljs-string">&quot;test&quot;</span>)
 <span class="hljs-comment">-- found == true</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="new">new</h4>
+<h3 id="Functions">2.2. Functions</h3>
+<h4 id="new">2.2.1. new</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;cuckoo_filter&quot;</span>
 <span class="hljs-keyword">local</span> cf = cuckoo_filter.new(<span class="hljs-number">1024</span>)
 </code></pre>
@@ -3428,7 +3452,7 @@ is 0.00012.</li>
 <ul>
 <li>cuckoo_filter userdata object.</li>
 </ul>
-<h4 id="version">version</h4>
+<h4 id="version">2.2.2. version</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;cuckoo_filter&quot;</span>
 <span class="hljs-keyword">local</span> v = cuckoo_filter.version()
 <span class="hljs-comment">-- v == &quot;1.0.1&quot;</span>
@@ -3442,8 +3466,8 @@ is 0.00012.</li>
 <ul>
 <li>Semantic version string</li>
 </ul>
-<h3 id="methods">Methods</h3>
-<h4 id="add">add</h4>
+<h3 id="Methods">2.3. Methods</h3>
+<h4 id="add">2.3.1. add</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> added = cf:add(key)
 </code></pre>
 <p>Adds an item to the cuckoo filter. This method works a little differently than
@@ -3458,7 +3482,7 @@ duplicates we consider any collision within the bucket to be a duplicate.</p>
 <li>True if the key was added, false if it already existed, throws an error if the
 filter is full.</li>
 </ul>
-<h4 id="delete">delete</h4>
+<h4 id="delete">2.3.2. delete</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> deleted = cf:delete(key)
 </code></pre>
 <p>Deletes an item to the cuckoo filter.</p>
@@ -3470,7 +3494,7 @@ filter is full.</li>
 <ul>
 <li>True if the key was deleted, false if it didn&apos;t exist.</li>
 </ul>
-<h4 id="query">query</h4>
+<h4 id="query">2.3.3. query</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> found = cf:query(key)
 </code></pre>
 <p>Checks for the existence of the key in the cuckoo filter.</p>
@@ -3482,7 +3506,7 @@ filter is full.</li>
 <ul>
 <li>True if the key exists, false if it doesn&apos;t.</li>
 </ul>
-<h4 id="count">count</h4>
+<h4 id="count">2.3.4. count</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> total = cf:count()
 </code></pre>
 <p>Returns the number of items in the cuckoo filter.</p>
@@ -3494,7 +3518,7 @@ filter is full.</li>
 <ul>
 <li>Returns the number of distinct items currently in the set.</li>
 </ul>
-<h4 id="clear">clear</h4>
+<h4 id="clear">2.3.5. clear</h4>
 <pre><code class="lang-lua">cf:clear()
 </code></pre>
 <p>Resets the cuckoo filter to an empty set.</p>
@@ -3506,13 +3530,13 @@ filter is full.</li>
 <ul>
 <li>none</li>
 </ul>
-<h1 id="lua-cuckoo-filter-expire-module">Lua Cuckoo Filter Expire Module</h1>
-<h2 id="overview">Overview</h2>
+<h1 id="Lua_Cuckoo_Filter_Expire_Module">Lua Cuckoo Filter Expire Module</h1>
+<h2 id="Overview">3. Overview</h2>
 <p>A cuckoo filter with automatic entry expiration. It supports a window of 256
 minutes, hours, or days after which time entries expire. If the cuckoo filter
 reaches 80% capacity then the least recently used interval is expired.</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">4. Module</h2>
+<h3 id="Example_Usage">4.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;cuckoo_filter_expire&quot;</span>
 
 <span class="hljs-keyword">local</span> cf = cuckoo_filter_expire.new(<span class="hljs-number">1000</span>, <span class="hljs-number">1</span>) <span class="hljs-comment">-- this will be rounded up to 1024</span>
@@ -3522,8 +3546,8 @@ cf:add(<span class="hljs-string">&quot;test&quot;</span>, ns)
 found = cf:query(<span class="hljs-string">&quot;test&quot;</span>)
 <span class="hljs-comment">-- found == true</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="new">new</h4>
+<h3 id="Functions">4.2. Functions</h3>
+<h4 id="new">4.2.1. new</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;cuckoo_filter_expire&quot;</span>
 <span class="hljs-keyword">local</span> cf = cuckoo_filter_expire.new(<span class="hljs-number">1024</span>, <span class="hljs-number">1</span>)
 </code></pre>
@@ -3543,7 +3567,7 @@ cuckoo filter</li>
 <ul>
 <li>cuckoo_filter_expire userdata object.</li>
 </ul>
-<h4 id="version">version</h4>
+<h4 id="version">4.2.2. version</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;cuckoo_filter_expire&quot;</span>
 <span class="hljs-keyword">local</span> v = cuckoo_filter_expire.version()
 <span class="hljs-comment">-- v == &quot;1.0.1&quot;</span>
@@ -3557,8 +3581,8 @@ cuckoo filter</li>
 <ul>
 <li>Semantic version string</li>
 </ul>
-<h3 id="methods">Methods</h3>
-<h4 id="add">add</h4>
+<h3 id="Methods">4.3. Methods</h3>
+<h4 id="add">4.3.1. add</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> added = cf:add(key, nanoseconds)
 </code></pre>
 <p>Adds an item to the cuckoo filter. This method works a little differently than
@@ -3574,7 +3598,7 @@ value is used to set the expiration interval.</li>
 <ul>
 <li>True if the key was added, false if it already existed</li>
 </ul>
-<h4 id="delete">delete</h4>
+<h4 id="delete">4.3.2. delete</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> deleted = cf:delete(key)
 </code></pre>
 <p>Deletes an item to the cuckoo filter.</p>
@@ -3586,7 +3610,7 @@ value is used to set the expiration interval.</li>
 <ul>
 <li>True if the key was deleted, false if it didn&apos;t exist.</li>
 </ul>
-<h4 id="query">query</h4>
+<h4 id="query">4.3.3. query</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> found = cf:query(key)
 </code></pre>
 <p>Checks for the existence of the key in the cuckoo filter.</p>
@@ -3598,7 +3622,7 @@ value is used to set the expiration interval.</li>
 <ul>
 <li>True if the key exists, false if it doesn&apos;t.</li>
 </ul>
-<h4 id="count">count</h4>
+<h4 id="count">4.3.4. count</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> total = cf:count()
 </code></pre>
 <p>Returns the number of items in the cuckoo filter.</p>
@@ -3610,7 +3634,7 @@ value is used to set the expiration interval.</li>
 <ul>
 <li>Returns the number of distinct items currently in the set.</li>
 </ul>
-<h4 id="clear">clear</h4>
+<h4 id="clear">4.3.5. clear</h4>
 <pre><code class="lang-lua">cf:clear()
 </code></pre>
 <p>Resets the cuckoo filter to an empty set.</p>
@@ -3622,7 +3646,7 @@ value is used to set the expiration interval.</li>
 <ul>
 <li>none</li>
 </ul>
-<h4 id="currentinterval">current_interval</h4>
+<h4 id="current_interval">4.3.6. current_interval</h4>
 <pre><code class="lang-lua">ns, interval = cf:current_interval()
 <span class="hljs-comment">-- ns == 1488402235000000000</span>
 <span class="hljs-comment">-- interval = 0</span>
@@ -3637,7 +3661,7 @@ value is used to set the expiration interval.</li>
 <li>The time of the most current interval (nanoseconds)</li>
 <li>The index of the most current interval</li>
 </ul>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Lua_Cuckoo_Filter_Expire_Module">Lua Cuckoo Filter Expire Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#new">2.2.1. new</a></li><li><a href="#version">2.2.2. version</a></li></ul><li><a href="#Methods">2.3. Methods</a></li><ul><li><a href="#add">2.3.1. add</a></li><li><a href="#delete">2.3.2. delete</a></li><li><a href="#query">2.3.3. query</a></li><li><a href="#count">2.3.4. count</a></li><li><a href="#clear">2.3.5. clear</a></li></ul></ul><li><a href="#Overview">3. Overview</a></li><li><a href="#Module">4. Module</a></li><ul><li><a href="#Example_Usage">4.1. Example Usage</a></li><li><a href="#Functions">4.2. Functions</a></li><ul><li><a href="#new">4.2.1. new</a></li><li><a href="#version">4.2.2. version</a></li></ul><li><a href="#Methods">4.3. Methods</a></li><ul><li><a href="#add">4.3.1. add</a></li><li><a href="#delete">4.3.2. delete</a></li><li><a href="#query">4.3.3. query</a></li><li><a href="#count">4.3.4. count</a></li><li><a href="#clear">4.3.5. clear</a></li><li><a href="#current_interval">4.3.6. current_interval</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3669,7 +3693,7 @@ value is used to set the expiration interval.</li>
                 </a>
                 
                 
-                <a href="../elasticsearch/" class="navigation navigation-next " aria-label="Next page: elasticsearch (1.0.5)">
+                <a href="../elasticsearch/" class="navigation navigation-next " aria-label="Next page: elasticsearch (1.0.6)">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -3680,7 +3704,7 @@ value is used to set the expiration interval.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"cuckoo_filter (1.1.1)","level":"1.6","depth":1,"next":{"title":"elasticsearch (1.0.5)","level":"1.7","depth":1,"path":"elasticsearch/README.md","ref":"elasticsearch/README.md","articles":[{"title":"io_modules","level":"1.7.1","depth":2,"path":"elasticsearch/io_modules/README.md","ref":"elasticsearch/io_modules/README.md","articles":[{"title":"encoders","level":"1.7.1.1","depth":3,"path":"elasticsearch/io_modules/encoders/README.md","ref":"elasticsearch/io_modules/encoders/README.md","articles":[{"title":"elasticsearch","level":"1.7.1.1.1","depth":4,"path":"elasticsearch/io_modules/encoders/elasticsearch/README.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/README.md","articles":[{"title":"common","level":"1.7.1.1.1.1","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/common.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/common.md","articles":[]},{"title":"mozlog","level":"1.7.1.1.1.2","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/mozlog.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/mozlog.md","articles":[]},{"title":"payload","level":"1.7.1.1.1.3","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","articles":[]}]}]}]},{"title":"sandboxes","level":"1.7.2","depth":2,"path":"elasticsearch/sandboxes/README.md","ref":"elasticsearch/sandboxes/README.md","articles":[{"title":"heka","level":"1.7.2.1","depth":3,"path":"elasticsearch/sandboxes/heka/README.md","ref":"elasticsearch/sandboxes/heka/README.md","articles":[{"title":"output","level":"1.7.2.1.1","depth":4,"path":"elasticsearch/sandboxes/heka/output/README.md","ref":"elasticsearch/sandboxes/heka/output/README.md","articles":[{"title":"elasticsearch_bulk_api","level":"1.7.2.1.1.1","depth":5,"path":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","ref":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","articles":[]}]}]}]}]},"previous":{"title":"compat (0.3.0)","level":"1.5","depth":1,"path":"compat/README.md","ref":"compat/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"cuckoo_filter/README.md","mtime":"2017-06-26T14:37:02.925Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"cuckoo_filter (1.1.1)","level":"1.6","depth":1,"next":{"title":"elasticsearch (1.0.6)","level":"1.7","depth":1,"path":"elasticsearch/README.md","ref":"elasticsearch/README.md","articles":[{"title":"io_modules","level":"1.7.1","depth":2,"path":"elasticsearch/io_modules/README.md","ref":"elasticsearch/io_modules/README.md","articles":[{"title":"encoders","level":"1.7.1.1","depth":3,"path":"elasticsearch/io_modules/encoders/README.md","ref":"elasticsearch/io_modules/encoders/README.md","articles":[{"title":"elasticsearch","level":"1.7.1.1.1","depth":4,"path":"elasticsearch/io_modules/encoders/elasticsearch/README.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/README.md","articles":[{"title":"common","level":"1.7.1.1.1.1","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/common.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/common.md","articles":[]},{"title":"mozlog","level":"1.7.1.1.1.2","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/mozlog.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/mozlog.md","articles":[]},{"title":"payload","level":"1.7.1.1.1.3","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","articles":[]}]}]}]},{"title":"sandboxes","level":"1.7.2","depth":2,"path":"elasticsearch/sandboxes/README.md","ref":"elasticsearch/sandboxes/README.md","articles":[{"title":"heka","level":"1.7.2.1","depth":3,"path":"elasticsearch/sandboxes/heka/README.md","ref":"elasticsearch/sandboxes/heka/README.md","articles":[{"title":"output","level":"1.7.2.1.1","depth":4,"path":"elasticsearch/sandboxes/heka/output/README.md","ref":"elasticsearch/sandboxes/heka/output/README.md","articles":[{"title":"elasticsearch_bulk_api","level":"1.7.2.1.1.1","depth":5,"path":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","ref":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","articles":[]}]}]}]}]},"previous":{"title":"compat (0.3.0)","level":"1.5","depth":1,"path":"compat/README.md","ref":"compat/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"cuckoo_filter/README.md","mtime":"2017-07-11T20:38:48.892Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

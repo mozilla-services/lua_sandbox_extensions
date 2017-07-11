@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,13 +3419,13 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="common-log-format-module">Common Log Format Module</h1>
-<h2 id="variables">Variables</h2>
+                                <h1 id="Common_Log_Format_Module">Common Log Format Module</h1>
+<h2 id="Variables">1. Variables</h2>
 <ul>
 <li><code>nginx_error_grammar</code> - LPEG grammar to parse an Nginx error log line</li>
 </ul>
-<h2 id="functions">Functions</h2>
-<h3 id="buildnginxgrammar">build_nginx_grammar</h3>
+<h2 id="Functions">2. Functions</h2>
+<h3 id="build_nginx_grammar">2.1. build_nginx_grammar</h3>
 <p>Constructs an LPEG grammar based on the Nginx log_format configuration string.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3411,7 +3435,7 @@
 <ul>
 <li>grammar (LPEG user data object) or an error is thrown</li>
 </ul>
-<h3 id="buildapachegrammar">build_apache_grammar</h3>
+<h3 id="build_apache_grammar">2.2. build_apache_grammar</h3>
 <p>Constructs an LPEG grammar based on the Apache log_format configuration string.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3421,7 +3445,7 @@
 <ul>
 <li>grammar (LPEG user data object) or an error is thrown</li>
 </ul>
-<h3 id="normalizeuseragent">normalize_user_agent</h3>
+<h3 id="normalize_user_agent">2.3. normalize_user_agent</h3>
 <p>Extracts the browser, version and os information from a user agent string.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3434,7 +3458,7 @@
 <li>os (string)</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/lpeg/modules/lpeg/common_log_format.lua" target="_blank">common_log_format.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Common_Log_Format_Module">Common Log Format Module</a></p><li><a href="#Variables">1. Variables</a></li><li><a href="#Functions">2. Functions</a></li><ul><li><a href="#build_nginx_grammar">2.1. build_nginx_grammar</a></li><li><a href="#build_apache_grammar">2.2. build_apache_grammar</a></li><li><a href="#normalize_user_agent">2.3. normalize_user_agent</a></li></ul></ul></div><a href="#Variables" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3477,7 +3501,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"common_log_format","level":"1.14.2.1.1","depth":4,"next":{"title":"date_time","level":"1.14.2.1.2","depth":4,"path":"lpeg/modules/lpeg/date_time.md","ref":"lpeg/modules/lpeg/date_time.md","articles":[]},"previous":{"title":"lpeg","level":"1.14.2.1","depth":3,"path":"lpeg/modules/lpeg/README.md","ref":"lpeg/modules/lpeg/README.md","articles":[{"title":"common_log_format","level":"1.14.2.1.1","depth":4,"path":"lpeg/modules/lpeg/common_log_format.md","ref":"lpeg/modules/lpeg/common_log_format.md","articles":[]},{"title":"date_time","level":"1.14.2.1.2","depth":4,"path":"lpeg/modules/lpeg/date_time.md","ref":"lpeg/modules/lpeg/date_time.md","articles":[]},{"title":"ip_address","level":"1.14.2.1.3","depth":4,"path":"lpeg/modules/lpeg/ip_address.md","ref":"lpeg/modules/lpeg/ip_address.md","articles":[]},{"title":"mysql","level":"1.14.2.1.4","depth":4,"path":"lpeg/modules/lpeg/mysql.md","ref":"lpeg/modules/lpeg/mysql.md","articles":[]},{"title":"postfix","level":"1.14.2.1.5","depth":4,"path":"lpeg/modules/lpeg/postfix.md","ref":"lpeg/modules/lpeg/postfix.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lpeg/modules/lpeg/common_log_format.md","mtime":"2017-06-26T14:37:03.101Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"common_log_format","level":"1.14.2.1.1","depth":4,"next":{"title":"date_time","level":"1.14.2.1.2","depth":4,"path":"lpeg/modules/lpeg/date_time.md","ref":"lpeg/modules/lpeg/date_time.md","articles":[]},"previous":{"title":"lpeg","level":"1.14.2.1","depth":3,"path":"lpeg/modules/lpeg/README.md","ref":"lpeg/modules/lpeg/README.md","articles":[{"title":"common_log_format","level":"1.14.2.1.1","depth":4,"path":"lpeg/modules/lpeg/common_log_format.md","ref":"lpeg/modules/lpeg/common_log_format.md","articles":[]},{"title":"date_time","level":"1.14.2.1.2","depth":4,"path":"lpeg/modules/lpeg/date_time.md","ref":"lpeg/modules/lpeg/date_time.md","articles":[]},{"title":"ip_address","level":"1.14.2.1.3","depth":4,"path":"lpeg/modules/lpeg/ip_address.md","ref":"lpeg/modules/lpeg/ip_address.md","articles":[]},{"title":"mysql","level":"1.14.2.1.4","depth":4,"path":"lpeg/modules/lpeg/mysql.md","ref":"lpeg/modules/lpeg/mysql.md","articles":[]},{"title":"postfix","level":"1.14.2.1.5","depth":4,"path":"lpeg/modules/lpeg/postfix.md","ref":"lpeg/modules/lpeg/postfix.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lpeg/modules/lpeg/common_log_format.md","mtime":"2017-07-11T20:38:49.044Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,8 +3419,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="elasticsearch-bulk-api-output">Elasticsearch Bulk API Output</h1>
-<h2 id="sample-configuration">Sample Configuration</h2>
+                                <h1 id="Elasticsearch_Bulk_API_Output">Elasticsearch Bulk API Output</h1>
+<h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">filename        = <span class="hljs-string">&quot;elasticsearch_bulk_api.lua&quot;</span>
 message_matcher = <span class="hljs-string">&quot;Type == &apos;nginx&apos;&quot;</span>
 ticker_interval = <span class="hljs-number">10</span> <span class="hljs-comment">-- flush every 10 seconds or flush_count (50000) messages</span>
@@ -3404,15 +3428,14 @@ memory_limit    = <span class="hljs-number">200e6</span>
 
 address             = <span class="hljs-string">&quot;127.0.0.1&quot;</span>
 port                = <span class="hljs-number">9200</span>
-timeout             = <span class="hljs-number">10</span>
+timeout             = <span class="hljs-number">10</span>    <span class="hljs-comment">-- socket timeout</span>
 flush_count         = <span class="hljs-number">50000</span>
 flush_on_shutdown   = <span class="hljs-keyword">false</span>
-<span class="hljs-comment">-- preserve_data       = false -- we don&apos;t rely on preserve data anymore</span>
-max_retry           = <span class="hljs-number">0</span>
-discard_on_error    = <span class="hljs-keyword">false</span> <span class="hljs-comment">-- discard the batch after max_retry+1 failed attemps to send the batch</span>
-abort_on_error      = <span class="hljs-keyword">false</span> <span class="hljs-comment">-- stop this plugin after max_retry+1 failed attemps to send the batch</span>
-<span class="hljs-comment">-- when setting abort_on_error=true, consider also settings shutdown_on_terminate or remove_checkpoints_on_terminate</span>
-
+preserve_data       = <span class="hljs-keyword">false</span> <span class="hljs-comment">-- there is no state maintained in this plugin</span>
+max_retry           = <span class="hljs-number">0</span>     <span class="hljs-comment">-- number of seconds (retries once per second)</span>
+discard_on_error    = <span class="hljs-keyword">false</span> <span class="hljs-comment">-- discard the batch after max_retry + 1 failed attempts to send the batch</span>
+abort_on_error      = <span class="hljs-keyword">false</span> <span class="hljs-comment">-- stop this plugin after max_retry + 1 failed attempts to send the batch</span>
+<span class="hljs-comment">-- when setting abort_on_error = true, consider also settings shutdown_on_terminate or remove_checkpoints_on_terminate</span>
 
 <span class="hljs-comment">-- See the elasticsearch module directory for the various encoders and configuration documentation.</span>
 encoder_module  = <span class="hljs-string">&quot;encoders.elasticsearch.payload&quot;</span>
@@ -3423,7 +3446,7 @@ encoders_elasticsearch_common    = {
 }
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.lua" target="_blank">elasticsearch_bulk_api.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Elasticsearch_Bulk_API_Output">Elasticsearch Bulk API Output</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3466,7 +3489,7 @@ encoders_elasticsearch_common    = {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"elasticsearch_bulk_api","level":"1.7.2.1.1.1","depth":5,"next":{"title":"geoip (0.1.2)","level":"1.8","depth":1,"path":"geoip/README.md","ref":"geoip/README.md","articles":[]},"previous":{"title":"output","level":"1.7.2.1.1","depth":4,"path":"elasticsearch/sandboxes/heka/output/README.md","ref":"elasticsearch/sandboxes/heka/output/README.md","articles":[{"title":"elasticsearch_bulk_api","level":"1.7.2.1.1.1","depth":5,"path":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","ref":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","mtime":"2017-06-26T14:37:02.945Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"elasticsearch_bulk_api","level":"1.7.2.1.1.1","depth":5,"next":{"title":"geoip (0.1.2)","level":"1.8","depth":1,"path":"geoip/README.md","ref":"geoip/README.md","articles":[]},"previous":{"title":"output","level":"1.7.2.1.1","depth":4,"path":"elasticsearch/sandboxes/heka/output/README.md","ref":"elasticsearch/sandboxes/heka/output/README.md","articles":[{"title":"elasticsearch_bulk_api","level":"1.7.2.1.1.1","depth":5,"path":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","ref":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"elasticsearch/sandboxes/heka/output/elasticsearch_bulk_api.md","mtime":"2017-07-11T20:38:48.908Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,11 +3419,11 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="heka-protobuf-message-s3-output-partitioner">Heka Protobuf Message S3 Output Partitioner</h1>
+                                <h1 id="Heka_Protobuf_Message_S3_Output_Partitioner">Heka Protobuf Message S3 Output Partitioner</h1>
 <p>Batches message data into Heka protobuf stream files based on the specified path
 dimensions and copies them to S3 when they reach the maximum size or maximum
 age.</p>
-<h4 id="sample-configuration">Sample Configuration</h4>
+<h4 id="Sample_Configuration">0.0.1. Sample Configuration</h4>
 <pre><code class="lang-lua">filename        = <span class="hljs-string">&quot;moz_telemetry_s3.lua&quot;</span>
 message_matcher = <span class="hljs-string">&quot;Type == &apos;telemetry&apos;&quot;</span>
 ticker_interval = <span class="hljs-number">60</span>
@@ -3439,7 +3463,7 @@ preserve_data       = <span class="hljs-keyword">not</span> flush_on_shutdown <s
 <span class="hljs-comment">-- encoder_module = &quot;encoders.heka.framed_protobuf&quot; -- default</span>
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.lua" target="_blank">moz_telemetry_s3.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Protobuf_Message_S3_Output_Partitioner">Heka Protobuf Message S3 Output Partitioner</a></p><li><a href="#">none</a></li><ul><li><a href="#">none</a></li><ul><li><a href="#Sample_Configuration">0.0.1. Sample Configuration</a></li></ul></ul></ul></div><a href="#" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3482,7 +3506,7 @@ preserve_data       = <span class="hljs-keyword">not</span> flush_on_shutdown <s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"moz_telemetry_s3","level":"1.17.3.1.3.5","depth":5,"next":{"title":"openssl (0.5.1)","level":"1.18","depth":1,"path":"openssl/README.md","ref":"openssl/README.md","articles":[]},"previous":{"title":"moz_telemetry_main_summary","level":"1.17.3.1.3.4","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.md","mtime":"2017-06-26T14:37:03.169Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"moz_telemetry_s3","level":"1.17.3.1.3.5","depth":5,"next":{"title":"openssl (0.5.1)","level":"1.18","depth":1,"path":"openssl/README.md","ref":"openssl/README.md","articles":[]},"previous":{"title":"moz_telemetry_main_summary","level":"1.17.3.1.3.4","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.md","mtime":"2017-07-11T20:38:49.100Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

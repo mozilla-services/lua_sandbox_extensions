@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,12 +3419,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="lua-circular-buffer-module">Lua Circular Buffer Module</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="Lua_Circular_Buffer_Module">Lua Circular Buffer Module</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>A circular buffer library for an in-memory sliding window time series data
 store.</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">2. Module</h2>
+<h3 id="Example_Usage">2.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;circular_buffer&quot;</span>
 
 <span class="hljs-keyword">local</span> cb = circular_buffer.new(<span class="hljs-number">1440</span>, <span class="hljs-number">1</span>, <span class="hljs-number">60</span>)
@@ -3410,8 +3434,8 @@ cb:add(<span class="hljs-number">1e9</span>, ERRORS, <span class="hljs-number">7
 <span class="hljs-keyword">local</span> val = cb:get(<span class="hljs-number">1e9</span>, ERRORS)
 <span class="hljs-comment">-- val == 8</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="new">new</h4>
+<h3 id="Functions">2.2. Functions</h3>
+<h4 id="new">2.2.1. new</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;circular_buffer&quot;</span>
 <span class="hljs-keyword">local</span> cb = circular_buffer.new(<span class="hljs-number">1440</span>, <span class="hljs-number">1</span>, <span class="hljs-number">60</span>)
 </code></pre>
@@ -3429,7 +3453,7 @@ globally registered and returned by the require function.</p>
 <ul>
 <li>circular_buffer userdata object.</li>
 </ul>
-<h4 id="version">version</h4>
+<h4 id="version">2.2.2. version</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> v = circular_buffer.version()
 <span class="hljs-comment">-- v == &quot;1.0.0&quot;</span>
 </code></pre>
@@ -3442,10 +3466,10 @@ globally registered and returned by the require function.</p>
 <ul>
 <li>Semantic version string</li>
 </ul>
-<h3 id="methods">Methods</h3>
+<h3 id="Methods">2.3. Methods</h3>
 <p><strong>Note:</strong> All column arguments are 1 based. If the column is out of range for
 the configured circular buffer a fatal error is generated.</p>
-<h4 id="add">add</h4>
+<h4 id="add">2.3.1. add</h4>
 <pre><code class="lang-lua">d = cb:add(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
 <span class="hljs-comment">-- d == 1</span>
 d = cb:add(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">99</span>)
@@ -3465,7 +3489,7 @@ operation on.</li>
 <li>The value of the updated row/column or nil if the time was outside the range
 of the buffer.</li>
 </ul>
-<h4 id="set">set</h4>
+<h4 id="set">2.3.2. set</h4>
 <pre><code class="lang-lua">d = cb:set(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
 <span class="hljs-comment">-- d == 1</span>
 d = cb:set(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">99</span>)
@@ -3487,7 +3511,7 @@ smaller/larger than the current value.</li>
 <li>The resulting value of the row/column or nil if the time was outside the range
 of the buffer.</li>
 </ul>
-<h4 id="get">get</h4>
+<h4 id="get">2.3.3. get</h4>
 <pre><code class="lang-lua">d = cb:get(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>)
 <span class="hljs-comment">-- d == 99</span>
 </code></pre>
@@ -3504,7 +3528,7 @@ from.</li>
 <li>The value at the specifed row/column or nil if the time was outside the range
 of the buffer.</li>
 </ul>
-<h4 id="getdelta">get_delta</h4>
+<h4 id="get_delta">2.3.4. get_delta</h4>
 <pre><code class="lang-lua">d = cb:get_delta(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>)
 <span class="hljs-comment">-- d == 99</span>
 </code></pre>
@@ -3522,7 +3546,7 @@ from.</li>
 <li>The delta value at the specifed row/column or nil if the time was outside the
 range of the buffer.</li>
 </ul>
-<h4 id="getrange">get_range</h4>
+<h4 id="get_range">2.3.5. get_range</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> stats = circular_buffer.new(<span class="hljs-number">5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
 stats:set(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
 stats:set(<span class="hljs-number">2e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
@@ -3549,7 +3573,7 @@ time is used. The end time must be greater than or equal to the start time.</li>
 <li>Array of column values or nil if the range fell entirely outside of the
 buffer.</li>
 </ul>
-<h4 id="getrangedelta">get_range_delta</h4>
+<h4 id="get_range_delta">2.3.6. get_range_delta</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> stats = circular_buffer.new(<span class="hljs-number">5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
 stats:set(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
 stats:set(<span class="hljs-number">2e9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
@@ -3577,7 +3601,7 @@ time is used. The end time must be greater than or equal to the start time.</li>
 <li>Array of column delta values or nil if the range fell entirely outside of the
 buffer.</li>
 </ul>
-<h4 id="getconfiguration">get_configuration</h4>
+<h4 id="get_configuration">2.3.7. get_configuration</h4>
 <pre><code class="lang-lua">rows, columns, seconds_per_row = cb:get_configuration()
 <span class="hljs-comment">-- rows == 1440</span>
 <span class="hljs-comment">-- columns = 1</span>
@@ -3597,7 +3621,7 @@ buffer.</li>
 </ul>
 </li>
 </ul>
-<h4 id="currenttime">current_time</h4>
+<h4 id="current_time">2.3.8. current_time</h4>
 <pre><code class="lang-lua">t = cb:current_time()
 <span class="hljs-comment">-- t == 86340000000000</span>
 </code></pre>
@@ -3610,7 +3634,7 @@ buffer.</li>
 <ul>
 <li>The time of the most current row in the circular buffer (nanoseconds).</li>
 </ul>
-<h4 id="setheader">set_header</h4>
+<h4 id="set_header">2.3.9. set_header</h4>
 <pre><code class="lang-lua">column = cb:set_header(<span class="hljs-number">1</span>, <span class="hljs-string">&quot;Errors&quot;</span>)
 <span class="hljs-comment">-- column == 1</span>
 </code></pre>
@@ -3636,7 +3660,7 @@ aggregated when combining multiple circular buffers.<ul>
 <ul>
 <li>The column number passed into the function.</li>
 </ul>
-<h4 id="getheader">get_header</h4>
+<h4 id="get_header">2.3.10. get_header</h4>
 <pre><code class="lang-lua">name, unit, aggregation_method = cb:get_header(<span class="hljs-number">1</span>)
 <span class="hljs-comment">-- name == &quot;Errors&quot;</span>
 <span class="hljs-comment">-- unit == &quot;count&quot;</span>
@@ -3656,7 +3680,7 @@ aggregated when combining multiple circular buffers.<ul>
 </ul>
 </li>
 </ul>
-<h4 id="resetdelta">reset_delta</h4>
+<h4 id="reset_delta">2.3.11. reset_delta</h4>
 <pre><code class="lang-lua">-- only available when using the non lua_sandbox (the sandbox output manages the
 -- reset in that case)
 cb:reset_delta(&quot;)
@@ -3670,7 +3694,7 @@ cb:reset_delta(&quot;)
 <ul>
 <li>none</li>
 </ul>
-<h4 id="annotate">annotate</h4>
+<h4 id="annotate">2.3.12. annotate</h4>
 <pre><code class="lang-lua"><span class="hljs-comment">-- only available when using the lua_sandbox</span>
 cb:annotate(<span class="hljs-number">1e9</span>, <span class="hljs-number">1</span>, <span class="hljs-string">&quot;alert&quot;</span>, <span class="hljs-string">&quot;Anonmaly detected rate of change exceeded 2 standard deviations&quot;</span>)
 </code></pre>
@@ -3690,7 +3714,7 @@ operation on.</li>
 <ul>
 <li>none</li>
 </ul>
-<h4 id="format">format</h4>
+<h4 id="format">2.3.13. format</h4>
 <pre><code class="lang-lua"><span class="hljs-comment">-- only available when using the lua_sandbox</span>
 cb:format(<span class="hljs-string">&quot;cbufd&quot;</span>)
 </code></pre>
@@ -3708,7 +3732,7 @@ structure.</p>
 <ul>
 <li>The circular buffer object.</li>
 </ul>
-<h3 id="output">Output</h3>
+<h3 id="Output">2.4. Output</h3>
 <pre><code class="lang-lua"><span class="hljs-comment">-- only available when using the lua_sandbox todo: add tostring support</span>
 cb:format(<span class="hljs-string">&quot;cbuf&quot;</span>)
 output(cb) <span class="hljs-comment">-- serializes the full buffer</span>
@@ -3736,12 +3760,12 @@ column.</p>
 <pre><code>{json header}
 row14_timestamp\trow14_col1\trow14_col2\n
 row10_timestamp\trow10_col1\trow10_col2\n
-</code></pre><h2 id="sample-cbuf-output">Sample Cbuf Output</h2>
+</code></pre><h2 id="Sample_Cbuf_Output">3. Sample Cbuf Output</h2>
 <pre><code>{&quot;time&quot;:2,&quot;rows&quot;:3,&quot;columns&quot;:3,&quot;seconds_per_row&quot;:60,&quot;column_info&quot;:[{&quot;name&quot;:&quot;HTTP_200&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;},{&quot;name&quot;:&quot;HTTP_400&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;},{&quot;name&quot;:&quot;HTTP_500&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;}], &quot;annotations&quot;:[]}
 10002   0   0
 11323   0   0
 10685   0   0
-</code></pre>
+</code></pre><div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Lua_Circular_Buffer_Module">Lua Circular Buffer Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#new">2.2.1. new</a></li><li><a href="#version">2.2.2. version</a></li></ul><li><a href="#Methods">2.3. Methods</a></li><ul><li><a href="#add">2.3.1. add</a></li><li><a href="#set">2.3.2. set</a></li><li><a href="#get">2.3.3. get</a></li><li><a href="#get_delta">2.3.4. get_delta</a></li><li><a href="#get_range">2.3.5. get_range</a></li><li><a href="#get_range_delta">2.3.6. get_range_delta</a></li><li><a href="#get_configuration">2.3.7. get_configuration</a></li><li><a href="#current_time">2.3.8. current_time</a></li><li><a href="#set_header">2.3.9. set_header</a></li><li><a href="#get_header">2.3.10. get_header</a></li><li><a href="#reset_delta">2.3.11. reset_delta</a></li><li><a href="#annotate">2.3.12. annotate</a></li><li><a href="#format">2.3.13. format</a></li></ul><li><a href="#Output">2.4. Output</a></li></ul><li><a href="#Sample_Cbuf_Output">3. Sample Cbuf Output</a></li></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3784,7 +3808,7 @@ row10_timestamp\trow10_col1\trow10_col2\n
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"circular_buffer (1.0.2)","level":"1.3","depth":1,"next":{"title":"modules","level":"1.3.1","depth":2,"path":"circular_buffer/modules/README.md","ref":"circular_buffer/modules/README.md","articles":[{"title":"lpeg","level":"1.3.1.1","depth":3,"path":"circular_buffer/modules/lpeg/README.md","ref":"circular_buffer/modules/lpeg/README.md","articles":[{"title":"cbufd","level":"1.3.1.1.1","depth":4,"path":"circular_buffer/modules/lpeg/cbufd.md","ref":"circular_buffer/modules/lpeg/cbufd.md","articles":[]}]}]},"previous":{"title":"bloom_filter (1.0.0)","level":"1.2","depth":1,"path":"bloom_filter/README.md","ref":"bloom_filter/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"circular_buffer/README.md","mtime":"2017-06-26T14:37:02.889Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"circular_buffer (1.0.2)","level":"1.3","depth":1,"next":{"title":"modules","level":"1.3.1","depth":2,"path":"circular_buffer/modules/README.md","ref":"circular_buffer/modules/README.md","articles":[{"title":"lpeg","level":"1.3.1.1","depth":3,"path":"circular_buffer/modules/lpeg/README.md","ref":"circular_buffer/modules/lpeg/README.md","articles":[{"title":"cbufd","level":"1.3.1.1.1","depth":4,"path":"circular_buffer/modules/lpeg/cbufd.md","ref":"circular_buffer/modules/lpeg/cbufd.md","articles":[]}]}]},"previous":{"title":"bloom_filter (1.0.0)","level":"1.2","depth":1,"path":"bloom_filter/README.md","ref":"bloom_filter/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"circular_buffer/README.md","mtime":"2017-07-11T20:38:48.856Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

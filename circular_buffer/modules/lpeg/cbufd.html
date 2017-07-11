@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,12 +3419,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="circular-buffer-delta-module">Circular Buffer Delta Module</h1>
-<h2 id="variables">Variables</h2>
+                                <h1 id="Circular_Buffer_Delta_Module">Circular Buffer Delta Module</h1>
+<h2 id="Variables">1. Variables</h2>
 <ul>
 <li><code>grammar</code> - LPEG grammar to parse cbufd output</li>
 </ul>
-<h2 id="usage">Usage</h2>
+<h2 id="Usage">2. Usage</h2>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> cbufd = <span class="hljs-built_in">require</span> <span class="hljs-string">&quot;lpeg.cbufd&quot;</span>.grammar
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">process_message</span><span class="hljs-params">()</span></span>
@@ -3413,12 +3437,12 @@
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>
 <span class="hljs-keyword">end</span>
 </code></pre>
-<h2 id="sample-inputoutput">Sample Input/Output</h2>
-<h3 id="circular-buffer-delta-input">Circular Buffer Delta Input</h3>
+<h2 id="Sample_Input_Output">3. Sample Input/Output</h2>
+<h3 id="Circular_Buffer_Delta_Input">3.1. Circular Buffer Delta Input</h3>
 <pre><code>{&quot;time&quot;:1379574900,&quot;rows&quot;:1440,&quot;columns&quot;:2,&quot;seconds_per_row&quot;:60,&quot;column_info&quot;:[{&quot;name&quot;:&quot;Requests&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;},{&quot;name&quot;:&quot;Total_Size&quot;,&quot;unit&quot;:&quot;KiB&quot;,&quot;aggregation&quot;:&quot;sum&quot;}]}
 1379660520      12075   159901
 1379660280      11837   154880
-</code></pre><h3 id="lua-table-output">Lua Table Output</h3>
+</code></pre><h3 id="Lua_Table_Output">3.2. Lua Table Output</h3>
 <pre><code class="lang-lua">{
 header=<span class="hljs-string">&apos;{&quot;time&quot;:1379574900,&quot;rows&quot;:1440,&quot;columns&quot;:2,&quot;seconds_per_row&quot;:60,&quot;column_info&quot;:[{&quot;name&quot;:&quot;Requests&quot;,&quot;unit&quot;:&quot;count&quot;,&quot;aggregation&quot;:&quot;sum&quot;},{&quot;name&quot;:&quot;Total_Size&quot;,&quot;unit&quot;:&quot;KiB&quot;,&quot;aggregation&quot;:&quot;sum&quot;}]}&apos;</span>,
 {<span class="hljs-number">12075</span>, <span class="hljs-number">159901</span>, time = <span class="hljs-number">1379660520000000000</span>},
@@ -3426,7 +3450,7 @@ header=<span class="hljs-string">&apos;{&quot;time&quot;:1379574900,&quot;rows&q
 }
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/circular_buffer/modules/lpeg/cbufd.lua" target="_blank">cbufd.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Circular_Buffer_Delta_Module">Circular Buffer Delta Module</a></p><li><a href="#Variables">1. Variables</a></li><li><a href="#Usage">2. Usage</a></li><li><a href="#Sample_Input_Output">3. Sample Input/Output</a></li><ul><li><a href="#Circular_Buffer_Delta_Input">3.1. Circular Buffer Delta Input</a></li><li><a href="#Lua_Table_Output">3.2. Lua Table Output</a></li></ul></ul></div><a href="#Variables" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3469,7 +3493,7 @@ header=<span class="hljs-string">&apos;{&quot;time&quot;:1379574900,&quot;rows&q
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"cbufd","level":"1.3.1.1.1","depth":4,"next":{"title":"sandboxes","level":"1.3.2","depth":2,"path":"circular_buffer/sandboxes/README.md","ref":"circular_buffer/sandboxes/README.md","articles":[{"title":"heka","level":"1.3.2.1","depth":3,"path":"circular_buffer/sandboxes/heka/README.md","ref":"circular_buffer/sandboxes/heka/README.md","articles":[{"title":"analysis","level":"1.3.2.1.1","depth":4,"path":"circular_buffer/sandboxes/heka/analysis/README.md","ref":"circular_buffer/sandboxes/heka/analysis/README.md","articles":[{"title":"throughput","level":"1.3.2.1.1.1","depth":5,"path":"circular_buffer/sandboxes/heka/analysis/throughput.md","ref":"circular_buffer/sandboxes/heka/analysis/throughput.md","articles":[]}]},{"title":"output","level":"1.3.2.1.2","depth":4,"path":"circular_buffer/sandboxes/heka/output/README.md","ref":"circular_buffer/sandboxes/heka/output/README.md","articles":[{"title":"cbuf2tsv","level":"1.3.2.1.2.1","depth":5,"path":"circular_buffer/sandboxes/heka/output/cbuf2tsv.md","ref":"circular_buffer/sandboxes/heka/output/cbuf2tsv.md","articles":[]}]}]}]},"previous":{"title":"lpeg","level":"1.3.1.1","depth":3,"path":"circular_buffer/modules/lpeg/README.md","ref":"circular_buffer/modules/lpeg/README.md","articles":[{"title":"cbufd","level":"1.3.1.1.1","depth":4,"path":"circular_buffer/modules/lpeg/cbufd.md","ref":"circular_buffer/modules/lpeg/cbufd.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"circular_buffer/modules/lpeg/cbufd.md","mtime":"2017-06-26T14:37:02.885Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"cbufd","level":"1.3.1.1.1","depth":4,"next":{"title":"sandboxes","level":"1.3.2","depth":2,"path":"circular_buffer/sandboxes/README.md","ref":"circular_buffer/sandboxes/README.md","articles":[{"title":"heka","level":"1.3.2.1","depth":3,"path":"circular_buffer/sandboxes/heka/README.md","ref":"circular_buffer/sandboxes/heka/README.md","articles":[{"title":"analysis","level":"1.3.2.1.1","depth":4,"path":"circular_buffer/sandboxes/heka/analysis/README.md","ref":"circular_buffer/sandboxes/heka/analysis/README.md","articles":[{"title":"throughput","level":"1.3.2.1.1.1","depth":5,"path":"circular_buffer/sandboxes/heka/analysis/throughput.md","ref":"circular_buffer/sandboxes/heka/analysis/throughput.md","articles":[]}]},{"title":"output","level":"1.3.2.1.2","depth":4,"path":"circular_buffer/sandboxes/heka/output/README.md","ref":"circular_buffer/sandboxes/heka/output/README.md","articles":[{"title":"cbuf2tsv","level":"1.3.2.1.2.1","depth":5,"path":"circular_buffer/sandboxes/heka/output/cbuf2tsv.md","ref":"circular_buffer/sandboxes/heka/output/cbuf2tsv.md","articles":[]}]}]}]},"previous":{"title":"lpeg","level":"1.3.1.1","depth":3,"path":"circular_buffer/modules/lpeg/README.md","ref":"circular_buffer/modules/lpeg/README.md","articles":[{"title":"cbufd","level":"1.3.1.1.1","depth":4,"path":"circular_buffer/modules/lpeg/cbufd.md","ref":"circular_buffer/modules/lpeg/cbufd.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"circular_buffer/modules/lpeg/cbufd.md","mtime":"2017-07-11T20:38:48.856Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

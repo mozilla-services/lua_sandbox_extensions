@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,15 +3419,15 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="rapidjson-lua-module">RapidJSON Lua Module</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="RapidJSON_Lua_Module">RapidJSON Lua Module</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>Lua wrapper for the RapidJSON library allowing for JSON-Schema validation
 and more efficient manipulation of large JSON structures where only a small
 amount of the data is consumed within the Lua script.  Schema pattern matching
 is restricted to a subset of regex described in the <em>Regular Expression</em> section
 of the <a href="http://rapidjson.org/md_doc_schema.html" target="_blank">RapidJSON Schema Documentation</a>.</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">2. Module</h2>
+<h3 id="Example_Usage">2.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;rjson&quot;</span>
 
 json = <span class="hljs-string">[[{&quot;array&quot;:[1,&quot;string&quot;,true,false,[3,4],{&quot;foo&quot;:&quot;bar&quot;},null]}]]</span>
@@ -3411,8 +3435,8 @@ doc = rjson.parse(json)
 str = doc:find(<span class="hljs-string">&quot;array&quot;</span>, <span class="hljs-number">1</span>);
 <span class="hljs-comment">-- str == &quot;string&quot;</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="parse">parse</h4>
+<h3 id="Functions">2.2. Functions</h3>
+<h4 id="parse">2.2.1. parse</h4>
 <p>Creates a JSON Document from a string.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> ok, doc = <span class="hljs-built_in">pcall</span>(rjson.parse, <span class="hljs-string">&apos;{&quot;foo&quot;:&quot;bar&quot;}&apos;</span>)
 <span class="hljs-built_in">assert</span>(ok, doc)
@@ -3426,7 +3450,7 @@ str = doc:find(<span class="hljs-string">&quot;array&quot;</span>, <span class="
 <ul>
 <li>doc (userdata) - JSON document or an error is thrown</li>
 </ul>
-<h4 id="parseschema">parse_schema</h4>
+<h4 id="parse_schema">2.2.2. parse_schema</h4>
 <p>Creates a JSON Schema.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> ok, doc = <span class="hljs-built_in">pcall</span>(rjson.parse_schema, <span class="hljs-string">&apos;{&quot;type&quot;:&quot;array&quot;,&quot;minItems&quot;: 1,&quot;oneOf&quot;: [{&quot;items&quot;: {&quot;type&quot;:&quot;number&quot;}}]}&apos;</span>)
 <span class="hljs-built_in">assert</span>(ok, doc)
@@ -3439,7 +3463,7 @@ str = doc:find(<span class="hljs-string">&quot;array&quot;</span>, <span class="
 <ul>
 <li>schema (userdata) - JSON schema or an error is thrown</li>
 </ul>
-<h4 id="parsemessage-heka-sandbox-only">parse_message (Heka sandbox only)</h4>
+<h4 id="parse_message_(Heka_sandbox_only)">2.2.3. parse_message (Heka sandbox only)</h4>
 <p>Creates a JSON Document from a message variable.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> ok, doc = <span class="hljs-built_in">pcall</span>(rjson.parse_message, <span class="hljs-string">&quot;Fields[myjson]&quot;</span>)
 <span class="hljs-built_in">assert</span>(ok, doc)
@@ -3465,7 +3489,7 @@ array; zero indexed</li>
 <ul>
 <li>doc (userdata) - JSON document or an error is thrown</li>
 </ul>
-<h4 id="version">version</h4>
+<h4 id="version">2.2.4. version</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;rjson&quot;</span>
 <span class="hljs-keyword">local</span> v = rjson.version()
 <span class="hljs-comment">-- v == &quot;1.0.0&quot;</span>
@@ -3479,12 +3503,12 @@ array; zero indexed</li>
 <ul>
 <li>Semantic version string</li>
 </ul>
-<h3 id="json-document-methods">JSON Document Methods</h3>
-<h4 id="parse">parse</h4>
-<h4 id="parsemessage-heka-sandbox-only">parse_message (Heka sandbox only)</h4>
+<h3 id="JSON_Document_Methods">2.3. JSON Document Methods</h3>
+<h4 id="parse">2.3.1. parse</h4>
+<h4 id="parse_message_(Heka_sandbox_only)">2.3.2. parse_message (Heka sandbox only)</h4>
 <p>Re-uses the document object to avoid GC costs/lag. Same arguments/returns as the
 rjson functions.</p>
-<h4 id="validate">validate</h4>
+<h4 id="validate">2.3.3. validate</h4>
 <p>Checks that the JSON document conforms to the specified schema.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> ok, err = doc:validate(schema)
 <span class="hljs-built_in">assert</span>(ok, err)
@@ -3498,7 +3522,7 @@ rjson functions.</p>
 <li>ok (bool) - true if valid</li>
 <li>err (string) - error message on failure</li>
 </ul>
-<h4 id="find">find</h4>
+<h4 id="find">2.3.4. find</h4>
 <p>Searches for and returns a value in the JSON structure.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> v = doc:find(<span class="hljs-string">&quot;obj&quot;</span>, <span class="hljs-string">&quot;arr&quot;</span>, <span class="hljs-number">0</span>, <span class="hljs-string">&quot;foo&quot;</span>)
 <span class="hljs-built_in">assert</span>(v, <span class="hljs-string">&quot;not found&quot;</span>)
@@ -3514,7 +3538,7 @@ to document</li>
 <ul>
 <li>value (lightuserdata) - handle to be passed to other methods, nil if not found</li>
 </ul>
-<h4 id="remove">remove</h4>
+<h4 id="remove">2.3.5. remove</h4>
 <p>Searches for and removes the resulting value in the JSON structure returning
 the removed value in new document (full copy).</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> rv = doc:remove(<span class="hljs-string">&quot;obj&quot;</span>, <span class="hljs-string">&quot;arr&quot;</span>)
@@ -3532,7 +3556,7 @@ to document</li>
 <ul>
 <li>doc (userdata) - new document containing the removed value or nil</li>
 </ul>
-<h4 id="removeshallow">remove_shallow</h4>
+<h4 id="remove_shallow">2.3.6. remove_shallow</h4>
 <p>Searches for and removes the resulting value in the JSON structure returning
 a reference to extracted JSON value (shallow copy).</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> rv = doc:remove_shallow(<span class="hljs-string">&quot;obj&quot;</span>, <span class="hljs-string">&quot;arr&quot;</span>)
@@ -3550,7 +3574,7 @@ to document</li>
 <ul>
 <li>value (lightuserdata) - value reference or nil</li>
 </ul>
-<h4 id="value">value</h4>
+<h4 id="value">2.3.7. value</h4>
 <p>Returns the primitive value of the JSON element.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> v = doc:find(<span class="hljs-string">&quot;obj&quot;</span>, <span class="hljs-string">&quot;arr&quot;</span>, <span class="hljs-number">0</span>, <span class="hljs-string">&quot;foo&quot;</span>)
 <span class="hljs-keyword">local</span> str = doc:value(v)
@@ -3567,7 +3591,7 @@ inner expression) e.g., str = doc:value(doc:find(&quot;foo&quot;)) or &quot;my d
 <li>primitive - string, number, bool, nil or throws an error if not convertible
 (object, array)</li>
 </ul>
-<h4 id="type">type</h4>
+<h4 id="type">2.3.8. type</h4>
 <p>Returns the type of the value in the JSON structure.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> t = doc:<span class="hljs-built_in">type</span>()
 <span class="hljs-built_in">assert</span>(t == <span class="hljs-string">&quot;object&quot;</span>, t)
@@ -3583,7 +3607,7 @@ inner expression)</li>
 <li>type (string, nil) - &quot;string&quot;, &quot;number&quot;, &quot;boolean&quot;, &quot;object&quot;, &quot;array&quot; or
 &quot;null&quot;</li>
 </ul>
-<h4 id="iter">iter</h4>
+<h4 id="iter">2.3.9. iter</h4>
 <p>Retrieves an iterator function for an object/array.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> v = doc:find(<span class="hljs-string">&quot;obj&quot;</span>, <span class="hljs-string">&quot;arr&quot;</span>)
 <span class="hljs-keyword">for</span> i,v <span class="hljs-keyword">in</span> doc:iter(v) <span class="hljs-keyword">do</span>
@@ -3600,7 +3624,7 @@ applied to document (accepts nil for API consistency)</li>
 <li>iter (function, nil) - iterator function returning an index/value for arrays
 or a key/value for objects.  Throws an error on primitive types.</li>
 </ul>
-<h4 id="size">size</h4>
+<h4 id="size">2.3.10. size</h4>
 <p>Returns the size of the value.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> v = doc:find(<span class="hljs-string">&quot;obj&quot;</span>, <span class="hljs-string">&quot;arr&quot;</span>)
 <span class="hljs-keyword">local</span> n = doc:size(v)
@@ -3616,7 +3640,7 @@ inner expression)</li>
 <li>size (number, nil) - Number of element in an array/object or the length of the
 string. Throws an error on numeric, boolean and null types.</li>
 </ul>
-<h4 id="makefield-heka-sandbox-only">make_field (Heka sandbox only)</h4>
+<h4 id="make_field_(Heka_sandbox_only)">2.3.11. make_field (Heka sandbox only)</h4>
 <p>Helper function to wrap the lightuserdata so it can be used in a Heka
 inject_message field).</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> msg = {Fields = {}}
@@ -3634,7 +3658,7 @@ inner expression)</li>
 <ul>
 <li>field (table, nil) - i.e., <code>{value = v, userdata = doc, representation = &quot;json&quot;}</code></li>
 </ul>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#RapidJSON_Lua_Module">RapidJSON Lua Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#parse">2.2.1. parse</a></li><li><a href="#parse_schema">2.2.2. parse_schema</a></li><li><a href="#parse_message_(Heka_sandbox_only)">2.2.3. parse_message (Heka sandbox only)</a></li><li><a href="#version">2.2.4. version</a></li></ul><li><a href="#JSON_Document_Methods">2.3. JSON Document Methods</a></li><ul><li><a href="#parse">2.3.1. parse</a></li><li><a href="#parse_message_(Heka_sandbox_only)">2.3.2. parse_message (Heka sandbox only)</a></li><li><a href="#validate">2.3.3. validate</a></li><li><a href="#find">2.3.4. find</a></li><li><a href="#remove">2.3.5. remove</a></li><li><a href="#remove_shallow">2.3.6. remove_shallow</a></li><li><a href="#value">2.3.7. value</a></li><li><a href="#type">2.3.8. type</a></li><li><a href="#iter">2.3.9. iter</a></li><li><a href="#size">2.3.10. size</a></li><li><a href="#make_field_(Heka_sandbox_only)">2.3.11. make_field (Heka sandbox only)</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3677,7 +3701,7 @@ inner expression)</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"rjson (1.1.1)","level":"1.21","depth":1,"next":{"title":"sax (0.5.0)","level":"1.22","depth":1,"path":"sax/README.md","ref":"sax/README.md","articles":[]},"previous":{"title":"postgres (2.3.0)","level":"1.20","depth":1,"path":"postgres/README.md","ref":"postgres/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rjson/README.md","mtime":"2017-06-26T14:37:03.269Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"rjson (1.1.1)","level":"1.21","depth":1,"next":{"title":"sax (0.5.0)","level":"1.22","depth":1,"path":"sax/README.md","ref":"sax/README.md","articles":[]},"previous":{"title":"postgres (2.3.0)","level":"1.20","depth":1,"path":"postgres/README.md","ref":"postgres/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rjson/README.md","mtime":"2017-07-11T20:38:49.172Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,8 +3419,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="nginx-access-log-decoder-module">Nginx Access Log Decoder Module</h1>
-<h2 id="decoder-configuration-table-required">Decoder Configuration Table (required)</h2>
+                                <h1 id="Nginx_Access_Log_Decoder_Module">Nginx Access Log Decoder Module</h1>
+<h2 id="Decoder_Configuration_Table_(required)">1. Decoder Configuration Table (required)</h2>
 <pre><code class="lang-lua">decoders_nginx_access = {
   <span class="hljs-comment">-- The &#x2018;log_format&#x2019; configuration directive from the nginx.conf.</span>
   <span class="hljs-comment">-- The $time_local or $time_iso8601 variable is converted to the number of</span>
@@ -3417,8 +3441,8 @@
   payload_keep = <span class="hljs-keyword">false</span>, <span class="hljs-comment">-- default</span>
 }
 </code></pre>
-<h2 id="functions">Functions</h2>
-<h3 id="decode">decode</h3>
+<h2 id="Functions">2. Functions</h2>
+<h3 id="decode">2.1. decode</h3>
 <p>Decode and inject the resulting message</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3438,7 +3462,7 @@ is specified it should be in the hashed based format see:
 </li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/lpeg/io_modules/decoders/nginx/access.lua" target="_blank">access.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Nginx_Access_Log_Decoder_Module">Nginx Access Log Decoder Module</a></p><li><a href="#Decoder_Configuration_Table_(required)">1. Decoder Configuration Table (required)</a></li><li><a href="#Functions">2. Functions</a></li><ul><li><a href="#decode">2.1. decode</a></li></ul></ul></div><a href="#Decoder_Configuration_Table_(required)" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3481,7 +3505,7 @@ is specified it should be in the hashed based format see:
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"access","level":"1.14.1.1.1.1","depth":5,"next":{"title":"error","level":"1.14.1.1.1.2","depth":5,"path":"lpeg/io_modules/decoders/nginx/error.md","ref":"lpeg/io_modules/decoders/nginx/error.md","articles":[]},"previous":{"title":"nginx","level":"1.14.1.1.1","depth":4,"path":"lpeg/io_modules/decoders/nginx/README.md","ref":"lpeg/io_modules/decoders/nginx/README.md","articles":[{"title":"access","level":"1.14.1.1.1.1","depth":5,"path":"lpeg/io_modules/decoders/nginx/access.md","ref":"lpeg/io_modules/decoders/nginx/access.md","articles":[]},{"title":"error","level":"1.14.1.1.1.2","depth":5,"path":"lpeg/io_modules/decoders/nginx/error.md","ref":"lpeg/io_modules/decoders/nginx/error.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lpeg/io_modules/decoders/nginx/access.md","mtime":"2017-06-26T14:37:03.109Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"access","level":"1.14.1.1.1.1","depth":5,"next":{"title":"error","level":"1.14.1.1.1.2","depth":5,"path":"lpeg/io_modules/decoders/nginx/error.md","ref":"lpeg/io_modules/decoders/nginx/error.md","articles":[]},"previous":{"title":"nginx","level":"1.14.1.1.1","depth":4,"path":"lpeg/io_modules/decoders/nginx/README.md","ref":"lpeg/io_modules/decoders/nginx/README.md","articles":[{"title":"access","level":"1.14.1.1.1.1","depth":5,"path":"lpeg/io_modules/decoders/nginx/access.md","ref":"lpeg/io_modules/decoders/nginx/access.md","articles":[]},{"title":"error","level":"1.14.1.1.1.2","depth":5,"path":"lpeg/io_modules/decoders/nginx/error.md","ref":"lpeg/io_modules/decoders/nginx/error.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lpeg/io_modules/decoders/nginx/access.md","mtime":"2017-07-11T20:38:49.056Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

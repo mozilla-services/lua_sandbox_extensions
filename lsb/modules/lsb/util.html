@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,9 +3419,9 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="lua-sandbox-utility-module">Lua Sandbox Utility Module</h1>
-<h2 id="functions">Functions</h2>
-<h3 id="beheadarray">behead_array</h3>
+                                <h1 id="Lua_Sandbox_Utility_Module">Lua Sandbox Utility Module</h1>
+<h2 id="Functions">1. Functions</h2>
+<h3 id="behead_array">1.1. behead_array</h3>
 <p>Effectively removes all array values up to the provided index from an array
 by copying end values to the array head and setting now unused entries at
 the end of the array to <code>nil</code>.</p>
@@ -3410,7 +3434,7 @@ the end of the array to <code>nil</code>.</p>
 <ul>
 <li>none - in-place operation</li>
 </ul>
-<h3 id="pairsbykey">pairs_by_key</h3>
+<h3 id="pairs_by_key">1.2. pairs_by_key</h3>
 <p>Sorts the keys into an array, and then iterates on the array.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3421,12 +3445,12 @@ the end of the array to <code>nil</code>.</p>
 <ul>
 <li>function - iterator that traverses the table keys in sort function order</li>
 </ul>
-<h3 id="mergeobjects">merge_objects</h3>
+<h3 id="merge_objects">1.3. merge_objects</h3>
 <p>Merge two objects. Add all data from &quot;src&quot; to &quot;dest&quot;. Numeric values are added,
 boolean and string values are overwritten, and arrays and objects are
 recursively merged. Any data with different types in dest and src will be
 skipped.</p>
-<h4 id="example">Example</h4>
+<h4 id="Example">1.3.1. Example</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> a = {
     foo = <span class="hljs-number">1</span>,
     bar = {<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>},
@@ -3452,7 +3476,7 @@ skipped.</p>
 }
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/lsb/modules/lsb/util.lua" target="_blank">util.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Lua_Sandbox_Utility_Module">Lua Sandbox Utility Module</a></p><li><a href="#Functions">1. Functions</a></li><ul><li><a href="#behead_array">1.1. behead_array</a></li><li><a href="#pairs_by_key">1.2. pairs_by_key</a></li><li><a href="#merge_objects">1.3. merge_objects</a></li><ul><li><a href="#Example">1.3.1. Example</a></li></ul></ul></ul></div><a href="#Functions" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3495,7 +3519,7 @@ skipped.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"util","level":"1.15.1.1.2","depth":4,"next":{"title":"moz_pioneer (0.0.1)","level":"1.16","depth":1,"path":"moz_pioneer/README.md","ref":"moz_pioneer/README.md","articles":[{"title":"io_modules","level":"1.16.1","depth":2,"path":"moz_pioneer/io_modules/README.md","ref":"moz_pioneer/io_modules/README.md","articles":[{"title":"decoders","level":"1.16.1.1","depth":3,"path":"moz_pioneer/io_modules/decoders/README.md","ref":"moz_pioneer/io_modules/decoders/README.md","articles":[{"title":"moz_pioneer","level":"1.16.1.1.1","depth":4,"path":"moz_pioneer/io_modules/decoders/moz_pioneer/README.md","ref":"moz_pioneer/io_modules/decoders/moz_pioneer/README.md","articles":[{"title":"jose","level":"1.16.1.1.1.1","depth":5,"path":"moz_pioneer/io_modules/decoders/moz_pioneer/jose.md","ref":"moz_pioneer/io_modules/decoders/moz_pioneer/jose.md","articles":[]}]}]}]}]},"previous":{"title":"stats","level":"1.15.1.1.1","depth":4,"path":"lsb/modules/lsb/stats.md","ref":"lsb/modules/lsb/stats.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lsb/modules/lsb/util.md","mtime":"2017-06-26T14:37:03.121Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"util","level":"1.15.1.1.2","depth":4,"next":{"title":"moz_pioneer (0.0.1)","level":"1.16","depth":1,"path":"moz_pioneer/README.md","ref":"moz_pioneer/README.md","articles":[{"title":"io_modules","level":"1.16.1","depth":2,"path":"moz_pioneer/io_modules/README.md","ref":"moz_pioneer/io_modules/README.md","articles":[{"title":"decoders","level":"1.16.1.1","depth":3,"path":"moz_pioneer/io_modules/decoders/README.md","ref":"moz_pioneer/io_modules/decoders/README.md","articles":[{"title":"moz_pioneer","level":"1.16.1.1.1","depth":4,"path":"moz_pioneer/io_modules/decoders/moz_pioneer/README.md","ref":"moz_pioneer/io_modules/decoders/moz_pioneer/README.md","articles":[{"title":"jose","level":"1.16.1.1.1.1","depth":5,"path":"moz_pioneer/io_modules/decoders/moz_pioneer/jose.md","ref":"moz_pioneer/io_modules/decoders/moz_pioneer/jose.md","articles":[]}]}]}]}]},"previous":{"title":"stats","level":"1.15.1.1.1","depth":4,"path":"lsb/modules/lsb/stats.md","ref":"lsb/modules/lsb/stats.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lsb/modules/lsb/util.md","mtime":"2017-07-11T20:38:49.068Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

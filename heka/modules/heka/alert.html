@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,8 +3419,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="heka-alert-module">Heka Alert Module</h1>
-<h2 id="sample-configuration">Sample Configuration</h2>
+                                <h1 id="Heka_Alert_Module">Heka Alert Module</h1>
+<h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">alert = {
     disabled = <span class="hljs-keyword">false</span>, <span class="hljs-comment">-- optional</span>
     prefix   = <span class="hljs-keyword">false</span>, <span class="hljs-comment">-- optional prefix plugin information to the summary and detail strings</span>
@@ -3410,8 +3434,8 @@
     }
 }
 </code></pre>
-<h2 id="functions">Functions</h2>
-<h3 id="getdashboarduri">get_dashboard_uri</h3>
+<h2 id="Functions">2. Functions</h2>
+<h3 id="get_dashboard_uri">2.1. get_dashboard_uri</h3>
 <p>Returns the URI of the dashboard output</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3422,7 +3446,7 @@
 <ul>
 <li>URI (string)</li>
 </ul>
-<h3 id="getthreshold">get_threshold</h3>
+<h3 id="get_threshold">2.2. get_threshold</h3>
 <p>Gets the value of the threshold setting associated with the specified id. If
 the id is not found the value of the &apos;<em>default</em>&apos; key is returned otherwise nil
 is returned.</p>
@@ -3434,7 +3458,7 @@ is returned.</p>
 <ul>
 <li>threshold - configuration value</li>
 </ul>
-<h3 id="throttled">throttled</h3>
+<h3 id="throttled">2.3. throttled</h3>
 <p>Check if an alert is currently throttled, this is useful to avoid running
 expensive tests.</p>
 <p><em>Arguments</em></p>
@@ -3447,7 +3471,7 @@ value)</li>
 <ul>
 <li>throttled (boolean) - true if the alert is currently throttled</li>
 </ul>
-<h3 id="send">send</h3>
+<h3 id="send">2.4. send</h3>
 <p>Send an alert message</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3462,7 +3486,7 @@ value)</li>
 <li>sent (boolean) - true if sent, false if throttled/disabled/empty</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/modules/heka/alert.lua" target="_blank">alert.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Alert_Module">Heka Alert Module</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li><li><a href="#Functions">2. Functions</a></li><ul><li><a href="#get_dashboard_uri">2.1. get_dashboard_uri</a></li><li><a href="#get_threshold">2.2. get_threshold</a></li><li><a href="#throttled">2.3. throttled</a></li><li><a href="#send">2.4. send</a></li></ul></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3505,7 +3529,7 @@ value)</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"alert","level":"1.9.2.1.1","depth":4,"next":{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},"previous":{"title":"heka","level":"1.9.2.1","depth":3,"path":"heka/modules/heka/README.md","ref":"heka/modules/heka/README.md","articles":[{"title":"alert","level":"1.9.2.1.1","depth":4,"path":"heka/modules/heka/alert.md","ref":"heka/modules/heka/alert.md","articles":[]},{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},{"title":"util","level":"1.9.2.1.3","depth":4,"path":"heka/modules/heka/util.md","ref":"heka/modules/heka/util.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/modules/heka/alert.md","mtime":"2017-06-26T14:37:02.989Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"alert","level":"1.9.2.1.1","depth":4,"next":{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},"previous":{"title":"heka","level":"1.9.2.1","depth":3,"path":"heka/modules/heka/README.md","ref":"heka/modules/heka/README.md","articles":[{"title":"alert","level":"1.9.2.1.1","depth":4,"path":"heka/modules/heka/alert.md","ref":"heka/modules/heka/alert.md","articles":[]},{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},{"title":"util","level":"1.9.2.1.3","depth":4,"path":"heka/modules/heka/util.md","ref":"heka/modules/heka/util.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/modules/heka/alert.md","mtime":"2017-07-11T20:38:48.960Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

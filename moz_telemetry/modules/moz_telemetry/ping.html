@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,27 +3419,27 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="mozilla-telemetry-data-normalization-module">Mozilla Telemetry Data Normalization Module</h1>
-<h2 id="functions">Functions</h2>
-<h3 id="build">build</h3>
+                                <h1 id="Mozilla_Telemetry_Data_Normalization_Module">Mozilla Telemetry Data Normalization Module</h1>
+<h2 id="Functions">1. Functions</h2>
+<h3 id="build">1.1. build</h3>
 <p>Returns the environment.build JSON object as a Lua table.</p>
-<h3 id="system">system</h3>
+<h3 id="system">1.2. system</h3>
 <p>Returns the environment.system JSON object as a Lua table.</p>
-<h3 id="addons">addons</h3>
+<h3 id="addons">1.3. addons</h3>
 <p>Returns the environment.addons JSON object as a Lua table.</p>
-<h3 id="numactiveaddons">num_active_addons</h3>
+<h3 id="num_active_addons">1.4. num_active_addons</h3>
 <p>Returns the number of active addons.</p>
-<h3 id="flashversion">flash_version</h3>
+<h3 id="flash_version">1.5. flash_version</h3>
 <p>Returns the flash version or nil if not available.</p>
-<h3 id="settings">settings</h3>
+<h3 id="settings">1.6. settings</h3>
 <p>Returns the environment.settings JSON object as a Lua table.</p>
-<h3 id="isdefaultbrowser">is_default_browser</h3>
+<h3 id="is_default_browser">1.7. is_default_browser</h3>
 <p>Returns true if Firefox is the default browser.</p>
-<h3 id="profilecreationtimestamp">profile_creation_timestamp</h3>
+<h3 id="profile_creation_timestamp">1.8. profile_creation_timestamp</h3>
 <p>Returns the profile creation timestamp in nano seconds since Jan 1, 1970.</p>
-<h3 id="khist">khist</h3>
+<h3 id="khist">1.9. khist</h3>
 <p>Returns the payload.keyedHistograms JSON object as a Lua table.</p>
-<h3 id="khistsum">khist_sum</h3>
+<h3 id="khist_sum">1.10. khist_sum</h3>
 <p><em>Arguments</em></p>
 <ul>
 <li>section (string)</li>
@@ -3426,13 +3450,13 @@
 <li>sum (number) - returns the sum of the histogram values for the specified
 section/key</li>
 </ul>
-<h3 id="info">info</h3>
+<h3 id="info">1.11. info</h3>
 <p>Returns the payload.info JSON object as a Lua table.</p>
-<h3 id="hours">hours</h3>
+<h3 id="hours">1.12. hours</h3>
 <p>Returns the subsession uptime in hours (e.g. 1.25).</p>
-<h3 id="payload">payload</h3>
+<h3 id="payload">1.13. payload</h3>
 <p>Returns the message payload JSON object as a Lua table.</p>
-<h3 id="gettimestamp">get_timestamp</h3>
+<h3 id="get_timestamp">1.14. get_timestamp</h3>
 <p><em>Arguments</em></p>
 <ul>
 <li>timestring (string) - rfc3339 or crash date format</li>
@@ -3441,7 +3465,7 @@ section/key</li>
 <ul>
 <li>timestamp (number) - timestamp in nano seconds since Jan 1, 1970</li>
 </ul>
-<h3 id="getdate">get_date</h3>
+<h3 id="get_date">1.15. get_date</h3>
 <p><em>Arguments</em></p>
 <ul>
 <li>timestring (string) - crash date format</li>
@@ -3451,7 +3475,7 @@ section/key</li>
 <li>date (string) - YY-MM-DD</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/modules/moz_telemetry/ping.lua" target="_blank">ping.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Mozilla_Telemetry_Data_Normalization_Module">Mozilla Telemetry Data Normalization Module</a></p><li><a href="#Functions">1. Functions</a></li><ul><li><a href="#build">1.1. build</a></li><li><a href="#system">1.2. system</a></li><li><a href="#addons">1.3. addons</a></li><li><a href="#num_active_addons">1.4. num_active_addons</a></li><li><a href="#flash_version">1.5. flash_version</a></li><li><a href="#settings">1.6. settings</a></li><li><a href="#is_default_browser">1.7. is_default_browser</a></li><li><a href="#profile_creation_timestamp">1.8. profile_creation_timestamp</a></li><li><a href="#khist">1.9. khist</a></li><li><a href="#khist_sum">1.10. khist_sum</a></li><li><a href="#info">1.11. info</a></li><li><a href="#hours">1.12. hours</a></li><li><a href="#payload">1.13. payload</a></li><li><a href="#get_timestamp">1.14. get_timestamp</a></li><li><a href="#get_date">1.15. get_date</a></li></ul></ul></div><a href="#Functions" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3494,7 +3518,7 @@ section/key</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"ping","level":"1.17.2.1.2","depth":4,"next":{"title":"sandboxes","level":"1.17.3","depth":2,"path":"moz_telemetry/sandboxes/README.md","ref":"moz_telemetry/sandboxes/README.md","articles":[{"title":"heka","level":"1.17.3.1","depth":3,"path":"moz_telemetry/sandboxes/heka/README.md","ref":"moz_telemetry/sandboxes/heka/README.md","articles":[{"title":"analysis","level":"1.17.3.1.1","depth":4,"path":"moz_telemetry/sandboxes/heka/analysis/README.md","ref":"moz_telemetry/sandboxes/heka/analysis/README.md","articles":[{"title":"moz_shield_study_enrollment","level":"1.17.3.1.1.1","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.md","articles":[]},{"title":"moz_telemetry_doctype_monitor","level":"1.17.3.1.1.2","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_monitor.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_monitor.md","articles":[]},{"title":"moz_telemetry_landfill_error","level":"1.17.3.1.1.3","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.md","articles":[]},{"title":"moz_telemetry_payload_size","level":"1.17.3.1.1.4","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.md","articles":[]},{"title":"moz_testpilot_installation","level":"1.17.3.1.1.5","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.md","articles":[]}]},{"title":"input","level":"1.17.3.1.2","depth":4,"path":"moz_telemetry/sandboxes/heka/input/README.md","ref":"moz_telemetry/sandboxes/heka/input/README.md","articles":[{"title":"moz_serverlog_s3_bootstrap","level":"1.17.3.1.2.1","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_serverlog_s3_bootstrap.md","ref":"moz_telemetry/sandboxes/heka/input/moz_serverlog_s3_bootstrap.md","articles":[]},{"title":"moz_telemetry_s3_bootstrap","level":"1.17.3.1.2.2","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","articles":[]},{"title":"moz_telemetry_s3_landfill","level":"1.17.3.1.2.3","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.md","articles":[]},{"title":"moz_telemetry_s3_snappy","level":"1.17.3.1.2.4","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","articles":[]}]},{"title":"output","level":"1.17.3.1.3","depth":4,"path":"moz_telemetry/sandboxes/heka/output/README.md","ref":"moz_telemetry/sandboxes/heka/output/README.md","articles":[{"title":"moz_telemetry_crash_summary","level":"1.17.3.1.3.1","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.md","articles":[]},{"title":"moz_telemetry_executive_summary","level":"1.17.3.1.3.2","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.md","articles":[]},{"title":"moz_telemetry_http","level":"1.17.3.1.3.3","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_http.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_http.md","articles":[]},{"title":"moz_telemetry_main_summary","level":"1.17.3.1.3.4","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","articles":[]},{"title":"moz_telemetry_s3","level":"1.17.3.1.3.5","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.md","articles":[]}]}]}]},"previous":{"title":"normalize","level":"1.17.2.1.1","depth":4,"path":"moz_telemetry/modules/moz_telemetry/normalize.md","ref":"moz_telemetry/modules/moz_telemetry/normalize.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/modules/moz_telemetry/ping.md","mtime":"2017-06-26T14:37:03.181Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"ping","level":"1.17.2.1.2","depth":4,"next":{"title":"sandboxes","level":"1.17.3","depth":2,"path":"moz_telemetry/sandboxes/README.md","ref":"moz_telemetry/sandboxes/README.md","articles":[{"title":"heka","level":"1.17.3.1","depth":3,"path":"moz_telemetry/sandboxes/heka/README.md","ref":"moz_telemetry/sandboxes/heka/README.md","articles":[{"title":"analysis","level":"1.17.3.1.1","depth":4,"path":"moz_telemetry/sandboxes/heka/analysis/README.md","ref":"moz_telemetry/sandboxes/heka/analysis/README.md","articles":[{"title":"moz_shield_study_enrollment","level":"1.17.3.1.1.1","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_shield_study_enrollment.md","articles":[]},{"title":"moz_telemetry_doctype_monitor","level":"1.17.3.1.1.2","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_monitor.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_doctype_monitor.md","articles":[]},{"title":"moz_telemetry_landfill_error","level":"1.17.3.1.1.3","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_landfill_error.md","articles":[]},{"title":"moz_telemetry_payload_size","level":"1.17.3.1.1.4","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_telemetry_payload_size.md","articles":[]},{"title":"moz_testpilot_installation","level":"1.17.3.1.1.5","depth":5,"path":"moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.md","ref":"moz_telemetry/sandboxes/heka/analysis/moz_testpilot_installation.md","articles":[]}]},{"title":"input","level":"1.17.3.1.2","depth":4,"path":"moz_telemetry/sandboxes/heka/input/README.md","ref":"moz_telemetry/sandboxes/heka/input/README.md","articles":[{"title":"moz_serverlog_s3_bootstrap","level":"1.17.3.1.2.1","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_serverlog_s3_bootstrap.md","ref":"moz_telemetry/sandboxes/heka/input/moz_serverlog_s3_bootstrap.md","articles":[]},{"title":"moz_telemetry_s3_bootstrap","level":"1.17.3.1.2.2","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","articles":[]},{"title":"moz_telemetry_s3_landfill","level":"1.17.3.1.2.3","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.md","articles":[]},{"title":"moz_telemetry_s3_snappy","level":"1.17.3.1.2.4","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","articles":[]}]},{"title":"output","level":"1.17.3.1.3","depth":4,"path":"moz_telemetry/sandboxes/heka/output/README.md","ref":"moz_telemetry/sandboxes/heka/output/README.md","articles":[{"title":"moz_telemetry_crash_summary","level":"1.17.3.1.3.1","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_crash_summary.md","articles":[]},{"title":"moz_telemetry_executive_summary","level":"1.17.3.1.3.2","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_executive_summary.md","articles":[]},{"title":"moz_telemetry_http","level":"1.17.3.1.3.3","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_http.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_http.md","articles":[]},{"title":"moz_telemetry_main_summary","level":"1.17.3.1.3.4","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_main_summary.md","articles":[]},{"title":"moz_telemetry_s3","level":"1.17.3.1.3.5","depth":5,"path":"moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.md","ref":"moz_telemetry/sandboxes/heka/output/moz_telemetry_s3.md","articles":[]}]}]}]},"previous":{"title":"normalize","level":"1.17.2.1.1","depth":4,"path":"moz_telemetry/modules/moz_telemetry/normalize.md","ref":"moz_telemetry/modules/moz_telemetry/normalize.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/modules/moz_telemetry/ping.md","mtime":"2017-07-11T20:38:49.112Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

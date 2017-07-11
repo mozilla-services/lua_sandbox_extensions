@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,9 +3419,9 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="heka-sandbox-utility-module">Heka Sandbox Utility Module</h1>
-<h2 id="functions">Functions</h2>
-<h3 id="tabletofields">table_to_fields</h3>
+                                <h1 id="Heka_Sandbox_Utility_Module">Heka Sandbox Utility Module</h1>
+<h2 id="Functions">1. Functions</h2>
+<h3 id="table_to_fields">1.1. table_to_fields</h3>
 <p>Flattens a Lua table so it can be encoded as a protobuf fields object.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3413,7 +3437,7 @@ structure to a JSON string</li>
 <li>none - in-place modification of <code>fields</code></li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/modules/heka/util.lua" target="_blank">util.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Sandbox_Utility_Module">Heka Sandbox Utility Module</a></p><li><a href="#Functions">1. Functions</a></li><ul><li><a href="#table_to_fields">1.1. table_to_fields</a></li></ul></ul></div><a href="#Functions" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3456,7 +3480,7 @@ structure to a JSON string</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"util","level":"1.9.2.1.3","depth":4,"next":{"title":"sandboxes","level":"1.9.3","depth":2,"path":"heka/sandboxes/README.md","ref":"heka/sandboxes/README.md","articles":[{"title":"heka","level":"1.9.3.1","depth":3,"path":"heka/sandboxes/heka/README.md","ref":"heka/sandboxes/heka/README.md","articles":[{"title":"analysis","level":"1.9.3.1.1","depth":4,"path":"heka/sandboxes/heka/analysis/README.md","ref":"heka/sandboxes/heka/analysis/README.md","articles":[{"title":"heka_message_schema","level":"1.9.3.1.1.1","depth":5,"path":"heka/sandboxes/heka/analysis/heka_message_schema.md","ref":"heka/sandboxes/heka/analysis/heka_message_schema.md","articles":[]}]},{"title":"input","level":"1.9.3.1.2","depth":4,"path":"heka/sandboxes/heka/input/README.md","ref":"heka/sandboxes/heka/input/README.md","articles":[{"title":"file","level":"1.9.3.1.2.1","depth":5,"path":"heka/sandboxes/heka/input/file.md","ref":"heka/sandboxes/heka/input/file.md","articles":[]},{"title":"heka_file","level":"1.9.3.1.2.2","depth":5,"path":"heka/sandboxes/heka/input/heka_file.md","ref":"heka/sandboxes/heka/input/heka_file.md","articles":[]},{"title":"heka_s3","level":"1.9.3.1.2.3","depth":5,"path":"heka/sandboxes/heka/input/heka_s3.md","ref":"heka/sandboxes/heka/input/heka_s3.md","articles":[]}]},{"title":"output","level":"1.9.3.1.3","depth":4,"path":"heka/sandboxes/heka/output/README.md","ref":"heka/sandboxes/heka/output/README.md","articles":[{"title":"alert","level":"1.9.3.1.3.1","depth":5,"path":"heka/sandboxes/heka/output/alert.md","ref":"heka/sandboxes/heka/output/alert.md","articles":[]},{"title":"heka_debug","level":"1.9.3.1.3.2","depth":5,"path":"heka/sandboxes/heka/output/heka_debug.md","ref":"heka/sandboxes/heka/output/heka_debug.md","articles":[]},{"title":"heka_inject_payload","level":"1.9.3.1.3.3","depth":5,"path":"heka/sandboxes/heka/output/heka_inject_payload.md","ref":"heka/sandboxes/heka/output/heka_inject_payload.md","articles":[]},{"title":"logfile_roll_by_size","level":"1.9.3.1.3.4","depth":5,"path":"heka/sandboxes/heka/output/logfile_roll_by_size.md","ref":"heka/sandboxes/heka/output/logfile_roll_by_size.md","articles":[]},{"title":"near_real_time_report","level":"1.9.3.1.3.5","depth":5,"path":"heka/sandboxes/heka/output/near_real_time_report.md","ref":"heka/sandboxes/heka/output/near_real_time_report.md","articles":[]}]}]}]},"previous":{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/modules/heka/util.md","mtime":"2017-06-26T14:37:02.989Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"util","level":"1.9.2.1.3","depth":4,"next":{"title":"sandboxes","level":"1.9.3","depth":2,"path":"heka/sandboxes/README.md","ref":"heka/sandboxes/README.md","articles":[{"title":"heka","level":"1.9.3.1","depth":3,"path":"heka/sandboxes/heka/README.md","ref":"heka/sandboxes/heka/README.md","articles":[{"title":"analysis","level":"1.9.3.1.1","depth":4,"path":"heka/sandboxes/heka/analysis/README.md","ref":"heka/sandboxes/heka/analysis/README.md","articles":[{"title":"heka_message_schema","level":"1.9.3.1.1.1","depth":5,"path":"heka/sandboxes/heka/analysis/heka_message_schema.md","ref":"heka/sandboxes/heka/analysis/heka_message_schema.md","articles":[]}]},{"title":"input","level":"1.9.3.1.2","depth":4,"path":"heka/sandboxes/heka/input/README.md","ref":"heka/sandboxes/heka/input/README.md","articles":[{"title":"file","level":"1.9.3.1.2.1","depth":5,"path":"heka/sandboxes/heka/input/file.md","ref":"heka/sandboxes/heka/input/file.md","articles":[]},{"title":"heka_file","level":"1.9.3.1.2.2","depth":5,"path":"heka/sandboxes/heka/input/heka_file.md","ref":"heka/sandboxes/heka/input/heka_file.md","articles":[]},{"title":"heka_s3","level":"1.9.3.1.2.3","depth":5,"path":"heka/sandboxes/heka/input/heka_s3.md","ref":"heka/sandboxes/heka/input/heka_s3.md","articles":[]}]},{"title":"output","level":"1.9.3.1.3","depth":4,"path":"heka/sandboxes/heka/output/README.md","ref":"heka/sandboxes/heka/output/README.md","articles":[{"title":"alert","level":"1.9.3.1.3.1","depth":5,"path":"heka/sandboxes/heka/output/alert.md","ref":"heka/sandboxes/heka/output/alert.md","articles":[]},{"title":"heka_debug","level":"1.9.3.1.3.2","depth":5,"path":"heka/sandboxes/heka/output/heka_debug.md","ref":"heka/sandboxes/heka/output/heka_debug.md","articles":[]},{"title":"heka_inject_payload","level":"1.9.3.1.3.3","depth":5,"path":"heka/sandboxes/heka/output/heka_inject_payload.md","ref":"heka/sandboxes/heka/output/heka_inject_payload.md","articles":[]},{"title":"logfile_roll_by_size","level":"1.9.3.1.3.4","depth":5,"path":"heka/sandboxes/heka/output/logfile_roll_by_size.md","ref":"heka/sandboxes/heka/output/logfile_roll_by_size.md","articles":[]},{"title":"near_real_time_report","level":"1.9.3.1.3.5","depth":5,"path":"heka/sandboxes/heka/output/near_real_time_report.md","ref":"heka/sandboxes/heka/output/near_real_time_report.md","articles":[]}]}]}]},"previous":{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/modules/heka/util.md","mtime":"2017-07-11T20:38:48.960Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

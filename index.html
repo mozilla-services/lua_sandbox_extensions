@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -329,7 +333,7 @@
                 <a href="elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1392,7 +1396,7 @@
                 <a href="lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3350,6 +3354,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3393,14 +3417,14 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="lua-sandbox-extensions">Lua Sandbox Extensions</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="Lua_Sandbox_Extensions">Lua Sandbox Extensions</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>Package management for <a href="http://mozilla-services.github.io/lua_sandbox/" target="_blank">Lua Sandbox</a>
 modules and sandboxes. The goal is to simplify the lua_sandbox core by
 decoupling the module and businesss logic maintenance and deployment.</p>
 <p><a href="http://mozilla-services.github.io/lua_sandbox_extensions" target="_blank">Full Documentation</a></p>
-<h2 id="installation">Installation</h2>
-<h3 id="prerequisites">Prerequisites</h3>
+<h2 id="Installation">2. Installation</h2>
+<h3 id="Prerequisites">2.1. Prerequisites</h3>
 <ul>
 <li>C compiler (GCC 4.7+, Visual Studio 2013)</li>
 <li>CMake (3.5+) - <a href="http://cmake.org/cmake/resources/software.html" target="_blank">http://cmake.org/cmake/resources/software.html</a></li>
@@ -3408,12 +3432,12 @@ decoupling the module and businesss logic maintenance and deployment.</p>
 <li>luasandbox (1.2+) <a href="https://github.com/mozilla-services/lua_sandbox" target="_blank">https://github.com/mozilla-services/lua_sandbox</a></li>
 <li>Module specific (i.e. if buiding the ssl module openssl will be required)</li>
 </ul>
-<h4 id="optional-used-for-documentation">Optional (used for documentation)</h4>
+<h4 id="Optional_(used_for_documentation)">2.1.1. Optional (used for documentation)</h4>
 <ul>
 <li>gitbook (2.3) - <a href="https://www.gitbook.com/" target="_blank">https://www.gitbook.com/</a></li>
 <li>lua (5.1) - <a href="https://www.lua.org/download.html" target="_blank">https://www.lua.org/download.html</a></li>
 </ul>
-<h3 id="cmake-build-instructions">CMake Build Instructions</h3>
+<h3 id="CMake_Build_Instructions">2.2. CMake Build Instructions</h3>
 <pre><code>git clone https://github.com/mozilla-services/lua_sandbox_extensions.git
 cd lua_sandbox_extensions
 mkdir release
@@ -3432,7 +3456,7 @@ cmake -DCMAKE_BUILD_TYPE=release -G &quot;NMake Makefiles&quot; -DEXT_lpeg=on ..
 nmake
 ctest
 nmake packages
-</code></pre><h2 id="releases">Releases</h2>
+</code></pre><h2 id="Releases">3. Releases</h2>
 <ul>
 <li>The master branch is the current release and is considered stable at all
 times.</li>
@@ -3447,7 +3471,7 @@ project dashboard.</li>
 </ul>
 </li>
 </ul>
-<h2 id="contributions">Contributions</h2>
+<h2 id="Contributions">4. Contributions</h2>
 <ul>
 <li>All pull requests must be made against the dev branch, direct commits to
 master are not permitted.</li>
@@ -3455,8 +3479,8 @@ master are not permitted.</li>
 a new feature please propose your design/approach before doing any work as not
 all feature requests are accepted).</li>
 </ul>
-<h1 id="heka-sandbox">Heka Sandbox</h1>
-<h2 id="decoder-api-convention">Decoder API Convention</h2>
+<h1 id="Heka_Sandbox">Heka Sandbox</h1>
+<h2 id="Decoder_API_Convention">5. Decoder API Convention</h2>
 <p>Each decoder module should implement a decode function according to the
 specification below. Also, if the decoder requires configuration options it
 should look for a table, in the cfg, with a variable name matching the module
@@ -3464,7 +3488,7 @@ name (periods replaced by underscores &quot;decoders.foo&quot; -&gt; &quot;decod
 naming convention only allows for a single instance of each decoder per sandbox
 i.e., if you need to parse more than one type of Nginx access log format you
 should use multiple input sandboxes (one for each).</p>
-<h3 id="decode">decode</h3>
+<h3 id="decode">5.1. decode</h3>
 <p>The decode function should parse, decode, and/or transform the original data and
 inject one or more Heka messages into the system.</p>
 <p><em>Arguments</em></p>
@@ -3485,12 +3509,12 @@ failure<ul>
 </ul>
 </li>
 </ul>
-<h2 id="encoder-api-convention">Encoder API Convention</h2>
+<h2 id="Encoder_API_Convention">6. Encoder API Convention</h2>
 <p>Each encoder module should implement an encode function according to the
 specification below. Also, if the encoder requires configuration options it
 should look for a table, in the cfg, with a variable name matching the module
 name (periods replaced by underscores &quot;encoders.foo&quot; -&gt; &quot;encoders_foo&quot;).</p>
-<h3 id="encode">encode</h3>
+<h3 id="encode">6.1. encode</h3>
 <p>The encode function should concatenate, encode, and/or transform the Heka
 message into a byte array.</p>
 <p><em>Arguments</em></p>
@@ -3508,7 +3532,7 @@ userdata</li>
 </ul>
 </li>
 </ul>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Sandbox">Heka Sandbox</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Installation">2. Installation</a></li><ul><li><a href="#Prerequisites">2.1. Prerequisites</a></li><ul><li><a href="#Optional_(used_for_documentation)">2.1.1. Optional (used for documentation)</a></li></ul><li><a href="#CMake_Build_Instructions">2.2. CMake Build Instructions</a></li></ul><li><a href="#Releases">3. Releases</a></li><li><a href="#Contributions">4. Contributions</a></li><li><a href="#Decoder_API_Convention">5. Decoder API Convention</a></li><ul><li><a href="#decode">5.1. decode</a></li></ul><li><a href="#Encoder_API_Convention">6. Encoder API Convention</a></li><ul><li><a href="#encode">6.1. encode</a></li></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3547,7 +3571,7 @@ userdata</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Lua Sandbox Extensions","level":"1.1","depth":1,"next":{"title":"bloom_filter (1.0.0)","level":"1.2","depth":1,"path":"bloom_filter/README.md","ref":"bloom_filter/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2017-06-26T14:37:02.833Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Lua Sandbox Extensions","level":"1.1","depth":1,"next":{"title":"bloom_filter (1.0.0)","level":"1.2","depth":1,"path":"bloom_filter/README.md","ref":"bloom_filter/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2017-07-11T20:38:48.808Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

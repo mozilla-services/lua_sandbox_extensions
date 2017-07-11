@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,8 +3419,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="elasticsearch-encoder-for-mozilla-telemetry-messages">Elasticsearch Encoder for Mozilla Telemetry Messages</h1>
-<h2 id="encoder-configuration-table">Encoder Configuration Table</h2>
+                                <h1 id="Elasticsearch_Encoder_for_Mozilla_Telemetry_Messages">Elasticsearch Encoder for Mozilla Telemetry Messages</h1>
+<h2 id="Encoder_Configuration_Table">1. Encoder Configuration Table</h2>
 <p><a href="../../../../../elasticsearch/io_modules/encoders/elasticsearch/common.html">Common Options</a></p>
 <pre><code class="lang-lua">encoders_elasticsearch_common = {
     <span class="hljs-comment">-- Common Options</span>
@@ -3404,8 +3428,8 @@
     fields = {<span class="hljs-string">&quot;Payload&quot;</span>, <span class="hljs-string">&quot;Fields[docType]&quot;</span>} <span class="hljs-comment">-- required</span>
 }
 </code></pre>
-<h2 id="functions">Functions</h2>
-<h3 id="encode">encode</h3>
+<h2 id="Functions">2. Functions</h2>
+<h3 id="encode">2.1. encode</h3>
 <p>Encodes a Heka Mozilla telemetry message into an ElasticSearch Bulk Load JSON
 schema.</p>
 <p><em>Arguments</em></p>
@@ -3417,7 +3441,7 @@ schema.</p>
 <li>JSON (string)</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.lua" target="_blank">telemetry.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Elasticsearch_Encoder_for_Mozilla_Telemetry_Messages">Elasticsearch Encoder for Mozilla Telemetry Messages</a></p><li><a href="#Encoder_Configuration_Table">1. Encoder Configuration Table</a></li><li><a href="#Functions">2. Functions</a></li><ul><li><a href="#encode">2.1. encode</a></li></ul></ul></div><a href="#Encoder_Configuration_Table" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3460,7 +3484,7 @@ schema.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"telemetry","level":"1.17.1.2.1.1.1","depth":6,"next":{"title":"heka","level":"1.17.1.2.2","depth":4,"path":"moz_telemetry/io_modules/encoders/heka/README.md","ref":"moz_telemetry/io_modules/encoders/heka/README.md","articles":[{"title":"moz_telemetry","level":"1.17.1.2.2.1","depth":5,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","articles":[{"title":"webrtc","level":"1.17.1.2.2.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","articles":[]}]}]},"previous":{"title":"moz_telemetry","level":"1.17.1.2.1.1","depth":5,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","articles":[{"title":"telemetry","level":"1.17.1.2.1.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","mtime":"2017-06-26T14:37:03.193Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"telemetry","level":"1.17.1.2.1.1.1","depth":6,"next":{"title":"heka","level":"1.17.1.2.2","depth":4,"path":"moz_telemetry/io_modules/encoders/heka/README.md","ref":"moz_telemetry/io_modules/encoders/heka/README.md","articles":[{"title":"moz_telemetry","level":"1.17.1.2.2.1","depth":5,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","articles":[{"title":"webrtc","level":"1.17.1.2.2.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","articles":[]}]}]},"previous":{"title":"moz_telemetry","level":"1.17.1.2.1.1","depth":5,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","articles":[{"title":"telemetry","level":"1.17.1.2.1.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","mtime":"2017-07-11T20:38:49.124Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../../..","book":{"language":""}});
         });
     </script>
 </div>

@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,19 +3419,19 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="heka-message-schema-display">Heka Message Schema Display</h1>
+                                <h1 id="Heka_Message_Schema_Display">Heka Message Schema Display</h1>
 <p>Generates documentation for each unique message in a data stream.  The output is
 a hierarchy of Logger, Type, EnvVersion, and a list of associated message field
 attributes including their counts (number in the brackets). This plugin is meant
 for data discovery/exploration and should not be left running on a production
 system.</p>
-<h2 id="sample-configuration">Sample Configuration</h2>
+<h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">filename = <span class="hljs-string">&quot;heka_message_schema.lua&quot;</span>
 ticker_interval = <span class="hljs-number">60</span>
 preserve_data = <span class="hljs-keyword">false</span>
 message_matcher = <span class="hljs-string">&quot;TRUE&quot;</span>
 </code></pre>
-<h2 id="sample-output">Sample Output</h2>
+<h2 id="Sample_Output">2. Sample Output</h2>
 <pre><code>Logger -&gt; Type -&gt; EnvVersion -&gt; Field Attributes.
 The number in brackets is the number of occurrences of each logger/type/attribute.
 
@@ -3418,7 +3442,7 @@ fx [14482]
             app (string)
             vendor (string)
 </code></pre><p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/sandboxes/heka/analysis/heka_message_schema.lua" target="_blank">heka_message_schema.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Message_Schema_Display">Heka Message Schema Display</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li><li><a href="#Sample_Output">2. Sample Output</a></li></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3461,7 +3485,7 @@ fx [14482]
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"heka_message_schema","level":"1.9.3.1.1.1","depth":5,"next":{"title":"input","level":"1.9.3.1.2","depth":4,"path":"heka/sandboxes/heka/input/README.md","ref":"heka/sandboxes/heka/input/README.md","articles":[{"title":"file","level":"1.9.3.1.2.1","depth":5,"path":"heka/sandboxes/heka/input/file.md","ref":"heka/sandboxes/heka/input/file.md","articles":[]},{"title":"heka_file","level":"1.9.3.1.2.2","depth":5,"path":"heka/sandboxes/heka/input/heka_file.md","ref":"heka/sandboxes/heka/input/heka_file.md","articles":[]},{"title":"heka_s3","level":"1.9.3.1.2.3","depth":5,"path":"heka/sandboxes/heka/input/heka_s3.md","ref":"heka/sandboxes/heka/input/heka_s3.md","articles":[]}]},"previous":{"title":"analysis","level":"1.9.3.1.1","depth":4,"path":"heka/sandboxes/heka/analysis/README.md","ref":"heka/sandboxes/heka/analysis/README.md","articles":[{"title":"heka_message_schema","level":"1.9.3.1.1.1","depth":5,"path":"heka/sandboxes/heka/analysis/heka_message_schema.md","ref":"heka/sandboxes/heka/analysis/heka_message_schema.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/sandboxes/heka/analysis/heka_message_schema.md","mtime":"2017-06-26T14:37:02.981Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"heka_message_schema","level":"1.9.3.1.1.1","depth":5,"next":{"title":"input","level":"1.9.3.1.2","depth":4,"path":"heka/sandboxes/heka/input/README.md","ref":"heka/sandboxes/heka/input/README.md","articles":[{"title":"file","level":"1.9.3.1.2.1","depth":5,"path":"heka/sandboxes/heka/input/file.md","ref":"heka/sandboxes/heka/input/file.md","articles":[]},{"title":"heka_file","level":"1.9.3.1.2.2","depth":5,"path":"heka/sandboxes/heka/input/heka_file.md","ref":"heka/sandboxes/heka/input/heka_file.md","articles":[]},{"title":"heka_s3","level":"1.9.3.1.2.3","depth":5,"path":"heka/sandboxes/heka/input/heka_s3.md","ref":"heka/sandboxes/heka/input/heka_s3.md","articles":[]}]},"previous":{"title":"analysis","level":"1.9.3.1.1","depth":4,"path":"heka/sandboxes/heka/analysis/README.md","ref":"heka/sandboxes/heka/analysis/README.md","articles":[{"title":"heka_message_schema","level":"1.9.3.1.1.1","depth":5,"path":"heka/sandboxes/heka/analysis/heka_message_schema.md","ref":"heka/sandboxes/heka/analysis/heka_message_schema.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/sandboxes/heka/analysis/heka_message_schema.md","mtime":"2017-07-11T20:38:48.940Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

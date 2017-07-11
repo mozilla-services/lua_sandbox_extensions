@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,11 +3419,11 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="mozilla-telemetry-landfill-data-s3-input">Mozilla Telemetry Landfill Data S3 Input</h1>
+                                <h1 id="Mozilla_Telemetry_Landfill_Data_S3_Input">Mozilla Telemetry Landfill Data S3 Input</h1>
 <p>Retrieves/reads each file from the <code>s3_file_list</code>. The primary use of this
 sandbox is to backfill the telemetry folder or to test new data
 transformation/validation sandboxes.</p>
-<h2 id="sample-configuration">Sample Configuration</h2>
+<h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">filename        = <span class="hljs-string">&quot;moz_telemetry_s3_landfill.lua&quot;</span>
 s3_bucket       = <span class="hljs-string">&quot;net-mozaws-prod-us-west-2-pipeline-data&quot;</span>
 s3_file_list    = <span class="hljs-string">&quot;landfill_dims.ls.1&quot;</span>
@@ -3408,7 +3432,7 @@ schema_path     = <span class="hljs-string">&quot;./mozilla-pipeline-schemas&quo
 passthru        = <span class="hljs-keyword">false</span> <span class="hljs-comment">-- if true the raw message is injected as-is (nginx_moz_ingest test)</span>
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.lua" target="_blank">moz_telemetry_s3_landfill.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Mozilla_Telemetry_Landfill_Data_S3_Input">Mozilla Telemetry Landfill Data S3 Input</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3451,7 +3475,7 @@ passthru        = <span class="hljs-keyword">false</span> <span class="hljs-comm
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"moz_telemetry_s3_landfill","level":"1.17.3.1.2.3","depth":5,"next":{"title":"moz_telemetry_s3_snappy","level":"1.17.3.1.2.4","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","articles":[]},"previous":{"title":"moz_telemetry_s3_bootstrap","level":"1.17.3.1.2.2","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.md","mtime":"2017-06-26T14:37:03.161Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"moz_telemetry_s3_landfill","level":"1.17.3.1.2.3","depth":5,"next":{"title":"moz_telemetry_s3_snappy","level":"1.17.3.1.2.4","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_snappy.md","articles":[]},"previous":{"title":"moz_telemetry_s3_bootstrap","level":"1.17.3.1.2.2","depth":5,"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","ref":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_bootstrap.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/sandboxes/heka/input/moz_telemetry_s3_landfill.md","mtime":"2017-07-11T20:38:49.092Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

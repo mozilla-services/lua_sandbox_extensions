@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,9 +3419,9 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="heka-message-conversion-into-a-column-based-schema">Heka Message Conversion into a Column Based Schema</h1>
-<h2 id="functions">Functions</h2>
-<h3 id="loadschema">load_schema</h3>
+                                <h1 id="Heka_Message_Conversion_into_a_Column_Based_Schema">Heka Message Conversion into a Column Based Schema</h1>
+<h2 id="Functions">1. Functions</h2>
+<h3 id="load_schema">1.1. load_schema</h3>
 <p>Validates the schema and returns the process_message and timer_event function
 to be used for the Heka sandbox API or throws an error.</p>
 <p><em>Arguments</em></p>
@@ -3410,7 +3434,7 @@ to be used for the Heka sandbox API or throws an error.</p>
 <li>process_message (function)</li>
 <li>timer_event (function)</li>
 </ul>
-<h2 id="schema">Schema</h2>
+<h2 id="Schema">2. Schema</h2>
 <p>The schema is a lua table consisting of five columns:</p>
 <ol>
 <li>column name - The name of the field in the output.
@@ -3422,7 +3446,7 @@ to be used for the Heka sandbox API or throws an error.</p>
 <li>field /function - If this is a string the data is retrieved from read_message(field) otherwise the provided
 function is invoked and its return value is used for the column data.</li>
 </ol>
-<h3 id="schema-example">Schema Example</h3>
+<h3 id="Schema_Example">2.1. Schema Example</h3>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> schema = {
 <span class="hljs-comment">--  column name  type                length  attributes  field /function</span>
     {<span class="hljs-string">&quot;Timestamp&quot;</span> ,<span class="hljs-string">&quot;TIMESTAMP&quot;</span>        ,<span class="hljs-keyword">nil</span>    ,<span class="hljs-string">&quot;SORTKEY&quot;</span>  ,<span class="hljs-string">&quot;Timestamp&quot;</span>},
@@ -3430,7 +3454,7 @@ function is invoked and its return value is used for the column data.</li>
     {<span class="hljs-string">&quot;version&quot;</span>   ,<span class="hljs-string">&quot;VARCHAR&quot;</span>          ,<span class="hljs-number">32</span>     ,<span class="hljs-keyword">nil</span>        ,get_version}
 }
 </code></pre>
-<h2 id="configuration-examples">Configuration Examples</h2>
+<h2 id="Configuration_Examples">3. Configuration Examples</h2>
 <pre><code class="lang-lua">format      = <span class="hljs-string">&quot;redshift.sql&quot;</span>
 buffer_dir = <span class="hljs-string">&quot;/mnt/output&quot;</span> <span class="hljs-comment">-- directory where the temporary buffer files are stored</span>
 buffer_size = <span class="hljs-number">10000</span> * <span class="hljs-number">1000</span>  <span class="hljs-comment">-- size of the largest buffer before performing a multi-line insert max 16MB - 8KB</span>
@@ -3461,7 +3485,7 @@ output_dir = <span class="hljs-string">&quot;/mnt/output&quot;</span> <span clas
 ts_field    = <span class="hljs-string">&quot;Timestamp&quot;</span>   <span class="hljs-comment">-- default</span>
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/io_modules/heka/derived_stream.lua" target="_blank">derived_stream.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Message_Conversion_into_a_Column_Based_Schema">Heka Message Conversion into a Column Based Schema</a></p><li><a href="#Functions">1. Functions</a></li><ul><li><a href="#load_schema">1.1. load_schema</a></li></ul><li><a href="#Schema">2. Schema</a></li><ul><li><a href="#Schema_Example">2.1. Schema Example</a></li></ul><li><a href="#Configuration_Examples">3. Configuration Examples</a></li></ul></div><a href="#Functions" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3504,7 +3528,7 @@ ts_field    = <span class="hljs-string">&quot;Timestamp&quot;</span>   <span cla
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"derived_stream","level":"1.9.1.3.2","depth":4,"next":{"title":"modules","level":"1.9.2","depth":2,"path":"heka/modules/README.md","ref":"heka/modules/README.md","articles":[{"title":"heka","level":"1.9.2.1","depth":3,"path":"heka/modules/heka/README.md","ref":"heka/modules/heka/README.md","articles":[{"title":"alert","level":"1.9.2.1.1","depth":4,"path":"heka/modules/heka/alert.md","ref":"heka/modules/heka/alert.md","articles":[]},{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},{"title":"util","level":"1.9.2.1.3","depth":4,"path":"heka/modules/heka/util.md","ref":"heka/modules/heka/util.md","articles":[]}]}]},"previous":{"title":"tsv","level":"1.9.1.3.1.4","depth":5,"path":"heka/io_modules/heka/derived_stream/tsv.md","ref":"heka/io_modules/heka/derived_stream/tsv.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/io_modules/heka/derived_stream.md","mtime":"2017-06-26T14:37:03.025Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"derived_stream","level":"1.9.1.3.2","depth":4,"next":{"title":"modules","level":"1.9.2","depth":2,"path":"heka/modules/README.md","ref":"heka/modules/README.md","articles":[{"title":"heka","level":"1.9.2.1","depth":3,"path":"heka/modules/heka/README.md","ref":"heka/modules/heka/README.md","articles":[{"title":"alert","level":"1.9.2.1.1","depth":4,"path":"heka/modules/heka/alert.md","ref":"heka/modules/heka/alert.md","articles":[]},{"title":"msg_interpolate","level":"1.9.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},{"title":"util","level":"1.9.2.1.3","depth":4,"path":"heka/modules/heka/util.md","ref":"heka/modules/heka/util.md","articles":[]}]}]},"previous":{"title":"tsv","level":"1.9.1.3.1.4","depth":5,"path":"heka/io_modules/heka/derived_stream/tsv.md","ref":"heka/io_modules/heka/derived_stream/tsv.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/io_modules/heka/derived_stream.md","mtime":"2017-07-11T20:38:48.984Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

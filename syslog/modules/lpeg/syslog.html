@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,9 +3419,9 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="syslog-module">Syslog Module</h1>
-<h2 id="variables">Variables</h2>
-<h3 id="lpeg-grammars">LPEG Grammars</h3>
+                                <h1 id="Syslog_Module">Syslog Module</h1>
+<h2 id="Variables">1. Variables</h2>
+<h3 id="LPEG_Grammars">1.1. LPEG Grammars</h3>
 <ul>
 <li><code>severity</code> - LPEG grammar to parse a syslog severity string and return the numeric value</li>
 <li><code>integer</code> - converts an integer string to a number</li>
@@ -3405,8 +3429,8 @@
 <li><code>notspace</code> - consumes everything that is not a space</li>
 <li><code>commonmac</code> - matches a MAC address string</li>
 </ul>
-<h2 id="functions">Functions</h2>
-<h3 id="buildrsysloggrammar">build_rsyslog_grammar</h3>
+<h2 id="Functions">2. Functions</h2>
+<h3 id="build_rsyslog_grammar">2.1. build_rsyslog_grammar</h3>
 <p>Constructs an LPEG grammar based on the rsyslog template configuration string.</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3416,7 +3440,7 @@
 <ul>
 <li>grammar (LPEG user data object) or an error is thrown</li>
 </ul>
-<h3 id="captureuntil">capture_until</h3>
+<h3 id="capture_until">2.2. capture_until</h3>
 <p>Captures all data up to &apos;match&apos; without consuming the match</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3427,7 +3451,7 @@
 <ul>
 <li>grammar (LPEG user data object) or an error is thrown</li>
 </ul>
-<h3 id="capturefollowedby">capture_followed_by</h3>
+<h3 id="capture_followed_by">2.3. capture_followed_by</h3>
 <p>Captures all data up to &apos;match&apos; and consumes the match</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3439,7 +3463,7 @@
 <li>grammar (LPEG user data object) or an error is thrown</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/syslog/modules/lpeg/syslog.lua" target="_blank">syslog.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Syslog_Module">Syslog Module</a></p><li><a href="#Variables">1. Variables</a></li><ul><li><a href="#LPEG_Grammars">1.1. LPEG Grammars</a></li></ul><li><a href="#Functions">2. Functions</a></li><ul><li><a href="#build_rsyslog_grammar">2.1. build_rsyslog_grammar</a></li><li><a href="#capture_until">2.2. capture_until</a></li><li><a href="#capture_followed_by">2.3. capture_followed_by</a></li></ul></ul></div><a href="#Variables" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3482,7 +3506,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"syslog","level":"1.27.2.1.3","depth":4,"next":{"title":"syslog_message","level":"1.27.2.1.4","depth":4,"path":"syslog/modules/lpeg/syslog_message.md","ref":"syslog/modules/lpeg/syslog_message.md","articles":[]},"previous":{"title":"useradd","level":"1.27.2.1.2.15","depth":5,"path":"syslog/modules/lpeg/linux/useradd.md","ref":"syslog/modules/lpeg/linux/useradd.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"syslog/modules/lpeg/syslog.md","mtime":"2017-06-26T14:37:03.345Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"syslog","level":"1.27.2.1.3","depth":4,"next":{"title":"syslog_message","level":"1.27.2.1.4","depth":4,"path":"syslog/modules/lpeg/syslog_message.md","ref":"syslog/modules/lpeg/syslog_message.md","articles":[]},"previous":{"title":"useradd","level":"1.27.2.1.2.15","depth":5,"path":"syslog/modules/lpeg/linux/useradd.md","ref":"syslog/modules/lpeg/linux/useradd.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"syslog/modules/lpeg/syslog.md","mtime":"2017-07-11T20:38:49.260Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>

@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,11 +3419,11 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="parquet-lua-module">Parquet Lua Module</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="Parquet_Lua_Module">Parquet Lua Module</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>Lua wrapper for the parquet-cpp library allowing for Parquet file output.</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">2. Module</h2>
+<h3 id="Example_Usage">2.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;parquet&quot;</span>
 
 <span class="hljs-keyword">local</span> r1 = {
@@ -3457,8 +3481,8 @@ writer:write_rowgroup() <span class="hljs-comment">-- writes out the first row g
 writer:dissect_record(r2)
 writer:close() <span class="hljs-comment">-- writes out a second row group with the remaining record</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="schema">schema</h4>
+<h3 id="Functions">2.2. Functions</h3>
+<h4 id="schema">2.2.1. schema</h4>
 <p>Creates a parquet schema for the writer.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> doc = parquet.schema(<span class="hljs-string">&quot;Document&quot;</span>, hive_compatible)
 </code></pre>
@@ -3472,7 +3496,7 @@ column names are coverted to snake case (alphanumeric and underscore only)</li>
 <ul>
 <li>schema (userdata) or an error is thrown</li>
 </ul>
-<h4 id="writer">writer</h4>
+<h4 id="writer">2.2.2. writer</h4>
 <p>Creates a Parquet writer.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> writer = parque.writer(<span class="hljs-string">&quot;foo.parquet&quot;</span>, schema, properties)
 </code></pre>
@@ -3510,7 +3534,7 @@ column names are coverted to snake case (alphanumeric and underscore only)</li>
 <ul>
 <li>writer (userdata) or an error is thrown</li>
 </ul>
-<h4 id="version">version</h4>
+<h4 id="version">2.2.3. version</h4>
 <p>Returns a string with the running version of the Parquet module.</p>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;parquet&quot;</span>
 <span class="hljs-keyword">local</span> v = parquet.version()
@@ -3524,8 +3548,8 @@ column names are coverted to snake case (alphanumeric and underscore only)</li>
 <ul>
 <li>Semantic version string</li>
 </ul>
-<h3 id="schemagroup-methods">Schema/Group Methods</h3>
-<h4 id="addgroup">add_group</h4>
+<h3 id="Schema_Group_Methods">2.3. Schema/Group Methods</h3>
+<h4 id="add_group">2.3.1. add_group</h4>
 <p>Adds a structure to the schema.</p>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> links = doc:add_group(<span class="hljs-string">&quot;Links&quot;</span>, <span class="hljs-string">&quot;optional&quot;</span>, logical)
 </code></pre>
@@ -3540,7 +3564,7 @@ list</li>
 <ul>
 <li>group (userdata) or throws an error</li>
 </ul>
-<h4 id="addcolumn">add_column</h4>
+<h4 id="add_column">2.3.2. add_column</h4>
 <p>Adds a data column to the schema.</p>
 <pre><code class="lang-lua">doc:add_column(<span class="hljs-string">&quot;DocId&quot;</span>, <span class="hljs-string">&quot;required&quot;</span>, <span class="hljs-string">&quot;int64&quot;</span>, logical, flba_len, precision, scale)
 </code></pre>
@@ -3564,8 +3588,8 @@ see: <a href="https://github.com/apache/parquet-format/blob/master/LogicalTypes.
 <ul>
 <li>none</li>
 </ul>
-<h3 id="schema-methods">Schema Methods</h3>
-<h4 id="finalize">finalize</h4>
+<h3 id="Schema_Methods">2.4. Schema Methods</h3>
+<h4 id="finalize">2.4.1. finalize</h4>
 <p>Builds the schema structure after it has been completely defined. The schema
 must be finalized before it is passed to the writer. Also, once the schema is
 finalized it cannot be modified (an error will be thrown).</p>
@@ -3579,8 +3603,8 @@ finalized it cannot be modified (an error will be thrown).</p>
 <ul>
 <li>none or throws an error</li>
 </ul>
-<h3 id="writer-methods">Writer Methods</h3>
-<h4 id="dissectrecord">dissect_record</h4>
+<h3 id="Writer_Methods">2.5. Writer Methods</h3>
+<h4 id="dissect_record">2.5.1. dissect_record</h4>
 <p>Dissects a record into columns based on the schema.</p>
 <pre><code class="lang-lua">writer:dissect_record(record)
 </code></pre>
@@ -3593,7 +3617,7 @@ finalized it cannot be modified (an error will be thrown).</p>
 <li>none or throws an error if the structure does not match the schema (fields
 that exist in the record but are not specified in the schema are ignored)</li>
 </ul>
-<h4 id="dissectmessage-heka-sandbox-only">dissect_message (Heka sandbox only)</h4>
+<h4 id="dissect_message_(Heka_sandbox_only)">2.5.2. dissect_message (Heka sandbox only)</h4>
 <p>Dissects a message into columns based on the schema.</p>
 <pre><code class="lang-lua">writer:dissect_message()
 </code></pre>
@@ -3606,7 +3630,7 @@ that exist in the record but are not specified in the schema are ignored)</li>
 <li>none or throws an error if the structure does not match the schema (fields
 that exist in the record but are not specified in the schema are ignored)</li>
 </ul>
-<h4 id="writerowgroup">write_rowgroup</h4>
+<h4 id="write_rowgroup">2.5.3. write_rowgroup</h4>
 <p>Writes the currently collected data out as a row group.</p>
 <pre><code class="lang-lua">writer:write_rowgroup()
 </code></pre>
@@ -3618,7 +3642,7 @@ that exist in the record but are not specified in the schema are ignored)</li>
 <ul>
 <li>none or throws an error if the write fails</li>
 </ul>
-<h4 id="close">close</h4>
+<h4 id="close">2.5.4. close</h4>
 <p>Closes the writer flushing any remaining data in the rowgroup.</p>
 <pre><code class="lang-lua">writer:close()
 </code></pre>
@@ -3630,7 +3654,7 @@ that exist in the record but are not specified in the schema are ignored)</li>
 <ul>
 <li>none or throws an error on failure</li>
 </ul>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Parquet_Lua_Module">Parquet Lua Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#schema">2.2.1. schema</a></li><li><a href="#writer">2.2.2. writer</a></li><li><a href="#version">2.2.3. version</a></li></ul><li><a href="#Schema_Group_Methods">2.3. Schema/Group Methods</a></li><ul><li><a href="#add_group">2.3.1. add_group</a></li><li><a href="#add_column">2.3.2. add_column</a></li></ul><li><a href="#Schema_Methods">2.4. Schema Methods</a></li><ul><li><a href="#finalize">2.4.1. finalize</a></li></ul><li><a href="#Writer_Methods">2.5. Writer Methods</a></li><ul><li><a href="#dissect_record">2.5.1. dissect_record</a></li><li><a href="#dissect_message_(Heka_sandbox_only)">2.5.2. dissect_message (Heka sandbox only)</a></li><li><a href="#write_rowgroup">2.5.3. write_rowgroup</a></li><li><a href="#close">2.5.4. close</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3673,7 +3697,7 @@ that exist in the record but are not specified in the schema are ignored)</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"parquet (0.0.7)","level":"1.19","depth":1,"next":{"title":"io_modules","level":"1.19.1","depth":2,"path":"parquet/io_modules/README.md","ref":"parquet/io_modules/README.md","articles":[{"title":"lpeg","level":"1.19.1.1","depth":3,"path":"parquet/io_modules/lpeg/README.md","ref":"parquet/io_modules/lpeg/README.md","articles":[{"title":"parquet","level":"1.19.1.1.1","depth":4,"path":"parquet/io_modules/lpeg/parquet.md","ref":"parquet/io_modules/lpeg/parquet.md","articles":[]}]}]},"previous":{"title":"openssl (0.5.1)","level":"1.18","depth":1,"path":"openssl/README.md","ref":"openssl/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/README.md","mtime":"2017-06-26T14:37:03.245Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"parquet (0.0.7)","level":"1.19","depth":1,"next":{"title":"io_modules","level":"1.19.1","depth":2,"path":"parquet/io_modules/README.md","ref":"parquet/io_modules/README.md","articles":[{"title":"lpeg","level":"1.19.1.1","depth":3,"path":"parquet/io_modules/lpeg/README.md","ref":"parquet/io_modules/lpeg/README.md","articles":[{"title":"parquet","level":"1.19.1.1.1","depth":4,"path":"parquet/io_modules/lpeg/parquet.md","ref":"parquet/io_modules/lpeg/parquet.md","articles":[]}]}]},"previous":{"title":"openssl (0.5.1)","level":"1.18","depth":1,"path":"openssl/README.md","ref":"openssl/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/README.md","mtime":"2017-07-11T20:38:49.156Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

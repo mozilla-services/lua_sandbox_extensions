@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,11 +3419,11 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="elasticsearch-encoder-for-heka-messages">Elasticsearch Encoder for Heka Messages</h1>
-<h2 id="encoder-configuration-table">Encoder Configuration Table</h2>
+                                <h1 id="Elasticsearch_Encoder_for_Heka_Messages">Elasticsearch Encoder for Heka Messages</h1>
+<h2 id="Encoder_Configuration_Table">1. Encoder Configuration Table</h2>
 <p><a href="common.html">Common Options</a></p>
-<h2 id="functions">Functions</h2>
-<h3 id="encode">encode</h3>
+<h2 id="Functions">2. Functions</h2>
+<h3 id="encode">2.1. encode</h3>
 <p>Creates the ElasticSearch bulk API index JSON and combines it with the
 JSON created by iterating the Heka message Fields.</p>
 <p><em>Arguments</em></p>
@@ -3410,12 +3434,12 @@ JSON created by iterating the Heka message Fields.</p>
 <ul>
 <li>JSON (string, nil) Elasticsearch JSON or nil (skip no payload)</li>
 </ul>
-<h2 id="sample-output">Sample Output</h2>
+<h2 id="Sample_Output">3. Sample Output</h2>
 <pre><code class="lang-json">{<span class="hljs-string">&quot;index&quot;</span>:{<span class="hljs-string">&quot;_index&quot;</span>:<span class="hljs-string">&quot;mylogger-2014.06.05&quot;</span>,<span class="hljs-string">&quot;_type&quot;</span>:<span class="hljs-string">&quot;mytype-host.domain.com&quot;</span>}}
 {<span class="hljs-string">&quot;json&quot;</span>:<span class="hljs-string">&quot;data&quot;</span>,<span class="hljs-string">&quot;extracted&quot;</span>:<span class="hljs-string">&quot;from&quot;</span>,<span class="hljs-string">&quot;heka&quot;</span>:<span class="hljs-string">&quot;message&quot;</span>}
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/elasticsearch/io_modules/encoders/elasticsearch/mozlog.lua" target="_blank">mozlog.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Elasticsearch_Encoder_for_Heka_Messages">Elasticsearch Encoder for Heka Messages</a></p><li><a href="#Encoder_Configuration_Table">1. Encoder Configuration Table</a></li><li><a href="#Functions">2. Functions</a></li><ul><li><a href="#encode">2.1. encode</a></li></ul><li><a href="#Sample_Output">3. Sample Output</a></li></ul></div><a href="#Encoder_Configuration_Table" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3458,7 +3482,7 @@ JSON created by iterating the Heka message Fields.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"mozlog","level":"1.7.1.1.1.2","depth":5,"next":{"title":"payload","level":"1.7.1.1.1.3","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","articles":[]},"previous":{"title":"common","level":"1.7.1.1.1.1","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/common.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/common.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"elasticsearch/io_modules/encoders/elasticsearch/mozlog.md","mtime":"2017-06-26T14:37:02.953Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"mozlog","level":"1.7.1.1.1.2","depth":5,"next":{"title":"payload","level":"1.7.1.1.1.3","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/payload.md","articles":[]},"previous":{"title":"common","level":"1.7.1.1.1.1","depth":5,"path":"elasticsearch/io_modules/encoders/elasticsearch/common.md","ref":"elasticsearch/io_modules/encoders/elasticsearch/common.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"elasticsearch/io_modules/encoders/elasticsearch/mozlog.md","mtime":"2017-07-11T20:38:48.912Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

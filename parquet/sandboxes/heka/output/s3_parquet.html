@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,12 +3419,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="s3-output-partitionerparquet-output">S3 Output Partitioner/Parquet output</h1>
+                                <h1 id="S3_Output_Partitioner_Parquet_output">S3 Output Partitioner/Parquet output</h1>
 <p>Batches message data into Parquet files based on the specified S3 path
 dimensions and copies them to S3 when they reach the maximum size or maximum
 age. <strong>Note:</strong> For now this plugin renames the file to &quot;*.done&quot; and a separate
 process takes care of the S3 upload.</p>
-<h4 id="sample-configuration">Sample Configuration</h4>
+<h4 id="Sample_Configuration">0.0.1. Sample Configuration</h4>
 <pre><code class="lang-lua">filename        = <span class="hljs-string">&quot;s3_parquet.lua&quot;</span>
 message_matcher = <span class="hljs-string">&quot;Type == &apos;telemetry&apos; &amp;&amp; Fields[docType] == &apos;testpilot&apos;&quot;</span>
 ticker_interval = <span class="hljs-number">60</span>
@@ -3499,7 +3523,7 @@ max_file_age        = <span class="hljs-number">60</span> * <span class="hljs-nu
 hive_compatible     = <span class="hljs-keyword">true</span> <span class="hljs-comment">-- default false</span>
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/parquet/sandboxes/heka/output/s3_parquet.lua" target="_blank">s3_parquet.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#S3_Output_Partitioner_Parquet_output">S3 Output Partitioner/Parquet output</a></p><li><a href="#">none</a></li><ul><li><a href="#">none</a></li><ul><li><a href="#Sample_Configuration">0.0.1. Sample Configuration</a></li></ul></ul></ul></div><a href="#" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3542,7 +3566,7 @@ hive_compatible     = <span class="hljs-keyword">true</span> <span class="hljs-c
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"next":{"title":"postgres (2.3.0)","level":"1.20","depth":1,"path":"postgres/README.md","ref":"postgres/README.md","articles":[]},"previous":{"title":"output","level":"1.19.2.1.1","depth":4,"path":"parquet/sandboxes/heka/output/README.md","ref":"parquet/sandboxes/heka/output/README.md","articles":[{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"path":"parquet/sandboxes/heka/output/s3_parquet.md","ref":"parquet/sandboxes/heka/output/s3_parquet.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/sandboxes/heka/output/s3_parquet.md","mtime":"2017-06-26T14:37:03.241Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"next":{"title":"postgres (2.3.0)","level":"1.20","depth":1,"path":"postgres/README.md","ref":"postgres/README.md","articles":[]},"previous":{"title":"output","level":"1.19.2.1.1","depth":4,"path":"parquet/sandboxes/heka/output/README.md","ref":"parquet/sandboxes/heka/output/README.md","articles":[{"title":"s3_parquet","level":"1.19.2.1.1.1","depth":5,"path":"parquet/sandboxes/heka/output/s3_parquet.md","ref":"parquet/sandboxes/heka/output/s3_parquet.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"parquet/sandboxes/heka/output/s3_parquet.md","mtime":"2017-07-11T20:38:49.152Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

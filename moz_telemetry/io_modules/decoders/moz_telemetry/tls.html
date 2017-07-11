@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,17 +3419,17 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="mozilla-tls-reports-decoder-module">Mozilla TLS Reports Decoder Module</h1>
+                                <h1 id="Mozilla_TLS_Reports_Decoder_Module">Mozilla TLS Reports Decoder Module</h1>
 <p>Extract clock skew, issuer info and Subject / SAN match status from tls error
 reports.</p>
-<h2 id="decoder-configuration-table-optional">Decoder Configuration Table (optional)</h2>
+<h2 id="Decoder_Configuration_Table_(optional)">1. Decoder Configuration Table (optional)</h2>
 <pre><code class="lang-lua">decoders_moz_telemetry_tls = {
     <span class="hljs-comment">-- Boolean used to determine whether to inject the raw message in addition to the decoded one.</span>
     inject_raw = <span class="hljs-keyword">false</span> <span class="hljs-comment">-- optional, if not specified the raw message is not injected</span>
 }
 </code></pre>
-<h2 id="functions">Functions</h2>
-<h3 id="transformmessage">transform_message</h3>
+<h2 id="Functions">2. Functions</h2>
+<h3 id="transform_message">2.1. transform_message</h3>
 <p>Transform and inject the message using the provided stream reader</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3415,7 +3439,7 @@ reports.</p>
 <ul>
 <li>none, injects an error message on decode failure</li>
 </ul>
-<h3 id="decode">decode</h3>
+<h3 id="decode">2.2. decode</h3>
 <p>Decode and inject the message given as argument, using a module-internal stream reader</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -3426,7 +3450,7 @@ reports.</p>
 <li>none, injects an error message on decode failure</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_telemetry/io_modules/decoders/moz_telemetry/tls.lua" target="_blank">tls.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Mozilla_TLS_Reports_Decoder_Module">Mozilla TLS Reports Decoder Module</a></p><li><a href="#Decoder_Configuration_Table_(optional)">1. Decoder Configuration Table (optional)</a></li><li><a href="#Functions">2. Functions</a></li><ul><li><a href="#transform_message">2.1. transform_message</a></li><li><a href="#decode">2.2. decode</a></li></ul></ul></div><a href="#Decoder_Configuration_Table_(optional)" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3469,7 +3493,7 @@ reports.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"tls","level":"1.17.1.1.1.2","depth":5,"next":{"title":"encoders","level":"1.17.1.2","depth":3,"path":"moz_telemetry/io_modules/encoders/README.md","ref":"moz_telemetry/io_modules/encoders/README.md","articles":[{"title":"elasticsearch","level":"1.17.1.2.1","depth":4,"path":"moz_telemetry/io_modules/encoders/elasticsearch/README.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/README.md","articles":[{"title":"moz_telemetry","level":"1.17.1.2.1.1","depth":5,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","articles":[{"title":"telemetry","level":"1.17.1.2.1.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","articles":[]}]}]},{"title":"heka","level":"1.17.1.2.2","depth":4,"path":"moz_telemetry/io_modules/encoders/heka/README.md","ref":"moz_telemetry/io_modules/encoders/heka/README.md","articles":[{"title":"moz_telemetry","level":"1.17.1.2.2.1","depth":5,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","articles":[{"title":"webrtc","level":"1.17.1.2.2.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","articles":[]}]}]}]},"previous":{"title":"ping","level":"1.17.1.1.1.1","depth":5,"path":"moz_telemetry/io_modules/decoders/moz_telemetry/ping.md","ref":"moz_telemetry/io_modules/decoders/moz_telemetry/ping.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/io_modules/decoders/moz_telemetry/tls.md","mtime":"2017-06-26T14:37:03.201Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"tls","level":"1.17.1.1.1.2","depth":5,"next":{"title":"encoders","level":"1.17.1.2","depth":3,"path":"moz_telemetry/io_modules/encoders/README.md","ref":"moz_telemetry/io_modules/encoders/README.md","articles":[{"title":"elasticsearch","level":"1.17.1.2.1","depth":4,"path":"moz_telemetry/io_modules/encoders/elasticsearch/README.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/README.md","articles":[{"title":"moz_telemetry","level":"1.17.1.2.1.1","depth":5,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/README.md","articles":[{"title":"telemetry","level":"1.17.1.2.1.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","ref":"moz_telemetry/io_modules/encoders/elasticsearch/moz_telemetry/telemetry.md","articles":[]}]}]},{"title":"heka","level":"1.17.1.2.2","depth":4,"path":"moz_telemetry/io_modules/encoders/heka/README.md","ref":"moz_telemetry/io_modules/encoders/heka/README.md","articles":[{"title":"moz_telemetry","level":"1.17.1.2.2.1","depth":5,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/README.md","articles":[{"title":"webrtc","level":"1.17.1.2.2.1.1","depth":6,"path":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","ref":"moz_telemetry/io_modules/encoders/heka/moz_telemetry/webrtc.md","articles":[]}]}]}]},"previous":{"title":"ping","level":"1.17.1.1.1.1","depth":5,"path":"moz_telemetry/io_modules/decoders/moz_telemetry/ping.md","ref":"moz_telemetry/io_modules/decoders/moz_telemetry/ping.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_telemetry/io_modules/decoders/moz_telemetry/tls.md","mtime":"2017-07-11T20:38:49.132Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

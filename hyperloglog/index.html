@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,12 +3419,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="lua-hyperloglog-module">Lua HyperLogLog Module</h1>
-<h2 id="overview">Overview</h2>
+                                <h1 id="Lua_HyperLogLog_Module">Lua HyperLogLog Module</h1>
+<h2 id="Overview">1. Overview</h2>
 <p>HyperLogLog is an algorithm for the count-distinct problem, approximating the
 number of distinct elements in a multiset (the cardinality).</p>
-<h2 id="module">Module</h2>
-<h3 id="example-usage">Example Usage</h3>
+<h2 id="Module">2. Module</h2>
+<h3 id="Example_Usage">2.1. Example Usage</h3>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;hyperloglog&quot;</span>
 
 <span class="hljs-keyword">local</span> hll = hyperloglog.new()
@@ -3408,15 +3432,15 @@ hll:add(<span class="hljs-string">&quot;test&quot;</span>)
 <span class="hljs-keyword">local</span> estimate = hll:count()
 <span class="hljs-comment">-- estimate == 1</span>
 </code></pre>
-<h3 id="functions">Functions</h3>
-<h4 id="new">new</h4>
+<h3 id="Functions">2.2. Functions</h3>
+<h4 id="new">2.2.1. new</h4>
 <pre><code class="lang-lua"><span class="hljs-built_in">require</span> <span class="hljs-string">&quot;hyperloglog&quot;</span>
 <span class="hljs-keyword">local</span> hll = hyperloglog.new()
 </code></pre>
 <p>Import Lua <em>hyperloglog</em> via the Lua &apos;require&apos; function. The module is
 globally registered and returned by the require function. The <em>new</em> function
 takes no arguments and returns a hyperloglog userdata object.</p>
-<h4 id="version">version</h4>
+<h4 id="version">2.2.2. version</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> v = hyperloglog.version()
 <span class="hljs-comment">-- v == &quot;0.1.0&quot;</span>
 </code></pre>
@@ -3429,7 +3453,7 @@ takes no arguments and returns a hyperloglog userdata object.</p>
 <ul>
 <li>Semantic version string</li>
 </ul>
-<h4 id="count">count</h4>
+<h4 id="count">2.2.3. count</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> estimate = hyperloglog.count(hll, hll1, ... hlln)
 </code></pre>
 <p>Returns the approximated number of distinct items in the merged set.</p>
@@ -3441,8 +3465,8 @@ takes no arguments and returns a hyperloglog userdata object.</p>
 <ul>
 <li>estimate (number) - count of distinct items.</li>
 </ul>
-<h3 id="methods">Methods</h3>
-<h4 id="add">add</h4>
+<h3 id="Methods">2.3. Methods</h3>
+<h4 id="add">2.3.1. add</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> altered = hll:add(key)
 </code></pre>
 <p>Adds an item to the hyperloglog.</p>
@@ -3454,7 +3478,7 @@ takes no arguments and returns a hyperloglog userdata object.</p>
 <ul>
 <li>True if the estimate was altered, false if it remains unchanged.</li>
 </ul>
-<h4 id="merge">merge</h4>
+<h4 id="merge">2.3.2. merge</h4>
 <pre><code class="lang-lua">hll:merge(hll1)
 </code></pre>
 <p>Merges the provided hyperloglog into the current object.</p>
@@ -3466,7 +3490,7 @@ takes no arguments and returns a hyperloglog userdata object.</p>
 <ul>
 <li>self (userdata)</li>
 </ul>
-<h4 id="count">count</h4>
+<h4 id="count">2.3.3. count</h4>
 <pre><code class="lang-lua"><span class="hljs-keyword">local</span> estimate = hll:count()
 </code></pre>
 <p>Returns the approximated number of distinct items in the set.</p>
@@ -3478,7 +3502,7 @@ takes no arguments and returns a hyperloglog userdata object.</p>
 <ul>
 <li>estimate (number) - count of distinct items.</li>
 </ul>
-<h4 id="clear">clear</h4>
+<h4 id="clear">2.3.4. clear</h4>
 <pre><code class="lang-lua">hll:clear()
 </code></pre>
 <p>Resets the hyperloglog to an empty set.</p>
@@ -3490,7 +3514,7 @@ takes no arguments and returns a hyperloglog userdata object.</p>
 <ul>
 <li>none</li>
 </ul>
-<h4 id="fromstring">fromstring</h4>
+<h4 id="fromstring">2.3.5. fromstring</h4>
 <pre><code class="lang-lua">hll:fromstring(str)
 </code></pre>
 <p>Loads the tostring() representation back into a hyperloglog user data object.</p>
@@ -3502,7 +3526,7 @@ takes no arguments and returns a hyperloglog userdata object.</p>
 <ul>
 <li>none</li>
 </ul>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Lua_HyperLogLog_Module">Lua HyperLogLog Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#new">2.2.1. new</a></li><li><a href="#version">2.2.2. version</a></li><li><a href="#count">2.2.3. count</a></li></ul><li><a href="#Methods">2.3. Methods</a></li><ul><li><a href="#add">2.3.1. add</a></li><li><a href="#merge">2.3.2. merge</a></li><li><a href="#count">2.3.3. count</a></li><li><a href="#clear">2.3.4. clear</a></li><li><a href="#fromstring">2.3.5. fromstring</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3545,7 +3569,7 @@ takes no arguments and returns a hyperloglog userdata object.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"hyperloglog (1.0.0)","level":"1.10","depth":1,"next":{"title":"jose (0.0.1)","level":"1.11","depth":1,"path":"jose/README.md","ref":"jose/README.md","articles":[]},"previous":{"title":"near_real_time_report","level":"1.9.3.1.3.5","depth":5,"path":"heka/sandboxes/heka/output/near_real_time_report.md","ref":"heka/sandboxes/heka/output/near_real_time_report.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"hyperloglog/README.md","mtime":"2017-06-26T14:37:03.037Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"hyperloglog (1.0.0)","level":"1.10","depth":1,"next":{"title":"jose (0.0.1)","level":"1.11","depth":1,"path":"jose/README.md","ref":"jose/README.md","articles":[]},"previous":{"title":"near_real_time_report","level":"1.9.3.1.3.5","depth":5,"path":"heka/sandboxes/heka/output/near_real_time_report.md","ref":"heka/sandboxes/heka/output/near_real_time_report.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"hyperloglog/README.md","mtime":"2017-07-11T20:38:48.996Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -17,6 +17,10 @@
     
             
                 
+                <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-navigator/plugin.css">
+                
+            
+                
                 <link rel="stylesheet" href="../../../../gitbook/gitbook-plugin-highlight/website.css">
                 
             
@@ -331,7 +335,7 @@
                 <a href="../../../../elasticsearch/">
             
                     
-                    elasticsearch (1.0.5)
+                    elasticsearch (1.0.6)
             
                 </a>
             
@@ -1394,7 +1398,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.5)
+                    lpeg (1.0.6)
             
                 </a>
             
@@ -3352,6 +3356,26 @@
     
 
     
+        
+        <li class="header">Third Party Extensions</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" >
+            
+                <a target="_blank" href="https://trink.github.io/streaming_algorithms/">
+            
+                    
+                    streaming_algorithms (0.0.1)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -3395,8 +3419,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="heka-kafka-consumer-input">Heka Kafka Consumer Input</h1>
-<h2 id="sample-configuration">Sample Configuration</h2>
+                                <h1 id="Heka_Kafka_Consumer_Input">Heka Kafka Consumer Input</h1>
+<h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">filename                = <span class="hljs-string">&quot;kafka.lua&quot;</span>
 output_limit            = <span class="hljs-number">8</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>
 brokerlist              = <span class="hljs-string">&quot;localhost:9092&quot;</span> <span class="hljs-comment">-- see https://github.com/edenhill/librdkafka/blob/master/src/rdkafka.h#L2205</span>
@@ -3430,7 +3454,7 @@ topic_conf = {
 <span class="hljs-comment">-- decoder_module = &quot;decoders.heka.protobuf&quot;</span>
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/kafka/sandboxes/heka/input/kafka.lua" target="_blank">kafka.lua</a></p>
-
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Kafka_Consumer_Input">Heka Kafka Consumer Input</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -3473,7 +3497,7 @@ topic_conf = {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"next":{"title":"output","level":"1.12.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.12.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]},"previous":{"title":"input","level":"1.12.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu"],"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kafka/sandboxes/heka/input/kafka.md","mtime":"2017-06-26T14:37:03.069Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-06-26T14:37:07.709Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"next":{"title":"output","level":"1.12.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.12.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]},"previous":{"title":"input","level":"1.12.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.12.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kafka/sandboxes/heka/input/kafka.md","mtime":"2017-07-11T20:38:49.012Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-11T20:38:53.481Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>
