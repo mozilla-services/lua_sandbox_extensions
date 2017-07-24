@@ -169,7 +169,22 @@ local function output_extensions(fh)
         end
     end
     ph:close()
+end
 
+
+local function output_third_party(fh)
+    local t = {}
+    local tp = assert(io.popen("curl -L https://github.com/mozilla-services/lua_sandbox_extensions/wiki/Third-Party-Sandbox-Extensions.md"))
+    fh:write("\n\n### Third Party Extensions\n\n")
+    for mod in tp:lines() do
+        local name, url = mod:match("^%*%s*%[([^]]+)%]%(([^)]+)")
+        if name then
+            t[#t + 1] = string.format("* [%s](%s)", name, url)
+        end
+    end
+    table.sort(t)
+    fh:write(table.concat(t, "\n"))
+    tp:close()
 end
 
 
@@ -179,12 +194,13 @@ local function main()
     os.execute(string.format("mkdir -p %s", output_dir))
     os.execute(string.format("cp README.md %s/.", output_dir))
     local fh = assert(io.open(string.format("%s/book.json", output_dir), "w"))
-    fh:write([[{"plugins" : ["collapsible-menu"]}]])
+    fh:write([[{"plugins" : ["collapsible-menu", "navigator"]}]])
     fh:close()
 
     fh = assert(io.open(string.format("%s/SUMMARY.md", output_dir), "w"))
     fh:write("* [Lua Sandbox Extensions](README.md)\n\n")
     output_extensions(fh)
+    output_third_party(fh)
     fh:close()
     os.execute(string.format("cd %s;gitbook install", output_dir))
     os.execute(string.format("gitbook build %s", output_dir))
