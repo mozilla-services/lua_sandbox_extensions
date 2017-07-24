@@ -166,7 +166,7 @@ function throttled(id, throttle)
 
     local time_t = time()
     local at = alert_times[id]
-    if not at or time_t - at > throttle then
+    if not at or throttle == 0 or time_t - at > throttle then
         return false
     end
     return true

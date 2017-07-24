@@ -62,7 +62,7 @@ set(EP_CMAKE_ARGS
 -DLUA51=${LUA51}
 --no-warn-unused-cli)
 
-set(extensions 
+set(extensions
 bloom_filter
 circular_buffer
 cjson
@@ -78,6 +78,7 @@ lfs
 lpeg
 lsb
 moz_pioneer
+moz_security
 moz_telemetry
 openssl
 parquet
