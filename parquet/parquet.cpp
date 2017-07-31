@@ -1497,6 +1497,12 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
       }
     }
     break;
+  case LUA_TLIGHTUSERDATA:
+    if (lua_touserdata(lua, -1) != NULL) {
+      add_value(lua, n, c, r, n->dl);
+      break;
+    }
+    /* FALLTHRU */
   case LUA_TNIL:
     if (n->nt == pq::schema::Node::PRIMITIVE) {
       add_null(c, r, d);
@@ -1510,7 +1516,6 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
   }
 }
 
-
 static void dissect_map(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
 {
   pq_node *kn = n->group->fields[0];
@@ -1523,7 +1528,7 @@ static void dissect_map(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, in
   bool found = false;
   lua_pushnil(lua);
   while (lua_next(lua, -2) != 0) {
-    dissect_field(pw, lua, vn, cr, vn->dl);
+    dissect_field(pw, lua, vn, cr, n->dl);
     lua_pop(lua, 1);
     add_value(lua, kn, kc, cr, kn->dl);
     cr = n->rl;
@@ -1544,7 +1549,7 @@ static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, i
   bool found = false;
   lua_pushnil(lua);
   while (lua_next(lua, -2) != 0) {
-    dissect_field(pw, lua, vn, cr, vn->dl);
+    dissect_field(pw, lua, vn, cr, n->dl);
     lua_pop(lua, 1);
     cr = n->rl;
     found = true;
@@ -1919,7 +1924,8 @@ int luaopen_parquet(lua_State *lua)
   }
 #endif
   lua_pop(lua, 1);
-
   luaL_register(lua, "parquet", pq_lib_f);
+  lua_pushlightuserdata(lua, NULL);
+  lua_setfield(lua, -2, "null");
   return 1;
 }

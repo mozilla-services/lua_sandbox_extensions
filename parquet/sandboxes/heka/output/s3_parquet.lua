@@ -130,9 +130,13 @@ local hindsight_admin       = read_config("hindsight_admin")
 local hostname              = read_config("Hostname")
 local metadata_group        = read_config("metadata_group")
 local json_objects          = read_config("json_objects")
+local json_decode_null      = read_config("json_decode_null")
 local json_objects_len      = 0
 if type(json_objects) == "table" then
     require "cjson"
+    if json_decode_null then
+       cjson.decode_null(true)
+    end
     json_objects_len = #json_objects
 end
 if not json_objects and metadata_group then error("metadata_group cannot be configured without json_objects") end
