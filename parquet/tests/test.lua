@@ -359,7 +359,7 @@ local function test_list_dissection_errors()
 
     }
     for i,v in ipairs(errs) do
-        local w = parquet.writer("maps_error.parquet", s)
+        local w = parquet.writer("lists_error.parquet", s)
         local ok, err = pcall(w.dissect_record, w, v[1])
         assert(err == v[2], string.format("Test: %d expected: %s received: %s", i, v[2], tostring(err)))
     end
