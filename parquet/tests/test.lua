@@ -4,9 +4,8 @@
 
 require "string"
 require "parquet"
-assert(parquet.version() == "0.0.7", parquet.version())
+assert(parquet.version() == "0.0.8", parquet.version())
 local parser = require "lpeg.parquet"
-
 local r1 = {
     DocId = 10,
     Links = {Forward = {20, 40, 60}},
@@ -274,6 +273,7 @@ message Document {
 local function test_map_dissection()
     local recs = {
         {my_map = {foo = 1, bar = 2}},
+        {my_map = {foo = 1, bar = parquet.null, blee = 2}},
         {my_map = {foo = 2}, omap = {bar = 3}},
         {my_map = {foo = 2}, omap = {}},
         {my_map = {foo = 99}, mom = {m1 = {nm1a = 100, nm1b = 101}, m2 = {nm2a = 200}}},
@@ -335,7 +335,8 @@ local function test_list_dissection()
     local recs = {
         {my_list = {1,2,3}},
         {my_list = {1,2,3}, olist = {10}},
-        {my_list = {1,2,3}, lol = {{100, 101}, {200}}},
+        {my_list = {1,2, parquet.null, parquet.null, 4, parquet.null, 3}, lol = {{100, 101}, {200}}},
+        {my_list = {1,2, nil, nil, 4, nil, 3}},
         {my_list = {1,2,3}, lol = {{}}},
     }
     local s = parser.load_parquet_schema(lists_schema)
@@ -358,7 +359,7 @@ local function test_list_dissection_errors()
 
     }
     for i,v in ipairs(errs) do
-        local w = parquet.writer("maps_error.parquet", s)
+        local w = parquet.writer("lists_error.parquet", s)
         local ok, err = pcall(w.dissect_record, w, v[1])
         assert(err == v[2], string.format("Test: %d expected: %s received: %s", i, v[2], tostring(err)))
     end

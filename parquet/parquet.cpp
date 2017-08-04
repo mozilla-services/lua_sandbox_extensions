@@ -1455,7 +1455,7 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
     if (n->node->is_group()) {
       if (n->node->is_repeated() && lua_objlen(lua, -1) > 0) { // array of groups
         size_t ol = lua_objlen(lua, -1);
-        for (size_t j = 1; j <= ol; ++j) {
+        for (int j = 1; j <= static_cast<int>(ol); ++j) {
           lua_rawgeti(lua, -1, j);
           if (lua_type(lua, -1) != LUA_TTABLE) {
             stringstream ss;
@@ -1488,7 +1488,7 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
       if (ol == 0) {
         add_null(c, r, d);
       } else {
-        for (size_t j = 1; j <= ol; ++j) {
+        for (int j = 1; j <= static_cast<int>(ol); ++j) {
           lua_rawgeti(lua, -1, j);
           add_value(lua, n, c, r, n->dl);
           lua_pop(lua, 1);
@@ -1497,6 +1497,12 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
       }
     }
     break;
+  case LUA_TLIGHTUSERDATA:
+    if (lua_touserdata(lua, -1) != NULL) {
+      add_value(lua, n, c, r, n->dl);
+      break;
+    }
+    /* FALLTHRU */
   case LUA_TNIL:
     if (n->nt == pq::schema::Node::PRIMITIVE) {
       add_null(c, r, d);
@@ -1510,7 +1516,6 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
   }
 }
 
-
 static void dissect_map(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
 {
   pq_node *kn = n->group->fields[0];
@@ -1523,7 +1528,7 @@ static void dissect_map(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, in
   bool found = false;
   lua_pushnil(lua);
   while (lua_next(lua, -2) != 0) {
-    dissect_field(pw, lua, vn, cr, vn->dl);
+    dissect_field(pw, lua, vn, cr, n->dl);
     lua_pop(lua, 1);
     add_value(lua, kn, kc, cr, kn->dl);
     cr = n->rl;
@@ -1540,18 +1545,17 @@ static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, i
 {
   pq_node *vn = n->group->fields[0];
 
-  int cr = r;
-  bool found = false;
-  lua_pushnil(lua);
-  while (lua_next(lua, -2) != 0) {
-    dissect_field(pw, lua, vn, cr, vn->dl);
-    lua_pop(lua, 1);
-    cr = n->rl;
-    found = true;
-  }
-
-  if (!found) {
+  size_t ol = lua_objlen(lua, -1);
+  if (ol == 0) {
     dissect_null(pw, n, r, d);
+  } else {
+    int cr = r;
+    for (int i = 1; i <= static_cast<int>(ol); ++i) {
+      lua_rawgeti(lua, -1, i);
+      dissect_field(pw, lua, vn, cr, n->dl);
+      lua_pop(lua, 1);
+      cr = n->rl;
+    }
   }
 }
 
@@ -1559,7 +1563,7 @@ static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, i
 static void dissect_tuple(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
 {
   size_t len = n->group->fields.size();
-  for (size_t i = 0; i < len; ++i) {
+  for (int i = 0; i < static_cast<int>(len); ++i) {
     pq_node *cn = n->group->fields[i];
     lua_checkstack(lua, 2);
     lua_rawgeti(lua, -1, i + 1);
@@ -1919,7 +1923,8 @@ int luaopen_parquet(lua_State *lua)
   }
 #endif
   lua_pop(lua, 1);
-
   luaL_register(lua, "parquet", pq_lib_f);
+  lua_pushlightuserdata(lua, NULL);
+  lua_setfield(lua, -2, "null");
   return 1;
 }
