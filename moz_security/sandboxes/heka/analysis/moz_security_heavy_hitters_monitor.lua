@@ -10,17 +10,18 @@ See: https://cacm.acm.org/magazines/2009/10/42481-finding-the-frequent-items-in-
 ## Sample Configuration
 ```lua
 filename = "moz_security_heavy_hitters.lua"
-message_matcher = "Logger == 'input.nginx' "
-ticker_interval = 1
+message_matcher = "Logger == 'input.nginx'"
+ticker_interval = 60
 
-id_field = "Fields[ip_address]"
--- hh_items = 1000 -- optional, defaults to 1000 (minimum number of heavy hitter IDs to track)
+id_field = "Fields[remote_addr]"
+-- hh_items = 1000 -- optional, defaults to 1000 (maximum number of heavy hitter IDs to track)
 
-cf_items = 32e6
+cf_items = 100e6
 -- cf_interval_size = 1, -- optional, default 1 (256 minutes)
 
 -- update if altering the cf_* configuration of an existing plugin
 preservation_version = 0
+preserve_data = true
 
 alert = {
     prefix = true,
@@ -56,7 +57,6 @@ function process_message()
         if cnt then
             hh[id] = cnt + 1
         else
-            hh_size = hh_size + 1
             if hh_size >= hh_items then
                 for k, cnt in pairs(hh) do
                     cnt = cnt - 1
@@ -67,8 +67,10 @@ function process_message()
                         hh[k] = cnt
                     end
                 end
+            else
+                hh_size = hh_size + 1
+                hh[id] = 1
             end
-            hh[id] = 2
         end
     end
     return 0
