@@ -32,11 +32,11 @@ local bad = jose.header({alg = "foo", enc = "A256GCM"})
 local construction_errors = {
     {fn = jose.jwk_import, args = {}        , err ="bad argument #0 to '?' (incorrect number of arguments)"},
     {fn = jose.jwk_import, args = {true}    , err ="bad argument #1 to '?' (string expected, got boolean)"},
-    {fn = jose.jwk_import, args = {"foo"}   , err ="file: jwk.c line: 1555 function: cjose_jwk_import message: invalid argument"},
+    {fn = jose.jwk_import, args = {"foo"}   , perr ="file: jwk.c line: %d+ function: cjose_jwk_import message: invalid argument"},
 
     {fn = jose.jwe_import, args = {}        , err ="bad argument #0 to '?' (incorrect number of arguments)"},
     {fn = jose.jwe_import, args = {true}    , err ="bad argument #1 to '?' (string expected, got boolean)"},
-    {fn = jose.jwe_import, args = {"not cs"}, err ="file: base64.c line: 111 function: _decode message: invalid argument"},
+    {fn = jose.jwe_import, args = {"not cs"}, perr ="file: base64.c line: %d+ function: _decode message: invalid argument"},
 
     {fn = jose.jwe_encrypt, args = {}       , err ="bad argument #0 to '?' (incorrect number of arguments)"},
     {fn = jose.jwe_encrypt, args = {true, payload, hdr},
@@ -46,11 +46,11 @@ local construction_errors = {
     {fn = jose.jwe_encrypt, args = {jwk, payload, true},
         err = "bad argument #3 to '?' (mozsvc.jose.hdr expected, got boolean)"},
     {fn = jose.jwe_encrypt, args = {jwk, payload, bad},
-        err ="file: jwe.c line: 179 function: _cjose_jwe_validate_hdr message: invalid argument"},
+        perr ="file: jwe.c line: %d+ function: _cjose_jwe_validate_hdr message: invalid argument"},
 
     {fn = jose.jws_import, args = {}        , err ="bad argument #0 to '?' (incorrect number of arguments)"},
     {fn = jose.jws_import, args = {true}    , err ="bad argument #1 to '?' (string expected, got boolean)"},
-    {fn = jose.jws_import, args = {"not cs"}, err ="file: jws.c line: 778 function: cjose_jws_import message: invalid argument"},
+    {fn = jose.jws_import, args = {"not cs"}, perr ="file: jws.c line: %d+ function: cjose_jws_import message: invalid argument"},
 
 
     {fn = jose.jws_sign, args = {}          , err ="bad argument #0 to '?' (incorrect number of arguments)"},
@@ -61,12 +61,16 @@ local construction_errors = {
     {fn = jose.jws_sign, args = {jwk, payload, true},
         err = "bad argument #3 to '?' (mozsvc.jose.hdr expected, got boolean)"},
     {fn = jose.jws_sign, args = {jwk, payload, bad},
-        err = "file: jws.c line: 112 function: _cjose_jws_validate_hdr message: invalid argument"},
+        perr = "file: jws.c line: %d+ function: _cjose_jws_validate_hdr message: invalid argument"},
 }
 
 for i, v in ipairs(construction_errors) do
     local ok, err = pcall(v.fn, unpack(v.args))
-    if err ~= v.err then error(string.format("error test %d failed %s\n", i, err)) end
+    if v.perr then
+        if not string.find(err, v.err) then error(string.format("error test %d failed %s\n", i, err)) end
+    else
+        if err ~= v.err then error(string.format("error test %d failed %s\n", i, err)) end
+    end
 end
 
 local zip = xhdr:get("zip")
