@@ -14,12 +14,6 @@ decoders_moz_generic = {
     -- e.g., generic/testping/testping.4.schema.json
     schema_path = "/mnt/work/mozilla-pipeline-schemas/schemas",
 
-    -- String used to specify the message field containing the user submitted payload.
-    content_field = "Fields[content]", -- optional, default shown
-
-    -- String used to specify the message field containing the URI of the submission.
-    uri_field = "Fields[uri]", -- optional, default shown
-
     -- String used to specify GeoIP city database location on disk.
     city_db_file = "/mnt/work/geoip/city.db", -- optional, if not specified no geoip lookup is performed
 
@@ -100,9 +94,6 @@ local function load_decoder_cfg()
     assert(type(cfg) == "table", module_cfg .. " must be a table")
     assert(type(cfg.schema_path) == "string", "schema_path must be set")
 
-    -- the old values for these were Fields[submission] and Fields[Path]
-    if not cfg.content_field then cfg.content_field = "Fields[content]" end
-    if not cfg.uri_field then cfg.uri_field = "Fields[uri]" end
     if not cfg.inject_raw then cfg.inject_raw = false end
     assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
 
@@ -270,7 +261,7 @@ end
 
 local function process_uri(hsr)
     -- Path should be of the form: ^/submit/namespace/doctype/docversion[/docid]$
-    local path = hsr:read_message(cfg.uri_field)
+    local path = hsr:read_message("Fields[uri]")
 
     local components = split_path(path)
     if not components or #components < 3 then
@@ -375,7 +366,7 @@ end
 local submissionField = {value = nil, representation = "json"}
 local doc = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
 local function process_json(hsr, msg)
-    local ok, err = pcall(doc.parse_message, doc, hsr, cfg.content_field, nil, nil, true)
+    local ok, err = pcall(doc.parse_message, doc, hsr, "Fields[content]", nil, nil, true)
     if not ok then
         -- TODO: check for gzip errors and classify them properly
         inject_error(hsr, "json", string.format("invalid submission: %s", err), msg.Fields)
