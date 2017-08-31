@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Generates test data for moz_pioneer JSOE decoder
+# Generates test data for moz_ingest_pioneer decoder
 --]]
 
 require "jose"
@@ -87,19 +87,20 @@ function process_message()
         inject_message(msg)
     end
 
+    -- create invalid import
+    msg.Fields.uri = uri_prefix .. "FE"
+    msg.Fields.content = submissions[1]
+    inject_message(msg)
+
     -- create invalid encryption
     msg.Fields.uri = uri_prefix .. "FF"
-    msg.Fields.content = submissions[1]
+    local jwe = jose.jwe_encrypt(jwk, submissions[1], hdr)
+    msg.Fields.content = jwe:export()
+    msg.Fields.content = string.gsub(msg.Fields.content, ".$", "X")
     inject_message(msg)
 
     -- unknown schema
     msg.Fields.uri = "/submit/pioneer/bogus/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571AAA"
-    local jwe = jose.jwe_encrypt(jwk, submissions[1], hdr)
-    msg.Fields.content = jwe:export()
-    inject_message(msg)
-
-    -- invalid uri
-    msg.Fields.uri = "/foo/bar"
     local jwe = jose.jwe_encrypt(jwk, submissions[1], hdr)
     msg.Fields.content = jwe:export()
     inject_message(msg)

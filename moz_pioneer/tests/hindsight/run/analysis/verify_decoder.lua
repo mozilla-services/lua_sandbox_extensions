@@ -3,50 +3,50 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Verifies the test data for moz_pioneer JSOE decoder
+# Verifies the test data for moz_ingest common/pioneer decoder
 --]]
 
 require "string"
 
 local messages = {
-    {Type = "pioneer", Fields = {
+    {Logger = "pioneer", Type = "validated", Fields = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
         docType = "heatmap",
         sourceVersion = 1,
         submission = '{"user":"abc1","sessions":[{"start_time":1496847280,"url":"http://some.website.com/and/the/url?query=string","tab_id":"-31-2","duration":2432},{"start_time":1496846280,"url":"https://foo.website.com/and/the/url#anchor","tab_id":"-2-14","duration":4410}]}'
         }
     },
-    {Type = "pioneer", Fields = {
+    {Logger = "pioneer", Type = "validated", Fields = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A02",
         submission = '{"user":"abc2","sessions":[{"start_time":1496847280,"url":"http://some.website.com/and/the/url?query=string"}]}'
         }
     },
-    {Type = "pioneer.error", Fields = {
+    {Logger = "pioneer", Type = "error", Fields = {
         DecodeErrorType = "json",
         DecodeError = "heatmap schema version 1 validation error: SchemaURI: # Keyword: required DocumentURI: #"
         },
     },
-    {Type = "pioneer.error", Fields = {
+    {Logger = "pioneer", Type = "error", Fields = {
         DecodeErrorType = "json",
         DecodeError = "invalid submission: failed to parse offset:1 Invalid value."
         }
     },
-    {Type = "pioneer.error", Fields = {
+    {Logger = "pioneer", Type = "error", Fields = {
         DecodeErrorType = "jwe_import",
         DecodeError = "file: base64.c line: 111 function: _decode message: invalid argument"
         },
     },
-    {Type = "pioneer.error", Fields = {
+    {Logger = "pioneer", Type = "error", Fields = {
+        DecodeErrorType = "jwe_decrypt",
+        DecodeError = "file: jwe.c line: 894 function: _cjose_jwe_decrypt_dat_a256gcm message: crypto error"
+        },
+    },
+    {Logger = "pioneer", Type = "error", Fields = {
         DecodeErrorType = "schema",
         DecodeError = "no schema: bogus ver: 1"
         }
     },
-    {Type = "pioneer.error", Fields = {
-        DecodeErrorType = "uri",
-        DecodeError = "invalid URI"
-        }
-    },
-    {Type = "pioneer.duplicate", Fields = {
+    {Logger = "pioneer", Type = "duplicate", Fields = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
         duplicateDelta = 0
         }

@@ -77,6 +77,7 @@ kafka
 lfs
 lpeg
 lsb
+moz_ingest
 moz_pioneer
 moz_security
 moz_telemetry
