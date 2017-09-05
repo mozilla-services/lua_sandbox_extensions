@@ -226,6 +226,7 @@ static int rjson_dparse(lua_State *lua)
   delete_owned_refs(j->refs);
   j->refs->clear();
   j->mpa->Clear();
+  j->doc->SetNull();
 
   const char *json = luaL_checkstring(lua, 2);
   bool validate = false;
@@ -241,6 +242,7 @@ static int rjson_dparse(lua_State *lua)
       lua_pushfstring(lua, "failed to parse offset:%f %s",
                       (lua_Number)j->doc->GetErrorOffset(),
                       rj::GetParseError_En(j->doc->GetParseError()));
+      j->doc->SetNull();
       return lua_error(lua);
     }
   } else {
@@ -248,6 +250,7 @@ static int rjson_dparse(lua_State *lua)
       lua_pushfstring(lua, "failed to parse offset:%f %s",
                       (lua_Number)j->doc->GetErrorOffset(),
                       rj::GetParseError_En(j->doc->GetParseError()));
+      j->doc->SetNull();
       return lua_error(lua);
     }
   }
@@ -856,6 +859,7 @@ static void json_decode(lua_State *lua, rjson *j, lsb_const_string *json,
       lua_pushfstring(lua, "failed to parse offset:%f %s",
                       (lua_Number)j->doc->GetErrorOffset(),
                       rj::GetParseError_En(j->doc->GetParseError()));
+      j->doc->SetNull();
     }
   } else {
     if (j->doc->ParseInsitu<rj::kParseStopWhenDoneFlag>(reinterpret_cast<char *>(j->insitu.buf)).HasParseError()) {
@@ -863,6 +867,7 @@ static void json_decode(lua_State *lua, rjson *j, lsb_const_string *json,
       lua_pushfstring(lua, "failed to parse offset:%f %s",
                       (lua_Number)j->doc->GetErrorOffset(),
                       rj::GetParseError_En(j->doc->GetParseError()));
+      j->doc->SetNull();
     }
   }
 
@@ -942,6 +947,7 @@ static int rjson_dparse_message(lua_State *lua)
   delete_owned_refs(j->refs);
   j->refs->clear();
   j->mpa->Clear();
+  j->doc->SetNull();
 
   const lsb_heka_message *msg = NULL;
   if (lsb_heka_get_type(hsb) == 'i') {

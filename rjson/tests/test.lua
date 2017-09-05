@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "rjson"
-assert(rjson.version() == "1.1.1", rjson.version())
+assert(rjson.version() == "1.1.2", rjson.version())
 
 schema_json = [[{
     "type":"object",
@@ -272,3 +272,9 @@ ok, err = pcall(rjson.parse, json)
 assert(ok, err)
 ok, err = pcall(rjson.parse, json, true)
 assert(not ok, "UTF-8 validation failed")
+
+doc = rjson.parse(nested)
+assert(doc)
+ok, err = pcall(doc.parse, doc, "{")
+assert(not ok) -- doc is now Null
+assert(nil == doc:find("main", "m1"))
