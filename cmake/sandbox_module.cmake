@@ -76,7 +76,7 @@ else() # build against the installed lua_sandbox
     else()
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox (>= 1.2)")
     endif()
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/modules)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/test_sandbox.c)
       add_executable(${MODULE_NAME}_test_sandbox test_sandbox.c)
       target_link_libraries(${MODULE_NAME}_test_sandbox ${LUASANDBOX_TEST_LIBRARY} ${LUASANDBOX_LIBRARIES})
       if(TEST_CONFIGURATION)
