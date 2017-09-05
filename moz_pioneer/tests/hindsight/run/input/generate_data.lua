@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Generates test data for moz_pioneer JSOE decoder
+# Generates test data for moz_ingest_comman/pioneer decoder
 --]]
 
 require "jose"
@@ -22,92 +22,95 @@ local rsa = [[
 }]]
 local jwk = jose.jwk_import(rsa)
 
+local envelope = [[
+{
+      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
+      "creationDate": "2015-11-05T01:25:43.312Z",
+      "type": "pioneer-study",
+      "version": 4,
+      "application": {
+        "architecture": "x86-64",
+        "buildId": "20151103030248",
+        "channel": "beta",
+        "name": "Firefox",
+        "platformVersion": "45.0",
+        "vendor": "Mozilla",
+        "version": "45.0",
+        "displayVersion": "45.0b6",
+        "xpcomAbi": "x86_64-gcc3"
+      },
+      "payload" : {
+        "encryptedData": "%s",
+        "encryptionKeyId": "%s",
+        "pioneerId": "11111111-1111-1111-1111-111111111111",
+        "studyName": "%s",
+        "studyVersion": %d
+      }
+}
+}]]
+
+
 local submissions = {
-    [[
-{
-  "user": "abc1",
-  "sessions": [
-    {
-      "start_time": 1496847280,
-      "url": "http://some.website.com/and/the/url?query=string",
-      "tab_id": "-31-2",
-      "duration": 2432
-    },
-    {
-      "start_time": 1496846280,
-      "url": "https://foo.website.com/and/the/url#anchor",
-      "tab_id": "-2-14",
-      "duration": 4410
-    }
-  ]
-}]],
-    -- no optional
-    [[
-{
-  "user": "abc2",
-  "sessions": [
-    {
-      "start_time": 1496847280,
-      "url": "http://some.website.com/and/the/url?query=string"
-    }
-  ]
-}]],
-    -- schema failure (missing user)
-    [[
-{
-  "sessions": [
-    {
-      "start_time": 1496847280,
-      "url": "http://some.website.com/and/the/url?query=string"
-    }
-  ]
-}]],
-    -- json parse failure
-    "text",
+    {'{ "exampleString" : "foobar"}', 'pioneer-20170901', "example", 1}, -- valid
+    {'text', 'pioneer-20170901', "example", 1}, -- parse failure
+    {'{ "exampleString" : 1}', 'pioneer-20170901', "example", 1}, -- study schema validation error
+    {'{ "exampleString" : "foobar"}', 'pioneer-20200901', "example", 1}, -- no encryption key
+    {'{ "exampleString" : "foobar"}', 'pioneer-20170901', "bogus", 1}, -- no schema
+    {'{ "exampleString" : "foobar"}', 'pioneer-20170901', "example", 2}, -- no version
 }
 
 local msg = {
     Logger = "moz_ingest",
-    Type   = "pioneer.raw",
+    Type   = "telemetry.raw",
     Hostname = "test.pioneer.com",
     Fields = {
-        remote_addr = "8.8.8.8",
-        uri         = nil,
-        protocol    = "HTTPS"
+        ["X-Forwarded-For"]         = "192.30.255.112, 127.0.0.1",
+        ["X-PingSender-Version"]    = "1.0",
+        Host    = "incoming.telemetry.mozilla.org",
+        DNT     = "1",
+        Date    = "Wed, 30 Aug 2017 20:43:39 GMT",
+        content = nil,
+        uri     = nil,
     }
 }
 
-local uri_prefix = "/submit/pioneer/heatmap/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571A"
+local uri_template = "/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A%02d/pioneer-study/Firefox/45.0/release/20151103030248"
 local hdr = jose.header({alg = "RSA-OAEP", enc = "A256GCM", zip = "DEF"})
 function process_message()
+    local cnt = 0
     for i,v in ipairs(submissions) do
-        msg.Fields.uri = string.format("%s%02d", uri_prefix, i)
-        local jwe = jose.jwe_encrypt(jwk, v, hdr)
-        msg.Fields.content = jwe:export()
+        msg.Fields.uri = string.format(uri_template, i)
+        local jwe = jose.jwe_encrypt(jwk, v[1], hdr)
+        msg.Fields.content = string.format(envelope, jwe:export(), v[2], v[3], v[4])
         inject_message(msg)
+        if i == 1 then inject_message(msg) end -- test duplicate
+        cnt = cnt + 1
     end
 
-    -- create invalid encryption
-    msg.Fields.uri = uri_prefix .. "FF"
-    msg.Fields.content = submissions[1]
+    -- invalid envelope
+    cnt = cnt + 1
+    msg.Fields.uri = string.format(uri_template, cnt)
+    msg.Fields.content = ""
     inject_message(msg)
 
-    -- unknown schema
-    msg.Fields.uri = "/submit/pioneer/bogus/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571AAA"
-    local jwe = jose.jwe_encrypt(jwk, submissions[1], hdr)
-    msg.Fields.content = jwe:export()
+    -- invalid envelope schema
+    cnt = cnt + 1
+    msg.Fields.uri = string.format(uri_template, cnt)
+    msg.Fields.content = "{}"
     inject_message(msg)
 
-    -- invalid uri
-    msg.Fields.uri = "/foo/bar"
-    local jwe = jose.jwe_encrypt(jwk, submissions[1], hdr)
-    msg.Fields.content = jwe:export()
+    local v = submissions[1]
+    -- invalid import
+    cnt = cnt + 1
+    msg.Fields.uri = string.format(uri_template, cnt)
+    msg.Fields.content = string.format(envelope, "xxxxxxxxxxxxxxxx", v[2], v[3], v[4])
     inject_message(msg)
 
-    -- create a duplicate
-    msg.Fields.uri = uri_prefix .. "01"
-    local jwe = jose.jwe_encrypt(jwk, submissions[1], hdr)
-    msg.Fields.content = jwe:export()
+    -- invalid encryption
+    cnt = cnt + 1
+    msg.Fields.uri = string.format(uri_template, cnt)
+    local jwe = jose.jwe_encrypt(jwk, submissions[1][1], hdr)
+    msg.Fields.content = string.format(envelope, string.gsub(jwe:export(), ".$", "X"), v[2], v[3], v[4])
     inject_message(msg)
 
     return 0

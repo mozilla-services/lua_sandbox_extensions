@@ -30,7 +30,7 @@ local s3_bucket     = read_config("s3_bucket") or error("s3_bucket must be set")
 local logger        = read_config("Logger")
 local is_running    = is_running
 if not read_config("passthru") then
-    tm = require "decoders.moz_telemetry.ping".transform_message
+    tm = require "decoders.moz_ingest.common".transform_message
 end
 
 
