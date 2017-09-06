@@ -29,6 +29,7 @@ if(NOT LUA51)
 endif()
 
 include(sandbox_module)
+string(REPLACE "-Werror" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 add_dependencies(rjson rapidjson)
 
 if(ZLIB_FOUND)

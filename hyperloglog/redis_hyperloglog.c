@@ -139,16 +139,22 @@ static uint64_t MurmurHash64A(const void *key, int len, unsigned int seed)
   switch (len & 7) {
   case 7:
     h ^= (uint64_t)data[6] << 48;
+    /* FALLTHRU */
   case 6:
     h ^= (uint64_t)data[5] << 40;
+    /* FALLTHRU */
   case 5:
     h ^= (uint64_t)data[4] << 32;
+    /* FALLTHRU */
   case 4:
     h ^= (uint64_t)data[3] << 24;
+    /* FALLTHRU */
   case 3:
     h ^= (uint64_t)data[2] << 16;
+    /* FALLTHRU */
   case 2:
     h ^= (uint64_t)data[1] << 8;
+    /* FALLTHRU */
   case 1:
     h ^= (uint64_t)data[0];
     h *= m;
