@@ -67,7 +67,7 @@ local construction_errors = {
 for i, v in ipairs(construction_errors) do
     local ok, err = pcall(v.fn, unpack(v.args))
     if v.perr then
-        if not string.find(err, v.err) then error(string.format("error test %d failed %s\n", i, err)) end
+        if not string.match(err, v.perr) then error(string.format("error test %d failed %s\n", i, err)) end
     else
         if err ~= v.err then error(string.format("error test %d failed %s\n", i, err)) end
     end
