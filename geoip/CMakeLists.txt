@@ -8,7 +8,7 @@ project(geoip LANGUAGES NONE)
 externalproject_add(
     ep_geoip
     GIT_REPOSITORY https://github.com/agladysh/lua-geoip.git
-    GIT_TAG a07d261d8a2c7ff854fe6cd72cb8c2e16ec638ff
+    GIT_TAG 06548fd6dac30d4ba0ea5489c3cffe8c20b526c0
     CMAKE_ARGS ${EP_CMAKE_ARGS}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
 )
