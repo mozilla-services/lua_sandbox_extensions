@@ -14,6 +14,8 @@ set(CPACK_PACKAGE_VENDOR        "HeliosLite")
 set(CPACK_PACKAGE_CONTACT       "Bruno Binet <bruno.binet@helioslite.com>")
 set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
 set(CPACK_STRIP_FILES           TRUE)
+set(CPACK_DEBIAN_FILE_NAME      "DEB-DEFAULT")
+set(CPACK_RPM_FILE_NAME         "RPM-DEFAULT")
 
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.13)")
 set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")

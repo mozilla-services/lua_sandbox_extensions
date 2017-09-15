@@ -14,6 +14,8 @@ set(CPACK_PACKAGE_VENDOR        "Mozilla Services")
 set(CPACK_PACKAGE_CONTACT       "Mike Trinkala <trink@mozilla.com>")
 set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
 set(CPACK_STRIP_FILES           TRUE)
+set(CPACK_DEBIAN_FILE_NAME      "DEB-DEFAULT")
+set(CPACK_RPM_FILE_NAME         "RPM-DEFAULT")
 
 set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
 
@@ -59,7 +61,7 @@ src/inet.c
 src/io.c
 src/luasocket.c
 src/options.c
-src/select.c 
+src/select.c
 src/tcp.c
 src/timeout.c
 src/udp.c
@@ -110,7 +112,7 @@ if(NOT MSVC)
 endif()
 
 set(SOCKET_MODULES
-src/ftp.lua 
+src/ftp.lua
 src/headers.lua
 src/http.lua
 src/smtp.lua
