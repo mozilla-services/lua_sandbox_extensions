@@ -65,6 +65,7 @@ set(EP_CMAKE_ARGS
 --no-warn-unused-cli)
 
 set(extensions
+aws
 bloom_filter
 circular_buffer
 cjson

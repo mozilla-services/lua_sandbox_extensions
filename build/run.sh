@@ -30,27 +30,13 @@ build_lua_sandbox_extensions() {
     local cmake_args
     local ext
     packages="git c++-compiler"
-    cmake_args="-DENABLE_ALL_EXT=true"
+    cmake_args=""
+    # todo add support for aws geoip jose kafka openssl parquet snappy systemd
     for ext in bloom_filter circular_buffer cjson compat cuckoo_filter \
-            elasticsearch jose geoip heka hyperloglog kafka lfs lpeg lsb moz_telemetry \
-            openssl parquet postgres rjson sax snappy socket ssl struct syslog \
-            systemd zlib; do
+            elasticsearch heka hyperloglog lfs lpeg lsb moz_ingest moz_pioneer \
+            moz_security moz_telemetry postgres rjson sax socket ssl struct \
+            syslog zlib; do
         case "$ext" in
-            geoip)
-                cmake_args="$cmake_args -DEXT_$ext=false"
-                ;;
-            jose)
-                cmake_args="$cmake_args -DEXT_$ext=false"
-                ;;
-            kafka)
-                cmake_args="$cmake_args -DEXT_$ext=false"
-                ;;
-            openssl)
-                cmake_args="$cmake_args -DEXT_$ext=false"
-                ;;
-            parquet)
-                cmake_args="$cmake_args -DEXT_$ext=false"
-                ;;
             postgres)
                 if [ "$CPACK_GENERATOR" = "DEB" ]; then
                     packages="$packages libpq-dev postgresql-server-dev-all"
@@ -59,9 +45,6 @@ build_lua_sandbox_extensions() {
                 else
                     cmake_args="$cmake_args -DEXT_$ext=false"
                 fi
-                ;;
-            snappy)
-                cmake_args="$cmake_args -DEXT_$ext=false"
                 ;;
             ssl)
                 if [ "$CPACK_GENERATOR" = "DEB" ]; then
@@ -72,9 +55,6 @@ build_lua_sandbox_extensions() {
                     cmake_args="$cmake_args -DEXT_$ext=false"
                 fi
                 ;;
-            systemd)
-                cmake_args="$cmake_args -DEXT_$ext=false"
-                ;;
             zlib)
                 if [ "$CPACK_GENERATOR" = "DEB" ]; then
                     packages="$packages zlib1g-dev"
@@ -83,6 +63,9 @@ build_lua_sandbox_extensions() {
                 else
                     cmake_args="$cmake_args -DEXT_$ext=false"
                 fi
+                ;;
+            *)
+                cmake_args="$cmake_args -DEXT_$ext=true";
                 ;;
         esac
     done
