@@ -9,37 +9,57 @@
 require "string"
 
 local messages = {
+    {Logger = "moz_ingest", Type = "error", Hostname = "example.com", Fields = {
+        DecodeErrorType = "uri",
+        DecodeError = "missing uri",
+        }
+    },
+    {Logger = "moz_ingest", Type = "error", Hostname = "example.com", Fields = {
+        uri = "/foobar",
+        DecodeErrorType = "uri",
+        DecodeError = "invalid uri",
+        }
+    },
     {Logger = "common", Type = "error", Hostname = "example.com", Fields = {
+        uri = "/submit/common/foobar/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
+        documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
         docType = "foobar",
         DecodeErrorType = "skipped",
         DecodeError = "no sub decoder",
         geoCity = "San Francisco",
         geoCountry = "US",
-        sourceVersion = 1
+        docVersion = 1
         }
     },
     {Logger = "common", Type = "duplicate", Hostname = "integration_test", Fields = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
+        docType = "foobar",
         duplicateDelta = 0,
         geoCity = "San Francisco",
         geoCountry = "US",
-        sourceVersion = 1
+        docVersion = 1
         }
     },
     {Logger = "common", Type = "error", Fields = {
+        documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A02",
+        uri = "/submit/common/widget/99/0055FAC4-8A1A-4FCA-B380-EBFDC8571A02",
+        docType = "widget",
         DecodeErrorType = "skipped",
         DecodeError = "no sub decoder",
         geoCity = "Halifax",
         geoCountry = "CA",
-        sourceVersion = 99
+        docVersion = 99
         }
     },
     {Logger = "common", Type = "error", Fields = {
+        documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A03",
+        uri = "/submit/common/widget/99/0055FAC4-8A1A-4FCA-B380-EBFDC8571A03",
+        docType = "widget",
         DecodeErrorType = "skipped",
         DecodeError = "no sub decoder",
         geoCity = "New York",
         geoCountry = "US",
-        sourceVersion = 99
+        docVersion = 99
         }
     },
 }

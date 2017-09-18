@@ -91,7 +91,6 @@ local function load_decoder_cfg()
         assert(type(error_on_missing_sub_decoder) == "boolean", "error_on_missing_sub_decoder must be a boolean")
     end
 
-
     if cfg.cf_items then
         if not cfg.cf_interval_size then cfg.cf_interval_size = 6 end
         if cfg.cf_partitions then
@@ -227,8 +226,14 @@ end
 
 
 function transform_message(hsr, msg)
+    local uri = hsr:read_message("Fields[uri]")
     if not msg then
-        msg = miu.new_message(hsr)
+        local ok
+        ok, msg = pcall(miu.new_message, hsr, uri)
+        if not ok then
+            inject_error(hsr, "moz_ingest", "uri", msg)
+            return
+        end
     end
 
     if geoip and not msg.Fields.geoCountry then
@@ -247,7 +252,6 @@ function transform_message(hsr, msg)
     end
 
     if dedupe and msg.Fields.documentId then
-        local uri = hsr:read_message("Fields[uri]")
         local idx = crc32()(uri) % cfg.cf_partitions + 1
         local cf = dedupe[idx]
         local added, delta = cf:add(uri, msg.Timestamp)

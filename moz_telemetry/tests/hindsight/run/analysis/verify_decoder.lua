@@ -61,7 +61,11 @@ local messages = {
         docType = "saved-session",
         geoCity = "San Francisco",
         geoCountry = "US",
-        duplicateDelta = 0
+        duplicateDelta = 0,
+        appUpdateChannel = "beta",
+        appBuildId = "20151103030248",
+        appVersion = "45.0",
+        appName = "Firefox"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Hostname = "example.com", Fields = {

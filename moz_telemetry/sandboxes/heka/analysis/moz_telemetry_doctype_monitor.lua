@@ -147,7 +147,7 @@ end
 
 function process_message()
     local ns = read_message("Timestamp")
-    local channel = read_message("Fields[normalizedChannel]") or DEFAULT_CHANNEL
+    local channel = mtn.channel(read_message("Fields[appUpdateChannel]"))
     local col = channels[channel]
     if not col then
         col = 1
