@@ -1,0 +1,580 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set ts=2 et sw=2 tw=80: */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/** @brief Lua AWS Kinesis wrapper implementation @file */
+
+extern "C"
+{
+#include "lauxlib.h"
+#include "lua.h"
+
+int luaopen_aws_kinesis(lua_State *lua);
+}
+
+#include <aws/core/Aws.h>
+#include <aws/core/auth/AWSCredentialsProvider.h>
+#include <aws/core/auth/AWSCredentialsProviderChain.h>
+#include <aws/core/utils/Outcome.h>
+#include <aws/core/utils/memory/stl/AWSAllocator.h>
+#include <aws/core/utils/memory/stl/AWSMap.h>
+#include <aws/core/utils/memory/stl/AWSString.h>
+#include <aws/core/utils/memory/stl/AWSStringStream.h>
+#include <aws/core/utils/memory/stl/AWSVector.h>
+#include <aws/core/client/ClientConfiguration.h>
+#include <aws/core/utils/DateTime.h>
+#include <aws/kinesis/model/DescribeStreamRequest.h>
+#include <aws/kinesis/model/GetRecordsRequest.h>
+#include <aws/kinesis/model/GetShardIteratorRequest.h>
+#include <aws/kinesis/model/PutRecordRequest.h>
+#include <aws/kinesis/KinesisClient.h>
+#include <chrono>
+#include <ctime>
+#include <thread>
+
+static const char *mt_simple_consumer = "mozsvc.aws.kinesis.simple_consumer";
+static const char *mt_simple_producer = "mozsvc.aws.kinesis.simple_producer";
+static const char *cred_types[] = { "CHAIN", "INSTANCE", NULL };
+
+namespace ath = Aws::Auth;
+namespace kin = Aws::Kinesis;
+
+typedef struct shard {
+  Aws::String it;         // current shard iterator
+  Aws::String sequenceId; // last sequenceId read
+  time_t last_request;    // used to throttle requests at one per second
+  bool closed;
+  bool active;            // pruning flag
+} shard;
+
+typedef struct simple_consumer
+{
+  kin::KinesisClient            *client;
+  Aws::String                   *streamName;
+  Aws::Map<Aws::String, shard> *shards;
+  Aws::Map<Aws::String, shard>::iterator *it;
+  kin::Model::ShardIteratorType itType;
+  time_t                        itTime;
+  time_t                        refresh;
+} simple_consumer;
+
+typedef struct simple_producer
+{
+  kin::KinesisClient            *client;
+  Aws::String                   *streamName;
+} simple_producer;
+
+
+static void load_string(lua_State *lua, int idx, const char *key, Aws::String &v)
+{
+  lua_getfield(lua, idx, key);
+  const char *s = lua_tostring(lua, -1);
+  if (s) v = s;
+  lua_pop(lua, 1);
+}
+
+
+static void load_boolean(lua_State *lua, int idx, const char *key, bool &v)
+{
+  lua_getfield(lua, idx, key);
+  if (lua_type(lua, -1) == LUA_TBOOLEAN) {
+    v = lua_toboolean(lua, -1);
+  }
+  lua_pop(lua, 1);
+}
+
+
+static void load_unsigned(lua_State *lua, int idx, const char *key, unsigned &v)
+{
+  lua_getfield(lua, idx, key);
+  if (lua_type(lua, -1) == LUA_TNUMBER) {
+    v = static_cast<unsigned>(lua_tonumber(lua, -1));
+  }
+  lua_pop(lua, 1);
+}
+
+
+static void load_long(lua_State *lua, int idx, const char *key, long &v)
+{
+  lua_getfield(lua, idx, key);
+  if (lua_type(lua, -1) == LUA_TNUMBER) {
+    v = static_cast<long>(lua_tonumber(lua, -1));
+  }
+  lua_pop(lua, 1);
+}
+
+
+static void load_scheme(lua_State *lua, int idx, const char *key, Aws::Http::Scheme &v)
+{
+  lua_getfield(lua, idx, key);
+  const char *s = lua_tostring(lua, -1);
+  if (s) {
+    v = Aws::Http::Scheme::HTTPS;
+    if (strcmp("HTTP", s) == 0) {
+      v = Aws::Http::Scheme::HTTP;
+    }
+  }
+  lua_pop(lua, 1);
+}
+
+
+static void
+load_configuration(lua_State *lua, int idx, Aws::Client::ClientConfiguration &conf)
+{
+  load_string(lua, idx, "userAgent", conf.userAgent);
+  load_scheme(lua, idx, "scheme", conf.scheme);
+  load_string(lua, idx, "region", conf.region);
+  load_boolean(lua, idx, "useDualStack", conf.useDualStack);
+  load_unsigned(lua, idx, "maxConnections", conf.maxConnections);
+  load_long(lua, idx, "requestTimeoutMs", conf.requestTimeoutMs);
+  load_long(lua, idx, "connectTimeoutMs", conf.connectTimeoutMs);
+  load_string(lua, idx, "endpointOverride", conf.endpointOverride);
+  load_scheme(lua, idx, "proxyScheme", conf.proxyScheme);
+  load_string(lua, idx, "proxyHost", conf.proxyHost);
+  load_unsigned(lua, idx, "proxyPort", conf.proxyPort);
+  load_string(lua, idx, "proxyUserName", conf.proxyUserName);
+  load_string(lua, idx, "proxyPassword", conf.proxyPassword);
+  load_boolean(lua, idx, "verifySSL", conf.verifySSL);
+  load_string(lua, idx, "caPath", conf.caPath);
+  load_string(lua, idx, "caFile", conf.caFile);
+  lua_getfield(lua, idx, "httpLibOverride");
+  const char *s = lua_tostring(lua, -1);
+  if (s) {
+    conf.httpLibOverride = Aws::Http::TransferLibType::DEFAULT_CLIENT;
+    if (strcmp("CURL_CLIENT", s) == 0) {
+      conf.httpLibOverride = Aws::Http::TransferLibType::CURL_CLIENT;
+    } else if (strcmp("WIN_INET_CLIENT", s) == 0) {
+      conf.httpLibOverride = Aws::Http::TransferLibType::WIN_INET_CLIENT;
+    } else if (strcmp("WIN_HTTP_CLIENT", s) == 0) {
+      conf.httpLibOverride = Aws::Http::TransferLibType::WIN_HTTP_CLIENT;
+    }
+  }
+  lua_pop(lua, 1);
+  load_boolean(lua, idx, "followRedirects", conf.followRedirects);
+}
+
+
+static int parse_checkpoints(simple_consumer *sc, const char *checkpoints)
+{
+  const char *p = checkpoints;
+  while (p && *p) {
+    auto pos = strchr(p, '\t');
+    if (!pos || p == pos) {return 1;}
+    auto shardId = Aws::String(p, pos - p);
+    p = ++pos;
+    if (!p) {return 1;}
+
+    pos = strchr(p, '\n');
+    if (!pos || p == pos) {return 1;}
+    auto sequenceId = Aws::String(p, pos - p);
+    p = ++pos;
+    sc->shards->insert({ shardId, { "", sequenceId, 0, false, false } });
+  }
+  return 0;
+}
+
+
+static Aws::String
+get_shard_iterator(lua_State *lua, simple_consumer *sc, const Aws::String &shardId,
+                   const Aws::String &sequenceId)
+{
+  kin::Model::GetShardIteratorRequest sir;
+  sir.SetStreamName(*sc->streamName);
+  sir.SetShardId(shardId);
+  sir.SetShardIteratorType(sc->itType);
+  if (sc->itType == kin::Model::ShardIteratorType::AT_TIMESTAMP) {
+    sir.SetTimestamp(Aws::Utils::DateTime(sc->itTime * 1000));
+  }
+
+  if (!sequenceId.empty()) {
+    sir.SetShardIteratorType(kin::Model::ShardIteratorType::AFTER_SEQUENCE_NUMBER);
+    sir.SetStartingSequenceNumber(sequenceId);
+  }
+
+  auto outcome = sc->client->GetShardIterator(sir);
+  if (!outcome.IsSuccess()) {
+    lua_pushstring(lua, outcome.GetError().GetMessage().c_str());
+    return Aws::String();
+  }
+  return outcome.GetResult().GetShardIterator();
+}
+
+
+static int get_shards(lua_State *lua, simple_consumer *sc)
+{
+  kin::Model::DescribeStreamRequest dsr;
+  dsr.SetStreamName(*sc->streamName);
+  Aws::Vector<kin::Model::Shard> shards;
+  do {
+    auto outcome = sc->client->DescribeStream(dsr);
+    if (!outcome.IsSuccess()) {
+      lua_pushstring(lua, outcome.GetError().GetMessage().c_str());
+      return 1;
+    }
+    auto &description = outcome.GetResult().GetStreamDescription();
+    auto &status = description.GetStreamStatus();
+    if (status != kin::Model::StreamStatus::ACTIVE &&
+        status != kin::Model::StreamStatus::UPDATING) {
+      lua_pushstring(lua, "stream not ready");
+      return 1;
+    }
+    auto &vs = description.GetShards();
+    shards.insert(shards.end(), vs.begin(), vs.end());
+    if (description.GetHasMoreShards() && shards.size() > 0) {
+      dsr.SetExclusiveStartShardId(shards[shards.size() - 1].GetShardId());
+    } else {
+      break;
+    }
+  } while (true);
+
+  for (auto &kv:*sc->shards) {
+    kv.second.active = false;
+  }
+
+  // add new and flag active shards
+  for (const auto &sh: shards) {
+    auto shardId = sh.GetShardId();
+    auto it = sc->shards->find(shardId);
+    if (it == sc->shards->end()) {
+      auto sit = get_shard_iterator(lua, sc, shardId, Aws::String());
+      sc->shards->insert({ shardId, { sit, "", 0, false, true } });
+    } else {
+      if (it->second.it.empty() && !it->second.closed) {
+        it->second.it = get_shard_iterator(lua, sc, shardId, it->second.sequenceId);
+      }
+      it->second.active = true;
+    }
+  }
+
+  // delete_inactive shards
+  auto it = sc->shards->begin();
+  for (auto end = sc->shards->end(); it != end;) {
+    auto cit = it++;
+    if (!cit->second.active) {
+      if (cit == *sc->it) {
+        *sc->it = it;
+      }
+      sc->shards->erase(cit);
+    }
+  }
+
+  if (sc->shards->size() == 0) {
+    lua_pushstring(lua, "no shards available");
+    return 1;
+  }
+  return 0;
+}
+
+
+static int simple_consumer_new(lua_State *lua)
+{
+  const char *streamName  = luaL_checkstring(lua, 1);
+  auto iteratorType       = kin::Model::ShardIteratorType::TRIM_HORIZON;
+  int64_t iteratorTime   = 0;
+  int t = lua_type(lua, 2);
+  switch (t) {
+  case LUA_TSTRING:
+    {
+      const char *v = lua_tostring(lua, 2);
+      if (strcmp(v, "TRIM_HORIZON") == 0) {
+        iteratorType = kin::Model::ShardIteratorType::TRIM_HORIZON;
+      } else if (strcmp(v, "LATEST") == 0) {
+        iteratorType = kin::Model::ShardIteratorType::LATEST;
+      } else {
+        luaL_error(lua, "invalid iterator type: %s", v);
+      }
+    }
+    break;
+  case LUA_TNUMBER:
+    iteratorType = kin::Model::ShardIteratorType::AT_TIMESTAMP;
+    iteratorTime = static_cast<int64_t>(lua_tonumber(lua, 2));
+    break;
+  case LUA_TNONE:
+  case LUA_TNIL:
+    break;
+  default:
+    luaL_typerror(lua, 2, "string, number, none, nil");
+    break;
+  }
+  const char *checkpoints = lua_tostring(lua, 3);
+  Aws::Client::ClientConfiguration config;
+  t = lua_type(lua, 4);
+  switch (t) {
+  case LUA_TTABLE:
+    load_configuration(lua, 4, config);
+    break;
+  case LUA_TNIL:
+  case LUA_TNONE:
+    break;
+  default:
+    luaL_typerror(lua, 4, "table, none/nil");
+    break;
+  }
+  int credType = luaL_checkoption(lua, 5, "INSTANCE", cred_types);
+
+  simple_consumer *sc = static_cast<simple_consumer *>(lua_newuserdata(lua, sizeof*sc));
+  switch (credType) {
+  case 0:
+    sc->client = new kin::KinesisClient(config);
+    break;
+  default:
+    {
+      auto cp = Aws::MakeShared<ath::InstanceProfileCredentialsProvider>(mt_simple_consumer);
+      sc->client = new kin::KinesisClient(cp, config);
+    }
+    break;
+  }
+  sc->streamName = new Aws::String(streamName);
+  sc->shards = new Aws::Map<Aws::String, shard>;
+  sc->it = new Aws::Map<Aws::String, shard>::iterator(sc->shards->end());
+  sc->itType = static_cast<kin::Model::ShardIteratorType>(iteratorType);
+  sc->itTime = iteratorTime;
+  sc->refresh = time(NULL);
+  luaL_getmetatable(lua, mt_simple_consumer);
+  lua_setmetatable(lua, -2);
+
+  if (!sc->streamName || !sc->client || !sc->shards || !sc->it) {
+    return luaL_error(lua, "memory allocation failed");
+  }
+
+  if (parse_checkpoints(sc, checkpoints) != 0) {
+    luaL_error(lua, "invalid checkpoint string");
+    return 1;
+  }
+
+  if (get_shards(lua, sc) != 0) {
+    return lua_error(lua);
+  }
+  return 1;
+}
+
+
+static int simple_consumer_gc(lua_State *lua)
+{
+  simple_consumer *sc = static_cast<simple_consumer *>(luaL_checkudata(lua, 1, mt_simple_consumer));
+  delete(sc->it);
+  delete(sc->shards);
+  delete(sc->streamName);
+  delete(sc->client);
+  return 0;
+}
+
+
+static int push_checkpoints(lua_State *lua, simple_consumer *sc)
+{
+  Aws::OStringStream buf;
+  for (const auto &kv:*sc->shards) {
+    if (!kv.second.sequenceId.empty()) {
+      buf << kv.first << "\t" << kv.second.sequenceId << "\n";
+    }
+  }
+  lua_pushstring(lua, buf.str().c_str());
+  return 0;
+}
+
+
+static shard& get_next_shard(simple_consumer *sc)
+{
+  auto begin = sc->shards->begin();
+  auto end = sc->shards->end();
+  if (*sc->it == end) {
+    *sc->it = begin;
+  } else if (++(*sc->it) == end) {
+    *sc->it = begin;
+  }
+
+  for (size_t cnt = 0; cnt < sc->shards->size() - 1 && (*sc->it)->second.closed; ++cnt) {
+    if (++(*sc->it) == end) *sc->it = begin;
+  }
+  return (*sc->it)->second;
+}
+
+
+static int simple_receive(lua_State *lua)
+{
+  simple_consumer *sc = static_cast<simple_consumer *>(luaL_checkudata(lua, 1, mt_simple_consumer));
+
+  time_t t = time(NULL);
+  if (sc->refresh + 3600 < t) {
+    sc->refresh = t;
+    if (get_shards(lua, sc) != 0) return lua_error(lua);
+  }
+
+  shard &sh = get_next_shard(sc);
+  if (sh.last_request == t) {
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    ++t;
+  }
+  sh.last_request = t;
+
+  bool error = false;
+  {
+    kin::Model::GetRecordsRequest rr;
+    rr.SetShardIterator(sh.it);
+    auto outcome = sc->client->GetRecords(rr);
+    if (outcome.IsSuccess()) {
+      sh.it = outcome.GetResult().GetNextShardIterator();
+      if (sh.it.empty()) {
+        sh.closed = true;
+        sc->refresh = 0;
+      }
+
+      auto &recs = outcome.GetResult().GetRecords();
+      size_t nrecs = recs.size();
+      if (nrecs == 0) {
+        lua_newtable(lua);
+        return 1;
+      }
+
+      sh.sequenceId = recs[nrecs - 1].GetSequenceNumber();
+      lua_createtable(lua, nrecs, 0);
+      int n = 0;
+      for (auto &r : recs) {
+        auto data = r.GetData();
+        lua_pushlstring(lua, reinterpret_cast<const char *>(data.GetUnderlyingData()), data.GetLength());
+        lua_rawseti(lua, -2, ++n);
+      }
+      push_checkpoints(lua, sc);
+    } else {
+      auto e = outcome.GetError();
+      if (e.GetErrorType() == kin::KinesisErrors::EXPIRED_ITERATOR) {
+        sh.it = get_shard_iterator(lua, sc, (*sc->it)->first, sh.sequenceId);
+        lua_newtable(lua);
+        return 1;
+      }
+      if (!e.ShouldRetry()) {
+        lua_pushstring(lua, e.GetMessage().c_str());
+        error = true;
+      }
+    }
+  }
+
+  if (error) lua_error(lua);
+  return 2;
+}
+
+
+static int simple_producer_new(lua_State *lua)
+{
+  Aws::Client::ClientConfiguration config;
+  switch (lua_type(lua, 1)) {
+  case LUA_TTABLE:
+    load_configuration(lua, 1, config);
+    break;
+  case LUA_TNIL:
+  case LUA_TNONE:
+    break;
+  default:
+    luaL_typerror(lua, 1, "table, none/nil");
+    break;
+  }
+  int credType = luaL_checkoption(lua, 2, "INSTANCE", cred_types);
+
+  simple_producer *sp = static_cast<simple_producer *>(lua_newuserdata(lua, sizeof*sp));
+  switch (credType) {
+  case 0:
+    sp->client = new kin::KinesisClient(config);
+    break;
+  default:
+    {
+      auto cp = Aws::MakeShared<ath::InstanceProfileCredentialsProvider>(mt_simple_producer);
+      sp->client = new kin::KinesisClient(cp, config);
+    }
+    break;
+  }
+  luaL_getmetatable(lua, mt_simple_producer);
+  lua_setmetatable(lua, -2);
+
+  if (!sp->client) {
+    return luaL_error(lua, "memory allocation failed");
+  }
+  return 1;
+}
+
+
+static int simple_producer_gc(lua_State *lua)
+{
+  simple_producer *sp = static_cast<simple_producer *>(luaL_checkudata(lua, 1, mt_simple_producer));
+  delete(sp->client);
+  return 0;
+}
+
+
+static int simple_send(lua_State *lua)
+{
+  simple_producer *sp = static_cast<simple_producer *>(luaL_checkudata(lua, 1, mt_simple_producer));
+
+  size_t len = 0;
+  auto streamName = luaL_checkstring(lua, 2);
+  auto data       = reinterpret_cast<const unsigned char*>(luaL_checklstring(lua, 3, &len));
+  auto *key       = luaL_checkstring(lua, 4);
+
+  kin::Model::PutRecordRequest rr;
+  rr.SetStreamName(streamName);
+  rr.SetData(Aws::Utils::ByteBuffer(data, len));
+  rr.SetPartitionKey(key);
+  auto outcome = sp->client->PutRecord(rr);
+  if (outcome.IsSuccess()) {
+    lua_pushnil(lua);
+  } else {
+    lua_pushstring(lua, outcome.GetError().GetMessage().c_str());
+  }
+  return 1;
+}
+
+
+static const struct luaL_reg lib_f[] =
+{
+  { "simple_consumer", simple_consumer_new },
+  { "simple_producer", simple_producer_new },
+  { NULL, NULL }
+};
+
+
+static const struct luaL_reg simple_consumer_lib_m[] =
+{
+  { "receive", simple_receive },
+  { "__gc", simple_consumer_gc },
+  { NULL, NULL }
+};
+
+static const struct luaL_reg simple_producer_lib_m[] =
+{
+  { "send", simple_send },
+  { "__gc", simple_producer_gc },
+  { NULL, NULL }
+};
+
+
+int luaopen_aws_kinesis(lua_State *lua)
+{
+  Aws::SDKOptions sdk_options;
+  Aws::InitAPI(sdk_options);
+
+  luaL_newmetatable(lua, mt_simple_consumer);
+  lua_pushvalue(lua, -1);
+  lua_setfield(lua, -2, "__index");
+  luaL_register(lua, NULL, simple_consumer_lib_m);
+  lua_pop(lua, 1);
+
+  luaL_newmetatable(lua, mt_simple_producer);
+  lua_pushvalue(lua, -1);
+  lua_setfield(lua, -2, "__index");
+  luaL_register(lua, NULL, simple_producer_lib_m);
+  lua_pop(lua, 1);
+
+  luaL_register(lua, "aws.kinesis", lib_f);
+
+  // if necessary flag the parent table as non-data for preservation
+  lua_getglobal(lua, "aws");
+  if (lua_getmetatable(lua, -1) == 0) {
+    lua_newtable(lua);
+    lua_setmetatable(lua, -2);
+  } else {
+    lua_pop(lua, 1);
+  }
+  lua_pop(lua, 1);
+  return 1;
+}

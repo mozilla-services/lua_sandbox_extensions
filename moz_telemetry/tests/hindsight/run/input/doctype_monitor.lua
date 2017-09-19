@@ -9,11 +9,11 @@
 require "string"
 
 local tm = {
-    Type = "telemetry", 
+    Type = "telemetry",
     Fields = {
         docType = "main",
         creationTimestamp = nil,
-        normalizedChannel = nil,
+        appUpdateChannel  = nil,
         extra             = nil,
         }
     }
@@ -23,11 +23,11 @@ function process_message()
     for i=0, 1439 do  -- volume (beta) and shape (Other) need history
         tm.Timestamp = i * 60e9 + ns
         tm.Fields.creationTimestamp = tm.Timestamp
-        tm.Fields.normalizedChannel = "beta"
+        tm.Fields.appUpdateChannel = "beta"
         for j=1, 20 do
             inject_message(tm)
         end
-        tm.Fields.normalizedChannel = "Other"
+        tm.Fields.appUpdateChannel = "Other"
         for j=1, 20 do
             inject_message(tm)
         end
@@ -36,12 +36,12 @@ function process_message()
    for i=0, 1440 do
        tm.Timestamp = i * 60e9 + ns + 86400e9 * 7
        tm.Fields.creationTimestamp = tm.Timestamp
-       tm.Fields.normalizedChannel = "beta"
+       tm.Fields.appUpdateChannel = "beta"
        for j=1, 25 do
            inject_message(tm)
        end
 
-       tm.Fields.normalizedChannel = "esr"
+       tm.Fields.appUpdateChannel = "esr"
        for j=1, 20 do
            inject_message(tm)
        end
@@ -51,7 +51,7 @@ function process_message()
        inject_message(tm)
        tm.Type = "telemetry"
 
-       tm.Fields.normalizedChannel = "aurora"
+       tm.Fields.appUpdateChannel = "aurora"
        for j=1, 19 do
            inject_message(tm)
        end
@@ -63,7 +63,7 @@ function process_message()
            tm.Fields.DecodeError = nil
        end
 
-       tm.Fields.normalizedChannel = "nightly"
+       tm.Fields.appUpdateChannel = "nightly"
        if i >= 900 then
            tm.Fields.extra = string.rep("x", 100)
        end
@@ -72,7 +72,7 @@ function process_message()
        end
        tm.Fields.extra = nil
 
-       tm.Fields.normalizedChannel = "release"
+       tm.Fields.appUpdateChannel = "release"
        if i >= 1380 then
            tm.Fields.creationTimestamp = tm.Timestamp - (i - 1380) * 3600e9
        end

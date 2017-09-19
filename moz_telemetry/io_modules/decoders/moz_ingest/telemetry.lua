@@ -51,7 +51,6 @@ local string        = require "string"
 local module_cfg    = string.gsub(module_name, "%.", "_")
 
 local rjson  = require "rjson"
-local lpeg   = require "lpeg"
 local crc32  = require "zlib".crc32
 local miu    = require "moz_ingest.util"
 local mtn    = require "moz_telemetry.normalize"
@@ -90,10 +89,6 @@ local default_schema = rjson.parse_schema([[
 }
 ]])
 
-local uri_dimensions        = {"documentId", "docType","appName","appVersion","appUpdateChannel","appBuildId"}
-local uri_dimensions_size   = #uri_dimensions
-local uri_max_length        = 10240
-
 local extract_payload_objects = {
     main = {
         "addonDetails",
@@ -126,63 +121,6 @@ local environment_objects = {
     "system",
     }
 
---[[
-Split a path into components. Multiple consecutive separators do not
-result in empty path components.
-Examples:
-  /foo/bar      ->   {"foo", "bar"}
-  ///foo//bar/  ->   {"foo", "bar"}
-  foo/bar/      ->   {"foo", "bar"}
-  /             ->   {}
---]]
-local sep           = lpeg.P("/")
-local elem          = lpeg.C((1 - sep)^1)
-local path_grammar  = lpeg.Ct(elem^0 * (sep^0 * elem)^0)
-
-local function split_path(s)
-    if type(s) ~= "string" then return {} end
-    return lpeg.match(path_grammar, s)
-end
-
-local function process_uri(hsr, msg)
-    -- Path should be of the form: ^/submit/telemetry/id[/extra/path/components]$
-    local path = hsr:read_message("Fields[uri]")
-
-    local pathLength = string.len(path)
-    if pathLength > uri_max_length then
-        error(string.format("uri\tPath too long: %d > %d", pathLength, uri_max_length), 0)
-    end
-
-    local components = split_path(path)
-    if not components or #components < 3 then
-        error("uri\tNot enough path components", 0)
-    end
-
-    local submit = table.remove(components, 1)
-    if submit ~= "submit" then
-        error(string.format("uri\tInvalid path prefix: '%s' in %s", submit, path), 0)
-    end
-
-    local namespace = table.remove(components, 1)
-    if namespace ~= "telemetry" then
-        error(string.format("uri\tInvalid namespace prefix: '%s' in %s", namespace, path), 0)
-    end
-    msg.Logger = namespace
-
-    local num_components = #components
-    if num_components > 0 then
-        if uri_dimensions_size >= num_components then
-            for i=1,num_components do
-                msg.Fields[uri_dimensions[i]] = components[i]
-            end
-        else
-            error("uri\tdimension spec/path component mismatch", 0)
-        end
-    end
-    msg.Fields.normalizedChannel = mtn.channel(msg.Fields.appUpdateChannel)
-end
-
-
 local function remove_objects(msg, doc, section, objects)
     if type(objects) ~= "table" then return end
 
@@ -207,7 +145,7 @@ local function validate_schema(hsr, msg, doc, version)
 
     ok, err = doc:validate(schema)
     if not ok then
-        error(string.format("json\t%s schema version %s validation error: %s",
+        error(string.format("json\tschema: %s version: %s validation error: %s",
                             msg.Fields.docType, tostring(version), err), 0)
     end
 end
@@ -249,7 +187,7 @@ local function process_json(hsr, msg)
             msg.Fields.appVersion        = doc:value(doc:find(info, "appVersion")) or UNK_DIM
             msg.Fields.appUpdateChannel  = doc:value(doc:find(info, "appUpdateChannel")) or UNK_DIM
             msg.Fields.appBuildId        = doc:value(doc:find(info, "appBuildID")) or UNK_DIM
-            msg.Fields.normalizedChannel = mtn.channel(doc:value(doc:find(info, "appUpdateChannel")))
+            msg.Fields.normalizedChannel = mtn.channel(msg.Fields.appUpdateChannel)
 
             -- Old telemetry was always "enabled"
             msg.Fields.telemetryEnabled = true
@@ -285,6 +223,7 @@ local function process_json(hsr, msg)
         msg.Fields.appBuildId           = doc:value(doc:find(app, "buildId"))
         msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
         msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
+        msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
 
         remove_objects(msg, doc, "environment", environment_objects)
         remove_objects(msg, doc, "payload", extract_payload_objects[msg.Fields.docType])
@@ -343,12 +282,12 @@ function transform_message(hsr, msg)
     end
 
     -- preserve the legacy telemetry behavior, todo these should eventually be deprecated
-    msg.Type                    = "telemetry"
-    msg.Fields.submissionDate   = os.date("%Y%m%d", msg.Timestamp / 1e9)
-    msg.Fields.sourceName       = "telemetry"
+    msg.Type                        = "telemetry"
+    msg.Fields.submissionDate       = os.date("%Y%m%d", msg.Timestamp / 1e9)
+    msg.Fields.sourceName           = "telemetry"
+    msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
     --
 
-    process_uri(hsr, msg)
     process_json(hsr, msg)
 
     -- Migrate the original message data after the validation (avoids Field duplication in the error message)

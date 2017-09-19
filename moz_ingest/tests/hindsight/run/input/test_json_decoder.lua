@@ -15,7 +15,7 @@ local hsr = create_stream_reader(read_config("Logger"))
 local is_running = is_running
 
 function process_message()
-    fh = assert(io.open("input.hpb", "rb")) -- closed on plugin shutdown
+    fh = assert(io.open("json.hpb", "rb")) -- closed on plugin shutdown
 
     local found, bytes, read
     local cnt = 0
