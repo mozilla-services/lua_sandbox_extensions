@@ -12,7 +12,8 @@ handling before passing the data off to the correct subdecoder.
 ```lua
 decoders_moz_ingest_common = {
     sub_decoders = { -- required
-        -- _namespace_ (string) - Decoder module name
+        -- _namespace_ (string) = Decoder module name
+        -- a namespace of "*" can be used to specify a default decoder
         telemetry  = "decoders.moz_ingest.telemetry",
     },
 
@@ -72,6 +73,7 @@ local table         = require "table"
 local assert        = assert
 local pairs         = pairs
 local pcall         = pcall
+local setmetatable  = setmetatable
 
 local create_stream_reader = create_stream_reader
 local decode_message       = decode_message
@@ -123,6 +125,10 @@ local function load_decoder_cfg()
             local tm = require(v).transform_message
             assert(type(tm) == "function", "sub_decoders, no transform_message function defined: " .. k)
             sub_decoders[k] = tm
+            if k == "*" then
+                local mt = {__index = function(t, k) return tm end }
+                setmetatable(sub_decoders, mt);
+            end
             sd_cnt = sd_cnt + 1
         elseif t == "boolean" and t and k == "test" then
             sd_cnt = 1
