@@ -14,11 +14,6 @@ local tm = require("decoders.moz_ingest.common").transform_message
 local hsr = create_stream_reader(read_config("Logger"))
 local is_running = is_running
 
-local errors = {
-    "missing uri",
-    "invalid uri"
-}
-
 function process_message()
     fh = assert(io.open("input.hpb", "rb")) -- closed on plugin shutdown
 
@@ -29,13 +24,7 @@ function process_message()
         repeat
             found, bytes, read = hsr:find_message(fh)
             if found then
-                local ok, err = pcall(tm, hsr)
-                if err then
-                    err_cnt = err_cnt + 1
-                    if errors[err_cnt] ~= err then
-                        error(string.format("err_cnt: %d err: %s", err_cnt, err))
-                    end
-                end
+                tm(hsr)
                 cnt = cnt + 1
             end
         until not found

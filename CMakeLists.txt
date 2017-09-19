@@ -13,6 +13,8 @@ endif()
 set(CMAKE_INSTALL_PREFIX "")
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 set(PACKAGE_PREFIX luasandbox)
+set(CPACK_DEBIAN_FILE_NAME      "DEB-DEFAULT")
+set(CPACK_RPM_FILE_NAME         "RPM-DEFAULT")
 
 if(LUA51) # build against installed lua 5.1
     find_package(Lua51)
@@ -63,6 +65,7 @@ set(EP_CMAKE_ARGS
 --no-warn-unused-cli)
 
 set(extensions
+aws
 bloom_filter
 circular_buffer
 cjson

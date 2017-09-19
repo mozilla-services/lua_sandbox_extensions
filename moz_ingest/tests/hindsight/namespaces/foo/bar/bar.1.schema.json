@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "properties": {
+    "exampleString": {
+      "description": "An example string.",
+      "maxLength": 1024,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "exampleString"
+  ],
+  "title": "foo",
+  "type": "object"
+}

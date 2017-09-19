@@ -44,5 +44,26 @@ function process_message()
     msg.Fields["X-Forwarded-For"] = "72.229.28.185, 127.0.0.1"
     inject_message(msg)
 
+    -- valid
+    msg.Type = "json.raw"
+    msg.Fields.uri = "/submit/foo/bar/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01"
+    msg.Fields.content = [[{"exampleString":"string one"}]]
+    inject_message(msg)
+
+    -- fails parsing
+    msg.Fields.uri = "/submit/foo/bar/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571A02"
+    msg.Fields.content = ""
+    inject_message(msg)
+
+    -- fails validation
+    msg.Fields.uri = "/submit/foo/bar/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571A03"
+    msg.Fields.content = [[{"xString":"string one"}]]
+    inject_message(msg)
+
+    -- fails schema lookup
+    msg.Fields.uri = "/submit/bar/bar/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01"
+    msg.Fields.content = "{}"
+    inject_message(msg)
+
     return 0
 end

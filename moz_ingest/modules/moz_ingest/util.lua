@@ -12,7 +12,9 @@
 Returns a new message table based on a moz_ingest uri/message.
 
 *Arguments*
-- hsr (userdata) - Heka stream reader
+- hsr (userdata) Heka stream reader
+- uri (string/nil) URI to parse into message fields, if not provided it is
+extracted from Fields[uri]
 
 *Return*
 - msg (table/error) - base message table before the namespace specific
@@ -46,36 +48,45 @@ local tonumber  = tonumber
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
--- ^/submit/telemetry/docid[/doctype]
 local element = l.P"/" * l.C((1 - l.P"/")^1)
-local telemetry_uri = l.P"/submit/" * l.C"telemetry" * element * element^-1
--- ^/submit/<namespace>/<doctype>/<docversion>[/<docid>]
-local generic_uri = l.P"/submit" * element * element * l.P"/" * (l.digit^1/tonumber) * element^-1
+local telemetry_uri = l.Ct(l.P"/submit"
+                           * l.P"/" * l.Cg("telemetry", "namespace")
+                           * l.Cg(element, "documentId")
+                           * l.Cg(element, "docType")
+                           * l.Cg(element, "appName")
+                           * l.Cg(element, "appVersion")
+                           * l.Cg(element, "appUpdateChannel")
+                           * l.Cg(element, "appBuildId"))
 
-function new_message(hsr)
-    local namespace, doctype, version, did
-    local uri = hsr:read_message("Fields[uri]") or error("missing uri", 0)
-    namespace, did, doctype = telemetry_uri:match(uri)
-    if not namespace then
-        namespace, doctype, version, did = generic_uri:match(uri)
+local generic_uri = l.Ct(l.P"/submit"
+                         * l.Cg(element, "namespace")
+                         * l.Cg(element, "docType")
+                         * l.P"/" * l.Cg(l.digit^1/tonumber, "docVersion")
+                         * l.Cg(element, "documentId"))
+
+function new_message(hsr, uri)
+    if not uri then
+        uri = hsr:read_message("Fields[uri]") or error("missing uri", 0)
     end
 
-    if not namespace then
-        error("invalid uri", 0)
+    local fields = telemetry_uri:match(uri)
+
+    if not fields then
+        fields = generic_uri:match(uri)
+        if not fields then error("invalid uri", 0) end
     end
+    local namespace = fields.namespace
+    fields.namespace = nil
+
+    -- migrate geo if it is already available (i.e., backfill)
+    fields.geoCountry = hsr:read_message("Fields[geoCountry]")
+    fields.geoCity    = hsr:read_message("Fields[geoCity]")
 
     return {
         Timestamp = hsr:read_message("Timestamp"),
         Logger    = namespace,
         Type      = "validated",
-        Fields    = {
-            documentId    = did,
-            docType       = doctype,
-            sourceVersion = version,
-            -- migrate geo if it is already available (i.e., backfill)
-            geoCountry    = hsr:read_message("Fields[geoCountry]"),
-            geoCity       = hsr:read_message("Fields[geoCity]")
-        }
+        Fields    = fields
     }
 end
 

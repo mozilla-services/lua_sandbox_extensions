@@ -12,7 +12,8 @@ handling before passing the data off to the correct subdecoder.
 ```lua
 decoders_moz_ingest_common = {
     sub_decoders = { -- required
-        -- _namespace_ (string) - Decoder module name
+        -- _namespace_ (string) = Decoder module name
+        -- a namespace of "*" can be used to specify a default decoder
         telemetry  = "decoders.moz_ingest.telemetry",
     },
 
@@ -72,6 +73,7 @@ local table         = require "table"
 local assert        = assert
 local pairs         = pairs
 local pcall         = pcall
+local setmetatable  = setmetatable
 
 local create_stream_reader = create_stream_reader
 local decode_message       = decode_message
@@ -90,7 +92,6 @@ local function load_decoder_cfg()
     if error_on_missing_sub_decoder then
         assert(type(error_on_missing_sub_decoder) == "boolean", "error_on_missing_sub_decoder must be a boolean")
     end
-
 
     if cfg.cf_items then
         if not cfg.cf_interval_size then cfg.cf_interval_size = 6 end
@@ -124,6 +125,10 @@ local function load_decoder_cfg()
             local tm = require(v).transform_message
             assert(type(tm) == "function", "sub_decoders, no transform_message function defined: " .. k)
             sub_decoders[k] = tm
+            if k == "*" then
+                local mt = {__index = function(t, k) return tm end }
+                setmetatable(sub_decoders, mt);
+            end
             sd_cnt = sd_cnt + 1
         elseif t == "boolean" and t and k == "test" then
             sd_cnt = 1
@@ -227,8 +232,14 @@ end
 
 
 function transform_message(hsr, msg)
+    local uri = hsr:read_message("Fields[uri]")
     if not msg then
-        msg = miu.new_message(hsr)
+        local ok
+        ok, msg = pcall(miu.new_message, hsr, uri)
+        if not ok then
+            inject_error(hsr, "moz_ingest", "uri", msg)
+            return
+        end
     end
 
     if geoip and not msg.Fields.geoCountry then
@@ -247,7 +258,6 @@ function transform_message(hsr, msg)
     end
 
     if dedupe and msg.Fields.documentId then
-        local uri = hsr:read_message("Fields[uri]")
         local idx = crc32()(uri) % cfg.cf_partitions + 1
         local cf = dedupe[idx]
         local added, delta = cf:add(uri, msg.Timestamp)

@@ -10,7 +10,7 @@ require "string"
 
 local results = {
     nightly = [[
-The average message size has changed by 10.0305% (current avg: 165B)
+The average message size has changed by 10.0069% (current avg: 165B)
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.size.html
 ]],
@@ -29,7 +29,7 @@ Diagnostic (count/error)
 ========================
 48	foobar
 ]],
-    release = 
+    release =
 [[
 48% of submissions received after 24 hours expected up to 20%
 
@@ -46,7 +46,7 @@ max_percent_duplicate: 4
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.duplicate.html
 ]],
-    Other = 
+    Other =
 [[
 SAX Analysis
 ============
@@ -59,7 +59,7 @@ max_mindist: 0
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.volume.html
 ]],
-    beta = 
+    beta =
 [[
 historical: 28800 current: 36000  delta: 25%
 
