@@ -49,6 +49,10 @@ preserve_data       = not flush_on_shutdown -- should always be the inverse of f
 
 -- Specify an optional module to encode incoming messages via its encode function.
 -- encoder_module = "encoders.heka.framed_protobuf" -- default
+
+-- Specifies experiment types whitelist, and experiment id blocklist
+experiment_types = {["normandy-preference-"] = true} -- optional
+experiment_blocklist = {["pref-flip-screenshots-release-1369150"] = true} -- optional
 ```
 --]]
 
@@ -85,6 +89,10 @@ if experiment_dimensions then
     experiment_batch_dir  = read_config("experiment_batch_dir") or error("experiment_batch_dir must be specified")
     experiment_dimensions = mts3.validate_dimensions(experiment_dimensions)
 end
+local experiment_types = read_config("experiment_types") or {}
+assert(type(experiment_types) == "table", "experiment_types must be a table")
+local experiment_blocklist = read_config("experiment_blocklist") or {}
+assert(type(experiment_blocklist) == "table", "experiment_blocklist must be a table")
 
 
 local function get_fqfn(dir, path)
@@ -190,6 +198,12 @@ local function process_standard_dimensions(data)
 end
 
 
+local function does_experiment_qualify(id, branch, experimentType)
+    return (not experimentType or experiment_types[experimentType])
+        and not experiment_blocklist[id]
+end
+
+
 local function process_experiment_dimensions(data, experiments)
     local ok, experiments = pcall(cjson.decode, experiments)
     if not ok then return end
@@ -198,11 +212,13 @@ local function process_experiment_dimensions(data, experiments)
     for id, exp in pairs(experiments) do
         vars.experimentId = id
         vars.experimentBranch = exp.branch
-        local dims = {}
-        for i,d in ipairs(experiment_dimensions) do
-            dims[i] = mts3.read_dimension(d, vars)
+        if does_experiment_qualify(id, exp.branch, exp.type) then
+            local dims = {}
+            for i,d in ipairs(experiment_dimensions) do
+                dims[i] = mts3.read_dimension(d, vars)
+            end
+            output_dimension(experiment_batch_dir, dims, data)
         end
-        output_dimension(experiment_batch_dir, dims, data)
     end
 end
 
