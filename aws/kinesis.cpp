@@ -11,6 +11,11 @@ extern "C"
 #include "lauxlib.h"
 #include "lua.h"
 
+#ifdef LUA_SANDBOX
+#include <luasandbox.h>
+#include <luasandbox/util/heka_message.h>
+#endif
+
 int luaopen_aws_kinesis(lua_State *lua);
 }
 
@@ -30,6 +35,8 @@ int luaopen_aws_kinesis(lua_State *lua);
 #include <aws/kinesis/model/GetShardIteratorRequest.h>
 #include <aws/kinesis/model/PutRecordRequest.h>
 #include <aws/kinesis/KinesisClient.h>
+#include <aws/monitoring/CloudWatchClient.h>
+#include <aws/monitoring/model/PutMetricDataRequest.h>
 #include <chrono>
 #include <ctime>
 #include <thread>
@@ -37,20 +44,24 @@ int luaopen_aws_kinesis(lua_State *lua);
 static const char *mt_simple_consumer = "mozsvc.aws.kinesis.simple_consumer";
 static const char *mt_simple_producer = "mozsvc.aws.kinesis.simple_producer";
 static const char *cred_types[] = { "CHAIN", "INSTANCE", NULL };
+static char hostname[256] = {0};
 
 namespace ath = Aws::Auth;
+namespace cw  = Aws::CloudWatch;
 namespace kin = Aws::Kinesis;
 
 typedef struct shard {
   Aws::String it;         // current shard iterator
   Aws::String sequenceId; // last sequenceId read
   time_t last_request;    // used to throttle requests at one per second
+  long long ms_behind;
   bool closed;
   bool active;            // pruning flag
 } shard;
 
 typedef struct simple_consumer
 {
+  cw::CloudWatchClient          *cwc;
   kin::KinesisClient            *client;
   Aws::String                   *streamName;
   Aws::Map<Aws::String, shard> *shards;
@@ -58,6 +69,7 @@ typedef struct simple_consumer
   kin::Model::ShardIteratorType itType;
   time_t                        itTime;
   time_t                        refresh;
+  time_t                        report;
 } simple_consumer;
 
 typedef struct simple_producer
@@ -170,7 +182,7 @@ static int parse_checkpoints(simple_consumer *sc, const char *checkpoints)
     if (!pos || p == pos) {return 1;}
     auto sequenceId = Aws::String(p, pos - p);
     p = ++pos;
-    sc->shards->insert({ shardId, { "", sequenceId, 0, false, false } });
+    sc->shards->insert({ shardId, { "", sequenceId, 0, 0, false, false } });
   }
   return 0;
 }
@@ -239,7 +251,7 @@ static int get_shards(lua_State *lua, simple_consumer *sc)
     auto it = sc->shards->find(shardId);
     if (it == sc->shards->end()) {
       auto sit = get_shard_iterator(lua, sc, shardId, Aws::String());
-      sc->shards->insert({ shardId, { sit, "", 0, false, true } });
+      sc->shards->insert({ shardId, { sit, "", 0, 0, false, true } });
     } else {
       if (it->second.it.empty() && !it->second.closed) {
         it->second.it = get_shard_iterator(lua, sc, shardId, it->second.sequenceId);
@@ -317,11 +329,13 @@ static int simple_consumer_new(lua_State *lua)
   simple_consumer *sc = static_cast<simple_consumer *>(lua_newuserdata(lua, sizeof*sc));
   switch (credType) {
   case 0:
+    sc->cwc = new cw::CloudWatchClient(config);
     sc->client = new kin::KinesisClient(config);
     break;
   default:
     {
       auto cp = Aws::MakeShared<ath::InstanceProfileCredentialsProvider>(mt_simple_consumer);
+      sc->cwc = new cw::CloudWatchClient(cp, config);
       sc->client = new kin::KinesisClient(cp, config);
     }
     break;
@@ -332,10 +346,11 @@ static int simple_consumer_new(lua_State *lua)
   sc->itType = static_cast<kin::Model::ShardIteratorType>(iteratorType);
   sc->itTime = iteratorTime;
   sc->refresh = time(NULL);
+  sc->report = sc->refresh;
   luaL_getmetatable(lua, mt_simple_consumer);
   lua_setmetatable(lua, -2);
 
-  if (!sc->streamName || !sc->client || !sc->shards || !sc->it) {
+  if (!sc->streamName || !sc->cwc || !sc->client || !sc->shards || !sc->it) {
     return luaL_error(lua, "memory allocation failed");
   }
 
@@ -358,6 +373,7 @@ static int simple_consumer_gc(lua_State *lua)
   delete(sc->shards);
   delete(sc->streamName);
   delete(sc->client);
+  delete(sc->cwc);
   return 0;
 }
 
@@ -375,7 +391,7 @@ static int push_checkpoints(lua_State *lua, simple_consumer *sc)
 }
 
 
-static shard& get_next_shard(simple_consumer *sc)
+static shard* get_next_shard(simple_consumer *sc)
 {
   auto begin = sc->shards->begin();
   auto end = sc->shards->end();
@@ -388,7 +404,36 @@ static shard& get_next_shard(simple_consumer *sc)
   for (size_t cnt = 0; cnt < sc->shards->size() - 1 && (*sc->it)->second.closed; ++cnt) {
     if (++(*sc->it) == end) *sc->it = begin;
   }
-  return (*sc->it)->second;
+  return *sc->it == end ? nullptr : &(*sc->it)->second;
+}
+
+
+static void mills_behind(simple_consumer *sc)
+{
+  auto pmdr = cw::Model::PutMetricDataRequest();
+  pmdr.SetNamespace("lsbe.kinesis.client-" + *sc->streamName);
+
+  auto datum = cw::Model::MetricDatum();
+  datum.SetMetricName("MillisBehindLatest");
+  datum.SetUnit(cw::Model::StandardUnit::Milliseconds);
+
+  Aws::Vector<cw::Model::Dimension> dims(3);
+  dims[0].SetName("Operation");
+  dims[0].SetValue("ProcessTask");
+  dims[1].SetName("ShardId");
+  dims[2].SetName("WorkerIdentifier");
+  dims[2].SetValue(hostname);
+
+  for (const auto &kv:*sc->shards) {
+    dims[1].SetValue(kv.first);
+    datum.SetValue(static_cast<double>(kv.second.ms_behind));
+    datum.SetDimensions(dims);
+    pmdr.AddMetricData(datum);
+  }
+  // todo: this is limited to 40KB of course the API has no to query the size so
+  // this wll inevitably become a bug as the put can become too big to ever
+  // succeed although we are limited to 52 metrics in this case.
+  sc->cwc->PutMetricData(pmdr); // ignore failures as they won't stop us from processing data
 }
 
 
@@ -397,38 +442,49 @@ static int simple_receive(lua_State *lua)
   simple_consumer *sc = static_cast<simple_consumer *>(luaL_checkudata(lua, 1, mt_simple_consumer));
 
   time_t t = time(NULL);
-  if (sc->refresh + 3600 < t) {
-    sc->refresh = t;
-    if (get_shards(lua, sc) != 0) return lua_error(lua);
+  if (t < sc->report || sc->report + 20LL < t) { // monitoring expects at least one report a minute
+    mills_behind(sc);
+    t = time(NULL);
+    sc->report = t;
   }
 
-  shard &sh = get_next_shard(sc);
-  if (sh.last_request == t) {
+  if (t < sc->refresh || sc->refresh + 3600LL < t) { // prune deleted shards
+    sc->refresh = t;
+    if (get_shards(lua, sc) != 0) return lua_error(lua);
+    t = time(NULL);
+  }
+
+  shard *sh = get_next_shard(sc);
+  if (!sh) return luaL_error(lua, "no shards available");
+  if (sh->last_request == t) {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     ++t;
   }
-  sh.last_request = t;
+  sh->last_request = t;
 
   bool error = false;
   {
     kin::Model::GetRecordsRequest rr;
-    rr.SetShardIterator(sh.it);
+    rr.SetShardIterator(sh->it);
     auto outcome = sc->client->GetRecords(rr);
     if (outcome.IsSuccess()) {
-      sh.it = outcome.GetResult().GetNextShardIterator();
-      if (sh.it.empty()) {
-        sh.closed = true;
+      auto r = outcome.GetResult();
+      sh->ms_behind = r.GetMillisBehindLatest();
+      sh->it = r.GetNextShardIterator();
+      if (sh->it.empty()) {
+        sh->closed = true;
+        sh->ms_behind = 0;
         sc->refresh = 0;
       }
 
-      auto &recs = outcome.GetResult().GetRecords();
+      auto &recs = r.GetRecords();
       size_t nrecs = recs.size();
       if (nrecs == 0) {
         lua_newtable(lua);
         return 1;
       }
 
-      sh.sequenceId = recs[nrecs - 1].GetSequenceNumber();
+      sh->sequenceId = recs[nrecs - 1].GetSequenceNumber();
       lua_createtable(lua, nrecs, 0);
       int n = 0;
       for (auto &r : recs) {
@@ -439,14 +495,27 @@ static int simple_receive(lua_State *lua)
       push_checkpoints(lua, sc);
     } else {
       auto e = outcome.GetError();
-      if (e.GetErrorType() == kin::KinesisErrors::EXPIRED_ITERATOR) {
-        sh.it = get_shard_iterator(lua, sc, (*sc->it)->first, sh.sequenceId);
+      switch (e.GetErrorType()) {
+      case kin::KinesisErrors::EXPIRED_ITERATOR:
+        sh->it = get_shard_iterator(lua, sc, (*sc->it)->first, sh->sequenceId);
+        break;
+      case kin::KinesisErrors::THROTTLING:
+      case kin::KinesisErrors::SLOW_DOWN:
+      case kin::KinesisErrors::K_M_S_THROTTLING:
+      case kin::KinesisErrors::LIMIT_EXCEEDED:
+      case kin::KinesisErrors::PROVISIONED_THROUGHPUT_EXCEEDED:
+        // just retry in another second
+        break;
+      default:
+        if (!e.ShouldRetry()) {
+          lua_pushfstring(lua, "error: %d message:%s", (int)e.GetErrorType(), e.GetMessage().c_str());
+          error = true;
+        }
+        break;
+      }
+      if (!error) {
         lua_newtable(lua);
         return 1;
-      }
-      if (!e.ShouldRetry()) {
-        lua_pushstring(lua, e.GetMessage().c_str());
-        error = true;
       }
     }
   }
@@ -508,7 +577,7 @@ static int simple_send(lua_State *lua)
 
   size_t len = 0;
   auto streamName = luaL_checkstring(lua, 2);
-  auto data       = reinterpret_cast<const unsigned char*>(luaL_checklstring(lua, 3, &len));
+  auto data       = reinterpret_cast<const unsigned char *>(luaL_checklstring(lua, 3, &len));
   auto *key       = luaL_checkstring(lua, 4);
 
   kin::Model::PutRecordRequest rr;
@@ -525,23 +594,20 @@ static int simple_send(lua_State *lua)
 }
 
 
-static const struct luaL_reg lib_f[] =
-{
+static const struct luaL_reg lib_f[] = {
   { "simple_consumer", simple_consumer_new },
   { "simple_producer", simple_producer_new },
   { NULL, NULL }
 };
 
 
-static const struct luaL_reg simple_consumer_lib_m[] =
-{
+static const struct luaL_reg simple_consumer_lib_m[] = {
   { "receive", simple_receive },
   { "__gc", simple_consumer_gc },
   { NULL, NULL }
 };
 
-static const struct luaL_reg simple_producer_lib_m[] =
-{
+static const struct luaL_reg simple_producer_lib_m[] = {
   { "send", simple_send },
   { "__gc", simple_producer_gc },
   { NULL, NULL }
@@ -576,5 +642,20 @@ int luaopen_aws_kinesis(lua_State *lua)
     lua_pop(lua, 1);
   }
   lua_pop(lua, 1);
+
+#ifdef LUA_SANDBOX
+  lua_getfield(lua, LUA_REGISTRYINDEX, LSB_CONFIG_TABLE);
+  if (lua_type(lua, -1) == LUA_TTABLE) {
+    lua_getfield(lua, -1, LSB_HOSTNAME);
+    if (lua_type(lua, -1) == LUA_TSTRING) {
+      size_t len;
+      const char *hn = lua_tolstring(lua, -1, &len);
+      strncpy(hostname, hn, sizeof(hostname) - 1);
+    }
+    lua_pop(lua, 1); // remove LSB_HOSTNAME
+  }
+  lua_pop(lua, 1); // remove LSB_CONFIG_TABLE
+#endif
+
   return 1;
 }
