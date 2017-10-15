@@ -131,7 +131,7 @@ local function output_fields(t, cnt)
             add_to_payload("[]")
         end
         if v.representation then
-            add_to_payload(" (", representation, ")")
+            add_to_payload(" (", v.representation, ")")
         end
         if cnt ~= v.cnt then
             add_to_payload(" - optional [", v.cnt, "]")

@@ -11,10 +11,10 @@
 #include <string>
 #include <vector>
 
-#include <parquet/column/writer.h>
+#include <parquet/column_writer.h>
 #include <parquet/file/writer.h>
 #include <parquet/types.h>
-#include <parquet/util/output.h>
+#include <arrow/io/file.h>
 
 extern "C"
 {
@@ -31,6 +31,7 @@ int luaopen_parquet(lua_State *lua);
 #endif
 
 using namespace std;
+using FileClass = arrow::io::FileOutputStream;
 
 namespace pq = parquet;
 
@@ -784,7 +785,8 @@ static int pq_new_writer(lua_State *lua)
     pw->w->num_records = 0;
     add_columns(pw->w, pw->w->node);
 
-    shared_ptr<pq::LocalFileOutputStream> sink(new pq::LocalFileOutputStream(name));
+    shared_ptr<FileClass> sink;
+    PARQUET_THROW_NOT_OK(FileClass::Open(name, &sink));
     if (t == LUA_TTABLE) {
       pw->w->writer = pq::ParquetFileWriter::Open(sink, static_pointer_cast<pq::schema::GroupNode>(ud->n->node),
                                                   setup_properties(lua));
@@ -1455,7 +1457,7 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
     if (n->node->is_group()) {
       if (n->node->is_repeated() && lua_objlen(lua, -1) > 0) { // array of groups
         size_t ol = lua_objlen(lua, -1);
-        for (int j = 1; j <= static_cast<int>(ol); ++j) {
+        for (size_t j = 1; j <= ol; ++j) {
           lua_rawgeti(lua, -1, j);
           if (lua_type(lua, -1) != LUA_TTABLE) {
             stringstream ss;
@@ -1488,7 +1490,7 @@ static void dissect_field(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, 
       if (ol == 0) {
         add_null(c, r, d);
       } else {
-        for (int j = 1; j <= static_cast<int>(ol); ++j) {
+        for (size_t j = 1; j <= ol; ++j) {
           lua_rawgeti(lua, -1, j);
           add_value(lua, n, c, r, n->dl);
           lua_pop(lua, 1);
@@ -1563,7 +1565,7 @@ static void dissect_list(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, i
 static void dissect_tuple(pq_writer *pw, lua_State *lua, pq_node *n, int16_t r, int16_t d)
 {
   size_t len = n->group->fields.size();
-  for (int i = 0; i < static_cast<int>(len); ++i) {
+  for (size_t i = 0; i < len; ++i) {
     pq_node *cn = n->group->fields[i];
     lua_checkstack(lua, 2);
     lua_rawgeti(lua, -1, i + 1);
