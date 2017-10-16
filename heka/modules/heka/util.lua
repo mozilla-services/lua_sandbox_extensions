@@ -45,7 +45,7 @@ function table_to_fields(t, fields, parent, char, max_depth)
         end
 
         if type(v) == "table" then
-            local _, sep_count = string.gsub(full_key, char, "")
+            local _, sep_count = string.gsub(full_key, "%" .. char, "")
             local depth = sep_count + 1
 
             if type(max_depth) == "number" and depth >= max_depth then

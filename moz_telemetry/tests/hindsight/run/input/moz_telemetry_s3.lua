@@ -12,7 +12,8 @@ require "string"
 local inputs = {
     {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main"}},
     {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main", ["environment.experiments"] = '{"foo":{"branch":"123"}}'}},
-    {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main", ["environment.experiments"] = '{"foo":{"branch":"123"}, "bar":{"branch":"456"}}'}}
+    {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main", ["environment.experiments"] = '{"foo":{"branch":"123"}, "bar":{"branch":"456"}}'}},
+    {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main", ["environment.experiments"] = '{"foo":{"branch":"123", "type":"normandy-preference-"}, "bar":{"branch":"456", "type":"another-type"}, "pref-flip-screenshots-release-1369150":{"branch":"789"}}'}}
 }
 
 
@@ -46,9 +47,10 @@ function process_message()
         local ed = eh:read("*a")
         eh:close()
 
-        if od:match("main\n") and ed:match("main%+foo%+123") and ed:match("main%+bar%+456") then
-            check_message_count("output/moz_telemetry_s3/main", 3)
-            check_message_count("output/moz_experiments_s3/main+foo+123", 2)
+        if od:match("main\n") and ed:match("main%+foo%+123") and ed:match("main%+bar%+456")
+            and not ed:match("main%+pref-flip-screenshots-release-1369150%+789") then
+            check_message_count("output/moz_telemetry_s3/main", 4)
+            check_message_count("output/moz_experiments_s3/main+foo+123", 3)
             check_message_count("output/moz_experiments_s3/main+bar+456", 1)
             return 0
         end

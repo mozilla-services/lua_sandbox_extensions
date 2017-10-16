@@ -8,6 +8,7 @@
 ## Sample Configuration
 ```lua
 filename            = "kinesis.lua"
+ticker_interval     = 5 -- recover from failure but allow it to be captured in the stats
 
 streamName          = "foobar"
 -- iteratorType        = "TRIM_HORIZON"
@@ -64,15 +65,17 @@ local is_running = is_running
 function process_message(cp)
     local reader = aws.kinesis.simple_consumer(streamName, iteratorType, cp, clientConfig, credentialProvider)
     while is_running() do
-        local records, cp = reader:receive()
+        local ok, records, cp = pcall(reader.receive, reader)
+        if not ok then return -1, records end
+
         for i, data in ipairs(records) do
             local ok, err = pcall(decode, data, default_headers)
             if not ok or err then
                 err_msg.Payload = err
                 pcall(inject_message, err_msg)
             end
+            if cp then inject_message(nil, cp) end
         end
-        if cp then inject_message(nil, cp) end
     end
     return 0
 end

@@ -55,7 +55,7 @@ local writer = aws.kinesis.simple_producer(streamName, clientConfig, credentialP
 ```
 
 *Arguments*
-* clientConfig (table/nil) - https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html
+* clientConfig (table/nil) https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html
 * credentialProvider (enum/nil)
     * CHAIN
     * INSTANCE (default)
@@ -77,7 +77,7 @@ local records, checkpoints = reader:receive()
 * none
 
 *Returns*
-* records (array) Zero or more data records (throws on a non recoverable error)
+* records (array) Zero or more data records (throws on error)
 * checkpoints (string/nil) TSV of shardId, sequenceId items (one per line)
 
 ### simple_producer Methods

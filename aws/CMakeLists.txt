@@ -3,13 +3,14 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.5)
-project(aws VERSION 0.0.1 LANGUAGES C CXX)
+project(aws VERSION 0.0.2 LANGUAGES C CXX)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AWS Lua Modules")
 
 find_package(aws-cpp-sdk-core 1.1.46 REQUIRED CONFIG)
 find_package(aws-cpp-sdk-kinesis 1.1.46 REQUIRED CONFIG)
+find_package(aws-cpp-sdk-monitoring 1.1.46 REQUIRED CONFIG)
 
 set(MODULE_SRCS kinesis.cpp aws.def)
 set(INSTALL_MODULE_PATH ${INSTALL_IOMODULE_PATH})
 include(sandbox_module)
-target_link_libraries(aws aws-cpp-sdk-kinesis)
+target_link_libraries(aws aws-cpp-sdk-kinesis aws-cpp-sdk-monitoring)
