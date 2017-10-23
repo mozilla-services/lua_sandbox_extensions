@@ -34,6 +34,7 @@ Decode and inject the resulting message
 --]]
 
 -- Imports
+local clf    = require "lpeg.common_log_format"
 local cjson  = require "cjson"
 local string = require "string"
 local util   = require "heka.util"
@@ -73,6 +74,14 @@ function decode(data, dh)
              else
                  msg.Type = dh.Type
              end
+
+             local agent = msg.Fields.agent
+             if agent then
+                 msg.Fields.user_agent_browser,
+                 msg.Fields.user_agent_version,
+                 msg.Fields.user_agent_os = clf.normalize_user_agent(agent)
+             end
+
              ok, msg = pcall(inject_message, msg)
              if not ok then
                  err_msg.Payload = msg
