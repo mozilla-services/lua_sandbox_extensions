@@ -61,6 +61,17 @@ syslog_grammar = l.Ct(
           * l.P(-1)
         )
     + (
+            l.P"Connection from "
+            * l.Cg(ipv46, "remote_addr")
+            * l.P" port "
+            * l.Cg(l.digit^1 / tonumber, "remote_port")
+            * l.P" on "
+            * l.Cg(ipv46, "local_addr")
+            * l.P" port "
+            * l.Cg(l.digit^1 / tonumber, "local_port")
+          * l.P(-1)
+        )
+    + (
             l.P"Connection closed by "
           * l.Cg(ipv46, "remote_addr")
           * l.P" [preauth]"
@@ -105,6 +116,9 @@ syslog_grammar = l.Ct(
             l.Cg(l.P"error" + l.P"fatal", "sshd_errorlevel")
           * l.P": "
           * l.Cg(l.P(1)^1, "sshd_error")
+        )
+    + (
+            l.Cg(l.P"Set " * l.P(1)^1, "set")
         )
     )
 
