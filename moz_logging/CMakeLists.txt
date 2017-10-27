@@ -3,6 +3,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(moz-logging VERSION 0.0.1 LANGUAGES C)
+project(moz-logging VERSION 0.0.2 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Infrastructure Logging Module")
 include(sandbox_module)

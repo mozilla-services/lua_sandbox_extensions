@@ -66,6 +66,7 @@ local string        = require "string"
 local module_cfg    = string.gsub(module_name, "%.", "_")
 
 local io     = require "io"
+local lfs    = require "lfs"
 local jose   = require "jose"
 local rjson  = require "rjson"
 local dt     = require "lpeg.date_time"
@@ -84,6 +85,24 @@ local inject_message       = inject_message
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
+
+function load_json_schemas_dir(path)
+    local schemas = {}
+    for fn in lfs.dir(path) do
+        local name = fn:match("(.+%.%d+)%.schema%.json$")
+        if name then
+            local fh = assert(io.input(string.format("%s/%s", path, fn)))
+            local schema = fh:read("*a")
+            fh:close()
+            local ok, rjs = pcall(rjson.parse_schema, schema)
+            if not ok then error(string.format("%s: %s", fn, rjs)) end
+            schemas[name] = rjs
+        end
+    end
+    return schemas
+end
+
+
 local function load_cfg()
     local cfg = read_config(module_cfg)
     assert(type(cfg) == "table", module_cfg .. " must be a table")
@@ -96,7 +115,7 @@ local function load_cfg()
     if not ok then error(string.format("%s: %s", cfg.envelope_schema_file, envelope_schema)) end
 
     assert(type(cfg.schema_path) == "string", "schema_path must be set")
-    local schemas = miu.load_json_schemas(cfg.schema_path)
+    local schemas = load_json_schemas_dir(cfg.schema_path)
 
     local cnt = 0
     local jose_keys = {}
@@ -173,9 +192,10 @@ function transform_message(hsr, msg)
     msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
 
     local pay = env:find("payload")
-    msg.Fields.studyVersion = env:value(env:find(pay, "studyVersion"))
-    msg.Fields.studyName    = env:value(env:find(pay, "studyName"))
-    msg.Fields.pioneerId    = env:value(env:find(pay, "pioneerId"))
+    msg.Fields.schemaName    = env:value(env:find(pay, "schemaName"))
+    msg.Fields.schemaVersion = env:value(env:find(pay, "schemaVersion"))
+    msg.Fields.studyName     = env:value(env:find(pay, "studyName"))
+    msg.Fields.pioneerId     = env:value(env:find(pay, "pioneerId"))
 
     -- verify the decryption and validation metadata
     local ekey  = env:value(env:find(pay, "encryptionKeyId"))
@@ -184,12 +204,10 @@ function transform_message(hsr, msg)
         error("jose\tno encryptionKeyId: " .. ekey, 0)
     end
 
-    local schema = schemas[msg.Fields.studyName]
-    if schema then schema = schema[msg.Fields.studyVersion] end
-
+    local sn = string.format("%s.%d", msg.Fields.schemaName, msg.Fields.schemaVersion)
+    local schema = schemas[sn]
     if not schema then
-        error(string.format("schema\tno study schema: %s ver: %d",
-                            msg.Fields.studyName, msg.Fields.studyVersion), 0)
+        error(string.format("schema\tno schema: %s study: %s", sn, msg.Fields.studyName), 0)
     end
 
     -- decrypt and validate the study data
