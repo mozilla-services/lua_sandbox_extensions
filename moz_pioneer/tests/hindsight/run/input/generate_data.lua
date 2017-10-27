@@ -44,19 +44,20 @@ local envelope = [[
         "encryptionKeyId": "%s",
         "pioneerId": "11111111-1111-1111-1111-111111111111",
         "studyName": "%s",
-        "studyVersion": %d
+        "schemaName": "%s",
+        "schemaVersion": %d
       }
 }
 }]]
 
 
 local submissions = {
-    {'{ "exampleString" : "foobar"}', 'pioneer-20170901', "example", 1}, -- valid
-    {'text', 'pioneer-20170901', "example", 1}, -- parse failure
-    {'{ "exampleString" : 1}', 'pioneer-20170901', "example", 1}, -- study schema validation error
-    {'{ "exampleString" : "foobar"}', 'pioneer-20200901', "example", 1}, -- no encryption key
-    {'{ "exampleString" : "foobar"}', 'pioneer-20170901', "bogus", 1}, -- no schema
-    {'{ "exampleString" : "foobar"}', 'pioneer-20170901', "example", 2}, -- no version
+    {'{ "eventId" : "enrolled"}', 'pioneer-20170901', "test-study", "event", 1}, -- valid
+    {'text', 'pioneer-20170901', "test-study", "event", 1}, -- parse failure
+    {'{ "eventId" : 1}', 'pioneer-20170901', "test-study", "event", 1}, -- study schema validation error
+    {'{ "eventId" : "foobar"}', 'pioneer-20200901', "test-study", "event", 1}, -- no encryption key
+    {'{ "eventId" : "foobar"}', 'pioneer-20170901', "test-study", "bogus", 1}, -- no schema
+    {'{ "eventId" : "foobar"}', 'pioneer-20170901', "test-study", "event", 2}, -- no version
 }
 
 local msg = {
@@ -81,7 +82,7 @@ function process_message()
     for i,v in ipairs(submissions) do
         msg.Fields.uri = string.format(uri_template, i)
         local jwe = jose.jwe_encrypt(jwk, v[1], hdr)
-        msg.Fields.content = string.format(envelope, jwe:export(), v[2], v[3], v[4])
+        msg.Fields.content = string.format(envelope, jwe:export(), v[2], v[3], v[4], v[5])
         inject_message(msg)
         if i == 1 then inject_message(msg) end -- test duplicate
         cnt = cnt + 1
@@ -103,14 +104,14 @@ function process_message()
     -- invalid import
     cnt = cnt + 1
     msg.Fields.uri = string.format(uri_template, cnt)
-    msg.Fields.content = string.format(envelope, "xxxxxxxxxxxxxxxx", v[2], v[3], v[4])
+    msg.Fields.content = string.format(envelope, "xxxxxxxxxxxxxxxx", v[2], v[3], v[4], v[5])
     inject_message(msg)
 
     -- invalid encryption
     cnt = cnt + 1
     msg.Fields.uri = string.format(uri_template, cnt)
     local jwe = jose.jwe_encrypt(jwk, submissions[1][1], hdr)
-    msg.Fields.content = string.format(envelope, string.gsub(jwe:export(), ".$", "X"), v[2], v[3], v[4])
+    msg.Fields.content = string.format(envelope, string.gsub(jwe:export(), ".$", "X"), v[2], v[3], v[4], v[5])
     inject_message(msg)
 
     return 0

@@ -28,3 +28,13 @@ assert(fields.remote_addr.value == '10.2.3.4', fields.remote_addr)
 assert(fields.disconnect_reason == 11, fields.disconnect_reason)
 assert(fields.disconnect_msg == 'The user disconnected the application [preauth]', fields.disconnect_msg)
 
+log = "Connection from 121.18.238.123 port 60512 on 172.31.41.219 port 22"
+fields = grammar:match(log)
+assert(fields.remote_addr.value == '121.18.238.123', fields.remote_addr)
+assert(fields.remote_port == 60512, fields.remote_port)
+assert(fields.local_addr.value == '172.31.41.219', fields.local_addr)
+assert(fields.local_port == 22, fields.local_port)
+
+log = "Set /proc/self/oom_score_adj to 0"
+fields = grammar:match(log)
+assert(fields.set == log, fields.set)
