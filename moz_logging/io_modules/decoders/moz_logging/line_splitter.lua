@@ -16,7 +16,6 @@ decoders_line_splitter = {
 }
 ```
 
-
 ## Functions
 
 ### decode
@@ -56,6 +55,8 @@ local read_config    = read_config
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
+local msg = {}
+
 local sub_decoder
 if cfg.sub_decoder:match("^decoders%.") then
     sub_decoder = sd_module.decode
@@ -64,13 +65,27 @@ else
     local grammar = sd_module.grammar or sd_module.syslog_grammar
     assert(type(grammar) == "userdata", "sub_decoders, no grammar defined")
     sub_decoder = function(data, dh)
-        if not dh then dh = {} end
-        local fields = grammar:match(data)
-        if not fields then return "parse failed" end
-        for k,v in pairs(fields) do
-            dh.Fields[k] = v
+        msg.Fields = grammar:match(data)
+        if not msg.Fields then return "parse failed" end
+        if dh then
+            msg.Uuid        = dh.Uuid
+            msg.Logger      = dh.Logger
+            msg.Hostname    = dh.Hostname
+            msg.Timestamp   = dh.Timestamp
+            msg.Type        = dh.Type
+            msg.Payload     = dh.Payload
+            msg.EnvVersion  = dh.EnvVersion
+            msg.Pid         = dh.Pid
+            msg.Severity    = dh.Severity
+            if type(dh.Fields) == "table" then
+                for k,v in pairs(dh.Fields) do
+                    if msg.Fields[k] == nil then
+                        msg.Fields[k] = v
+                    end
+                end
+            end
         end
-        inject_message(dh)
+        inject_message(msg)
     end
 end
 
