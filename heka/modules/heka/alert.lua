@@ -21,6 +21,9 @@ alert = {
 }
 
 ```
+## Variables
+
+* thresholds - the thresholds configuration table
 
 ## Functions
 
@@ -95,6 +98,8 @@ local inject_message = inject_message
 local alert_cfg = read_config("alert")
 assert(type(alert_cfg) == "table", "alert configuration must be a table")
 assert(type(alert_cfg.modules) == "table", "alert.modules configuration must be a table")
+if type(alert_cfg.thresholds) == nil then alert_cfg.thresholds = {} end
+assert(type(alert_cfg.thresholds) == "table", "alert.thresholds configuration must be nil or a table")
 
 alert_cfg.throttle = alert_cfg.throttle or 90
 assert(type(alert_cfg.throttle) == "number" and alert_cfg.throttle > 0, "alert.throttle configuration must be a number > 0 ")
@@ -148,6 +153,7 @@ function get_dashboard_uri(id, ext)
 end
 
 
+thresholds = alert_cfg.thresholds -- expose the entire table
 function get_threshold(id)
     local at = alert_cfg.thresholds[id]
     if not at then
