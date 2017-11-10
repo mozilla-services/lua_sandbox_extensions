@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>moz_security_heavy_hitters_monitor · GitBook</title>
+        <title>moz_security_heavy_hitters · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.2">
@@ -654,7 +654,7 @@
                 <a href="../../../../heka/">
             
                     
-                    heka (1.1.12)
+                    heka (1.1.13)
             
                 </a>
             
@@ -1960,7 +1960,7 @@
                 <a href="../../../../moz_logging/">
             
                     
-                    moz_logging (0.0.2)
+                    moz_logging (0.0.3)
             
                 </a>
             
@@ -2429,7 +2429,7 @@
                 <a href="../../../">
             
                     
-                    moz_security (0.0.2)
+                    moz_security (0.0.3)
             
                 </a>
             
@@ -2480,12 +2480,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.20.1.1.1.1" data-path="moz_security_heavy_hitters_monitor.html">
+        <li class="chapter active" data-level="1.20.1.1.1.1" data-path="moz_security_heavy_hitters.html">
             
-                <a href="moz_security_heavy_hitters_monitor.html">
+                <a href="moz_security_heavy_hitters.html">
             
                     
-                    moz_security_heavy_hitters_monitor
+                    moz_security_heavy_hitters
             
                 </a>
             
@@ -4192,7 +4192,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../../../.." >moz_security_heavy_hitters_monitor</a>
+        <a href="../../../.." >moz_security_heavy_hitters</a>
     </h1>
 </div>
 
@@ -4207,33 +4207,21 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="Mozilla_Security_Heavy_Hitters_Monitor">Mozilla Security Heavy Hitters Monitor</h1>
+                                <h1 id="Mozilla_Security_Heavy_Hitters">Mozilla Security Heavy Hitters</h1>
 <p>See: <a href="https://cacm.acm.org/magazines/2009/10/42481-finding-the-frequent-items-in-streams-of-data/abstract" target="_blank">https://cacm.acm.org/magazines/2009/10/42481-finding-the-frequent-items-in-streams-of-data/abstract</a></p>
 <h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">filename = <span class="hljs-string">&quot;moz_security_heavy_hitters.lua&quot;</span>
 message_matcher = <span class="hljs-string">&quot;Logger == &apos;input.nginx&apos;&quot;</span>
 ticker_interval = <span class="hljs-number">60</span>
-
-id_field = <span class="hljs-string">&quot;Fields[remote_addr]&quot;</span>
-<span class="hljs-comment">-- hh_items = 1000 -- optional, defaults to 1000 (maximum number of heavy hitter IDs to track)</span>
-
-cf_items = <span class="hljs-number">100e6</span>
-<span class="hljs-comment">-- cf_interval_size = 1, -- optional, default 1 (256 minutes)</span>
-
-<span class="hljs-comment">-- update if altering the cf_* configuration of an existing plugin</span>
-preservation_version = <span class="hljs-number">0</span>
 preserve_data = <span class="hljs-keyword">true</span>
 
-alert = {
-    prefix = <span class="hljs-keyword">true</span>,
-    throttle = <span class="hljs-number">1</span>,
-    modules = {
-        email = {recipients = {<span class="hljs-string">&quot;pagerduty@mozilla.com&quot;</span>}}
-    }
-}
+id_field = <span class="hljs-string">&quot;Fields[remote_addr]&quot;</span>
+<span class="hljs-comment">-- id_field_capture = &quot;,? *([^,]+)$&quot;a -- optional e.g. extract the last entry in a comma delimited list</span>
+
+<span class="hljs-comment">-- hh_items = 10000 -- optional, defaults to 10000 (maximum number of heavy hitter IDs to track)</span>
 </code></pre>
-<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters_monitor.lua" target="_blank">moz_security_heavy_hitters_monitor.lua</a></p>
-<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Mozilla_Security_Heavy_Hitters_Monitor">Mozilla Security Heavy Hitters Monitor</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
+<p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters.lua" target="_blank">moz_security_heavy_hitters.lua</a></p>
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Mozilla_Security_Heavy_Hitters">Mozilla Security Heavy Hitters</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -4276,7 +4264,7 @@ alert = {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"moz_security_heavy_hitters_monitor","level":"1.20.1.1.1.1","depth":5,"next":{"title":"moz_security_sshd_login_monitor","level":"1.20.1.1.1.2","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","articles":[]},"previous":{"title":"analysis","level":"1.20.1.1.1","depth":4,"path":"moz_security/sandboxes/heka/analysis/README.md","ref":"moz_security/sandboxes/heka/analysis/README.md","articles":[{"title":"moz_security_heavy_hitters_monitor","level":"1.20.1.1.1.1","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters_monitor.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters_monitor.md","articles":[]},{"title":"moz_security_sshd_login_monitor","level":"1.20.1.1.1.2","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters_monitor.md","mtime":"2017-10-27T18:36:35.768Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-10-27T18:36:39.710Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"moz_security_heavy_hitters","level":"1.20.1.1.1.1","depth":5,"next":{"title":"moz_security_sshd_login_monitor","level":"1.20.1.1.1.2","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","articles":[]},"previous":{"title":"analysis","level":"1.20.1.1.1","depth":4,"path":"moz_security/sandboxes/heka/analysis/README.md","ref":"moz_security/sandboxes/heka/analysis/README.md","articles":[{"title":"moz_security_heavy_hitters","level":"1.20.1.1.1.1","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters.md","articles":[]},{"title":"moz_security_sshd_login_monitor","level":"1.20.1.1.1.2","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_security/sandboxes/heka/analysis/moz_security_heavy_hitters.md","mtime":"2017-11-10T18:54:18.065Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-11-10T18:54:23.103Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>
