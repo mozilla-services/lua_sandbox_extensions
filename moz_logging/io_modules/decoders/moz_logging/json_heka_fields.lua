@@ -57,7 +57,7 @@ function decode(data, dh)
     for line in string.gmatch(data, "([^\n]+)\n*") do
         local ok, msg = pcall(cjson.decode, line)
         if ok then
-            local msg = {Fields = cjson.decode(line)}
+            msg = {Fields = msg}
             if dh then
                 msg.Uuid       = dh.Uuid
                 msg.Logger     = dh.Logger
