@@ -75,11 +75,13 @@ function decode(data, dh)
                  msg.Type = dh.Type
              end
 
-             local agent = msg.Fields.agent
-             if agent then
-                 msg.Fields.user_agent_browser,
-                 msg.Fields.user_agent_version,
-                 msg.Fields.user_agent_os = clf.normalize_user_agent(agent)
+             if msg.Fields then
+                 local agent = msg.Fields.agent
+                 if agent then
+                     msg.Fields.user_agent_browser,
+                     msg.Fields.user_agent_version,
+                     msg.Fields.user_agent_os = clf.normalize_user_agent(agent)
+                 end
              end
 
              ok, msg = pcall(inject_message, msg)

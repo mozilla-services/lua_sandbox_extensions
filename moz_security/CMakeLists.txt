@@ -3,10 +3,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(moz-security VERSION 0.0.2 LANGUAGES C)
+project(moz-security VERSION 0.0.3 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Infrastructure Security Analysis")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-date (>= 0.0.1)")
-string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)
 
 add_test(NAME ${MODULE_NAME}_hindsight

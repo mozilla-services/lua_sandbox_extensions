@@ -23,12 +23,9 @@ alert = {
   modules = {
     email = {recipients = {"trink@mozilla.com"}},
   },
-  ingestion_error = {
-    -- Logger = {inactivity_timeout = 5, percent = 0.5}
-    ["*"] = { -- configures the default
-      inactivity_timeout = 5, -- minutes
-      percent = 0.5
-    }
+  thresholds = {
+    -- ["input.bastion_systemd_sshd"] = {inactivity_timeout = 60, percent = 0.5} -- a timeout of 60 or more disables the check as the alert window is only one hour
+    _default_ = {inactivity_timeout = 5, -- minutes percent = 0.5} -- if not specified the default is no monitoring
   }
 }
 ```
@@ -53,16 +50,13 @@ local CREATED           = 1
 local INGESTED          = 2
 local ERROR             = 3
 
-local ie = read_config("alert").ingestion_error
-assert(type(ie) == "table", "alert.ingestion_error must be a table")
-for k,v in pairs(ie) do
+local cnt = 0
+for k,v in pairs(alert.thresholds) do
     assert(type(v.inactivity_timeout) == "number", "inactivity_timeout must be a number")
     assert(type(v.percent) == "number", "percent must be a number")
-    if k == "*" then
-        local mt = {__index = function(t, k) return v end }
-        setmetatable(ie, mt);
-    end
+    cnt = cnt + 1
 end
+assert(cnt > 0, "at least one alert threshold must be set")
 
 inputs = {}
 local function get_input(logger, rows, spr)
@@ -133,10 +127,10 @@ local function diagnostic_prune(ns, diags)
 end
 
 
-local function inactivity_alert(ns, k, vcnt, cb, e)
+local function inactivity_alert(ns, th, k, vcnt, cb, e)
     if vcnt == 0 then return false end
 
-    local iato = ie[k].inactivity_timeout
+    local iato = th.inactivity_timeout
     if MINS_IN_HOUR - vcnt > iato then
         local _, cnt = stats.sum(cb:get_range(INGESTED, e - ((iato - 1) * 60e9))) -- include the current minute
         if cnt == 0 then
@@ -177,21 +171,21 @@ function timer_event(ns, shutdown)
         local diags = v[2]
         diagnostic_prune(ns, diags)
 
-        if not alert.throttled(k) then
+        local th = alert.get_threshold(k)
+        if th and not alert.throttled(k) then
             local e = cb:current_time() - 60e9 -- exclude the current minute
             local s = e - ((MINS_IN_HOUR - 1) * 60e9)
             local array = cb:get_range(INGESTED, s, e)
             local isum, vcnt = stats.sum(array)
-            if not inactivity_alert(ns, k, vcnt, cb, e) then
+            if not inactivity_alert(ns, th, k, vcnt, cb, e) then
                 array = cb:get_range(ERROR, s, e)
                 local esum = stats.sum(array)
                 if isum > 1000 or esum > 1000 then
-                    local mpe = ie[k].percent
                     local pe  = esum / (isum + esum) * 100
-                    if pe > mpe then
+                    if pe > th.percent then
                         if alert.send(k, "ingestion error",
-                                      string.format(ingestion_error_template, isum, esum, pe, mpe,
-                                                    alert.get_dashboard_uri(k),
+                                      string.format(ingestion_error_template, isum, esum, pe,
+                                                    th.percent, alert.get_dashboard_uri(k),
                                                     diagnostic_dump(diags))) then
                             cb:annotate(ns, ERROR, "alert", string.format("%.4g%%", pe))
                         end
