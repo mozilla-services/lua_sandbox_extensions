@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Validates the moz_telemetry_heavy_hitters_monitor output
+# Validates the moz_security_heavy_hitters output
 --]]
 
 require "string"
