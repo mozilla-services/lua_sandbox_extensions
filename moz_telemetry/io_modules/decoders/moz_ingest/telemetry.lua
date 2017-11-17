@@ -224,6 +224,7 @@ local function process_json(hsr, msg)
         msg.Fields.appUpdateChannel     = doc:value(doc:find(app, "channel"))
         msg.Fields.appVendor            = doc:value(doc:find(app, "vendor"))
         msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
+        msg.Fields.normalizedOSVersion  = mtn.os_version(doc:value(doc:find("environment", "system", "os", "version")))
 
         remove_objects(msg, doc, "environment", environment_objects)
         remove_objects(msg, doc, "payload", extract_payload_objects[msg.Fields.docType])

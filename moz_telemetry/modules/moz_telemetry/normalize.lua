@@ -192,6 +192,15 @@ function os(name)
     return normalize_os_grammar:match(name)
 end
 
+local normalize_os_version_grammar =
+    l.C(l.R"09"^1 * (l.P"." * l.R"09"^1)^-2)
+
+function os_version(v)
+    local vstr = tostring(v)
+    if vstr then
+        return normalize_os_version_grammar:match(vstr)
+    end
+end
 
 -- https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 local country_names = {

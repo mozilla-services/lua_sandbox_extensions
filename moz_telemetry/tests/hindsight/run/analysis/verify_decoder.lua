@@ -15,6 +15,7 @@ local messages = {
             ["sourceVersion"] = 4,
             ["telemetryEnabled"] = true,
             ["os"] = "Darwin",
+            ["normalizedOSVersion"] = "14.5.0",
             ["environment.partner"] = '{"distributionId":null,"distributionVersion":null,"distributor":null,"distributorChannel":null,"partnerId":null,"partnerNames":[]}',
             ["appVendor"] = "Mozilla",
             ["submissionDate"] = "19700101",
