@@ -35,10 +35,8 @@ local msg = {
 function process_message()
     local user  = read_message("Fields[remote_user]")
     local ip    = read_message("Fields[remote_addr]")
-    local id    = string.format("%X%X%X%X%X%X%X%X%X%X%X%X%X%X%X%X",
-                                string.byte(read_message("Uuid"), 1, 16))
 
-    msg.Fields[2].value    = string.format("%s logged into bastion from %s id:%s", user, ip, id)
+    msg.Fields[2].value    = string.format("%s logged into bastion from %s", user, ip)
     msg.Fields[3].value[2] = string.format("<manatee-%s@moz-svc-ops.pagerduty.com>", user)
     inject_message(msg)
     return 0
