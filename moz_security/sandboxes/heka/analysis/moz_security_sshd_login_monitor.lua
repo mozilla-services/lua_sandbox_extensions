@@ -15,12 +15,12 @@ message_matcher = "Type == 'logging.shared.bastion.systemd.sshd' && Fields[sshd_
 ticker_interval = 0
 process_message_inject_limit = 1
 
--- default_email = "foxsec-alerts@mozilla.com"
+-- default_email = "foxsec-dump+OutOfHours@mozilla.com"
 ```
 --]]
 require "string"
 
-local default_email = read_config("default_email") or "foxsec-alerts@mozilla.com"
+local default_email = read_config("default_email") or "foxsec-dump+OutOfHours@mozilla.com"
 local msg = {
     Type = "alert",
     Payload = "",
