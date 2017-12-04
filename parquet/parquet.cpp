@@ -1860,6 +1860,8 @@ static int pq_writer_dissect_message(lua_State *lua)
           } else {
             add_null(c, 0, 0);
           }
+        } else if (cn->name == LSB_SIZE) {
+          add_integer(c, static_cast<long long>(msg->raw.len), cn->rl, cn->dl);
         } else {
           stringstream ss;
           ss << "column '" << cn->name << "' invalid schema";
