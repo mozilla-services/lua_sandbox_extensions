@@ -159,6 +159,7 @@ local type      = type
 local l         = require "lpeg"
 local upper     = string.upper
 local tonumber  = tonumber
+local tostring  = tostring
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
