@@ -61,7 +61,7 @@ local consumer   = kafka.consumer(brokerlist, topics, consumer_conf, topic_conf)
 *Arguments*
 * brokerlist (string) - [librdkafka broker string](https://github.com/edenhill/librdkafka/blob/master/src/rdkafka.h#L2205)
 * topics (array of 'topic[:partition]' strings) - Balanced consumer group mode a
-  consumer can only subscribe on topics, not topics:partitions. The partition 
+  consumer can only subscribe on topics, not topics:partitions. The partition
   syntax is only used for manual assignments (without balanced consumer groups).
 * consumer_conf (table) - must contain 'group.id' see: [librdkafka consumer configuration](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#global-configuration-properties)
 * topic_conf (table, optional) - [librdkafka topic configuration](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#topic-configuration-properties)
@@ -91,12 +91,13 @@ Returns a string with the running version of Kafka module.
 Creates a topic to be used by a producer, no-op if the topic already exists.
 
 ```lua
-producer:create_topic(topic) -- creates the topic if it does not exist
+producer:create_topic(topic, topic_conf) -- creates the topic if it does not exist
 
 ```
 
 *Arguments*
 * topic (string) - Name of the topic
+* topic_conf (table, optional) - [librdkafka topic configuration](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#topic-configuration-properties)
 
 *Return*
 * none
@@ -146,14 +147,14 @@ local ret = producer:send(topic, -1, sequence_id, message)
 *Arguments*
 * topic (string) - Name of the topic
 * partition (number) - Topic partition number (-1 for automatic assignment)
-* sequence_id 
+* sequence_id
     * lua_sandbox (lightuserdata/nil/none) - Opaque pointer for checkpointing
     * Lua 5.1 (number/nil/none) - range: zero to UINTPTR_MAX
 * message
     * heka_sandbox (string/table)
         * string - message to send
         * table - zero copy specifier (table of read_message arguments)
-    * Lua 5.1 (string) - Message to send 
+    * Lua 5.1 (string) - Message to send
 
 
 *Return*

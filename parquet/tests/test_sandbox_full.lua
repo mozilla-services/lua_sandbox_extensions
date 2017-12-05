@@ -8,6 +8,7 @@ local parser = require "lpeg.parquet"
 
 local schema = [[
 message test {
+    required int64 size;
     required fixed_len_byte_array(16) Uuid;
     required int64 Timestamp;
     required binary Logger;
