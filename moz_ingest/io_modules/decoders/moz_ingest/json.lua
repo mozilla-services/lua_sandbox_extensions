@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Mozilla Telemetry Decoder Module
+# Mozilla Telemetry JSON Decoder Module
 
 ## Decoder Configuration Table
 ```lua
@@ -17,6 +17,16 @@ decoders_moz_ingest_json = {
 
     -- array of namespace directories to ignore
     -- namespace_ignore = {"heka", "metadata", "pioneer-study", "telemetry"},
+
+    -- Transform the User-Agent header into user_agent_browser, user_agent_version, user_agent_os.
+    -- user_agent_transform = false, -- default
+
+    -- Always preserve the User-Agent header if transform is enabled.
+    -- user_agent_keep = false, -- default
+
+    -- Only preserve the User-Agent header if transform is enabled and fails.
+    -- user_agent_conditional = false, -- default
+
 }
 ```
 
@@ -52,6 +62,7 @@ local module_cfg    = string.gsub(module_name, "%.", "_")
 local rjson  = require "rjson"
 local miu    = require "moz_ingest.util"
 local lfs    = require "lfs"
+local clf    = require "lpeg.common_log_format"
 
 local read_config          = read_config
 local assert               = assert
@@ -87,8 +98,8 @@ end
 local namespaces = load_namespaces(cfg.namespace_path)
 
 
-local submissionField = {value = nil, representation = "json"}
 local doc = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
+local submissionField = {value = doc, representation = "json"}
 local function process_json(hsr, msg)
     local ok, err = pcall(doc.parse_message, doc, hsr, "Fields[content]", nil, nil, true)
     if not ok then
@@ -108,6 +119,7 @@ local function process_json(hsr, msg)
         error(string.format("json\tnamespace: %s schema: %s version: %d error: %s",
                             msg.Logger, msg.Fields.docType, msg.Fields.docVersion, err), 0)
     end
+    msg.Fields.submission = submissionField
 end
 
 
@@ -119,8 +131,18 @@ function transform_message(hsr, msg)
     process_json(hsr, msg)
 
     -- Migrate the original message data after the validation (avoids Field duplication in the error message)
-    msg.Hostname    = hsr:read_message("Hostname")
-    msg.Fields.Host = hsr:read_message("Fields[Host]")
+    msg.Hostname                = hsr:read_message("Hostname")
+    msg.Fields.Host             = hsr:read_message("Fields[Host]")
+    msg.Fields["User-Agent"]    = hsr:read_message("Fields[User-Agent]")
+
+    if msg.Fields["User-Agent"] and cfg.user_agent_transform then
+        msg.Fields.user_agent_browser,
+        msg.Fields.user_agent_version,
+        msg.Fields.user_agent_os = clf.normalize_user_agent(msg.Fields["User-Agent"])
+        if not ((cfg.user_agent_conditional and not msg.Fields.user_agent_browser) or cfg.user_agent_keep) then
+            msg.Fields["User-Agent"] = nil
+        end
+    end
 
     local ok, err = pcall(inject_message, msg)
     if not ok then

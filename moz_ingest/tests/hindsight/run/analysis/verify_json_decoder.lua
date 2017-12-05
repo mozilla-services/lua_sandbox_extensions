@@ -14,7 +14,11 @@ local messages = {
         docType = "bar",
         geoCity = "New York",
         geoCountry = "US",
-        documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01"
+        documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
+        submission = [[{"exampleString":"string one"}]],
+        user_agent_browser = "Firefox",
+        user_agent_version = 59,
+        user_agent_os      = "Linux"
         }
     },
     {Logger = "foo", Type = "error", Hostname = "example.com", Fields = {
