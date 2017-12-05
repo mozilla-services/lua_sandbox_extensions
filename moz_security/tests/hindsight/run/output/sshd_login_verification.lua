@@ -9,8 +9,8 @@
 require "string"
 
 local results = {
-    { summary    = "trink logged into bastion from 192.168.1.1 id:11111111111111111111111111111111",
-      recipients = {"<foxsec-alerts@mozilla.com>", "<manatee-trink@moz-svc-ops.pagerduty.com>"}
+    { summary    = "trink logged into bastion from 192.168.1.1",
+      recipients = {"<foxsec-dump+OutOfHours@mozilla.com>", "<manatee-trink@moz-svc-ops.pagerduty.com>"}
     }
 }
 
