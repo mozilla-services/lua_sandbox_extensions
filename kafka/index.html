@@ -1283,7 +1283,7 @@
                 <a href="../hyperloglog/">
             
                     
-                    hyperloglog (1.0.0)
+                    hyperloglog (1.0.1)
             
                 </a>
             
@@ -1807,7 +1807,7 @@
                 <a href="../moz_ingest/">
             
                     
-                    moz_ingest (0.0.2)
+                    moz_ingest (0.0.3)
             
                 </a>
             
@@ -2429,7 +2429,7 @@
                 <a href="../moz_security/">
             
                     
-                    moz_security (0.0.3)
+                    moz_security (0.0.4)
             
                 </a>
             
@@ -2531,7 +2531,7 @@
                 <a href="../moz_telemetry/">
             
                     
-                    moz_telemetry (1.2.15)
+                    moz_telemetry (1.2.16)
             
                 </a>
             
@@ -3159,7 +3159,7 @@
                 <a href="../parquet/">
             
                     
-                    parquet (0.0.9)
+                    parquet (0.0.10)
             
                 </a>
             
@@ -4257,7 +4257,7 @@ msg, topic, partition, key = consumer:receive()
 <ul>
 <li>brokerlist (string) - <a href="https://github.com/edenhill/librdkafka/blob/master/src/rdkafka.h#L2205" target="_blank">librdkafka broker string</a></li>
 <li>topics (array of &apos;topic[:partition]&apos; strings) - Balanced consumer group mode a
-consumer can only subscribe on topics, not topics:partitions. The partition 
+consumer can only subscribe on topics, not topics:partitions. The partition
 syntax is only used for manual assignments (without balanced consumer groups).</li>
 <li>consumer_conf (table) - must contain &apos;group.id&apos; see: <a href="https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#global-configuration-properties" target="_blank">librdkafka consumer configuration</a></li>
 <li>topic_conf (table, optional) - <a href="https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#topic-configuration-properties" target="_blank">librdkafka topic configuration</a></li>
@@ -4283,11 +4283,12 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <h3 id="Producer_Methods">2.3. Producer Methods</h3>
 <h4 id="create_topic">2.3.1. create_topic</h4>
 <p>Creates a topic to be used by a producer, no-op if the topic already exists.</p>
-<pre><code class="lang-lua">producer:create_topic(topic) <span class="hljs-comment">-- creates the topic if it does not exist</span>
+<pre><code class="lang-lua">producer:create_topic(topic, topic_conf) <span class="hljs-comment">-- creates the topic if it does not exist</span>
 </code></pre>
 <p><em>Arguments</em></p>
 <ul>
 <li>topic (string) - Name of the topic</li>
+<li>topic_conf (table, optional) - <a href="https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#topic-configuration-properties" target="_blank">librdkafka topic configuration</a></li>
 </ul>
 <p><em>Return</em></p>
 <ul>
@@ -4325,7 +4326,7 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <ul>
 <li>topic (string) - Name of the topic</li>
 <li>partition (number) - Topic partition number (-1 for automatic assignment)</li>
-<li>sequence_id <ul>
+<li>sequence_id<ul>
 <li>lua_sandbox (lightuserdata/nil/none) - Opaque pointer for checkpointing</li>
 <li>Lua 5.1 (number/nil/none) - range: zero to UINTPTR_MAX</li>
 </ul>
@@ -4336,7 +4337,7 @@ syntax is only used for manual assignments (without balanced consumer groups).</
 <li>table - zero copy specifier (table of read_message arguments)</li>
 </ul>
 </li>
-<li>Lua 5.1 (string) - Message to send </li>
+<li>Lua 5.1 (string) - Message to send</li>
 </ul>
 </li>
 </ul>
@@ -4427,7 +4428,7 @@ be called after every send.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"kafka (1.0.5)","level":"1.13","depth":1,"next":{"title":"sandboxes","level":"1.13.1","depth":2,"path":"kafka/sandboxes/README.md","ref":"kafka/sandboxes/README.md","articles":[{"title":"heka","level":"1.13.1.1","depth":3,"path":"kafka/sandboxes/heka/README.md","ref":"kafka/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.13.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.13.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},{"title":"output","level":"1.13.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.13.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]}]}]},"previous":{"title":"jose (0.0.1)","level":"1.12","depth":1,"path":"jose/README.md","ref":"jose/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kafka/README.md","mtime":"2017-11-10T18:54:17.901Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-11-10T18:54:23.103Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"kafka (1.0.5)","level":"1.13","depth":1,"next":{"title":"sandboxes","level":"1.13.1","depth":2,"path":"kafka/sandboxes/README.md","ref":"kafka/sandboxes/README.md","articles":[{"title":"heka","level":"1.13.1.1","depth":3,"path":"kafka/sandboxes/heka/README.md","ref":"kafka/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.13.1.1.1","depth":4,"path":"kafka/sandboxes/heka/input/README.md","ref":"kafka/sandboxes/heka/input/README.md","articles":[{"title":"kafka","level":"1.13.1.1.1.1","depth":5,"path":"kafka/sandboxes/heka/input/kafka.md","ref":"kafka/sandboxes/heka/input/kafka.md","articles":[]}]},{"title":"output","level":"1.13.1.1.2","depth":4,"path":"kafka/sandboxes/heka/output/README.md","ref":"kafka/sandboxes/heka/output/README.md","articles":[{"title":"kafka","level":"1.13.1.1.2.1","depth":5,"path":"kafka/sandboxes/heka/output/kafka.md","ref":"kafka/sandboxes/heka/output/kafka.md","articles":[]}]}]}]},"previous":{"title":"jose (0.0.1)","level":"1.12","depth":1,"path":"jose/README.md","ref":"jose/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kafka/README.md","mtime":"2017-12-06T15:44:12.718Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-12-06T15:44:21.987Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
