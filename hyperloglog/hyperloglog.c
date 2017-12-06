@@ -45,6 +45,7 @@ static int hll_new(lua_State *lua)
   hyperloglog *hll = lua_newuserdata(lua, nbytes);
   memcpy(hll->magic, hll_magic, sizeof(hll->magic));
   hll->encoding = HLL_DENSE;
+  memset(hll->card, 0, sizeof(hll->card));
   HLL_INVALIDATE_CACHE(hll);
   memset(hll->notused, 0, sizeof(hll->notused));
   memset(hll->registers, 0, HLL_REGISTERS_SIZE);

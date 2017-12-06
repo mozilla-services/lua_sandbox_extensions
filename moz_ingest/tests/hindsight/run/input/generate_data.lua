@@ -48,6 +48,7 @@ function process_message()
     msg.Type = "json.raw"
     msg.Fields.uri = "/submit/foo/bar/1/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01"
     msg.Fields.content = [[{"exampleString":"string one"}]]
+    msg.Fields["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101 Firefox/59.0"
     inject_message(msg)
 
     -- fails parsing

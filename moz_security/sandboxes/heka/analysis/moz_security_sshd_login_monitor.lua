@@ -15,12 +15,12 @@ message_matcher = "Type == 'logging.shared.bastion.systemd.sshd' && Fields[sshd_
 ticker_interval = 0
 process_message_inject_limit = 1
 
--- default_email = "foxsec-alerts@mozilla.com"
+-- default_email = "foxsec-dump+OutOfHours@mozilla.com"
 ```
 --]]
 require "string"
 
-local default_email = read_config("default_email") or "foxsec-alerts@mozilla.com"
+local default_email = read_config("default_email") or "foxsec-dump+OutOfHours@mozilla.com"
 local msg = {
     Type = "alert",
     Payload = "",
@@ -35,10 +35,8 @@ local msg = {
 function process_message()
     local user  = read_message("Fields[remote_user]")
     local ip    = read_message("Fields[remote_addr]")
-    local id    = string.format("%X%X%X%X%X%X%X%X%X%X%X%X%X%X%X%X",
-                                string.byte(read_message("Uuid"), 1, 16))
 
-    msg.Fields[2].value    = string.format("%s logged into bastion from %s id:%s", user, ip, id)
+    msg.Fields[2].value    = string.format("%s logged into bastion from %s", user, ip)
     msg.Fields[3].value[2] = string.format("<manatee-%s@moz-svc-ops.pagerduty.com>", user)
     inject_message(msg)
     return 0

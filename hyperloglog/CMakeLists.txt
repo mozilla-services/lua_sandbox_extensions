@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(hyperloglog VERSION 1.0.0 LANGUAGES C)
+project(hyperloglog VERSION 1.0.1 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua hyperloglog module (distinct count)")
 set(MODULE_SRCS hyperloglog.c redis_hyperloglog.c hyperloglog.def)
 include(sandbox_module)

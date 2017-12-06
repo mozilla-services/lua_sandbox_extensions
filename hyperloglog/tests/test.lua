@@ -4,7 +4,7 @@
 
 require "hyperloglog"
 require "string"
-assert(hyperloglog.version() == "1.0.0", hyperloglog.version())
+assert(hyperloglog.version() == "1.0.1", hyperloglog.version())
 
 local hll = hyperloglog.new()
 local hll1 = hyperloglog.new()
