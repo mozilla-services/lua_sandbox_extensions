@@ -90,24 +90,19 @@ static int stats_cb(rd_kafka_t *rk,
 #endif
 
 
-static void msg_delivered(rd_kafka_t *rk,
-                          void *payload,
-                          size_t len,
-                          int error_code,
-                          void *opaque,
-                          void *msg_opaque)
+static void dr_msg_cb(rd_kafka_t *rk,
+                   const rd_kafka_message_t *rkmessage,
+                   void *opaque)
 {
-  (void)rk;
-  (void)payload;
-  (void)len;
-  kafka_producer *kp = (kafka_producer *)opaque;
-  kp->msg_opaque = msg_opaque;
-  if (error_code) {
+  if (!rk) {return;}
+  kafka_producer *kp = opaque;
+  kp->msg_opaque = rkmessage->_private;
+  if (rkmessage->err != RD_KAFKA_RESP_ERR_NO_ERROR) {
     ++kp->failures;
 #ifdef LUA_SANDBOX
     kp->logger->cb(kp->logger->context, rd_kafka_name(rk), 3,
-                   "delivery error\t%d\t%s", error_code,
-                   rd_kafka_err2str(error_code));
+                   "delivery error\t%d\t%s", rkmessage->err,
+                   rd_kafka_err2str(rkmessage->err));
 #endif
   }
 }
@@ -312,7 +307,7 @@ static int producer_new(lua_State *lua)
     return lua_error(lua);
   }
   rd_kafka_conf_set_opaque(conf, kp);
-  rd_kafka_conf_set_dr_cb(conf, msg_delivered);
+  rd_kafka_conf_set_dr_msg_cb(conf, dr_msg_cb);
 
 #ifdef LUA_SANDBOX
   lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
