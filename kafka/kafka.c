@@ -89,7 +89,14 @@ static void msg_delivered(rd_kafka_t *rk,
   (void)len;
   kafka_producer *kp = (kafka_producer *)opaque;
   kp->msg_opaque = msg_opaque;
-  if (error_code) ++kp->failures;
+  if (error_code) {
+    ++kp->failures;
+#ifdef LUA_SANDBOX
+    kp->logger->cb(kp->logger->context, rd_kafka_name(rk), 3,
+                   "delivery error\t%d\t%s", error_code,
+                   rd_kafka_err2str(error_code));
+#endif
+  }
 }
 
 
