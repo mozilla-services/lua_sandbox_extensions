@@ -74,6 +74,19 @@ static void log_cb(const rd_kafka_t *rk,
   kp->logger->cb(kp->logger->context, rd_kafka_name(rk), level, "%s\t%s", fac,
                  buf);
 }
+
+
+static int stats_cb(rd_kafka_t *rk,
+                    char *json,
+                    size_t json_len,
+                    void *opaque)
+{
+  if (!rk) {return 0;}
+  (void)json_len;
+  kafka_producer *kp = opaque;
+  kp->logger->cb(kp->logger->context, rd_kafka_name(rk), 6, "%s", json);
+  return 0;
+}
 #endif
 
 
@@ -311,11 +324,14 @@ static int producer_new(lua_State *lua)
   kp->logger = lsb_get_logger(lsb);
   if (kp->logger->cb) {
     rd_kafka_conf_set_log_cb(conf, log_cb);
+    rd_kafka_conf_set_stats_cb(conf, stats_cb);
   } else {
     rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+    rd_kafka_conf_set_stats_cb(conf, NULL); // disable stats
   }
 #else
   rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+  rd_kafka_conf_set_stats_cb(conf, NULL); // disable stats
 #endif
 
   char errstr[512];
@@ -761,11 +777,14 @@ static int consumer_new(lua_State *lua)
   kc->logger = lsb_get_logger(lsb);
   if (kc->logger->cb) {
     rd_kafka_conf_set_log_cb(conf, log_cb);
+    rd_kafka_conf_set_stats_cb(conf, stats_cb);
   } else {
     rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+    rd_kafka_conf_set_stats_cb(conf, NULL); // disable stats
   }
 #else
   rd_kafka_conf_set_log_cb(conf, NULL); // disable logging
+  rd_kafka_conf_set_stats_cb(conf, NULL); // disable stats
 #endif
 
   char errstr[512];
