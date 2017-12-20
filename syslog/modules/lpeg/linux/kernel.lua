@@ -170,6 +170,11 @@ syslog_grammar = l.Ct(
             * l.Cg(sl.commonmac, "nf_dst_mac")
             * l.P":" 
             * l.Cg(sl.commonmac, "nf_src_mac")
+	    --[[
+	    The MAC field will include trailing bytes indicating information such as
+	    the frame type (e.g., Ethernet), we want to capture any of these as well.
+	    --]]
+	    * (l.P":" * l.Cg(sl.notspace, "nf_type_mac"))^-1
             )^-1
         * (netfilter_ipv4 + netfilter_ipv6)
         * (

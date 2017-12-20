@@ -324,6 +324,5 @@ commonmac   = l.xdigit * l.xdigit
             * l.P":" * l.xdigit * l.xdigit
             * l.P":" * l.xdigit * l.xdigit
             * l.P":" * l.xdigit * l.xdigit
-            * l.P":" * l.xdigit * l.xdigit
 
 return M
