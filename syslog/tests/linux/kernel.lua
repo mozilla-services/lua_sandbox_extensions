@@ -101,3 +101,16 @@ assert(fields.nf_flowlbl == 0, fields.nf_flowlbl)
 assert(fields.nf_protocol == 'ICMPv6', fields.nf_protocol)
 assert(fields.nf_icmpv6_type == 130, fields.nf_icmpv6_type)
 assert(fields.nf_icmpv6_code == 0, fields.nf_icmpv6_code)
+
+--- Test segfault message processing
+log = "[1994647.950748] test[28779]: segfault at 1 ip 000034421bfaaa46 sp 00007fffffffffff error 4 in libc-2.29.so[7ffffffff000+1c0000]"
+fields = grammar:match(log)
+assert(fields.monotonic_timestamp == 1994647.950748, fields.monotonic_timestamp)
+assert(fields.fault_process_name == 'test', fields.fault_process_name)
+assert(fields.fault_process_pid == '28779', fields.fault_process_pid)
+assert(fields.fault_type == 'segfault', fields.fault_type)
+assert(fields.fault_at == 1, fields.fault_at)
+assert(fields.fault_instruction_pointer == '000034421bfaaa46', fields.fault_instruction_pointer)
+assert(fields.fault_stack_pointer == '00007fffffffffff', fields.fault_stack_pointer)
+assert(fields.fault_error_bits == 4, fields.fault_error_bits)
+assert(fields.fault_in == 'libc-2.29.so[7ffffffff000+1c0000]', fields.fault_in)
