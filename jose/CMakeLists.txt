@@ -10,7 +10,7 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(CJOSE REQUIRED cjose)
 
 set(MODULE_SRCS jose.c jose.def)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libjansson4, libssl1.0.0 (>= 1.0.1)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libjansson4, libssl1.0.0 (>= 1.0.1)|libssl1.0.2 (>= 1.0.2)")
 find_package(ZLIB)
 if(ZLIB_FOUND)
   add_definitions(-DHAVE_ZLIB)
