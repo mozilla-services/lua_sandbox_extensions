@@ -151,9 +151,9 @@ local ret = producer:send(topic, -1, sequence_id, message)
     * lua_sandbox (lightuserdata/nil/none) - Opaque pointer for checkpointing
     * Lua 5.1 (number/nil/none) - range: zero to UINTPTR_MAX
 * message
-    * heka_sandbox (string/table)
+    * heka_sandbox (string/userdata)
         * string - message to send
-        * table - zero copy specifier (table of read_message arguments)
+        * userdata - zero copy specifier
     * Lua 5.1 (string) - Message to send
 
 
