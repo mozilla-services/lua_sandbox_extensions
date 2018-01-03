@@ -15,6 +15,8 @@ output_limit           = 8 * 1024 * 1024
 brokerlist             = "localhost:9092" -- see https://github.com/edenhill/librdkafka/blob/master/src/rdkafka.h#L2205
 ticker_interval        = 60
 async_buffer_size      = 20000
+ignore_topic_err       = false
+ignore_partition_err   = false
 
 topic_constant = "test"
 producer_conf = {
@@ -41,6 +43,8 @@ local topic_variable    = read_config("topic_variable") or "Logger"
 local producer_conf     = read_config("producer_conf")
 local topic_confs       = read_config("topic_confs") or {}
 local encoder_module    = read_config("encoder_module") or "encoders.heka.protobuf"
+local ignore_topic_err  = read_config("ignore_topic_err") or false
+local ignore_partition_err = read_config("ignore_partition_err") or false
 local encode = require(encoder_module).encode
 if not encode then
     error(encoder_module .. " does not provide an encode function")
@@ -76,9 +80,19 @@ function process_message(sequence_id)
         elseif ret == 90 then
             return -1, "message too large" -- fail
         elseif ret == 2 then
-            error("unknown topic: " .. topic)
+           local err_msg = "unknown topic: " .. topic
+           if ignore_topic_err then
+               return -1, err_msg --fail
+           else
+               error(err_msg)
+           end
         elseif ret == 3 then
-            error("unknown partition")
+            local err_msg = "unknown partition for topic: " .. topic
+            if ignore_partition_err then
+                return -1, err_msg -- fail
+            else
+                error(err_msg)
+            end
         end
     end
 
