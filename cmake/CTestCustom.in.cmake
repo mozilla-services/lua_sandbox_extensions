@@ -1,1 +1,2 @@
 set(CTEST_CUSTOM_PRE_TEST  "${CMAKE_MAKE_PROGRAM} install DESTDIR=install")
+set(CTEST_CUSTOM_PRE_TEST "${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=install -P cmake_install.cmake")
