@@ -8,6 +8,8 @@ local files = {
     "ip_address.lua",
     "mysql.lua",
     "postfix.lua",
+    "escape_sequences.lua",
+    "logfmt.lua",
 }
 
 for i,v in ipairs(files) do
