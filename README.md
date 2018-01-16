@@ -12,7 +12,7 @@ decoupling the module and businesss logic maintenance and deployment.
 
 ### Prerequisites
 * C compiler (GCC 4.7+, Visual Studio 2013)
-* CMake (3.5+) - http://cmake.org/cmake/resources/software.html
+* CMake (3.6+) - http://cmake.org/cmake/resources/software.html
 * Git http://git-scm.com/download
 * luasandbox (1.2+) https://github.com/mozilla-services/lua_sandbox
 * Module specific (i.e. if buiding the ssl module openssl will be required)
