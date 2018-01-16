@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.6)
 project(jose VERSION 0.0.1 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua JOSE module")
 
@@ -10,7 +10,8 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(CJOSE REQUIRED cjose)
 
 set(MODULE_SRCS jose.c jose.def)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libjansson4, libssl1.0.0 (>= 1.0.1)")
+set(CPACK_DEBIAN_PACKAGE_RELEASE 2)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libjansson4, libssl1.0.0 (>= 1.0.1)|libssl1.0.2 (>= 1.0.2)")
 find_package(ZLIB)
 if(ZLIB_FOUND)
   add_definitions(-DHAVE_ZLIB)
