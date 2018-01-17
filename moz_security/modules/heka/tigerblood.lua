@@ -29,12 +29,16 @@ Send a violation message to be processed by the Tigerblood output plugin.
 - sent (boolean) - true if sent, false if disabled or an invalid argument
 --]]
 
--- Imports
-local inject_message = inject_message
-local pairs = pairs
-local j = require "cjson"
+local jenc           = require "cjson".encode
 
-local tb_cfg = read_config("tigerblood")
+local inject_message = inject_message
+local pairs          = pairs
+local type           = type
+local error          = error
+
+local module_name = ...
+local module_cfg = require "string".gsub(module_name, "%.", "_")
+local cfg = read_config(module_cfg) or error(module_cfg .. " configuration not found")
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -45,23 +49,23 @@ local msg = {
 }
 
 function send(violations)
-    if tb_cfg.disabled then
+    if cfg.disabled or not violations or type(violations) ~= "table" then
         return false
     end
 
-    if not violations or #violations == 0 then
-        return false
-    end
-
-    -- Ensure each entry in the violations table contains the correct fields
+    local vcnt = 0
     for k,v in pairs(violations) do
-        if not v["ip"] or not v["violation"] or not v["weight"] then
+        -- Ensure each entry in the violations table contains the correct fields
+        if not v.ip or not v.violation or not v.weight then
             return false
         end
+        vcnt = vcnt + 1
+    end
+    if vcnt == 0 then
+        return false
     end
 
-    -- Encode the violations as a JSON document and attach it to our fields
-    msg.Fields[1] = { name = "violations", value = j.encode(violations) }
+    msg.Fields[1] = { name = "violations", value = jenc(violations) }
     inject_message(msg)
 
     return true
