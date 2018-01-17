@@ -33,10 +33,16 @@ local msg = {
 }
 
 function process_message()
-    local user  = read_message("Fields[remote_user]")
-    local ip    = read_message("Fields[remote_addr]")
+    local user    = read_message("Fields[remote_user]")
+    local ip      = read_message("Fields[remote_addr]")
+    local city    = read_message("Fields[remote_addr_city]")
+    local country = read_message("Fields[remote_addr_country]")
 
     msg.Fields[2].value    = string.format("%s logged into bastion from %s", user, ip)
+    -- If we also have city and country information, append that to the message
+    if city and country then
+        msg.Fields[2].value = msg.Fields[2].value .. string.format(" (%s, %s)", city, country)
+    end
     msg.Fields[3].value[2] = string.format("<manatee-%s@moz-svc-ops.pagerduty.com>", user)
     inject_message(msg)
     return 0

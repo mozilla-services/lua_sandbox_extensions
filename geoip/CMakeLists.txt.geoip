@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(geoip VERSION 0.2.0 LANGUAGES C)
+project(geoip VERSION 0.2.1 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua geoip Module")
@@ -85,3 +85,5 @@ install(TARGETS city DESTINATION ${INSTALL_IOMODULE_PATH}/geoip)
 add_library(country SHARED ${COUNTRY_SRC})
 target_link_libraries(country ${LUA_LIBRARIES} ${GEOIP_LIBRARY})
 install(TARGETS country DESTINATION ${INSTALL_IOMODULE_PATH}/geoip)
+
+install(DIRECTORY ${PARENT_SOURCE_DIR}/io_modules/ DESTINATION ${INSTALL_IOMODULE_PATH} ${DPERMISSION})
