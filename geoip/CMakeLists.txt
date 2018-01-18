@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(geoip LANGUAGES NONE)
+project(geoip LANGUAGES C)
 
 externalproject_add(
     ep_geoip
@@ -12,6 +12,7 @@ externalproject_add(
     CMAKE_ARGS ${EP_CMAKE_ARGS} -DPARENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
 )
-externalproject_add_step(ep_geoip copy_cpack 
+externalproject_add_step(ep_geoip copy_cpack
 COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/${PROJECT_NAME}.cpack ${CMAKE_BINARY_DIR}
 DEPENDEES install)
+include(sandbox_ep_test)
