@@ -157,8 +157,8 @@ local netfilter_ipv6 = l.P" SRC="
                        + netfilter_other
                        )
 
-syslog_grammar = l.Ct(
-    (
+-- Grammar for Linux NetFilter logs (e.g., iptables)
+local netfilter = (
         l.P"[" * l.Cg(sl.float, "monotonic_timestamp") * l.P"] "
         * sl.capture_until("nf_prefix", "IN=")
         * l.P"IN="
@@ -170,6 +170,11 @@ syslog_grammar = l.Ct(
             * l.Cg(sl.commonmac, "nf_dst_mac")
             * l.P":" 
             * l.Cg(sl.commonmac, "nf_src_mac")
+	    --[[
+	    The MAC field will include trailing bytes indicating information such as
+	    the frame type (e.g., Ethernet), we want to capture any of these as well.
+	    --]]
+	    * (l.P":" * l.Cg(sl.notspace, "nf_type_mac"))^-1
             )^-1
         * (netfilter_ipv4 + netfilter_ipv6)
         * (
@@ -185,6 +190,20 @@ syslog_grammar = l.Ct(
             * l.P" "
             )^-1
         )
-    )
+
+-- Grammar for kernel generated segfault messages
+local segfault = (
+        l.P"[" * l.Cg(sl.float, "monotonic_timestamp") * l.P"] "
+        * sl.capture_until("fault_process_name", "[") * l.P("[")
+        * sl.capture_until("fault_process_pid", "]") * l.P("]: ")
+        * l.Cg(l.P("segfault"), "fault_type")
+        * l.P(" at ") * l.Cg(sl.integer, "fault_at")
+        * l.P(" ip ") * l.Cg(sl.notspace, "fault_instruction_pointer")
+        * l.P(" sp ") * l.Cg(sl.notspace, "fault_stack_pointer")
+        * l.P(" error ") * l.Cg(sl.integer, "fault_error_bits")
+        * l.P(" in ") * l.Cg(sl.notspace, "fault_in")
+        )
+
+syslog_grammar = l.Ct(netfilter + segfault)
 
 return M

@@ -11,7 +11,10 @@ require "string"
 local results = {
     { summary    = "trink logged into bastion from 192.168.1.1",
       recipients = {"<foxsec-dump+OutOfHours@mozilla.com>", "<manatee-trink@moz-svc-ops.pagerduty.com>"}
-    }
+    },
+    { summary    = "trink logged into bastion from 192.168.1.2 (Mountain View, US)",
+      recipients = {"<foxsec-dump+OutOfHours@mozilla.com>", "<manatee-trink@moz-svc-ops.pagerduty.com>"}
+    },
 }
 
 local cnt = 0
@@ -37,5 +40,5 @@ end
 
 
 function timer_event()
-    assert(cnt == 1, string.format("%d out of 1 tests ran", cnt))
+    assert(cnt == 2, string.format("%d out of 2 tests ran", cnt))
 end

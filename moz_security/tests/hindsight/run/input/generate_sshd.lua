@@ -8,8 +8,11 @@
 
 
 local tests = {
-    {"11111111-1111-1111-1111-111111111111", "trink" , "192.168.1.1"},
+    {"11111111-1111-1111-1111-111111111111", "trink", "192.168.1.1"},
+    {"11111111-1111-1111-1111-111111111112", "trink", "192.168.1.2"}
 }
+
+geo = require "geoip.heka"
 
 local msg = {
     Timestamp = nil,
@@ -27,6 +30,7 @@ function process_message()
         msg.Uuid = v[1]
         msg.Fields.remote_user = v[2]
         msg.Fields.remote_addr = v[3]
+        geo.add_geoip(msg, "remote_addr")
         inject_message(msg)
     end
     return 0
