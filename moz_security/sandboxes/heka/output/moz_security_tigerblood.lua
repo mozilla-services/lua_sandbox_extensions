@@ -174,12 +174,13 @@ local function json_request(method, uri, body)
         sink = ltn12.sink.table(response)
     })
 
-    return {
-        r = r,
-        status_code = code,
-        body = table.concat(response),
-        headers = resp_headers,
-    }
+    if type(code) == "string" then
+        -- request could not be made, code will contain an error string (e.g., connection refused)
+        return false, code
+    elseif type(code) == "number" and code >= 400 then
+        return false, string.format("request failed with response code %d", code)
+    end
+    return true, ""
 end
 
 configure_client()
@@ -189,7 +190,10 @@ function process_message()
     if not violations or type(violations) ~= "string" then
         return -1, "invalid argument for violations"
     end
-    json_request("PUT", "/violations/", violations)
+    local ok, msg = json_request("PUT", "/violations/", violations)
+    if not ok then
+        return -1, msg
+    end
     return 0
 end
 
