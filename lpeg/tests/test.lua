@@ -10,10 +10,11 @@ local files = {
     "postfix.lua",
     "escape_sequences.lua",
     "logfmt.lua",
+    "printf.lua",
 }
 
 for i,v in ipairs(files) do
-    local f = loadfile(v)
+    local f = assert(loadfile(v))
     f()
 end
 
