@@ -33,10 +33,10 @@ local msg = {
 }
 
 function process_message()
-    local user    = read_message("Fields[remote_user]")
-    local ip      = read_message("Fields[remote_addr]")
-    local city    = read_message("Fields[remote_addr_city]")
-    local country = read_message("Fields[remote_addr_country]")
+    local user    = read_message("Fields[user]")
+    local ip      = read_message("Fields[ssh_remote_ipaddr]")
+    local city    = read_message("Fields[ssh_remote_ipaddr_city]")
+    local country = read_message("Fields[ssh_remote_ipaddr_country]")
 
     msg.Fields[2].value    = string.format("%s logged into bastion from %s", user, ip)
     -- If we also have city and country information, append that to the message
