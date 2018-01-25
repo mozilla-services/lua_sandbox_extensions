@@ -49,6 +49,7 @@ local geoip     = require "geoip.city"
 local ostime    = require "os".time
 local smatch    = string.match
 local assert    = assert
+local ipairs    = ipairs
 local pairs     = pairs
 local type      = type
 
@@ -91,10 +92,49 @@ else
     refresh_db()
 end
 
+
+local function add_array(msg, field_name, values)
+    refresh_db()
+    local found = false
+    for k,v in pairs(cfg.lookup) do
+        local fname = field_name .. v
+        local items = {}
+        for i,j in ipairs(values) do
+            local geo
+            if validate_ip(j) then
+                geo = geodb:query_by_addr(j, k)
+                if geo then found = true end
+            end
+            items[i] = geo or ""
+        end
+        if found then
+            msg.Fields[fname] = items
+        else
+            break
+        end
+    end
+
+    if found and cfg.remove_original_field then
+        msg.Fields[field_name] = nil
+    end
+end
+
+
 function add_geoip(msg, field_name)
     if not msg.Fields then return end
     local value = msg.Fields[field_name]
-    if type(value) ~= "string" or not validate_ip(value) then return end
+    local vt = type(value)
+    if vt == "table" then
+        if value.value then  -- Heka schema
+            value = value.value
+        end
+        vt = type(value)
+        if vt == "table" then -- array of values
+            add_array(msg, field_name, value)
+            return
+        end
+    end
+    if vt ~= "string" or not validate_ip(value) then return end
 
     refresh_db()
 
