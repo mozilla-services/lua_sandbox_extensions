@@ -1,0 +1,62 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(xxhash VERSION 0.0.1 LANGUAGES C)
+
+set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua xxhash Module")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_VENDOR        "Mozilla Services")
+set(CPACK_PACKAGE_CONTACT       "Aaron Meihm <alm@mozilla.com>")
+set(CPACK_OUTPUT_CONFIG_FILE    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cpack")
+set(CPACK_STRIP_FILES           TRUE)
+set(CPACK_DEBIAN_FILE_NAME      "DEB-DEFAULT")
+set(CPACK_RPM_FILE_NAME         "RPM-DEFAULT")
+
+set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
+
+if(MSVC)
+    set(CMAKE_C_FLAGS           "/W3 /WX")
+    set(CMAKE_C_FLAGS_RELEASE   "/MD /O2 /Ob2")
+else()
+    set(CMAKE_C_FLAGS           "-std=c99 -pedantic -Werror -Wall -Wextra -fPIC")
+    set(CMAKE_C_FLAGS_RELEASE   "-O2")
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif()
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(LUA51) # build against installed lua 5.1
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, lua5.1")
+    set(CPACK_PACKAGE_NAME lua51-${PROJECT_NAME})
+    find_package(Lua51)
+    find_program(LUA NAMES lua lua.bat)
+    add_test(NAME test COMMAND ${LUA} test.lua)
+else() # lua_sandbox build
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, luasandbox (>= 1.0.2)")
+    find_package(luasandbox 1.0.2 REQUIRED CONFIG)
+    set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
+    set(LUA_INCLUDE_DIR ${LUASANDBOX_INCLUDE_DIR}/luasandbox)
+endif()
+
+file(WRITE xxhash.def "EXPORTS\nluaopen_xxhash")
+
+set(XXHASH_SRC
+src/xxhash.c
+src/xxhash_bind.c
+xxhash.def
+)
+
+include(CPack)
+include_directories(${LUA_INCLUDE_DIR})
+add_library(xxhash SHARED ${XXHASH_SRC})
+target_link_libraries(xxhash ${LUA_LIBRARIES})
+
+set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)
+file(MAKE_DIRECTORY ${EMPTY_DIR})
+install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_MODULE_PATH} ${DPERMISSION})
+install(TARGETS xxhash DESTINATION ${INSTALL_MODULE_PATH})

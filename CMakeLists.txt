@@ -68,6 +68,7 @@ aws
 bloom_filter
 circular_buffer
 cjson
+cms
 compat
 cuckoo_filter
 elasticsearch
@@ -95,6 +96,7 @@ ssl
 struct
 syslog
 systemd
+xxhash
 zlib
 )
 
