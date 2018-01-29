@@ -37,7 +37,6 @@ threshold_cap = 10 -- Threshold will be calculated average + (calculated average
 require "string"
 require "table"
 
-local c         = require "cms.cms"
 local ostime    = require "os".time
 
 local sample_min_id = read_config("sample_min_id") or error("sample_min_id must be configured")
@@ -51,7 +50,7 @@ local id_fieldc     = read_config("id_field_capture")
 local cms_epsilon   = read_config("cms_epsilon") or 1 / 10000
 local cms_delta     = read_config("cms_delta") or 0.0001
 
-local cms = c.new(cms_epsilon, cms_delta)
+local cms = require "streaming_algorithms.cm_sketch".new(cms_epsilon, cms_delta)
 
 local alist = {}
 
@@ -84,7 +83,7 @@ function sampler:reset()
 end
 
 function sampler:calc()
-    if not cms or self.n < sample_min_id or self.evcount < sample_min_ev then
+    if self.n < sample_min_id or self.evcount < sample_min_ev then
         return
     end
     if self.validtick < sample_ticks then
@@ -94,7 +93,7 @@ function sampler:calc()
     local cnt = 0
     local t = 0
     for k,v in pairs(self.s) do
-        t = t + cms.check(k)
+        t = t + cms:point_query(k)
         cnt = cnt + 1
     end
     self.threshold = t / cnt
@@ -108,7 +107,7 @@ function sampler:add(x)
     if self.start_time + sample_window < ostime() then
         self:reset()
         alist:reset()
-        cms = c.new(cms_epsilon, cms_delta)
+        cms:clear()
     end
     self.evcount = self.evcount + 1
     self.validtick = self.validtick + 1
@@ -129,12 +128,12 @@ function process_message()
     if not id then return -1, "no id_field" end
     if id_fieldc then
         id = string.match(id, id_fieldc)
-        if not id then return 1 end -- no error as the capture may intentionally reject entries
+        if not id then return 0 end -- no error as the capture may intentionally reject entries
     end
 
     sampler:add(id)
     sampler:calc()
-    local q = cms.add(id)
+    local q = cms:update(id)
     if sampler.threshold ~= 0 and q > sampler.threshold then
         alist:add(id, q)
     end

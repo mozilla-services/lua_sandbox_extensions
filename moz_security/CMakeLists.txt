@@ -5,6 +5,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(moz-security VERSION 0.0.6 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Infrastructure Security Analysis")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-streaming-algorithms (>= 0.0.2)")
+string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)
 
 add_test(NAME ${MODULE_NAME}_hindsight
