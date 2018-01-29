@@ -18,19 +18,19 @@ local msg = {
     Timestamp = nil,
     Logger = "input.syslog",
     Fields = {
-        programname     = "sshd",
-        sshd_authmsg    = "Accepted",
-        remote_user     = "",
-        remote_addr     = ""
+        programname         = "sshd",
+        authmsg             = "Accepted",
+        user                = "",
+        ssh_remote_ipaddr   = ""
     }
 }
 
 function process_message()
     for i,v in ipairs(tests) do
         msg.Uuid = v[1]
-        msg.Fields.remote_user = v[2]
-        msg.Fields.remote_addr = v[3]
-        geo.add_geoip(msg, "remote_addr")
+        msg.Fields.user = v[2]
+        msg.Fields.ssh_remote_ipaddr = v[3]
+        geo.add_geoip(msg, "ssh_remote_ipaddr")
         inject_message(msg)
     end
     return 0

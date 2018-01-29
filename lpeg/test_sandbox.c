@@ -24,6 +24,7 @@ static const char *test_cfg =
     "instruction_limit = 0\n"
     "output_limit = 0\n"
     TEST_MODULE_PATH
+    "path = path .. ';./?.lua'\n"
 ;
 
 

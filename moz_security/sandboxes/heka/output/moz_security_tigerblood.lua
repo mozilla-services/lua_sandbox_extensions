@@ -19,7 +19,7 @@ message_matcher = "Type == 'tigerblood'"
 tigerblood = {
    base_url     = "https://tigerblood.prod.mozaws.net", -- NB: no trailing slash
    id           = "fxa_heavy_hitters", -- hawk ID
-   key          = "hawksecret", -- hawk secret
+   _key         = "hawksecret", -- hawk secret
 }
 ```
 --]]
@@ -82,7 +82,7 @@ local function calculate_mac(artifacts)
         error("unsupported hash algorithm")
     end
     return mime.b64(hmac.hmac(client_cfg.algorithm, normalize_string(artifacts),
-        client_cfg.key, true))
+        client_cfg._key, true))
 end
 
 local function hawk_artifacts(method, resource)
@@ -139,7 +139,7 @@ local function configure_client()
     if not client_cfg.base_url then
         error("configuration missing base_url")
     end
-    if not client_cfg.id or not client_cfg.key then
+    if not client_cfg.id or not client_cfg._key then
         error("configuration missing hawk credentials")
     end
 
