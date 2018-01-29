@@ -641,7 +641,7 @@
                 <a href="../../../geoip/">
             
                     
-                    geoip (0.2.1)
+                    geoip (0.2.2)
             
                 </a>
             
@@ -711,7 +711,7 @@
                 <a href="../../../heka/">
             
                     
-                    heka (1.1.14)
+                    heka (1.1.15)
             
                 </a>
             
@@ -1589,7 +1589,7 @@
                 <a href="../../../lpeg/">
             
                     
-                    lpeg (1.0.7)
+                    lpeg (1.0.8)
             
                 </a>
             
@@ -1668,6 +1668,38 @@
     
 
             </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.1.2" data-path="../../../lpeg/io_modules/lpeg/">
+            
+                <a href="../../../lpeg/io_modules/lpeg/">
+            
+                    
+                    lpeg
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1.2.1" data-path="../../../lpeg/io_modules/lpeg/sub_decoder_util.html">
+            
+                <a href="../../../lpeg/io_modules/lpeg/sub_decoder_util.html">
+            
+                    
+                    sub_decoder_util
+            
+                </a>
+            
+
             
         </li>
     
@@ -1793,6 +1825,19 @@
             
                     
                     postfix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.2.1.8" data-path="../../../lpeg/modules/lpeg/printf.html">
+            
+                <a href="../../../lpeg/modules/lpeg/printf.html">
+            
+                    
+                    printf
             
                 </a>
             
@@ -2056,7 +2101,7 @@
                 <a href="../../../moz_logging/">
             
                     
-                    moz_logging (0.0.3)
+                    moz_logging (0.0.4)
             
                 </a>
             
@@ -2525,7 +2570,7 @@
                 <a href="../../../moz_security/">
             
                     
-                    moz_security (0.0.5)
+                    moz_security (0.0.6)
             
                 </a>
             
@@ -2640,7 +2685,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.1.2" data-path="../../../moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.html">
+        <li class="chapter " data-level="1.20.2.1.1.2" data-path="../../../moz_security/sandboxes/heka/analysis/moz_security_hh_cms.html">
+            
+                <a href="../../../moz_security/sandboxes/heka/analysis/moz_security_hh_cms.html">
+            
+                    
+                    moz_security_hh_cms
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20.2.1.1.3" data-path="../../../moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.html">
             
                 <a href="../../../moz_security/sandboxes/heka/analysis/moz_security_sshd_login_monitor.html">
             
@@ -3837,7 +3895,7 @@
                 <a href="../../">
             
                     
-                    syslog (1.0.8)
+                    syslog (1.0.9)
             
                 </a>
             
@@ -4171,7 +4229,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.31.2.1.3" data-path="../../modules/lpeg/syslog.html">
+        <li class="chapter " data-level="1.31.2.1.3" data-path="../../modules/lpeg/openssh_portable.html">
+            
+                <a href="../../modules/lpeg/openssh_portable.html">
+            
+                    
+                    openssh_portable
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.31.2.1.4" data-path="../../modules/lpeg/syslog.html">
             
                 <a href="../../modules/lpeg/syslog.html">
             
@@ -4184,7 +4255,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.31.2.1.4" data-path="../../modules/lpeg/syslog_message.html">
+        <li class="chapter " data-level="1.31.2.1.5" data-path="../../modules/lpeg/syslog_message.html">
             
                 <a href="../../modules/lpeg/syslog_message.html">
             
@@ -4392,16 +4463,26 @@
   <span class="hljs-comment">-- template (string) - The &apos;template&apos; configuration string from rsyslog.conf</span>
   <span class="hljs-comment">-- see http://rsyslog-5-8-6-doc.neocities.org/rsyslog_conf_templates.html</span>
   <span class="hljs-comment">-- Default:</span>
-  <span class="hljs-comment">-- template = &quot;&lt;%PRI%&gt;%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%&quot; -- RSYSLOG_TraditionalForwardFormat</span>
+  <span class="hljs-comment">-- template = &quot;&lt;%PRI%&gt;%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%&quot;, -- RSYSLOG_TraditionalForwardFormat</span>
 
-  <span class="hljs-comment">-- sub_decoders = {</span>
-    <span class="hljs-comment">-- _programname_ (string) - Decoder module name or grammar module name</span>
-    <span class="hljs-comment">-- kernel = &quot;lpeg.linux.kernel&quot;, -- exports an lpeg grammar named &apos;syslog_grammar&apos;</span>
-    <span class="hljs-comment">-- nginx  = &quot;decoders.nginx.access&quot;, -- decoder module name</span>
-  <span class="hljs-comment">-- }</span>
+  printf_messages = { <span class="hljs-comment">-- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html</span>
+   {<span class="hljs-string">&quot;%s:%lu: invalid line&quot;</span>, <span class="hljs-string">&quot;path&quot;</span>, <span class="hljs-string">&quot;linenum&quot;</span>},
+   <span class="hljs-string">&quot;lpeg.openssh_portable&quot;</span>, <span class="hljs-comment">-- must export a `printf_messages` array</span>
+  },
 
-  <span class="hljs-comment">-- When using sub decoders this stores the original log line in the message payload.</span>
-  <span class="hljs-comment">-- payload_keep = false, -- default</span>
+  sub_decoders = { <span class="hljs-comment">-- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html</span>
+
+    nginx  = <span class="hljs-string">&quot;decoders.nginx.access&quot;</span>, <span class="hljs-comment">-- decoder module name</span>
+    kernel = <span class="hljs-string">&quot;lpeg.linux.kernel&quot;</span>,     <span class="hljs-comment">-- grammar module name, must export an lpeg grammar named &apos;syslog_grammar&apos;</span>
+    sshd = {
+      <span class="hljs-comment">-- openssh_portable auth message, imported in printf_messages</span>
+      {<span class="hljs-string">&quot;Accepted publickey for foobar from 10.11.12.13 port 4242 ssh2&quot;</span>, {remote_addr = <span class="hljs-string">&quot;geoip.heka.add_geoip&quot;</span>}},
+    },
+    foo = {
+      <span class="hljs-string">&quot;/tmp/input.tsv:23: invalid line&quot;</span>, <span class="hljs-comment">-- custom log defined in printf_messages</span>
+      {{<span class="hljs-string">&quot;Status: %s&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>}, <span class="hljs-keyword">nil</span>},   <span class="hljs-comment">-- inline printf spec, no transformation</span>
+    },
+  },
 }
 </code></pre>
 <h2 id="Functions">2. Functions</h2>
@@ -4410,14 +4491,19 @@
 <p><em>Arguments</em></p>
 <ul>
 <li>data (string) - syslog message</li>
-<li>default_headers (optional table) - Heka message table containing the default
+<li>default_headers (table/nil/none) - Heka message table containing the default
 header values to use, if they are not populated by the decoder. If &apos;Fields&apos;
 is specified it should be in the hashed based format see:
-<a href="http://mozilla-services.github.io/lua_sandbox/heka/message.html" target="_blank">http://mozilla-services.github.io/lua_sandbox/heka/message.html</a></li>
+<a href="http://mozilla-services.github.io/lua_sandbox/heka/message.html" target="_blank">http://mozilla-services.github.io/lua_sandbox/heka/message.html</a>. In the case
+of multiple decoders this may be the message from the previous input/decoding
+step.</li>
+<li>mutable (bool/nil/none) - Flag indicating if the decoder can modify the
+default_headers/msg structure in place or if it has to be copied first.</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>(nil, string) or throws an error on invalid data or an inject message failure<ul>
+<li>err (nil, string) or throws an error on invalid data or an inject message
+failure<ul>
 <li>nil - if the decode was successful</li>
 <li>string - error message if the decode failed (e.g. no match)</li>
 </ul>
@@ -4467,7 +4553,7 @@ is specified it should be in the hashed based format see:
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"syslog","level":"1.31.1.1.1","depth":4,"next":{"title":"modules","level":"1.31.2","depth":2,"path":"syslog/modules/README.md","ref":"syslog/modules/README.md","articles":[{"title":"lpeg","level":"1.31.2.1","depth":3,"path":"syslog/modules/lpeg/README.md","ref":"syslog/modules/lpeg/README.md","articles":[{"title":"bsd","level":"1.31.2.1.1","depth":4,"path":"syslog/modules/lpeg/bsd/README.md","ref":"syslog/modules/lpeg/bsd/README.md","articles":[{"title":"filterlog","level":"1.31.2.1.1.1","depth":5,"path":"syslog/modules/lpeg/bsd/filterlog.md","ref":"syslog/modules/lpeg/bsd/filterlog.md","articles":[]}]},{"title":"linux","level":"1.31.2.1.2","depth":4,"path":"syslog/modules/lpeg/linux/README.md","ref":"syslog/modules/lpeg/linux/README.md","articles":[{"title":"cron","level":"1.31.2.1.2.1","depth":5,"path":"syslog/modules/lpeg/linux/cron.md","ref":"syslog/modules/lpeg/linux/cron.md","articles":[]},{"title":"dhclient","level":"1.31.2.1.2.2","depth":5,"path":"syslog/modules/lpeg/linux/dhclient.md","ref":"syslog/modules/lpeg/linux/dhclient.md","articles":[]},{"title":"dhcpd","level":"1.31.2.1.2.3","depth":5,"path":"syslog/modules/lpeg/linux/dhcpd.md","ref":"syslog/modules/lpeg/linux/dhcpd.md","articles":[]},{"title":"groupadd","level":"1.31.2.1.2.4","depth":5,"path":"syslog/modules/lpeg/linux/groupadd.md","ref":"syslog/modules/lpeg/linux/groupadd.md","articles":[]},{"title":"groupdel","level":"1.31.2.1.2.5","depth":5,"path":"syslog/modules/lpeg/linux/groupdel.md","ref":"syslog/modules/lpeg/linux/groupdel.md","articles":[]},{"title":"kernel","level":"1.31.2.1.2.6","depth":5,"path":"syslog/modules/lpeg/linux/kernel.md","ref":"syslog/modules/lpeg/linux/kernel.md","articles":[]},{"title":"login","level":"1.31.2.1.2.7","depth":5,"path":"syslog/modules/lpeg/linux/login.md","ref":"syslog/modules/lpeg/linux/login.md","articles":[]},{"title":"named","level":"1.31.2.1.2.8","depth":5,"path":"syslog/modules/lpeg/linux/named.md","ref":"syslog/modules/lpeg/linux/named.md","articles":[]},{"title":"pam","level":"1.31.2.1.2.9","depth":5,"path":"syslog/modules/lpeg/linux/pam.md","ref":"syslog/modules/lpeg/linux/pam.md","articles":[]},{"title":"puppet_agent","level":"1.31.2.1.2.10","depth":5,"path":"syslog/modules/lpeg/linux/puppet_agent.md","ref":"syslog/modules/lpeg/linux/puppet_agent.md","articles":[]},{"title":"sshd","level":"1.31.2.1.2.11","depth":5,"path":"syslog/modules/lpeg/linux/sshd.md","ref":"syslog/modules/lpeg/linux/sshd.md","articles":[]},{"title":"su","level":"1.31.2.1.2.12","depth":5,"path":"syslog/modules/lpeg/linux/su.md","ref":"syslog/modules/lpeg/linux/su.md","articles":[]},{"title":"sudo","level":"1.31.2.1.2.13","depth":5,"path":"syslog/modules/lpeg/linux/sudo.md","ref":"syslog/modules/lpeg/linux/sudo.md","articles":[]},{"title":"systemd_logind","level":"1.31.2.1.2.14","depth":5,"path":"syslog/modules/lpeg/linux/systemd_logind.md","ref":"syslog/modules/lpeg/linux/systemd_logind.md","articles":[]},{"title":"useradd","level":"1.31.2.1.2.15","depth":5,"path":"syslog/modules/lpeg/linux/useradd.md","ref":"syslog/modules/lpeg/linux/useradd.md","articles":[]}]},{"title":"syslog","level":"1.31.2.1.3","depth":4,"path":"syslog/modules/lpeg/syslog.md","ref":"syslog/modules/lpeg/syslog.md","articles":[]},{"title":"syslog_message","level":"1.31.2.1.4","depth":4,"path":"syslog/modules/lpeg/syslog_message.md","ref":"syslog/modules/lpeg/syslog_message.md","articles":[]}]}]},"previous":{"title":"decoders","level":"1.31.1.1","depth":3,"path":"syslog/io_modules/decoders/README.md","ref":"syslog/io_modules/decoders/README.md","articles":[{"title":"syslog","level":"1.31.1.1.1","depth":4,"path":"syslog/io_modules/decoders/syslog.md","ref":"syslog/io_modules/decoders/syslog.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"syslog/io_modules/decoders/syslog.md","mtime":"2018-01-18T17:23:29.782Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-01-18T17:23:34.338Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"syslog","level":"1.31.1.1.1","depth":4,"next":{"title":"modules","level":"1.31.2","depth":2,"path":"syslog/modules/README.md","ref":"syslog/modules/README.md","articles":[{"title":"lpeg","level":"1.31.2.1","depth":3,"path":"syslog/modules/lpeg/README.md","ref":"syslog/modules/lpeg/README.md","articles":[{"title":"bsd","level":"1.31.2.1.1","depth":4,"path":"syslog/modules/lpeg/bsd/README.md","ref":"syslog/modules/lpeg/bsd/README.md","articles":[{"title":"filterlog","level":"1.31.2.1.1.1","depth":5,"path":"syslog/modules/lpeg/bsd/filterlog.md","ref":"syslog/modules/lpeg/bsd/filterlog.md","articles":[]}]},{"title":"linux","level":"1.31.2.1.2","depth":4,"path":"syslog/modules/lpeg/linux/README.md","ref":"syslog/modules/lpeg/linux/README.md","articles":[{"title":"cron","level":"1.31.2.1.2.1","depth":5,"path":"syslog/modules/lpeg/linux/cron.md","ref":"syslog/modules/lpeg/linux/cron.md","articles":[]},{"title":"dhclient","level":"1.31.2.1.2.2","depth":5,"path":"syslog/modules/lpeg/linux/dhclient.md","ref":"syslog/modules/lpeg/linux/dhclient.md","articles":[]},{"title":"dhcpd","level":"1.31.2.1.2.3","depth":5,"path":"syslog/modules/lpeg/linux/dhcpd.md","ref":"syslog/modules/lpeg/linux/dhcpd.md","articles":[]},{"title":"groupadd","level":"1.31.2.1.2.4","depth":5,"path":"syslog/modules/lpeg/linux/groupadd.md","ref":"syslog/modules/lpeg/linux/groupadd.md","articles":[]},{"title":"groupdel","level":"1.31.2.1.2.5","depth":5,"path":"syslog/modules/lpeg/linux/groupdel.md","ref":"syslog/modules/lpeg/linux/groupdel.md","articles":[]},{"title":"kernel","level":"1.31.2.1.2.6","depth":5,"path":"syslog/modules/lpeg/linux/kernel.md","ref":"syslog/modules/lpeg/linux/kernel.md","articles":[]},{"title":"login","level":"1.31.2.1.2.7","depth":5,"path":"syslog/modules/lpeg/linux/login.md","ref":"syslog/modules/lpeg/linux/login.md","articles":[]},{"title":"named","level":"1.31.2.1.2.8","depth":5,"path":"syslog/modules/lpeg/linux/named.md","ref":"syslog/modules/lpeg/linux/named.md","articles":[]},{"title":"pam","level":"1.31.2.1.2.9","depth":5,"path":"syslog/modules/lpeg/linux/pam.md","ref":"syslog/modules/lpeg/linux/pam.md","articles":[]},{"title":"puppet_agent","level":"1.31.2.1.2.10","depth":5,"path":"syslog/modules/lpeg/linux/puppet_agent.md","ref":"syslog/modules/lpeg/linux/puppet_agent.md","articles":[]},{"title":"sshd","level":"1.31.2.1.2.11","depth":5,"path":"syslog/modules/lpeg/linux/sshd.md","ref":"syslog/modules/lpeg/linux/sshd.md","articles":[]},{"title":"su","level":"1.31.2.1.2.12","depth":5,"path":"syslog/modules/lpeg/linux/su.md","ref":"syslog/modules/lpeg/linux/su.md","articles":[]},{"title":"sudo","level":"1.31.2.1.2.13","depth":5,"path":"syslog/modules/lpeg/linux/sudo.md","ref":"syslog/modules/lpeg/linux/sudo.md","articles":[]},{"title":"systemd_logind","level":"1.31.2.1.2.14","depth":5,"path":"syslog/modules/lpeg/linux/systemd_logind.md","ref":"syslog/modules/lpeg/linux/systemd_logind.md","articles":[]},{"title":"useradd","level":"1.31.2.1.2.15","depth":5,"path":"syslog/modules/lpeg/linux/useradd.md","ref":"syslog/modules/lpeg/linux/useradd.md","articles":[]}]},{"title":"openssh_portable","level":"1.31.2.1.3","depth":4,"path":"syslog/modules/lpeg/openssh_portable.md","ref":"syslog/modules/lpeg/openssh_portable.md","articles":[]},{"title":"syslog","level":"1.31.2.1.4","depth":4,"path":"syslog/modules/lpeg/syslog.md","ref":"syslog/modules/lpeg/syslog.md","articles":[]},{"title":"syslog_message","level":"1.31.2.1.5","depth":4,"path":"syslog/modules/lpeg/syslog_message.md","ref":"syslog/modules/lpeg/syslog_message.md","articles":[]}]}]},"previous":{"title":"decoders","level":"1.31.1.1","depth":3,"path":"syslog/io_modules/decoders/README.md","ref":"syslog/io_modules/decoders/README.md","articles":[{"title":"syslog","level":"1.31.1.1.1","depth":4,"path":"syslog/io_modules/decoders/syslog.md","ref":"syslog/io_modules/decoders/syslog.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"syslog/io_modules/decoders/syslog.md","mtime":"2018-02-02T04:04:42.871Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-02-02T04:15:47.362Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>
