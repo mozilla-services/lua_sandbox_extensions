@@ -33,7 +33,7 @@ local function hex2integer(s)
 end
 
 local rule_number                   = integer("rule_number")
-local sub_rule_number               = integer("sub_rule_number")
+local sub_rule_number               = integer("sub_rule_number")^-1
 local anchor                        = text("anchor")
 local tracker                       = integer("tracker")
 local real_interface                = text("real_interface")
@@ -55,7 +55,7 @@ local ip4                           = tos * "," * ecn * "," * ttl * "," * id * "
 local class                         = l.Cg((l.P"0x" * l.xdigit^1), "class")
 local flow_label                    = text("flow_label")
 local hop_limit                     = integer("hop_limit")
-local ip6                           = class * "," * flow_label * "," * hop_limit * "," * protocol_text * "," * protocol_id 
+local ip6                           = class * "," * flow_label * "," * hop_limit * "," * protocol_text * "," * protocol_id
 
 local length                        = integer("length")
 local source_address                = l.Cg(ip.v4 + ip.v6, "source_address")
@@ -85,7 +85,7 @@ local icmp_data                     = icmp_type * "," * (echo_data + unreachprot
 
 local carp_data                     = text("carp_type") * "," * integer("carp_ttl") * "," * integer("vhid") * "," * integer("version") * "," * integer("advbase") * "," * integer("advskew")
 
-local protocol_specific_data        = tcp_data + udp_data + icmp_data + carp_data 
+local protocol_specific_data        = tcp_data + udp_data + icmp_data + carp_data
 local ip_specific_data              = (ip4 + ip6) * "," * ip_data * (l.P"," * protocol_specific_data)^-1
 
 syslog_grammar = l.Ct(rule_number * "," * sub_rule_number * "," * anchor * "," * tracker * "," * real_interface * "," * reason * "," * action * "," * direction * "," * ip_version * (l.P"," * ip_specific_data)^-1)

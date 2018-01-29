@@ -47,15 +47,18 @@ end
 local send_decode_failures  = read_config("send_decode_failures")
 
 local err_msg = {
-    Type    = "error",
+    Type    = "error.decode",
     Payload = nil,
+    Fields  = {
+        data = nil
+    }
 }
 
 function process_message(checkpoint)
     local fh = io.stdin
     if input_filename then
         fh = assert(io.open(input_filename, "rb")) -- closed on plugin shutdown
-        if checkpoint then 
+        if checkpoint then
             fh:seek("set", checkpoint)
         else
             checkpoint = 0
@@ -67,6 +70,7 @@ function process_message(checkpoint)
         local ok, err = pcall(decode, data, default_headers)
         if (not ok or err) and send_decode_failures then
             err_msg.Payload = err
+            err_msg.Fields.data = data
             pcall(inject_message, err_msg)
         end
 
