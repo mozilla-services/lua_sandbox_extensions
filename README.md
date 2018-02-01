@@ -83,10 +83,14 @@ inject one or more Heka messages into the system.
 *Arguments*
 - data (string) - Raw data from the input sandbox that needs
   parsing/decoding/transforming
-- default_headers (optional table) - Heka message table containing the default
+- default_headers (table/nil/none) - Heka message table containing the default
   header values to use, if they are not populated by the decoder. If 'Fields'
   is specified it should be in the hashed based format see:
-  http://mozilla-services.github.io/lua_sandbox/heka/message.html
+  http://mozilla-services.github.io/lua_sandbox/heka/message.html. In the case
+  of multiple decoders this may be the message from the previous input/decoding
+  step.
+- mutable (bool/nil/none) - Flag indicating if the decoder can modify the
+  default_headers/msg structure in place or if it has to be copied first.
 
 *Return*
 - err (nil, string) or throws an error on invalid data or an inject message

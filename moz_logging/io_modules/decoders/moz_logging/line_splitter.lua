@@ -12,7 +12,8 @@ into multiple messages.
 
 ```lua
 decoders_line_splitter = {
-  sub_decoder = Decoder module name or grammar module name
+  -- printf_messages (table/nil) see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html
+  -- sub_decoder (string/table) see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
 }
 ```
 
@@ -23,15 +24,19 @@ decoders_line_splitter = {
 Decode and inject the resulting message
 
 *Arguments*
-- data (string) - JSON messages, one per line, with a Heka schema
-- default_headers (optional table) - Heka message table containing the default
+- data (string) - one or more new line delimited log messages
+- default_headers (table/nil/none) - Heka message table containing the default
   header values to use, if they are not populated by the decoder. If 'Fields'
   is specified it should be in the hashed based format see:
-  http://mozilla-services.github.io/lua_sandbox/heka/message.html
+  http://mozilla-services.github.io/lua_sandbox/heka/message.html. In the case
+  of multiple decoders this may be the message from the previous input/decoding
+  step.
 
 *Return*
-- nil - throws an error on an invalid data type, JSON parse error,
-  inject_message failure etc.
+- err (nil, string) or throws an error on invalid data or an inject message
+  failure
+    - nil - if the decode was successful
+    - string - error message if the decode failed (e.g. no match)
 
 --]]
 
@@ -39,11 +44,11 @@ Decode and inject the resulting message
 local module_name   = ...
 local module_cfg    = require "string".gsub(module_name, "%.", "_")
 local cfg = read_config(module_cfg) or {}
-assert(type(cfg.sub_decoder) == "string", "sub_decoder must be set")
 
-local string    = require "string"
-local sd_module = require(cfg.sub_decoder)
+local sdu           = require "lpeg.sub_decoder_util"
+local sub_decoder   = sdu.load_sub_decoder(cfg.sub_decoder, cfg.printf_messages)
 
+local string = string
 local assert = assert
 local pairs  = pairs
 local pcall  = pcall
@@ -55,40 +60,6 @@ local read_config    = read_config
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
-local msg = {}
-
-local sub_decoder
-if cfg.sub_decoder:match("^decoders%.") then
-    sub_decoder = sd_module.decode
-    assert(type(sub_decoder) == "function", "sub_decoders, no decode function defined")
-else
-    local grammar = sd_module.grammar or sd_module.syslog_grammar
-    assert(type(grammar) == "userdata", "sub_decoders, no grammar defined")
-    sub_decoder = function(data, dh)
-        msg.Fields = grammar:match(data)
-        if not msg.Fields then return "parse failed" end
-        if dh then
-            msg.Uuid        = dh.Uuid
-            msg.Logger      = dh.Logger
-            msg.Hostname    = dh.Hostname
-            msg.Timestamp   = dh.Timestamp
-            msg.Type        = dh.Type
-            msg.Payload     = dh.Payload
-            msg.EnvVersion  = dh.EnvVersion
-            msg.Pid         = dh.Pid
-            msg.Severity    = dh.Severity
-            if type(dh.Fields) == "table" then
-                for k,v in pairs(dh.Fields) do
-                    if msg.Fields[k] == nil then
-                        msg.Fields[k] = v
-                    end
-                end
-            end
-        end
-        inject_message(msg)
-    end
-end
-
 local err_msg = {
     Logger  = read_config("Logger"),
     Type    = "error",
@@ -98,9 +69,12 @@ local err_msg = {
     }
 }
 
+
 function decode(data, dh)
      for line in string.gmatch(data, "([^\n]+)\n*") do
-         local err = sub_decoder(line, dh)
+         local msg = sdu.copy_message(dh, false)
+         msg.Payload = line
+         local err = sub_decoder(line, msg, true)
          if err then
              err_msg.Payload = err
              err_msg.Fields.data = line

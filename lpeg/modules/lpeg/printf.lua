@@ -30,6 +30,17 @@ Compile the provide list of printf_messages into the grammars table.
 
 *Arguments*
 - printf_messages (array) - array of printf message specifications to be compiled into grammars
+```lua
+printf_messages = {
+ -- array (string and/or array) the order specified here is the load and evaluation order.
+   -- string: name of a module containing a `printf_messages` array to import
+   -- array: creates an on the fly grammar using a printf format specifications.
+     -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html
+
+ {"%s:%lu: invalid line", "path", "linenum"},
+ "lpeg.openssh_portable", -- must export a `printf_messages` array
+}
+```
 - grammars (array/nil) - optional existing grammar array to append to
 - grammars_size (number/nil) - number of items in the array
 - module (string/nil) - identifer to help locate errors in nested includes
