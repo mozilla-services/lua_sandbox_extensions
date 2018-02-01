@@ -80,7 +80,7 @@ Copies a message for use in decoder/subdecoder
 *Arguments*
 * src (table) Heka message table. This is a shallow copy of the individual
   values in the Fields hash and assumes they will be replaced as opposed to
-  modififed when they are tables. The main use of this function is to populate
+  modified when they are tables. The main use of this function is to populate
   a new message with defaults.
 * mutable (bool/nil/none)
 
