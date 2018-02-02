@@ -130,6 +130,9 @@ function process_message()
         id = string.match(id, id_fieldc)
         if not id then return 0 end -- no error as the capture may intentionally reject entries
     end
+    if id == "-" then
+        return 0
+    end
 
     sampler:add(id)
     sampler:calc()
