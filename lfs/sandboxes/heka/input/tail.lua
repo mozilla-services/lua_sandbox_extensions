@@ -14,8 +14,14 @@ filename = "tail.lua"
 ticker_interval = 1 -- poll once a second after hitting EOF
 
 -- Name of the input file
-input_filename = /var/log/text.log
+input_filename = "/var/log/text.log"
 
+-- Multi-line log support
+-- delimiter = "^# User@Host:" -- optional if anchored at the beginning of the line it is treated as
+                               -- a start of record delimiter and the line belongs to the next log
+                               -- otherwise it is an end of record delimiter and the line belongs to
+                               -- the current log. "^$" is special cased and is treated as an end of
+                               -- line delimiter.
 -- Consumes appended data as the file grows
 -- Default:
 -- follow = "descriptor" -- use "name" for rotated logs
@@ -26,7 +32,11 @@ input_filename = /var/log/text.log
 -- Default:
 -- default_headers = nil
 
+-- printf_messages = -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html
+
 -- Specifies a module that will decode the raw data and inject the resulting message.
+-- Supports the same syntax as an individual sub decoder
+-- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
 -- Default:
 -- decoder_module = "decoders.payload"
 
@@ -37,6 +47,9 @@ input_filename = /var/log/text.log
 ```
 --]]
 require "io"
+require "string"
+local sdu       = require "lpeg.sub_decoder_util"
+local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.payload", read_config("printf_messages"))
 
 local input_filename  = read_config("input_filename") or error("input_filename is required")
 local follow = read_config("follow") or "descriptor"
@@ -45,27 +58,89 @@ assert(follow == "descriptor" or follow == "name", "invalid follow cfg")
 local default_headers = read_config("default_headers")
 assert(default_headers == nil or type(default_headers) == "table", "invalid default_headers cfg")
 
-local decoder_module  = read_config("decoder_module") or "decoders.payload"
-local decode          = require(decoder_module).decode
-if not decode then
-    error(decoder_module .. " does not provide a decode function")
-end
 local send_decode_failures  = read_config("send_decode_failures")
+local delimiter = read_config("delimiter")
 
 local err_msg = {
-    Type    = "error",
+    Type    = "error.decode",
     Payload = nil,
+    Fields  = {
+        data = nil
+    }
 }
 
-local function read_until_eof(fh, checkpoint)
-    for data in fh:lines() do
-        local ok, err = pcall(decode, data, default_headers)
+local read_until_eof
+local function flush_remaining() return end
+if delimiter then
+    local concat = require "table".concat
+    local start_delimiter = delimiter:match("^^") and delimiter ~= "^$"
+    local buffer
+    local buffer_idx
+    local buffer_size
+
+    local function reset_buffer()
+        buffer            = {}
+        buffer_idx        = 0
+        buffer_size       = 0
+    end
+    reset_buffer()
+
+    function read_until_eof(fh, checkpoint)
+        for data in fh:lines() do
+            if data:match(delimiter) then
+                if not start_delimiter then
+                    buffer_idx = buffer_idx + 1
+                    buffer[buffer_idx] = data
+                    buffer_size = buffer_size + #data + 1
+                end
+
+                local line = concat(buffer, "\n")
+                local ok, err = pcall(decode, line, default_headers)
+                if (not ok or err) and send_decode_failures then
+                    err_msg.Payload = err
+                    err_msg.Fields.data = line
+                    pcall(inject_message, err_msg)
+                end
+                checkpoint = checkpoint + buffer_size
+                inject_message(nil, checkpoint)
+                reset_buffer()
+
+                if start_delimiter then
+                    buffer_idx = 1
+                    buffer[buffer_idx] = data
+                    buffer_size = #data + 1
+                end
+            else
+                buffer_idx = buffer_idx + 1
+                buffer[buffer_idx] = data
+                buffer_size = buffer_size + #data + 1
+            end
+        end
+    end
+
+    function flush_remaining()
+        if buffer_idx == 0 then return end
+        local line = concat(buffer, "\n")
+        local ok, err = pcall(decode, line, default_headers)
         if (not ok or err) and send_decode_failures then
             err_msg.Payload = err
+            err_msg.Fields.data = line
             pcall(inject_message, err_msg)
         end
-        checkpoint = checkpoint + #data + 1
-        inject_message(nil, checkpoint)
+        reset_buffer()
+    end
+
+else
+    function read_until_eof(fh, checkpoint)
+        for data in fh:lines() do
+            local ok, err = pcall(decode, data, default_headers)
+            if (not ok or err) and send_decode_failures then
+                err_msg.Payload = err
+                pcall(inject_message, err_msg)
+            end
+            checkpoint = checkpoint + #data + 1
+            inject_message(nil, checkpoint)
+        end
     end
 end
 
@@ -97,6 +172,7 @@ local function follow_name(fh, checkpoint)
         read_until_eof(fh, checkpoint)
         local tinode = get_inode()
         if inode ~= tinode then
+            flush_remaining()
             inode = tinode
             checkpoint = 0
             inject_message(nil, checkpoint)

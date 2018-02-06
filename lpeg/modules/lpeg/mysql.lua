@@ -48,12 +48,12 @@ local use_db        = l.P"use " * line
 
 local last_insert   = l.P"last_insert_id=" * l.Cg(integer, "Last_insert") * ","
 local insert        = l.P"insert_id=" * l.Cg(integer, "Insert_id") * ","
-local timestamp     = l.P"timestamp=" * l.Cg((l.digit^1 / "%0000000000"), "Timestamp")
+local timestamp     = l.P"timestamp=" * l.Cg((l.digit^1 / "%0000000000"), "timestamp")
 local set           = l.P"SET " * last_insert^0 * insert^0 * timestamp * ";" * sep
 
 local admin         = l.P"# administrator command: " * line
 
-local sql           = l.Cg((l.P(1) - sql_end)^0 * sql_end, "Payload")
+local sql           = l.Cg((l.P(1) - sql_end)^0 * sql_end, "sql")
 
 -- Maria DB extensions
 local yes_no        = l.C(l.P"Yes" + "No")
@@ -119,11 +119,11 @@ local innodb_usage     = "#   InnoDB_IO_r_ops: " * l.Cg(integer, "InnoDB_IO_r_op
                        * l.Cg(l.Cc"s", "representation")), "InnoDB_queue_wait") * sep
                        * "#   InnoDB_pages_distinct: " * l.Cg(integer, "InnoDB_pages_distinct") * sep
 
-slow_query_grammar          = l.Ct(time^0 * user * l.Cg(l.Ct(query), "Fields") * use_db^0 * set * admin^0 * sql)
-mariadb_slow_query_grammar  = l.Ct(time^0 * user * l.Cg(l.Ct(thread_id * query * full_scan^0), "Fields") * use_db^0 * set * admin^0 * sql)
-percona_slow_query_grammar  = l.Ct(time^0 * percona_user * l.Cg(l.Ct(conn_id^0 * info^0 * percona_query * memory_footprint^0 * stored_routine^0 * query_plan_info^0 * innodb_usage^0), "Fields") * use_db^0 * set * admin^0 * sql)
+slow_query_grammar          = l.Ct(time^0 * user * query * use_db^0 * set * admin^0 * sql)
+mariadb_slow_query_grammar  = l.Ct(time^0 * user * thread_id * query * full_scan^0 * use_db^0 * set * admin^0 * sql)
+percona_slow_query_grammar  = l.Ct(time^0 * percona_user * conn_id^0 * info^0 * percona_query * memory_footprint^0 * stored_routine^0 * query_plan_info^0 * innodb_usage^0 * use_db^0 * set * admin^0 * sql)
 
-short_slow_query_grammar         = l.Ct(l.Cg(l.Ct(query), "Fields") * use_db^0 * set * admin^0 * sql)
-mariadb_short_slow_query_grammar = l.Ct(l.Cg(l.Ct(thread_id * query * full_scan^0), "Fields") * use_db^0 * set * admin^0 * sql)
+short_slow_query_grammar         = l.Ct(query * use_db^0 * set * admin^0 * sql)
+mariadb_short_slow_query_grammar = l.Ct(thread_id * query * full_scan^0 * use_db^0 * set * admin^0 * sql)
 
 return M
