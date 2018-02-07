@@ -15,12 +15,15 @@ message_matcher = "Type == 'logging.shared.bastion.systemd.sshd' && Fields[sshd_
 ticker_interval = 0
 process_message_inject_limit = 1
 
--- default_email = "foxsec-dump+OutOfHours@mozilla.com"
+-- default_email = "foxsec-dump+OutOfHours@mozilla.com" -- Optional, default email always gets alert
+-- only_default_email = false -- Optional, if true alert will not include user manatee address
 ```
 --]]
 require "string"
 
 local default_email = read_config("default_email") or "foxsec-dump+OutOfHours@mozilla.com"
+local only_default = read_config("only_default_email")
+
 local msg = {
     Type = "alert",
     Payload = "",
@@ -43,7 +46,9 @@ function process_message()
     if city and country then
         msg.Fields[2].value = msg.Fields[2].value .. string.format(" (%s, %s)", city, country)
     end
-    msg.Fields[3].value[2] = string.format("<manatee-%s@moz-svc-ops.pagerduty.com>", user)
+    if not only_default then
+        msg.Fields[3].value[2] = string.format("<manatee-%s@moz-svc-ops.pagerduty.com>", user)
+    end
     inject_message(msg)
     return 0
 end

@@ -16,7 +16,7 @@ geo = require "geoip.heka"
 
 local msg = {
     Timestamp = nil,
-    Logger = "input.syslog",
+    Logger = read_config("logger"),
     Fields = {
         programname         = "sshd",
         authmsg             = "Accepted",
