@@ -9,7 +9,8 @@ require "string"
 #  Logfile output rolled by size
 
 Outputs decoded data stream rolling the log file every time it reaches the
-`roll_size`.
+`roll_size`. Current filename is incremented.
+If you need the usual logrotate behavior (old filenames are incremented and the last is purged), use logfile_rotate.lua instead.
 
 ## Sample Configuration
 ```lua
