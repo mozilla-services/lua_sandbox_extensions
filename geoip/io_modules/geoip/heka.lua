@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Heka Message Extensions with GeoIP information
+# Heka Message Extensions with GeoIP Information
 
 This module is intended to be used with another IO module such as a decoder to
 extend the message with GeoIP information prior to injection.
@@ -35,6 +35,7 @@ message named "remote_addr_city" with the resulting city value.
 geoip_heka = {
     city_db_file = "/path/to/geo/dat", -- path to GeoIP data
     lookup = { city = "_city", country_code = "_country" }, -- entries to lookup and their field suffix
+    remove_original_field = false, -- remove the original field after a successful lookup
 
     test = false, -- true if being used in tests without GeoIP database
 }

@@ -81,6 +81,7 @@ function new_message(hsr, uri)
     -- migrate geo if it is already available (i.e., backfill)
     fields.geoCountry = hsr:read_message("Fields[geoCountry]")
     fields.geoCity    = hsr:read_message("Fields[geoCity]")
+    fields.geoISP     = hsr:read_message("Fields[geoISP]")
 
     return {
         Timestamp = hsr:read_message("Timestamp"),

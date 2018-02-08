@@ -20,7 +20,10 @@ decoders_moz_ingest_common = {
     -- error_on_missing_sub_decoder = false, -- optional
 
     -- String used to specify GeoIP city database location on disk.
-    city_db_file = "/usr/share/geoip/city.db", -- optional, if not specified no geoip lookup is performed
+    city_db_file = "/usr/share/geoip/GeoIP2-City.mmdb", -- optional, if not specified no city/country geoip lookup is performed
+
+    isp_db_file = "/usr/share/geoip/GeoIP2-ISP.mmdb", -- optional
+    isp_docTypes = {"customStudy" = true} -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined
 
     -- WARNING if the cuckoo filter settings are altered the plugin's
     -- `preservation_version` should be incremented
@@ -80,8 +83,9 @@ local decode_message       = decode_message
 local inject_message       = inject_message
 
 local sub_decoders  = {}
-local geoip
+local maxminddb
 local city_db
+local isp_db
 local dedupe
 local duplicateDelta
 
@@ -113,8 +117,16 @@ local function load_decoder_cfg()
     end
 
     if cfg.city_db_file then
-        geoip = require "geoip.city"
-        city_db = assert(geoip.open(cfg.city_db_file))
+        maxminddb = require "maxminddb"
+        city_db = assert(maxminddb.open(cfg.city_db_file))
+    end
+
+    if cfg.isp_db_file then
+        maxminddb = require "maxminddb"
+        isp_db = assert(maxminddb.open(cfg.isp_db_file))
+        assert(type(cfg.isp_docTypes) == "table", "isp_docTypes table must be set")
+    else
+        assert(cfg.isp_docTypes == nil, "isp_docTypes cannot be defined without isp_db_file")
     end
 
     local sd_cnt = 0
@@ -150,28 +162,42 @@ local UNK_GEO = "??"
 -- Track the hour to facilitate reopening city_db hourly.
 local hour = floor(os.time() / 3600)
 
-local function get_geo_field(xff, remote_addr, field_name, default_value)
-    local geo
-    if xff then
-        local first_addr = string.match(xff, "([^, ]+)")
-        if first_addr then
-            geo = city_db:query_by_addr(first_addr, field_name)
-        end
+local function get_ip(db, xff, remote_addr)
+    local ok, ip = pcall(db.lookup, db, xff)
+    if not ok then
+        ip = db:lookup(remote_addr)
     end
-    if geo then return geo end
-    if remote_addr then
-        geo = city_db:query_by_addr(remote_addr, field_name)
-    end
-    return geo or default_value
-end
-
-local function get_geo_country(xff, remote_addr)
-    return get_geo_field(xff, remote_addr, "country_code", UNK_GEO)
+    return ip
 end
 
 local function get_geo_city(xff, remote_addr)
-    return get_geo_field(xff, remote_addr, "city", UNK_GEO)
+    local city = UNK_GEO
+    local country = UNK_GEO
+
+    local ok, ip = pcall(get_ip, city_db, xff, remote_addr)
+    if not ok then return city, country end
+
+    ok, city = pcall(ip.get, ip, "city", "names", "en")
+    if not ok then city = UNK_GEO end
+
+    ok, country = pcall(ip.get, ip, "country", "iso_code")
+    if not ok then country = UNK_GEO end
+
+    return city, country
 end
+
+local function get_geo_isp(xff, remote_addr)
+    local isp = UNK_GEO
+
+    local ok, ip = pcall(get_ip, isp_db, xff, remote_addr)
+    if not ok then return isp end
+
+    ok, isp = pcall(ip.get, ip, "isp")
+    if not ok then isp = UNK_GEO end
+
+    return isp
+end
+
 
 --[[
 Read the raw message, annotate it with our error information, and attempt to inject it.
@@ -242,19 +268,25 @@ function transform_message(hsr, msg)
         end
     end
 
-    if geoip and not msg.Fields.geoCountry then
-        -- reopen city_db once an hour
+    if maxminddb then
+        -- reopen the geoip databases once an hour
         local current_hour = floor(os.time() / 3600)
         if current_hour > hour then
-            city_db:close()
-            city_db = assert(geoip.open(cfg.city_db_file))
+            if cfg.city_db_file then
+                city_db = assert(maxminddb.open(cfg.city_db_file))
+            end
+            if cfg.isp_db_file then
+                isp_db = assert(maxminddb.open(cfg.isp_db_file))
+            end
             hour = current_hour
         end
 
         local xff = hsr:read_message("Fields[X-Forwarded-For]")
         local remote_addr = hsr:read_message("Fields[remote_addr]")
-        msg.Fields.geoCountry = get_geo_country(xff, remote_addr)
-        msg.Fields.geoCity = get_geo_city(xff, remote_addr)
+        msg.Fields.geoCity, msg.Fields.geoCountry = get_geo_city(xff, remote_addr)
+        if cfg.isp_docTypes and cfg.isp_docTypes[msg.Fields.docType] then
+            msg.Fields.geoISP = get_geo_isp(xff, remote_addr)
+        end
     end
 
     if dedupe and msg.Fields.documentId then
