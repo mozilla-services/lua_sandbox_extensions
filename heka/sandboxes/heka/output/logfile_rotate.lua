@@ -60,8 +60,7 @@ function process_message()
         fh = nil
 
         -- rotate files
-        local file_num = rotate_retention
-        while file_num > 0 do
+        for file_num = rotate_retention, 1, -1 do
 
             local fn_newer = string.format("%s.%d", fn, file_num - 1)
             if file_num == 1 then -- newer file has never been rotated, so has no suffix
@@ -70,12 +69,9 @@ function process_message()
             local fn_older = string.format("%s.%d", fn, file_num)
 
             -- Apply retention policy (remove older file)
+            -- (do not perform any check, the file can be missing)
             if file_num == rotate_retention then
-                local fh_older, err = io.open(fn_older, "r")
-                if fh_older then
-                    fh_older:close()
-                    os.remove(fn_older)
-                end
+                os.remove(fn_older)
             end
 
             -- Rename file if exist
@@ -83,10 +79,9 @@ function process_message()
             if fh_newer then
                 fh_newer:close()
                 local ok, err = os.rename(fn_newer, fn_older)
-                if err then return -1, err end
+                if err then return 1, err end -- Something goes wrong, return fatal error
             end
 
-            file_num = file_num - 1
         end
 
     end
