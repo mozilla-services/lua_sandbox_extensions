@@ -116,6 +116,8 @@ WHERE id = 10;
 }
 
 local fields = {
+    {"timestamp", "1399500744000000000"},
+    {"sql", "/* [queryName=FIND_ITEMS] */ SELECT *\nFROM widget\nWHERE id = 10;\n"},
     {"Query_time", 2.964652, "s"},
     {"Rows_examined", 9773},
     {"Lock_time", 0.000050, "s"},
@@ -123,6 +125,8 @@ local fields = {
 }
 
 local mariadb_fields = {
+    {"timestamp", "1399500744000000000"},
+    {"sql", "/* [queryName=FIND_ITEMS] */ SELECT *\nFROM widget\nWHERE id = 10;\n"},
     {"Query_time", 1.178108, "s"},
     {"Rows_examined", 198},
     {"Lock_time", 0.000053, "s"},
@@ -133,6 +137,8 @@ local mariadb_fields = {
 }
 
 local mariadb_verbose_fields = {
+    {"timestamp", "1399500744000000000"},
+    {"sql", "/* [queryName=FIND_ITEMS] */ SELECT *\nFROM widget\nWHERE id = 10;\n"},
     {"Query_time", 1.178108, "s"},
     {"Rows_examined", 198},
     {"Lock_time", 0.000053, "s"},
@@ -150,6 +156,8 @@ local mariadb_verbose_fields = {
 }
 
 local percona_fields = {
+    {"timestamp", "1399500744000000000"},
+    {"sql", "/* [queryName=FIND_ITEMS] */ SELECT *\nFROM widget\nWHERE id = 10;\n"},
     {"Schema", "imdb"},
     {"Last_errno", 0},
     {"Killed", 0},
@@ -173,6 +181,8 @@ local percona_fields = {
 }
 
 local percona_verbose_fields = {
+    {"timestamp", "1399500744000000000"},
+    {"sql", "/* [queryName=FIND_ITEMS] */ SELECT *\nFROM widget\nWHERE id = 10;\n"},
     {"Schema", "imdb"},
     {"Last_errno", 0},
     {"Killed", 0},
@@ -203,20 +213,18 @@ local percona_verbose_fields = {
 }
 
 local function validate(fields, t)
-    if t.Timestamp ~= "1399500744000000000" then return error("Timestamp:" .. t.Timestamp) end
-    if t.Payload ~= "/* [queryName=FIND_ITEMS] */ SELECT *\nFROM widget\nWHERE id = 10;\n" then return error("Payload:" .. t.Payload) end
     for i, v in ipairs(fields) do
         if #v == 3 then
-            if t.Fields[v[1]].value ~= v[2] or t.Fields[v[1]].representation ~= v[3] then
+            if t[v[1]].value ~= v[2] or t[v[1]].representation ~= v[3] then
                 if type(v[2]) == "string" then
-                    return error(string.format("field:%s: %s (%s)", v[1], t.Fields[v[1]].value, t.Fields[v[1]].representation), 2)
+                    return error(string.format("field:%s: %s (%s)", v[1], t[v[1]].value, t[v[1]].representation), 2)
                 else
-                    return error(string.format("field:%s: %G (%s)", v[1], t.Fields[v[1]].value, t.Fields[v[1]].representation), 2)
+                    return error(string.format("field:%s: %G (%s)", v[1], t[v[1]].value, t[v[1]].representation), 2)
                 end
             end
         else
             print("Output:" .. v[1])
-            if t.Fields[v[1]] ~= v[2] then return error(string.format("field:%s:", v[1]) .. t.Fields[v[1]], 2) end
+            if t[v[1]] ~= v[2] then return error(string.format("field:%s:", v[1]) .. t[v[1]], 2) end
         end
     end
 end
