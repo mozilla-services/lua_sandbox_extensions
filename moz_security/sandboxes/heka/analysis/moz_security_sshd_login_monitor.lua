@@ -13,12 +13,13 @@ If user_email is specified in the configuration, alerts will also be sent to thi
 address. User email should be a string containing a %s format specifier which is
 replaced with the username of the account which logged in.
 
-The acceptable_message_delay parameter indicates an age in seconds. If a new event
-is received and the timestamp is older than current time - acceptable_message_delay,
-instead of handling the alert normally the alert will be submitted to delay_email,
-with an indication that events are being consumed with abnormal timestamp fields.
+The acceptable_message_drift parameter indicates an age in seconds. If a new event
+is received and the timestamp is older than current time - acceptable_message_drift,
+or newer than the current time + acceptable_message_drift, then instead of handling
+the alert normally the alert will be submitted to drift_email with an indication
+that events are being consumed with abnormal timestamp fields.
 
-If delay_email is not set, delayed messages will just be ignored.
+If drift_email is not set, excessively new or old messages will just be ignored.
 
 This analysis plugin makes assumptions events will be received in a timely manner
 under normal circumstances.
@@ -32,8 +33,8 @@ process_message_inject_limit = 1
 
 default_email = "foxsec-dump+OutOfHours@mozilla.com" -- required
 -- user_email = "manatee-%s@moz-svc-ops.pagerduty.com" -- optional user specific email address
--- delay_email = "captainkirk@mozilla.com" -- optional delayed message notification
--- acceptable_message_delay = 600 -- optional, defaults to 600 seconds if not specified
+-- drift_email = "captainkirk@mozilla.com" -- optional drift message notification
+-- acceptable_message_drift = 600 -- optional, defaults to 600 seconds if not specified
 ```
 --]]
 --
@@ -43,8 +44,8 @@ require "os"
 
 local default_email            = read_config("default_email") or error("default_email must be configured")
 local user_email               = read_config("user_email")
-local delay_email              = read_config("delay_email")
-local acceptable_message_delay = read_config("acceptable_message_delay") or 600
+local drift_email              = read_config("drift_email")
+local acceptable_message_drift = read_config("acceptable_message_drift") or 600
 local cephost                  = read_config("Hostname") or "unknown"
 
 local msg = {
@@ -85,14 +86,14 @@ function process_message()
         msg.Fields[3].value[2] = string.format(string.format("<%s>", user_email), user)
     end
 
-    -- finally, if the message is delayed modify the recipient address and add some additional
+    -- finally, if the message has time drift modify the recipient address and add some additional
     -- information to the payload
-    local delaysec = os.time() - tss
-    if delaysec > acceptable_message_delay then
-        if not delay_email then return -1, "dropping delayed event" end
-        msg.Fields[3].value[1] = string.format("<%s>", delay_email)
+    local delaysec = math.abs(os.time() - tss)
+    if delaysec > acceptable_message_drift then
+        if not drift_email then return -1, "dropping event with time drift" end
+        msg.Fields[3].value[1] = string.format("<%s>", drift_email)
         msg.Fields[3].value[2] = nil
-        msg.Payload = msg.Payload .. string.format("WARNING: message has unacceptable delay %d seconds\n", delaysec)
+        msg.Payload = msg.Payload .. string.format("WARNING: message has unacceptable drift %d seconds\n", delaysec)
     end
 
     inject_message(msg)
