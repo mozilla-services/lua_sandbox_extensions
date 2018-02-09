@@ -66,9 +66,6 @@ function process_message()
     local city    = read_message("Fields[ssh_remote_ipaddr_city]")
     local country = read_message("Fields[ssh_remote_ipaddr_country]")
 
-    if not ts then
-        return -1, "event had no timestamp"
-    end
     local tss = math.floor(ts / 1e9)
 
     -- first, adjust the message for the default case
