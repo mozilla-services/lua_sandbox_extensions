@@ -10,7 +10,7 @@
 filename            = "udp.lua"
 instruction_limit   = 0
 
--- address (string) - An IP address (* for all interfaces), or a path to a UNIX 
+-- address (string) - An IP address (* for all interfaces), or a path to a UNIX
 -- socket.
 -- Default:
 -- address = "127.0.0.1"
@@ -26,7 +26,11 @@ instruction_limit   = 0
 -- Default:
 -- default_headers = nil
 
--- Specify a module that will decode the raw data and inject the resulting message.
+-- printf_messages = -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html
+
+-- Specifies a module that will decode the raw data and inject the resulting message.
+-- Supports the same syntax as an individual sub decoder
+-- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
 -- Default:
 -- decoder_module = "decoders.heka.protobuf"
 
@@ -40,18 +44,14 @@ instruction_limit   = 0
 ```
 --]]
 local socket = require "socket"
+local sdu       = require "lpeg.sub_decoder_util"
+local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.protobuf", read_config("printf_messages"))
 
 local address               = read_config("address") or "127.0.0.1"
 local is_unixsock           = address:sub(1,1) == "/"
 local port                  = read_config("port") or 514
 local default_headers       = read_config("default_headers")
 assert(default_headers == nil or type(default_headers) == "table", "invalid default_headers cfg")
-
-local decoder_module = read_config("decoder_module") or "decoders.heka.protobuf"
-local decode = require(decoder_module).decode
-if not decode then
-    error(decoder_module .. " does not provide a decode function")
-end
 local send_decode_failures = read_config("send_decode_failures")
 
 local err_msg = {
@@ -94,7 +94,7 @@ function process_message()
                 err_msg.Type = "error.decode"
                 err_msg.Payload = err
                 err_msg.Fields.data = data
-                if not is_unixsock then 
+                if not is_unixsock then
                     err_msg.Fields.sender_ip = remote
                     -- port is already set in the shared table
                 end

@@ -3,8 +3,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.5)
-project(aws VERSION 0.0.2 LANGUAGES C CXX)
+project(aws VERSION 0.0.3 LANGUAGES C CXX)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AWS Lua Modules")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox-lpeg (>= 1.0.9)")
+string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 
 find_package(aws-cpp-sdk-core 1.1.46 REQUIRED CONFIG)
 find_package(aws-cpp-sdk-kinesis 1.1.46 REQUIRED CONFIG)
