@@ -68,12 +68,6 @@ function process_message()
             end
             local fn_older = string.format("%s.%d", fn, file_num)
 
-            -- Apply retention policy (remove older file)
-            -- (do not perform any check, the file can be missing)
-            if file_num == rotate_retention then
-                os.remove(fn_older)
-            end
-
             -- Rename file if exist
             local fh_newer, err = io.open(fn_newer, "r")
             if fh_newer then

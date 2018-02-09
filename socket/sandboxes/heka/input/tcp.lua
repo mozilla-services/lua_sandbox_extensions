@@ -52,16 +52,13 @@ require "coroutine"
 local socket = require "socket"
 require "string"
 require "table"
+local sdu       = require "lpeg.sub_decoder_util"
+local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.protobuf", read_config("printf_messages"))
 
 local address           = read_config("address") or "127.0.0.1"
 local port              = read_config("port") or 5566
 local default_headers   = read_config("default_headers") or {}
 assert(type(default_headers) == "table", "invalid default_headers cfg")
-local decoder_module    = read_config("decoder_module") or "decoders.payload"
-local decode            = require(decoder_module).decode
-if not decode then
-    error(decoder_module .. " does not provide a decode function")
-end
 local send_decode_failures  = read_config("send_decode_failures")
 local ssl_params = read_config("ssl_params")
 
@@ -79,8 +76,11 @@ local sockets = {server}
 local is_running = is_running
 
 local err_msg = {
-    Type    = "error",
+    Type    = "error.decode",
     Payload = nil,
+    Fields  = {
+        data = nil
+    }
 }
 
 local function handle_client(client, caddr, cport)
@@ -104,6 +104,7 @@ local function handle_client(client, caddr, cport)
             local ok, err1 = pcall(decode, buf, default_headers)
             if (not ok or err1) and send_decode_failures then
                 err_msg.Payload = err1
+                err_msg.Fields.data = data
                 pcall(inject_message, err_msg)
             end
         end
