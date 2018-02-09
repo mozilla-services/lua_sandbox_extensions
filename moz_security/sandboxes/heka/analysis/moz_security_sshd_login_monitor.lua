@@ -26,7 +26,7 @@ under normal circumstances.
 ## Sample Configuration
 ```lua
 filename = "moz_security_sshd_login_monitor.lua"
-message_matcher = "Type ~= 'logging.*bastion.file.sshd' && Fields[sshd_authmsg] == 'Accepted'"
+message_matcher = "Type ~= 'bastion.file.sshd'% && Fields[sshd_authmsg] == 'Accepted'"
 ticker_interval = 0
 process_message_inject_limit = 1
 
