@@ -5,7 +5,10 @@
 -- Copyright 2015 Mathieu Parent <math.parent@gmail.com>
 
 --[[
-# Linux sshd Grammar Module
+# [DEPRECATED] Linux sshd Grammar Module
+
+These grammars have been migrated to the new printf specification in
+openssh_portable.lua.
 
 ## Variables
 ### LPEG Grammars
