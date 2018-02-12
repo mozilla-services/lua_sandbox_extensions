@@ -16,10 +16,8 @@ assert(loadfile"linux/login.lua")()
 assert(loadfile"linux/named.lua")()
 assert(loadfile"linux/pam.lua")()
 assert(loadfile"linux/puppet_agent.lua")()
-assert(loadfile"linux/sshd.lua")()
+assert(loadfile"linux/sshd.lua")() -- todo deprecate
 assert(loadfile"linux/su.lua")()
 assert(loadfile"linux/sudo.lua")()
 assert(loadfile"linux/systemd_logind.lua")()
 assert(loadfile"linux/useradd.lua")()
-
-assert(loadfile"syslog_message.lua")() -- todo deprecate

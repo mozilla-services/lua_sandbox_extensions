@@ -35,13 +35,19 @@ topic_conf = {
 -- Default:
 -- default_headers = nil
 
--- Specify a module that will decode the raw data and inject the resulting message.
+-- printf_messages = -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html
+
+-- Specifies a module that will decode the raw data and inject the resulting message.
+-- Supports the same syntax as an individual sub decoder
+-- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
 -- Default:
 -- decoder_module = "decoders.heka.protobuf"
 ```
 --]]
 
 require "kafka"
+local sdu       = require "lpeg.sub_decoder_util"
+local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.protobuf", read_config("printf_messages"))
 
 local brokerlist      = read_config("brokerlist") or error("brokerlist must be set")
 local topics          = read_config("topics") or error("topics must be set")
@@ -49,19 +55,16 @@ local consumer_conf   = read_config("consumer_conf")
 local topic_conf      = read_config("topic_conf")
 local default_headers = read_config("default_headers") or {}
 assert(type(default_headers) == "table", "invalid default_headers cfg")
-local decoder_module  = read_config("decoder_module") or "decoders.heka.protobuf"
-local decode          = require(decoder_module).decode
-if not decode then
-    error(decoder_module .. " does not provide a decode function")
-end
 
 local is_running    = is_running
 local consumer      = kafka.consumer(brokerlist, topics, consumer_conf, topic_conf)
 
 local err_msg = {
-    Logger  = read_config("Logger"),
-    Type    = "error",
+    Type    = "error.decode",
     Payload = nil,
+    Fields  = {
+        data = nil
+    }
 }
 
 function process_message()
@@ -72,6 +75,7 @@ function process_message()
             local ok, err = pcall(decode, data, default_headers)
             if not ok or err then
                 err_msg.Payload = err
+                err_msg.Fields.data = data
                 pcall(inject_message, err_msg)
             end
         end

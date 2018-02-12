@@ -14,7 +14,7 @@ Common funtionality to instantiate an LPeg based sub decoder configuration.
 Returns a table of sub_decoder functions, keyed by sub_decoder_name.
 
 *Arguments*
-- sub_decoders (table) sub_decoders configuration table
+- sub_decoders (table/nil) sub_decoders configuration table
 ```lua
 sub_decoders = {
 -- sub_decoder_name (string) = (string/array) a sub_decoder_name of "*" is
@@ -30,27 +30,29 @@ sub_decoders = {
        -- the last entry in the array to handle the no match case; <<DROP>>
        -- silently discards the message and <<FAIL>> reports an error. If
        -- neither is specified the default no match behavior is to inject the
-       -- original message produced by the syslog decoder.
+       -- original message produced by the parent decoder.
     -- array:
        -- column 1: (string/array)
           -- string: Sample message (see above)
           -- array: printf.build_grammar format specification
        -- column 2: (table/nil)
           -- Transformation table with Heka message field name keys and a
-          -- value of the fully qualified transformation function name. The
-          -- function returns no values but can error; it receives two
-          -- arguments: the Heka message table and the field name to act on.
-          -- The function can modify the message in any way.
+          -- value of the fully qualified transformation function name
+          -- `<module_name>#<function_name>`. The function returns no values but
+          -- can error; it receives two arguments: the Heka message table and
+          -- the field name to act on. The function can modify the message in
+          -- any way.
 
   nginx  = "decoders.nginx.access", -- decoder module name
   kernel = "lpeg.linux.kernel",     -- grammar module name, must export an lpeg grammar named 'grammar' or 'syslog_grammar'
+  -- kernel = "lpeg.linux.kernel#syslog_grammar", -- the above is a shorthand for the explicit grammar specification
   sshd = {
     -- openssh_portable auth message, imported in printf_messages
-    {"Accepted publickey for foobar from 10.11.12.13 port 4242 ssh2", {remote_addr = "geoip.heka.add_geoip"}},
+    {"Accepted publickey for foobar from 10.11.12.13 port 4242 ssh2", {remote_addr = "geoip.heka#add_geoip"}},
   },
   foo = {
     "/tmp/input.tsv:23: invalid line", -- custom log defined in printf_messages
-    {{"Status: %s", "status"}, nil},   -- inline printf spec, no transformation
+    { {"Status: %s", "status"}, nil},   -- inline printf spec, no transformation
   },
 }
 ```
@@ -80,7 +82,7 @@ Copies a message for use in decoder/subdecoder
 *Arguments*
 * src (table) Heka message table. This is a shallow copy of the individual
   values in the Fields hash and assumes they will be replaced as opposed to
-  modififed when they are tables. The main use of this function is to populate
+  modified when they are tables. The main use of this function is to populate
   a new message with defaults.
 * mutable (bool/nil/none)
 
@@ -121,6 +123,9 @@ local DROP_TOKEN = "<<DROP>>"
 
 local function grammar_decode_fn(g)
     return function(data, dh, mutable)
+        -- the grammar is expected to return a table compatible with the hash
+        -- based Heka message Fields entry
+        -- http://mozilla-services.github.io/lua_sandbox/heka/message.html#Hash_Based_Message_Fields
         local fields = g:match(data)
         if not fields then return "parse failed" end
         local msg = copy_message(dh, mutable)
@@ -132,12 +137,12 @@ end
 
 local function grammar_pick_fn(sd, nomatch_action)
     return function(data, dh, mutable)
-        local msg = dh
+        local msg = copy_message(dh, mutable)
+        msg.Payload = data -- keep the original, the context is needed in most cases
         local fields
         for _,cpg in ipairs(sd) do  -- individually check each grammar
             fields = cpg[1]:match(data)
             if fields then
-                msg = copy_message(dh, mutable)
                 add_fields(msg, fields)
                 if cpg[2] then -- apply user defined transformation functions
                     for k,f in pairs(cpg[2]) do
@@ -169,8 +174,14 @@ local function load_sub_decoder_impl(sd, grammars, sdk)
             end
             return decode
         else
-            local m = require(sd)
-            local g = m.grammar or m.syslog_grammar
+            local mname, gname = string.match(sd, "([^#]+)#(.+)")
+            local g
+            if mname then
+                g = require(mname)[gname]
+            else
+                local m = require(sd)
+                g = m.grammar or m.syslog_grammar
+            end
             if type(g) ~= "userdata" then
                 error(string.format("sub_decoder, no grammar defined: %s", sdk))
             end
@@ -206,12 +217,8 @@ local function load_sub_decoder_impl(sd, grammars, sdk)
             if cpg[2] then
                 for k,v in pairs(cpg[2]) do
                     local fn
-                    local mname, fname = string.match(v, "(.-)%.([^.]+)$")
-                    if mname then
-                        fn = require(mname)[fname]
-                    else
-                        fn = _G[cpg[2]]
-                    end
+                    local mname, fname = string.match(v, "([^#]+)#(.+)")
+                    if mname then fn = require(mname)[fname] end
                     if type(fn) ~= "function" then
                         error(string.format("invalid transformation function %s=%s", k, v))
                     end

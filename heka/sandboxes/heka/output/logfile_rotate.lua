@@ -4,35 +4,35 @@
 
 require "io"
 require "string"
+require "os"
 
 --[[
-#  Logfile output rolled by size
+#  Logfile output rotated by size
 
-Outputs decoded data stream rolling the log file every time it reaches the
-`roll_size`. Current filename is incremented.
-If you need the usual logrotate behavior (old filenames are incremented and the last is purged), use logfile_rotate.lua instead.
+Outputs decoded data stream rotating the log file every time it reaches the
+`rotate_size`.
 
 ## Sample Configuration
 ```lua
-filename        = "logfile_roll_by_size.lua"
+filename        = "logfile_rotate.lua"
 message_matcher = "TRUE"
 ticker_interval = 0
-preserve_data   = true
 
 --location where the payload is written
-output_dir      = "/var/tmp"
-roll_size       = 1024 * 1024 * 1024
+output_dir       = "/var/tmp"
+rotate_size      = 1024 * 1024 * 1024
+rotate_retention = 10
 
 -- Specify a module that will encode/convert the Heka message into its output representation.
 encoder_module = "encoders.heka.framed_protobuf" -- default
 ```
 --]]
 
-file_num = 0
 
 local output_dir        = read_config("output_dir") or "/var/tmp"
 local output_prefix     = read_config("Logger")
-local roll_size         = read_config("roll_size") or 1e9
+local rotate_size       = read_config("rotate_size") or 1e9
+local rotate_retention  = read_config("rotate_retention") or 10
 local encoder_module    = read_config("encoder_module") or "encoders.heka.framed_protobuf"
 local encode = require(encoder_module).encode
 if not encode then
@@ -40,10 +40,11 @@ if not encode then
 end
 
 local fh
+local fn = string.format("%s/%s.log", output_dir, output_prefix)
+
 
 function process_message()
     if not fh then
-        local fn = string.format("%s/%s.%d.log", output_dir, output_prefix, file_num)
         fh, err = io.open(fn, "a")
         if err then return -1, err end
     end
@@ -54,13 +55,33 @@ function process_message()
     -- if type(data) == "userdata" then data = tostring(data) end -- uncomment to test the non zero copy behaviour
     fh:write(data)
 
-    if fh:seek() >= roll_size  then
+    if fh:seek() >= rotate_size  then
         fh:close()
         fh = nil
-        file_num = file_num + 1
+
+        -- rotate files
+        for file_num = rotate_retention, 1, -1 do
+
+            local fn_newer = string.format("%s.%d", fn, file_num - 1)
+            if file_num == 1 then -- newer file has never been rotated, so has no suffix
+                fn_newer = fn
+            end
+            local fn_older = string.format("%s.%d", fn, file_num)
+
+            -- Rename file if exist
+            local fh_newer, err = io.open(fn_newer, "r")
+            if fh_newer then
+                fh_newer:close()
+                local ok, err = os.rename(fn_newer, fn_older)
+                if err then return 1, err end -- Something goes wrong, return fatal error
+            end
+
+        end
+
     end
     return 0
 end
+
 
 function timer_event(ns)
     -- no op

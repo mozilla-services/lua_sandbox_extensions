@@ -79,6 +79,7 @@ kafka
 lfs
 lpeg
 lsb
+maxminddb
 moz_ingest
 moz_logging
 moz_pioneer

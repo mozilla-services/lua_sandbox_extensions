@@ -83,7 +83,7 @@ local nginx_error_levels = l.Cg((
 + l.P"crit"    / "2"
 + l.P"alert"   / "1"
 + l.P"emerg"   / "0")
-/ tonumber, "Severity")
+/ tonumber, "severity")
 
 local nginx_upstream_sep        = ", "
 local nginx_upstream_gsep       = " : "
@@ -474,10 +474,11 @@ function build_apache_grammar(log_format)
     return l.Ct(grammar)
 end
 
-nginx_error_grammar = l.Ct(l.Cg(dt.build_strftime_grammar("%Y/%m/%d %T") / dt.time_to_ns, "Timestamp")
+nginx_error_grammar = l.Ct(l.Cg(dt.build_strftime_grammar("%Y/%m/%d %T") / dt.time_to_ns, "time")
                            * l.space * "[" * nginx_error_levels * "]"
-                           * l.space * l.Cg(l.digit^1 / tonumber, "Pid") * "#"
-                           * l.Cg(l.Ct(l.Cg(l.digit^1 / tonumber, "tid") * ": " * (l.P"*" * l.Cg(l.digit^1 / tonumber, "connection") * " ")^-1), "Fields")
-                           * l.Cg(l.P(1)^0, "Payload"))
+                           * l.space * l.Cg(l.digit^1 / tonumber, "pid") * "#"
+                           * l.Cg(l.digit^1 / tonumber, "tid") * ": "
+                           * (l.P"*" * l.Cg(l.digit^1 / tonumber, "connection") * " ")^-1
+                           * l.Cg(l.P(1)^0, "msg"))
 
 return M

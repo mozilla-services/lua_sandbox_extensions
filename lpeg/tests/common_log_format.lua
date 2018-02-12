@@ -394,13 +394,13 @@ local function nginx_error()
     local log = '2014/03/01 11:29:39 [notice] 16842#0: using inherited sockets from "6;"'
     local fields = clf.nginx_error_grammar:match(log)
     local result = {
-        Pid         = 16842,
-        Payload     = 'using inherited sockets from "6;"',
-        Severity    = 5,
-        Timestamp   = 1393673379000000000
+        pid         = 16842,
+        msg         = 'using inherited sockets from "6;"',
+        severity    = 5,
+        time        = 1393673379000000000,
+        tid         = 0
     }
     verify_result(fields, result)
-    assert(fields.Fields.tid == 0, "expected a thread id of 0")
 end
 
 local function nginx_error_connection()
@@ -408,14 +408,14 @@ local function nginx_error_connection()
     local log = '2014/03/01 11:29:39 [notice] 16842#0: *8878 using inherited sockets from "6;"'
     local fields = clf.nginx_error_grammar:match(log)
     local result = {
-        Pid         = 16842,
-        Payload     = 'using inherited sockets from "6;"',
-        Severity    = 5,
-        Timestamp   = 1393673379000000000
+        pid         = 16842,
+        msg         = 'using inherited sockets from "6;"',
+        severity    = 5,
+        time        = 1393673379000000000,
+        tid         = 0,
+        connection  = 8878
     }
     verify_result(fields, result)
-    assert(fields.Fields.tid == 0, "invalid tid")
-    assert(fields.Fields.connection == 8878, "invalid connection")
 end
 
 local function nginx_upstream()
