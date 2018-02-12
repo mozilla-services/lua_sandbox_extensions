@@ -13,24 +13,8 @@ decoders_syslog = {
   -- Default:
   -- template = "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%", -- RSYSLOG_TraditionalForwardFormat
 
-  printf_messages = { -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html
-   {"%s:%lu: invalid line", "path", "linenum"},
-   "lpeg.openssh_portable", -- must export a `printf_messages` array
-  },
-
-  sub_decoders = { -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
-
-    nginx  = "decoders.nginx.access", -- decoder module name
-    kernel = "lpeg.linux.kernel",     -- grammar module name, must export an lpeg grammar named 'syslog_grammar'
-    sshd = {
-      -- openssh_portable auth message, imported in printf_messages
-      {"Accepted publickey for foobar from 10.11.12.13 port 4242 ssh2", {remote_addr = "geoip.heka.add_geoip"}},
-    },
-    foo = {
-      "/tmp/input.tsv:23: invalid line", -- custom log defined in printf_messages
-      {{"Status: %s", "status"}, nil},   -- inline printf spec, no transformation
-    },
-  },
+  -- printf_messages = nil, -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/
+  -- sub_decoders = nil, -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
 }
 ```
 
@@ -71,10 +55,6 @@ assert(type(cfg) == "table", module_cfg .. " must be a table")
 local template      = cfg.template or "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%"
 local grammar       = syslog.build_rsyslog_grammar(template)
 local sub_decoders  = sdu.load_sub_decoders(cfg.sub_decoders, cfg.printf_messages)
-
-if not (cfg.payload_keep ~= nil and type(cfg.payload_keep) == "boolean") then
-    cfg.payload_keep = true
-end
 
 local pairs = pairs
 local type  = type
@@ -118,19 +98,19 @@ function decode(data, dh, mutable)
     fields.hostname = nil
     fields.source = nil
 
-    msg.Payload = fields.msg
+    local payload = fields.msg
     fields.msg = nil
     sdu.add_fields(msg, fields)
 
     local df = sub_decoders[programname]
     if df then
-        local payload = msg.Payload
-        if not cfg.payload_keep then msg.Payload = nil end
         local err = df(payload, msg, true)
         if err then
             err = string.format("%s.%s %s", module_name, programname, err)
         end
         return err
+    else
+        msg.Payload = payload
     end
     inject_message(msg)
 end

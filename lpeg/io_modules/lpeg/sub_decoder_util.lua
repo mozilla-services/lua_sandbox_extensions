@@ -14,7 +14,7 @@ Common funtionality to instantiate an LPeg based sub decoder configuration.
 Returns a table of sub_decoder functions, keyed by sub_decoder_name.
 
 *Arguments*
-- sub_decoders (table) sub_decoders configuration table
+- sub_decoders (table/nil) sub_decoders configuration table
 ```lua
 sub_decoders = {
 -- sub_decoder_name (string) = (string/array) a sub_decoder_name of "*" is
@@ -30,7 +30,7 @@ sub_decoders = {
        -- the last entry in the array to handle the no match case; <<DROP>>
        -- silently discards the message and <<FAIL>> reports an error. If
        -- neither is specified the default no match behavior is to inject the
-       -- original message produced by the syslog decoder.
+       -- original message produced by the parent decoder.
     -- array:
        -- column 1: (string/array)
           -- string: Sample message (see above)
@@ -137,12 +137,12 @@ end
 
 local function grammar_pick_fn(sd, nomatch_action)
     return function(data, dh, mutable)
-        local msg = dh
+        local msg = copy_message(dh, mutable)
+        msg.Payload = data -- keep the original, the context is needed in most cases
         local fields
         for _,cpg in ipairs(sd) do  -- individually check each grammar
             fields = cpg[1]:match(data)
             if fields then
-                msg = copy_message(dh, mutable)
                 add_fields(msg, fields)
                 if cpg[2] then -- apply user defined transformation functions
                     for k,f in pairs(cpg[2]) do
