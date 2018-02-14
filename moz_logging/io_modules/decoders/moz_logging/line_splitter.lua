@@ -75,7 +75,7 @@ local err_msg = {
 
 function decode(data, dh, mutable)
      for line in string.gmatch(data, "([^\n]+)\n*") do
-         local err = sub_decoder(line, msg, mutable)
+         local err = sub_decoder(line, dh, mutable)
          if err then
              err_msg.Payload = err
              err_msg.Fields.data = line
