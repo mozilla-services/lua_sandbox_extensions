@@ -481,4 +481,11 @@ nginx_error_grammar = l.Ct(l.Cg(dt.build_strftime_grammar("%Y/%m/%d %T") / dt.ti
                            * (l.P"*" * l.Cg(l.digit^1 / tonumber, "connection") * " ")^-1
                            * l.Cg(l.P(1)^0, "msg"))
 
+apache_error_grammar = l.Ct("[" * l.Cg(dt.build_strftime_grammar("%a %b %d %T.%f %Y") / dt.time_to_ns, "time") * "]"
+                           * l.space * "[" * ( l.Cg( (l.alnum + l.S"_-")^1, "process_name" )  )^-1 * ":" * nginx_error_levels * "]"
+                           * l.space * "[pid" * l.space * l.Cg(l.digit^1 / tonumber, "pid") * ":tid" * l.space
+                           * l.Cg(l.digit^1 / tonumber, "tid") * "]" * l.space
+                           * (l.P"[client" * l.space * l.Cg(host, "remote_addr") * ":" * l.Cg(l.digit^1 / tonumber, "port") * "]" )^-1
+                           * l.Cg(l.P(1)^0, "msg"))
+
 return M
