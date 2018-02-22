@@ -14,9 +14,10 @@ extend the message with GeoIP2 information prior to injection.
 
 Given a Heka message add the geoip entries based on the specified field name.
 The requested geoip entries are specified in the `databases` configuration
-table. The table is <db_filename> = <lookup table>. The lookup table is
-<suffix> = <path array> (an empty suffix will overwrite the original value). The
-path specification is specific to the database being queried.
+table. The table is &lt;db_filename&gt; = &lt;lookup table&gt;. The lookup table
+is &lt;suffix&gt; = &lt;path array&gt; (an empty suffix will overwrite the
+original value). The path specification is specific to the database being
+queried.
 
 *Arguments*
 - msg (table) - original message
@@ -36,7 +37,7 @@ maxminddb_heka = {
         ["GeoIP2-ISP-Test.mmdb"] = {
             _isp = {"isp"}
         },
-    }
+    },
     remove_original_field = false, -- remove the original field after a successful lookup
 }
 ```
@@ -74,7 +75,6 @@ local function refresh_db()
     local ctime = ostime()
     if ptime + 3600 < ctime then
         for file, t in pairs(databases) do
-            if t.db then t.db :close() end
             local ok
             ok, t.db = pcall(mm.open, file)
             if not ok then error("error opening: " .. file) end
