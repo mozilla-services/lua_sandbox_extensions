@@ -232,14 +232,28 @@ end
 local function header()
     local t = mysql.slow_query_grammar:match(slow_query_log[1])
     if not t then return error("no match") end
-    if t.Hostname ~= "127.0.0.1" then return error("Hostname: " .. t.Hostname) end
+    if t.Host_ip ~= "127.0.0.1" then return error("Host_ip: " .. t.Host_ip) end
     validate(fields, t)
 end
 
 local function standard()
     local t = mysql.slow_query_grammar:match(slow_query_log[2])
     if not t then return error("no match") end
-    if t.Hostname ~= "127.0.0.1" then return error("Hostname: " .. t.Hostname) end
+    if t.Host_ip ~= "127.0.0.1" then return error("Host_ip: " .. t.Host_ip) end
+    validate(fields, t)
+end
+
+local function hostname()
+    local t = mysql.slow_query_grammar:match(slow_query_log[4])
+    if not t then return error("no match") end
+    if t.Host ~= "db01.example.com" then return error("Host: " .. tostring(t.Host)) end
+    validate(fields, t)
+end
+
+local function hostname1()
+    local t = mysql.slow_query_grammar:match(slow_query_log[5])
+    if not t then return error("no match") end
+    if t.Host ~= "db-01.example.com" then return error("Host: " .. tostring(t.Host)) end
     validate(fields, t)
 end
 
@@ -252,7 +266,7 @@ end
 local function mariadb_standard()
     local t = mysql.mariadb_slow_query_grammar:match(mariadb_slow_query_log[1])
     if not t then return error("no match") end
-    if t.Hostname ~= "127.0.0.1" then return error("Hostname: " .. t.Hostname) end
+    if t.Host_ip ~= "127.0.0.1" then return error("Host_ip: " .. t.Host_ip) end
     validate(mariadb_fields, t)
 end
 
@@ -265,26 +279,28 @@ end
 local function mariadb_verbose()
     local t = mysql.mariadb_slow_query_grammar:match(mariadb_slow_query_log[3])
     if not t then return error("no match") end
-    if t.Hostname ~= "127.0.0.1" then return error("Hostname: " .. t.Hostname) end
+    if t.Host_ip ~= "127.0.0.1" then return error("Host_ip: " .. t.Host_ip) end
     validate(mariadb_verbose_fields, t)
 end
 
 local function percona_standard()
     local t = mysql.percona_slow_query_grammar:match(percona_slow_query_log[1])
     if not t then return error("no match") end
-    if t.Hostname ~= "127.0.0.1" then return error("Hostname: " .. t.Hostname) end
+    if t.Host_ip ~= "127.0.0.1" then return error("Host_ip: " .. t.Host_ip) end
     validate(percona_fields, t)
 end
 
 local function percona_verbose()
     local t = mysql.percona_slow_query_grammar:match(percona_slow_query_log[2])
     if not t then return error("no match") end
-    if t.Hostname ~= "127.0.0.1" then return error("Hostname: " .. t.Hostname) end
+    if t.Host_ip ~= "127.0.0.1" then return error("Host_ip: " .. t.Host_ip) end
     validate(percona_verbose_fields, t)
 end
 
 header()
 standard()
+hostname()
+hostname1()
 short()
 mariadb_standard()
 mariadb_short()

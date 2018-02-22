@@ -85,41 +85,13 @@ if delimiter then
     end
     reset_buffer()
 
-    function read_until_eof(fh, checkpoint)
-        for data in fh:lines() do
-            if data:match(delimiter) then
-                if not start_delimiter then
-                    buffer_idx = buffer_idx + 1
-                    buffer[buffer_idx] = data
-                    buffer_size = buffer_size + #data + 1
-                end
-
-                local line = concat(buffer, "\n")
-                local ok, err = pcall(decode, line, default_headers)
-                if (not ok or err) and send_decode_failures then
-                    err_msg.Payload = err
-                    err_msg.Fields.data = line
-                    pcall(inject_message, err_msg)
-                end
-                checkpoint = checkpoint + buffer_size
-                inject_message(nil, checkpoint)
-                reset_buffer()
-
-                if start_delimiter then
-                    buffer_idx = 1
-                    buffer[buffer_idx] = data
-                    buffer_size = #data + 1
-                end
-            else
-                buffer_idx = buffer_idx + 1
-                buffer[buffer_idx] = data
-                buffer_size = buffer_size + #data + 1
-            end
-        end
+    local function append_data(data)
+        buffer_idx = buffer_idx + 1
+        buffer[buffer_idx] = data
+        buffer_size = buffer_size + #data + 1
     end
 
-    function flush_remaining()
-        if buffer_idx == 0 then return end
+    local function decode_record()
         local line = concat(buffer, "\n")
         local ok, err = pcall(decode, line, default_headers)
         if (not ok or err) and send_decode_failures then
@@ -130,8 +102,26 @@ if delimiter then
         reset_buffer()
     end
 
+    read_until_eof = function(fh, checkpoint)
+        for data in fh:lines() do
+            if data:match(delimiter) then
+                if not start_delimiter then append_data(data) end
+                checkpoint = checkpoint + buffer_size
+                decode_record()
+                inject_message(nil, checkpoint)
+                if start_delimiter then append_data(data) end
+            else
+                append_data(data)
+            end
+        end
+    end
+
+    flush_remaining = function()
+        if buffer_idx ~= 0 then decode_record() end
+    end
+
 else
-    function read_until_eof(fh, checkpoint)
+    read_until_eof = function(fh, checkpoint)
         for data in fh:lines() do
             local ok, err = pcall(decode, data, default_headers)
             if (not ok or err) and send_decode_failures then
@@ -147,7 +137,7 @@ end
 
 local function open_file(checkpoint)
     local fh, err = io.open(input_filename, "rb")
-    if not fh then return nil end
+    if not fh then return nil, 0 end
 
     if checkpoint ~= 0 then
         if not fh:seek("set", checkpoint) then
@@ -156,7 +146,7 @@ local function open_file(checkpoint)
             inject_message(nil, checkpoint)
         end
     end
-    return fh
+    return fh, checkpoint
 end
 
 
@@ -174,12 +164,10 @@ local function follow_name(fh, checkpoint)
         if inode ~= tinode then
             flush_remaining()
             inode = tinode
-            checkpoint = 0
-            inject_message(nil, checkpoint)
             fh:close()
             if not tinode then return nil end
 
-            fh = open_file(checkpoint)
+            fh, checkpoint = open_file(0)
             if not fh then return nil end
         else
             return fh -- poll
@@ -206,12 +194,10 @@ local fh
 function process_message(checkpoint)
     checkpoint = checkpoint or 0
     if not fh then
-        fh = open_file(checkpoint)
+        fh, checkpoint = open_file(checkpoint)
         if not fh then
-            if checkpoint ~= 0 then
-                print("file not found resetting the checkpoint to 0")
-                inject_message(nil, 0)
-            end
+            print("file not found:", input_filename)
+            inject_message(nil, checkpoint)
             return 0
         end
     end
