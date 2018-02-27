@@ -10,6 +10,7 @@
 decoders_syslog = {
   -- template (string) - The 'template' configuration string from rsyslog.conf
   -- see http://rsyslog-5-8-6-doc.neocities.org/rsyslog_conf_templates.html
+  -- see https://github.com/rsyslog/rsyslog/blob/de0a9dd10703c4e6efcc69164781220d31a9e115/runtime/rsconf.c#L85
   -- Default:
   -- template = "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%", -- RSYSLOG_TraditionalForwardFormat
 
