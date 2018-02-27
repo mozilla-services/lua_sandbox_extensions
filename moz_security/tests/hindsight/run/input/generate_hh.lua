@@ -3,32 +3,81 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Generates test data for moz_security_heavy_hitters_monitor
+# Generates test data for sampled heavy hitters tests
 --]]
 
 require "string"
 
 local msg = {
     Timestamp = 0,
-    Logger = "input.hh",
+    Logger = read_config("logger"),
     Fields = {
         id = "",
     }
 }
 
+local testtable = {}
+
+function add_tt_entry(k, n)
+    testtable[k] = {}
+    testtable[k].max = n
+    testtable[k].cur = 0
+end
+
+
 function process_message()
-    for i = 1, 1100 do
-        msg.Fields.id = string.format("%04d", i)
-        inject_message(msg)
+    p = "10.0.0."
+    for i = 1, 200 do
+        add_tt_entry(string.format("%s%s", p, i), 80)
+    end
+    p = "10.0.1."
+    for i = 1, 250 do
+        add_tt_entry(string.format("%s%s", p, i), 150)
+    end
+    p = "10.0.2."
+    for i = 1, 250 do
+        add_tt_entry(string.format("%s%s", p, i), 80)
+    end
+    p = "10.0.3."
+    for i = 1, 250 do
+        add_tt_entry(string.format("%s%s", p, i), 80)
+    end
+    p = "192.168.1."
+    for i = 1, 10 do
+        add_tt_entry(string.format("%s%s", p, i), 1000)
+    end
+    p = "192.168.0."
+    for i = 1, 20 do
+        add_tt_entry(string.format("%s%s", p, i), 1500)
+    end
+    p = "10.0.4."
+    for i = 1, 254 do
+        add_tt_entry(string.format("%s%s", p, i), 80)
+    end
+    p = "10.0.5."
+    for i = 1, 254 do
+        add_tt_entry(string.format("%s%s", p, i), 60)
+    end
+    p = "10.0.6."
+    for i = 1, 254 do
+        add_tt_entry(string.format("%s%s", p, i), 95)
     end
 
-    local cnt = 1
-    for i = 1, 1100, 10 do
-        msg.Fields.id = string.format("%04d", i)
-        for j = 1, cnt do
-            inject_message(msg)
+    local finished = false
+    while not finished do
+        local sent = false
+        for k,v in pairs(testtable) do
+            if v.cur < v.max then
+                msg.Fields.id = k
+                inject_message(msg)
+                v.cur = v.cur + 1
+                sent = true
+            end
         end
-        cnt = cnt + 1
+        if not sent then
+            finished = true
+        end
     end
+
     return 0
 end

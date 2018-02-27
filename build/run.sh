@@ -31,10 +31,10 @@ build_lua_sandbox_extensions() {
     local ext
     packages="git c++-compiler"
     cmake_args=""
-    # todo add support for aws geoip jose kafka openssl parquet snappy systemd
+    # todo add support for aws geoip jose kafka parquet snappy systemd
     for ext in bloom_filter circular_buffer cjson compat cuckoo_filter \
             elasticsearch heka hyperloglog lfs lpeg lsb moz_ingest moz_pioneer \
-            moz_security moz_telemetry postgres rjson sax socket ssl struct \
+            moz_security moz_telemetry openssl postgres rjson sax socket ssl struct \
             syslog zlib; do
         case "$ext" in
             postgres)
@@ -46,11 +46,25 @@ build_lua_sandbox_extensions() {
                     cmake_args="$cmake_args -DEXT_$ext=false"
                 fi
                 ;;
-            ssl)
+            *ssl)
                 if [ "$CPACK_GENERATOR" = "DEB" ]; then
-                    packages="$packages libssl-dev"
+		    if [ -f "/etc/debian_version" ] && egrep -q '(^9|^buster/sid)' /etc/debian_version; then
+                        # Install older OpenSSL for stretch / ubuntu dev
+                        packages="$packages libssl1.0-dev"
+                    else
+                        packages="$packages libssl-dev"
+                    fi
+                    cmake_args="$cmake_args -DEXT_$ext=true"
                 elif [ "$CPACK_GENERATOR" = "RPM" ]; then
-                    packages="$packages openssl-devel"
+                    if rpm -qa | grep -q compat-openssl10; then
+			# Newer Fedora installs 1.1 by default but also installs a 1.0
+                        # compat package; if we see that installed also grab the devel version
+                        # of it
+                        packages="$packages compat-openssl10-devel"
+                    else
+                        packages="$packages openssl-devel"
+                    fi
+                    cmake_args="$cmake_args -DEXT_$ext=true"
                 else
                     cmake_args="$cmake_args -DEXT_$ext=false"
                 fi

@@ -5,6 +5,8 @@
 cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 project(openssl VERSION 0.5.1 LANGUAGES C)
 
+include(CheckFunctionExists)
+
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua OpenSSL Module")
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
@@ -45,6 +47,12 @@ else() # lua_sandbox build
 endif()
 
 find_package(OpenSSL REQUIRED)
+
+set(CMAKE_REQUIRED_LIBRARIES ssl)
+check_function_exists(SSLv3_method HAVE_SSLV3_METHOD)
+check_function_exists(X509_ALGOR_cmp HAVE_X509_ALGOR_CMP)
+
+configure_file("${PROJECT_SOURCE_DIR}/src/config.h.in" "${PROJECT_SOURCE_DIR}/src/config.h")
 
 if (APPLE)
   set(OPENSSL_ROOT_DIR /opt/local)

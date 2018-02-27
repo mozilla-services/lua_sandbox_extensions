@@ -34,7 +34,10 @@ sub_decoders = {
     -- array:
        -- column 1: (string/array)
           -- string: Sample message (see above)
-          -- array: printf.build_grammar format specification
+          -- array:
+            -- printf.build_grammar format specification
+            -- module reference to a grammar builder function, any additional columns are passed to the function
+            -- module reference to a an LPeg grammar, any additional columns are passed to match see [Carg](http://www.inf.puc-rio.br/~roberto/lpeg/#cap-arg)
        -- column 2: (table/nil)
           -- Transformation table with Heka message field name keys and a
           -- value of the fully qualified transformation function name
@@ -52,7 +55,9 @@ sub_decoders = {
   },
   foo = {
     "/tmp/input.tsv:23: invalid line", -- custom log defined in printf_messages
-    { {"Status: %s", "status"}, nil},   -- inline printf spec, no transformation
+    { {"Status: %s", "status"}, nil},  -- inline printf spec, no transformation
+    { {"example#fn", arg1}, nil},      -- use fn(arg1) from the example module to build a grammar
+    { {"example#foo"}, nil},           -- use the foo LPeg grammar from the example module
   },
 }
 ```
@@ -112,6 +117,7 @@ local pairs         = pairs
 local require       = require
 local setmetatable  = setmetatable
 local type          = type
+local unpack        = unpack
 
 local inject_message    = inject_message
 
@@ -135,13 +141,27 @@ local function grammar_decode_fn(g)
 end
 
 
+local function grammar_fn(g)
+    return function(data)
+        return g:match(data)
+    end
+end
+
+
+local function grammar_fn_args(g, args)
+    return function(data)
+        return g:match(data, 1, unpack(args, 2))
+    end
+end
+
+
 local function grammar_pick_fn(sd, nomatch_action)
     return function(data, dh, mutable)
         local msg = copy_message(dh, mutable)
         msg.Payload = data -- keep the original, the context is needed in most cases
         local fields
         for _,cpg in ipairs(sd) do  -- individually check each grammar
-            fields = cpg[1]:match(data)
+            fields = cpg[1](data)
             if fields then
                 add_fields(msg, fields)
                 if cpg[2] then -- apply user defined transformation functions
@@ -164,6 +184,20 @@ local function grammar_pick_fn(sd, nomatch_action)
 end
 
 
+local mod_ref = "([^#]+)#(.+)"
+local function get_module_ref(s)
+    local mname, ref = string.match(s, mod_ref)
+    local mr
+    if mname then
+        mr = require(mname)[ref]
+    else
+        local m = require(s)
+        mr = m.grammar or m.syslog_grammar
+    end
+    return mr
+end
+
+
 local function load_sub_decoder_impl(sd, grammars, sdk)
     local sdt = type(sd)
     if sdt == "string" then
@@ -174,20 +208,13 @@ local function load_sub_decoder_impl(sd, grammars, sdk)
             end
             return decode
         else
-            local mname, gname = string.match(sd, "([^#]+)#(.+)")
-            local g
-            if mname then
-                g = require(mname)[gname]
-            else
-                local m = require(sd)
-                g = m.grammar or m.syslog_grammar
-            end
+            local g = get_module_ref(sd)
             if type(g) ~= "userdata" then
                 error(string.format("sub_decoder, no grammar defined: %s", sdk))
             end
             return grammar_decode_fn(g)
         end
-    elseif sdt == "table" then -- cherry pick printf grammars
+    elseif sdt == "table" then -- cherry pick grammars
         local nomatch_action
         for i,cpg in ipairs(sd) do
             if type(cpg) ~= "table" then
@@ -195,7 +222,7 @@ local function load_sub_decoder_impl(sd, grammars, sdk)
                 sd[i] = cpg
             end
 
-            local g
+            local fn
             local typ = type(cpg[1])
             if typ == "string" then
                 if (cpg[1] == DROP_TOKEN or cpg[1] == FAIL_TOKEN) and sd[i + 1] == nil then
@@ -203,21 +230,39 @@ local function load_sub_decoder_impl(sd, grammars, sdk)
                     sd[i] = nil
                     break
                 end
-                g = printf.match_sample(grammars, cpg[1])
+                local g = printf.match_sample(grammars, cpg[1])
                 if not g then
                     error(string.format("no grammar found for: %s", cpg[1]))
                 end
+                fn = grammar_fn(g)
             elseif typ == "table" then
-                g = printf.build_grammar(cpg[1])
+                if string.match(cpg[1][1], "%%")  then -- printf specification
+                    fn = grammar_fn(printf.build_grammar(cpg[1]))
+                else
+                    local g = get_module_ref(cpg[1][1])
+                    local t = type(g)
+                    if t == "function" then
+                        fn = grammar_fn(g(unpack(cpg[1], 2)))
+                    elseif t == "userdata" then
+                        local len = #cpg[1]
+                        if len > 1 then
+                            fn = grammar_fn_args(g, cpg[1])
+                        else
+                            fn = grammar_fn(g)
+                        end
+                    else
+                        error(string.format("invalid module reference %s", cpg[1][1]))
+                    end
+                end
             else
                 error(string.format("sub_decoder: %s invalid entry: %d", sdk, i))
             end
-            cpg[1] = g
+            cpg[1] = fn
 
             if cpg[2] then
                 for k,v in pairs(cpg[2]) do
                     local fn
-                    local mname, fname = string.match(v, "([^#]+)#(.+)")
+                    local mname, fname = string.match(v, mod_ref)
                     if mname then fn = require(mname)[fname] end
                     if type(fn) ~= "function" then
                         error(string.format("invalid transformation function %s=%s", k, v))
