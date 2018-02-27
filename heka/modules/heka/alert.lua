@@ -41,7 +41,7 @@ Returns the URI of the dashboard output
 ### get_threshold
 
 Gets the value of the threshold setting associated with the specified id. If
-the id is not found the value of the '_default_' key is returned otherwise nil
+the id is not found the value of the '*' key is returned otherwise nil
 is returned.
 
 *Arguments*
@@ -157,7 +157,7 @@ thresholds = alert_cfg.thresholds -- expose the entire table
 function get_threshold(id)
     local at = alert_cfg.thresholds[id]
     if not at then
-        at = alert_cfg.thresholds._default_
+        at = alert_cfg.thresholds["*"] or alert_cfg.thresholds._default_
     end
     return at
 end
