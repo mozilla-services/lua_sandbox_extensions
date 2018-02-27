@@ -6,7 +6,8 @@
 # Tigerblood Output Plugin
 
 Sends tigerblood events to Mozilla Tigerblood IP reputation service using a
-hawk/JSON request.
+hawk/JSON request. This output plugin currently only supports submitting
+IP violations to the /violations/ endpoint.
 
 https://github.com/mozilla-services/tigerblood
 
@@ -19,7 +20,7 @@ message_matcher = "Type == 'tigerblood'"
 tigerblood = {
    base_url     = "https://tigerblood.prod.mozaws.net", -- NB: no trailing slash
    id           = "fxa_heavy_hitters", -- hawk ID
-   _key         = "hawksecret", -- hawk secret
+   _key         = "hawksecret" -- hawk secret
 }
 ```
 --]]
@@ -27,101 +28,19 @@ tigerblood = {
 local client_cfg = read_config("tigerblood") or error("no tigerblood configuration specified")
 
 local string    = require("string")
-local table     = require("table")
-local digest    = require("openssl").digest
-local hmac      = require("openssl").hmac
-local random    = require("openssl").random
-local mime      = require("mime")
-local os        = require("os")
 local http      = require("socket.http")
 local https     = require("ssl.https")
 local url       = require("socket.url")
 local ltn12     = require("ltn12")
 local cjson     = require("cjson")
 
-local function url_escape(s)
-    return s:gsub("+", "-"):gsub("/", "_"):gsub("=", "")
-end
+local hawk = require "hawk"
+local hawkhdr = {}
 
-local function nonce(size)
-    return url_escape(mime.b64(random(size)))
-end
-
-local function supported_hash(algorithm)
-    return algorithm == "sha256"
-end
-
-local function hash_payload(payload, algorithm, content_type)
-    if not supported_hash(algorithm) then
-        error("unsupported hash algorithm")
-    end
-
-    local normalized = "hawk.1.payload"
-    normalized = string.format("%s\n%s", normalized, string.lower(content_type))
-    normalized = string.format("%s\n%s\n", normalized, payload)
-    return mime.b64(digest.digest(algorithm, normalized, true))
-end
-
-local function normalize_string(artifacts)
-    local normalized = {
-        "hawk.1.header",
-        artifacts.ts,
-        artifacts.nonce,
-        string.upper(artifacts.method),
-        artifacts.resource,
-        string.lower(artifacts.host),
-        artifacts.port,
-        artifacts.hash,
-        "",
-    }
-    return string.format("%s\n", table.concat(normalized, "\n"))
-end
-
-local function calculate_mac(artifacts)
-    if not supported_hash(client_cfg.algorithm) then
-        error("unsupported hash algorithm")
-    end
-    return mime.b64(hmac.hmac(client_cfg.algorithm, normalize_string(artifacts),
-        client_cfg._key, true))
-end
-
-local function hawk_artifacts(method, resource)
-    return {
-        method = method,
-        host = client_cfg.host,
-        port = client_cfg.port,
-        resource = resource,
-        ts = os.time(),
-        nonce = nonce(6),
-    }
-end
-
-local function hawk_options(payload)
-    return {
-        payload = payload,
-        content_type = "application/json",
-    }
-end
-
-local function hawk_header(artifacts, options)
-    if options.payload and options.content_type then
-        artifacts.hash = hash_payload(options.payload, client_cfg.algorithm, options.content_type)
-    end
-
-    local mac = calculate_mac(artifacts)
-    local header = string.format("Hawk id=\"%s\", ts=\"%s\", nonce=\"%s\"",
-        client_cfg.id, artifacts.ts, artifacts.nonce)
-
-    if artifacts.hash then
-        header = string.format("%s, hash=\"%s\"", header, artifacts.hash)
-    end
-
-    return string.format("%s, mac=\"%s\"", header, mac)
-end
 
 local function get_port(parsed_url)
     if parsed_url.port then
-        return parsed_url.port
+        return tonumber(parsed_url.port)
     elseif parsed_url.scheme and parsed_url.scheme == "http" then
         return 80
     elseif parsed_url.scheme and parsed_url.scheme == "https" then
@@ -131,11 +50,8 @@ local function get_port(parsed_url)
     end
 end
 
-local function configure_client()
-    if not client_cfg.algorithm then
-        client_cfg.algorithm = "sha256"
-    end
 
+local function configure_client()
     if not client_cfg.base_url then
         error("configuration missing base_url")
     end
@@ -152,12 +68,15 @@ local function configure_client()
     else
         client_cfg.requestor = http
     end
+
+    hawkhdr = hawk.new(client_cfg.id, client_cfg._key, client_cfg.host, client_cfg.port)
 end
+
 
 local function json_request(method, uri, body)
     local headers = {
-        Authorization = hawk_header(hawk_artifacts(method, uri), hawk_options(body)),
-        Host = string.format("%s:%s", client_cfg.host, client_cfg.port),
+        Authorization = hawkhdr:get_header(method, uri, body, "application/json"),
+        Host = string.format("%s:%d", client_cfg.host, client_cfg.port),
         ["Content-Type"] = "application/json",
         ["Content-Length"] = #body,
     }
@@ -166,7 +85,7 @@ local function json_request(method, uri, body)
     if not client_cfg.requestor then
         error("no requestor set in configuration")
     end
-    local r, code, resp_headers = client_cfg.requestor.request({
+    local r, code = client_cfg.requestor.request({
         method = method,
         url = string.format("%s%s", client_cfg.base_url, uri),
         headers = headers,
@@ -196,6 +115,7 @@ function process_message()
     end
     return 0
 end
+
 
 function timer_event(ns)
     -- no op

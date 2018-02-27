@@ -1,0 +1,62 @@
+diff --git a/src/ssl.c b/src/ssl.c
+index 95edf95..ddd88b6 100644
+--- a/src/ssl.c
++++ b/src/ssl.c
+@@ -8,6 +8,7 @@
+ #include "private.h"
+ #include <stdint.h>
+ #include "ssl_options.h"
++#include "config.h"
+ 
+ #define MYNAME    "ssl"
+ #define MYVERSION MYNAME " library for " LUA_VERSION " / Nov 2014 / "\
+@@ -24,14 +25,16 @@ static int openssl_ssl_ctx_new(lua_State*L)
+   SSL_METHOD* method = NULL;
+   const char* ciphers;
+   SSL_CTX* ctx;
+-  if (strcmp(meth, "SSLv3") == 0)
++  if (strcmp(meth, "SSLv23") == 0)
++    method = SSLv23_method();   /* SSLv3 but can rollback to v2 */
++#ifdef HAVE_SSLV3_METHOD
++  else if (strcmp(meth, "SSLv3") == 0)
+     method = SSLv3_method();    /* SSLv3 */
+   else if (strcmp(meth, "SSLv3_server") == 0)
+     method = SSLv3_server_method(); /* SSLv3 */
+   else if (strcmp(meth, "SSLv3_client") == 0)
+     method = SSLv3_client_method(); /* SSLv3 */
+-  else if (strcmp(meth, "SSLv23") == 0)
+-    method = SSLv23_method();   /* SSLv3 but can rollback to v2 */
++#endif
+   else if (strcmp(meth, "SSLv23_server") == 0)
+     method = SSLv23_server_method();  /* SSLv3 but can rollback to v2 */
+   else if (strcmp(meth, "SSLv23_client") == 0)
+diff --git a/src/xalgor.c b/src/xalgor.c
+index db9204f..c8ffe1d 100644
+--- a/src/xalgor.c
++++ b/src/xalgor.c
+@@ -8,6 +8,7 @@
+ #include "openssl.h"
+ #include "private.h"
+ #include "sk.h"
++#include "config.h"
+ IMP_LUA_SK(X509_ALGOR, x509_algor)
+ 
+ #define MYNAME "x509.algor"
+@@ -33,7 +34,7 @@ static int openssl_xalgor_dup(lua_State* L)
+   return 1;
+ }
+ 
+-#if OPENSSL_VERSION_NUMBER >= 0x10002000L
++#ifdef HAVE_X509_ALGOR_CMP
+ static int openssl_xalgor_cmp(lua_State* L)
+ {
+   X509_ALGOR* alg = CHECK_OBJECT(1, X509_ALGOR, "openssl.x509_algor");
+@@ -121,7 +122,7 @@ static luaL_Reg xalgor_funcs[] =
+   {"md",                openssl_xalgor_md},
+ #endif
+   {"tostring",          openssl_xalgor_tostring},
+-#if OPENSSL_VERSION_NUMBER >= 0x10002000L
++#ifdef HAVE_X509_ALGOR_CMP
+   {"equals",            openssl_xalgor_cmp},
+   {"__eq",              openssl_xalgor_cmp},
+ #endif

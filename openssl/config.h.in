@@ -1,0 +1,7 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
+#cmakedefine HAVE_X509_ALGOR_CMP @HAVE_X509_ALGOR_CMP@
+#cmakedefine HAVE_SSLV3_METHOD @HAVE_SSLV3_METHOD@
+
+#endif
