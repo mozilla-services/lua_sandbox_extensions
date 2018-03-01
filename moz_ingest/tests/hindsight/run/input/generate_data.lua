@@ -41,7 +41,7 @@ function process_message()
 
     -- override remote_addr with X-Forwarded-For
     msg.Fields.uri = "/submit/common/widget/99/0055FAC4-8A1A-4FCA-B380-EBFDC8571A03"
-    msg.Fields["X-Forwarded-For"] = "72.229.28.185, 127.0.0.1"
+    msg.Fields["X-Forwarded-For"] = "127.0.0.1, 72.229.28.185"
     inject_message(msg)
 
     -- valid
