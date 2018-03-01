@@ -59,6 +59,7 @@ local messages = {
         DecodeError = "no sub decoder",
         geoCity = "New York",
         geoCountry = "US",
+        geoISP = "Time Warner Cable",
         docVersion = 99
         }
     },
