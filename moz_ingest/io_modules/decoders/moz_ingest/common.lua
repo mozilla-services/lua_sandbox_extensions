@@ -23,7 +23,7 @@ decoders_moz_ingest_common = {
     city_db_file = "/usr/share/geoip/GeoIP2-City.mmdb", -- optional, if not specified no city/country geoip lookup is performed
 
     isp_db_file = "/usr/share/geoip/GeoIP2-ISP.mmdb", -- optional
-    isp_docTypes = {"customStudy" = true} -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined
+    isp_docTypes = {customStudy = true}, -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined
 
     -- WARNING if the cuckoo filter settings are altered the plugin's
     -- `preservation_version` should be incremented
@@ -162,19 +162,11 @@ local UNK_GEO = "??"
 -- Track the hour to facilitate reopening city_db hourly.
 local hour = floor(os.time() / 3600)
 
-local function get_ip(db, xff, remote_addr)
-    local ok, ip = pcall(db.lookup, db, xff)
-    if not ok then
-        ip = db:lookup(remote_addr)
-    end
-    return ip
-end
-
-local function get_geo_city(xff, remote_addr)
+local function get_geo_city(ip_addr)
     local city = UNK_GEO
     local country = UNK_GEO
 
-    local ok, ip = pcall(get_ip, city_db, xff, remote_addr)
+    local ok, ip = pcall(city_db.lookup, city_db, ip_addr)
     if not ok then return city, country end
 
     ok, city = pcall(ip.get, ip, "city", "names", "en")
@@ -186,10 +178,10 @@ local function get_geo_city(xff, remote_addr)
     return city, country
 end
 
-local function get_geo_isp(xff, remote_addr)
+local function get_geo_isp(ip_addr)
     local isp = UNK_GEO
 
-    local ok, ip = pcall(get_ip, isp_db, xff, remote_addr)
+    local ok, ip = pcall(isp_db.lookup, isp_db, ip_addr)
     if not ok then return isp end
 
     ok, isp = pcall(ip.get, ip, "isp")
@@ -268,7 +260,7 @@ function transform_message(hsr, msg)
         end
     end
 
-    if maxminddb then
+    if maxminddb and not msg.Fields.geoCountry then
         -- reopen the geoip databases once an hour
         local current_hour = floor(os.time() / 3600)
         if current_hour > hour then
@@ -281,11 +273,16 @@ function transform_message(hsr, msg)
             hour = current_hour
         end
 
-        local xff = hsr:read_message("Fields[X-Forwarded-For]")
-        local remote_addr = hsr:read_message("Fields[remote_addr]")
-        msg.Fields.geoCity, msg.Fields.geoCountry = get_geo_city(xff, remote_addr)
+        local ip_addr = hsr:read_message("Fields[X-Forwarded-For]")
+        if ip_addr then
+            ip_addr = string.match(ip_addr, ",? *([^,]+)$") -- use the last ip
+        end
+        if not ip_addr then
+            ip_addr = hsr:read_message("Fields[remote_addr]")
+        end
+        msg.Fields.geoCity, msg.Fields.geoCountry = get_geo_city(ip_addr)
         if cfg.isp_docTypes and cfg.isp_docTypes[msg.Fields.docType] then
-            msg.Fields.geoISP = get_geo_isp(xff, remote_addr)
+            msg.Fields.geoISP = get_geo_isp(ip_addr)
         end
     end
 
