@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,10 +33,34 @@ build_lua_sandbox_extensions() {
     cmake_args=""
     # todo add support for aws geoip jose kafka parquet snappy systemd
     for ext in bloom_filter circular_buffer cjson compat cuckoo_filter \
-            elasticsearch heka hyperloglog lfs lpeg lsb moz_ingest moz_pioneer \
-            moz_security moz_telemetry openssl postgres rjson sax socket ssl struct \
-            syslog zlib; do
+            elasticsearch heka hyperloglog lfs lpeg lsb moz_ingest maxminddb \
+            moz_pioneer moz_security moz_telemetry openssl postgres rjson sax \
+            socket ssl struct syslog zlib; do
         case "$ext" in
+            maxminddb)
+                if [[ "$DISTRO" =~ ^(centos|fedora|ubuntu:12.04|ubuntu:latest) ]]; then
+                    if [ "$CPACK_GENERATOR" = "DEB" ]; then
+                        (   set -x;
+                            $as_root apt-get install -y software-properties-common python-software-properties
+                            $as_root add-apt-repository -y ppa:maxmind/ppa
+                        )
+                        packages="$packages libmaxminddb-dev libmaxminddb0"
+                        cmake_args="$cmake_args -DEXT_$ext=true"
+                    elif [ "$CPACK_GENERATOR" = "RPM" ]; then
+                        if [[ "$DISTRO" =~ ^centos ]]; then
+                            (   set -x;
+                                $as_root yum install -y "epel-release"
+                            )
+                        fi
+                        packages="$packages libmaxminddb-devel libmaxminddb"
+                        cmake_args="$cmake_args -DEXT_$ext=true"
+                    else
+                        cmake_args="$cmake_args -DEXT_$ext=false"
+                    fi
+                else
+                    cmake_args="$cmake_args -DEXT_$ext=false"
+                fi
+                ;;
             postgres)
                 if [ "$CPACK_GENERATOR" = "DEB" ]; then
                     packages="$packages libpq-dev postgresql-server-dev-all"
