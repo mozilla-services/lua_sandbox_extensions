@@ -275,7 +275,18 @@ function transform_message(hsr, msg)
 
         local ip_addr = hsr:read_message("Fields[X-Forwarded-For]")
         if ip_addr then
-            ip_addr = string.match(ip_addr, ",? *([^,]+)$") -- use the last ip
+            -- X-Forwarded-For in an ELB request can contain multiple addresses
+            -- of the form:
+            -- X-Forwarded-For: ip-address-1, ip-address-2, client-ip-address
+            -- The first ones are passed through from the incoming XFF header,
+            -- while the last one is the IP of the request itself.
+            -- As of 2018/03/02, approximately 0.2% of submissions have multiple
+            -- addresses.
+            -- In the example above, ip-address-1 would be the address closest
+            -- to the origin of the request. In practice, however, many of the
+            -- "first" addresses are bogus (or internal), so we use the "last"
+            -- address as it gives a more reliable lookup.
+            ip_addr = string.match(ip_addr, ",? *([^,]+)$")
         end
         if not ip_addr then
             ip_addr = hsr:read_message("Fields[remote_addr]")
