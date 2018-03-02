@@ -1,5 +1,6 @@
 require "string"
 
+-- TODO: Recieve more than one message, see `input/new_doctype_monitor.lua`
 local results = {
     "test_message_1",
     "test_message_2\ntest_message_3",
@@ -16,5 +17,5 @@ end
 
 
 function timer_event()
-    assert(cnt == 3, string.format("%d out of 3 tests ran", cnt))
+    assert(cnt == 1, string.format("%d out of 1 tests ran", cnt))
 end

@@ -54,6 +54,11 @@ function process_message()
             for i=1, 10 do send_message(ts, "test_message_3") end
         end
 
+        --[[ TODO: Alerts sent via heka.alerts are not sent during CI because the ticker interval is
+             driven by the timestamps in the injected messages. The alerting module uses the wall clock
+             instead. The tests below will not alert. See PR in bug 1174882 for more details.
+        --]]
+
         --[[ Test state across timer events and an alert with more than one doctype
 
             - doctype that has been added to the blacklist

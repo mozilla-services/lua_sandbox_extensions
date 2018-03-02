@@ -41,7 +41,7 @@ function Set(list)
 end
 
 -- Maintained in the puppet repository: https://github.com/mozilla-services/puppet-config/blob/master/pipeline/yaml/app/pipeline.yaml#L78
-known_doctypes = Set{
+local known_doctypes = Set{
     "idle-daily",
     "saved-session",
     "android-anr-report",
@@ -91,6 +91,7 @@ known_doctypes = Set{
     "tls13-middlebox-draft22"
 }
 
+discovered = {}     -- Preserved doctypes that have been discovered
 counts = {}         -- Count of the candidate doctypes
 refresh_cycles = 0  -- Number of timer events since the last refresh
 
@@ -104,7 +105,7 @@ function process_message()
     if type(dt) ~= "string" then dt = "invalid" end
 
     -- Count the document if its below the daily threshold
-    if not known_doctypes[dt] then 
+    if not (known_doctypes[dt] or discovered[dt]) then
         counts[dt] = (counts[dt] or 0) + 1
     end
 
@@ -119,11 +120,11 @@ function timer_event(ns, shutdown)
             if count >= threshold then
                 keys[#keys+1] = dt
                 counts[dt] = nil
-                known_doctypes[dt] = true
+                discovered[dt] = true
             end
         end
         if #keys > 0 then
-            body = table.concat(keys, "\n")
+            local body = table.concat(keys, "\n")
             alert.send("new_doctype", "alert: new ping types detected", body)
         end
     end
