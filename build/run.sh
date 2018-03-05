@@ -55,7 +55,7 @@ build_lua_sandbox_extensions() {
     local ext
     packages="git c++-compiler"
     cmake_args=""
-    # todo add support for aws geoip jose kafka parquet snappy systemd moz_pioneer moz_security
+    # todo add support for aws jose kafka parquet systemd moz_pioneer moz_security
     for ext in bloom_filter circular_buffer cjson compat cuckoo_filter \
             elasticsearch heka hyperloglog lfs lpeg lsb maxminddb moz_ingest \
             moz_telemetry openssl postgres rjson sax \

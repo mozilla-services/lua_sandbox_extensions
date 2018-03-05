@@ -71,7 +71,7 @@ cjson
 compat
 cuckoo_filter
 elasticsearch
-geoip
+# geoip # deprecated use maxminddb
 heka
 hyperloglog
 jose
@@ -90,7 +90,7 @@ parquet
 postgres
 rjson
 sax
-snappy
+# snappy # deprecated
 socket
 ssl
 struct
