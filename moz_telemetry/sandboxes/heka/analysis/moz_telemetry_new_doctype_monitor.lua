@@ -17,6 +17,23 @@ ticker_interval = 60
 preserve_data = true
 threshold = 100
 
+-- Maintained in the puppet repository: https://github.com/mozilla-services/puppet-config/blob/master/pipeline/yaml/app/pipeline.yaml#L78
+known_doctypes = {
+    "idle-daily", "saved-session", "android-anr-report", "ftu", "loop",
+    "flash-video", "main", "activation", "deletion", "crash", "uitour-tag",
+    "heartbeat", "core", "b2g-installer-device", "b2g-installer-flash",
+    "advancedtelemetry", "appusage", "testpilot", "testpilottest",
+    "malware-addon-states", "sync", "outofdate-notifications-system-addon",
+    "tls-13-study", "shield-study", "shield-study-addon", "shield-study-error",
+    "system-addon-deployment-diagnostics", "disableSHA1rollout", "tls-13-study-v1",
+    "tls-13-study-v2", "tls-13-study-v3", "tls13-middlebox-repetition",
+    "tls13-middlebox-testing", "modules", "certificate-checker",
+    "flash-shield-study", "deployment-checker", "anonymous", "focus-event",
+    "new-profile", "health", "update", "tls13-middlebox-alt-server-hello-1",
+    "first-shutdown", "tls13-middlebox-ghack", "mobile-event",
+    "tls13-middlebox-draft22"
+}
+
 alert = {
   disabled = false,
   prefix = false,
@@ -40,56 +57,7 @@ function Set(list)
     return set
 end
 
--- Maintained in the puppet repository: https://github.com/mozilla-services/puppet-config/blob/master/pipeline/yaml/app/pipeline.yaml#L78
-local known_doctypes = Set{
-    "idle-daily",
-    "saved-session",
-    "android-anr-report",
-    "ftu",
-    "loop",
-    "flash-video",
-    "main",
-    "activation",
-    "deletion",
-    "crash",
-    "uitour-tag",
-    "heartbeat",
-    "core",
-    "b2g-installer-device",
-    "b2g-installer-flash",
-    "advancedtelemetry",
-    "appusage",
-    "testpilot",
-    "testpilottest",
-    "malware-addon-states",
-    "sync",
-    "outofdate-notifications-system-addon",
-    "tls-13-study",
-    "shield-study",
-    "shield-study-addon",
-    "shield-study-error",
-    "system-addon-deployment-diagnostics",
-    "disableSHA1rollout",
-    "tls-13-study-v1",
-    "tls-13-study-v2",
-    "tls-13-study-v3",
-    "tls13-middlebox-repetition",
-    "tls13-middlebox-testing",
-    "modules",
-    "certificate-checker",
-    "flash-shield-study",
-    "deployment-checker",
-    "anonymous",
-    "focus-event",
-    "new-profile",
-    "health",
-    "update",
-    "tls13-middlebox-alt-server-hello-1",
-    "first-shutdown",
-    "tls13-middlebox-ghack",
-    "mobile-event",
-    "tls13-middlebox-draft22"
-}
+local known_doctypes = Set(read_config("known_doctypes"))
 
 discovered = {}     -- Preserved doctypes that have been discovered
 counts = {}         -- Count of the candidate doctypes
