@@ -72,6 +72,7 @@ compat
 cuckoo_filter
 elasticsearch
 # geoip # deprecated use maxminddb
+hindsight
 heka
 hyperloglog
 jose

@@ -57,9 +57,9 @@ build_lua_sandbox_extensions() {
     cmake_args=""
     # todo add support for aws jose kafka parquet systemd moz_pioneer moz_security
     for ext in bloom_filter circular_buffer cjson compat cuckoo_filter \
-            elasticsearch heka hyperloglog lfs lpeg lsb maxminddb moz_ingest \
-            moz_telemetry openssl postgres rjson sax \
-            socket ssl struct syslog zlib; do
+            elasticsearch hindsight heka hyperloglog lfs lpeg lsb maxminddb \
+            moz_ingest moz_telemetry openssl postgres rjson sax socket ssl \
+            struct syslog zlib; do
         case "$ext" in
             maxminddb)
                 if [ "$integration_tests" = "true" ]; then
