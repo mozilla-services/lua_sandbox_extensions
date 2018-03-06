@@ -26,7 +26,7 @@ local messages = {
         docType = "foobar",
         DecodeErrorType = "skipped",
         DecodeError = "no sub decoder",
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         geoCountry = "US",
         docVersion = 1
         }
@@ -35,7 +35,7 @@ local messages = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
         docType = "foobar",
         duplicateDelta = 0,
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         geoCountry = "US",
         docVersion = 1
         }
@@ -57,9 +57,9 @@ local messages = {
         docType = "widget",
         DecodeErrorType = "skipped",
         DecodeError = "no sub decoder",
-        geoCity = "New York",
+        geoCity = "Milton",
         geoCountry = "US",
-        geoISP = "Time Warner Cable",
+        geoISP = "Century Link",
         docVersion = 99
         }
     },

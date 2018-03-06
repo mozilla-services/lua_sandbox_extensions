@@ -9,7 +9,12 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-rjson (>= 1.1.1), ${PACKAGE_
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)
 
-add_test(NAME ${PROJECT_NAME}_hindsight
-  COMMAND run.sh
-  CONFIGURATIONS hindsight
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/hindsight)
+add_test(NAME ${PROJECT_NAME}_decoder_common
+  COMMAND ../run.sh
+  CONFIGURATIONS integration
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/integration/decoder_common)
+
+add_test(NAME ${PROJECT_NAME}_decoder_json
+  COMMAND ../run.sh
+  CONFIGURATIONS integration
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/integration/decoder_json)
