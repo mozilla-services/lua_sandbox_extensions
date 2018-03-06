@@ -47,20 +47,20 @@ local module_cfg  = require "string".gsub(module_name, "%.", "_")
 local cfg         = read_config(module_cfg) or error(module_name .. " configuration not found")
 assert(type(cfg.databases) == "table", "databases configuration must be a table")
 
+local mm        = require "maxminddb"
 local databases = {}
 for k,v in pairs(cfg.databases) do
     if type(v) ~= "table" then
         error(string.format("invalid database entry: %s", k))
     end
-    databases[k] = {lookups = v, db = nil}
+    local ok, db = pcall(mm.open, k)
+    if not ok then error("error opening: " .. k) end
+    databases[k] = {lookups = v, db = db}
 end
 assert(next(databases) ~= nil, "databases must contain at least one entry")
 
-local mm        = require "maxminddb"
-local ostime    = require "os".time
 local smatch    = string.match
 local assert    = assert
-local error     = error
 local ipairs    = ipairs
 local pairs     = pairs
 local pcall     = pcall
@@ -70,21 +70,6 @@ local unpack    = unpack
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module.
 
-local ptime = 0
-local function refresh_db()
-    local ctime = ostime()
-    if ptime + 3600 < ctime then
-        for file, t in pairs(databases) do
-            local ok
-            ok, t.db = pcall(mm.open, file)
-            if not ok then error("error opening: " .. file) end
-            ptime = ctime
-        end
-    end
-end
-refresh_db()
-
-
 local function validate_ip(ip)
     local sl = #ip
     return not (sl < 7 or sl > 15 or not smatch(ip, "^%d+%.%d+%.%d+%.%d+$"))
@@ -92,8 +77,6 @@ end
 
 
 local function add_array(msg, field_name, values)
-    refresh_db()
-
     local update = false
     for _, t in pairs(databases) do
         local found = false
@@ -154,8 +137,6 @@ function add_geoip(msg, field_name)
         end
     end
     if vt ~= "string" or not validate_ip(value) then return end
-
-    refresh_db()
 
     local found = false
     for _, t in pairs(databases) do

@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(maxminddb VERSION 0.2.1 LANGUAGES C)
+project(maxminddb VERSION 0.2.2 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua MaxMindDB Module")
