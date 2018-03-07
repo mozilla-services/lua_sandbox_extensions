@@ -52,7 +52,9 @@ src/lfs.def
 include(CPack)
 include_directories(${LUA_INCLUDE_DIR})
 add_library(lfs SHARED ${LFS_SRC})
-target_link_libraries(lfs ${LUA_LIBRARIES})
+if(MSVC)
+  target_link_libraries(lfs ${LUA_LIBRARIES})
+endif()
 
 set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)

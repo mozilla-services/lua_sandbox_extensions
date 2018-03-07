@@ -56,7 +56,10 @@ postgres.def
 include(CPack)
 include_directories(${LUA_INCLUDE_DIR} ${PostgreSQL_INCLUDE_DIRS})
 add_library(postgres SHARED ${POSTGRES_SRC})
-target_link_libraries(postgres ${LUA_LIBRARIES} ${PostgreSQL_LIBRARIES})
+if(MSVC)
+  target_link_libraries(postgres ${LUA_LIBRARIES})
+endif()
+target_link_libraries(postgres ${PostgreSQL_LIBRARIES})
 
 set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)

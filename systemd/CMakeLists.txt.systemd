@@ -56,7 +56,7 @@ systemd_daemon_core.def
 
 add_library(systemd_daemon_core SHARED ${SRC_SYSTEMD_DAEMON_CORE})
 set_target_properties(systemd_daemon_core PROPERTIES OUTPUT_NAME core LIBRARY_OUTPUT_DIRECTORY systemd/daemon)
-target_link_libraries(systemd_daemon_core ${LUA_LIBRARIES} ${SYSTEMD_LIBRARY})
+target_link_libraries(systemd_daemon_core ${SYSTEMD_LIBRARY})
 
 file(WRITE systemd_id128_core.def "EXPORTS\nluaopen_systemd_id128_core\n")
 set(SRC_SYSTEMD_ID128_CORE
@@ -67,7 +67,7 @@ systemd_id128_core.def
 
 add_library(systemd_id128_core SHARED ${SRC_SYSTEMD_ID128_CORE})
 set_target_properties(systemd_id128_core PROPERTIES OUTPUT_NAME core LIBRARY_OUTPUT_DIRECTORY systemd/id128)
-target_link_libraries(systemd_id128_core ${LUA_LIBRARIES} ${SYSTEMD_LIBRARY})
+target_link_libraries(systemd_id128_core ${SYSTEMD_LIBRARY})
 
 file(WRITE systemd_journal_core.def "EXPORTS\nluaopen_systemd_journal_core\n")
 set(SRC_SYSTEMD_JOURNAL_CORE
@@ -79,7 +79,7 @@ systemd_journal_core.def
 
 add_library(systemd_journal_core SHARED ${SRC_SYSTEMD_JOURNAL_CORE})
 set_target_properties(systemd_journal_core PROPERTIES OUTPUT_NAME core LIBRARY_OUTPUT_DIRECTORY systemd/journal)
-target_link_libraries(systemd_journal_core ${LUA_LIBRARIES} ${SYSTEMD_LIBRARY})
+target_link_libraries(systemd_journal_core ${SYSTEMD_LIBRARY})
 
 
 

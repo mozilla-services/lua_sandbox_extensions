@@ -69,7 +69,10 @@ country.def
 include(CPack)
 include_directories(${LUA_INCLUDE_DIR})
 add_library(geoip SHARED ${GEOIP_SRC})
-target_link_libraries(geoip ${LUA_LIBRARIES} ${GEOIP_LIBRARY})
+if(MSVC)
+  target_link_libraries(geoip ${LUA_LIBRARIES})
+endif()
+target_link_libraries(geoip ${GEOIP_LIBRARY})
 
 set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)
@@ -79,11 +82,17 @@ install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH}/geoip ${DPE
 install(TARGETS geoip DESTINATION ${INSTALL_IOMODULE_PATH})
 
 add_library(city SHARED ${CITY_SRC})
-target_link_libraries(city ${LUA_LIBRARIES} ${GEOIP_LIBRARY})
+if(MSVC)
+  target_link_libraries(city ${LUA_LIBRARIES})
+endif()
+target_link_libraries(city ${GEOIP_LIBRARY})
 install(TARGETS city DESTINATION ${INSTALL_IOMODULE_PATH}/geoip)
 
 add_library(country SHARED ${COUNTRY_SRC})
-target_link_libraries(country ${LUA_LIBRARIES} ${GEOIP_LIBRARY})
+if(MSVC)
+  target_link_libraries(country ${LUA_LIBRARIES})
+endif()
+target_link_libraries(country ${GEOIP_LIBRARY})
 install(TARGETS country DESTINATION ${INSTALL_IOMODULE_PATH}/geoip)
 
 install(DIRECTORY ${PARENT_SOURCE_DIR}/io_modules/ DESTINATION ${INSTALL_IOMODULE_PATH} ${DPERMISSION})
