@@ -54,13 +54,13 @@ local messages = {
             ["Host"] = "incoming.telemetry.mozilla.org",
             ["environment.build"] = '{"applicationId":"{ec8030f7-c20a-464f-9b0e-13a3a9e97384}","applicationName":"Firefox","architecture":"x86-64","architecturesInBinary":"i386-x86_64","buildId":"20151103030248","hotfixVersion":"20150225.01","platformVersion":"45.0","vendor":"Mozilla","version":"45.0","xpcomAbi":"x86_64-gcc3"}',
             ["X-PingSender-Version"] = "1.0",
-            ["geoCity"] = "San Francisco"
+            ["geoCity"] = "Milton"
         }
     },
     {Logger = "telemetry", Type = "telemetry.duplicate", Hostname = "integration_test", Fields = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
         docType = "saved-session",
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         geoCountry = "US",
         duplicateDelta = 0,
         appUpdateChannel = "beta",
@@ -83,7 +83,7 @@ local messages = {
         appUpdateChannel = "beta",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A02",
         docType = "saved-session",
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         geoCountry = "US",
         normalizedChannel = "beta",
         appBuildId = "20151103030248",

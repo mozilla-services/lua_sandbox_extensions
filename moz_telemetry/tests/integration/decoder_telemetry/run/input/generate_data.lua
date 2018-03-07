@@ -1,8 +1,28 @@
-∫√
-»\Îuz√H§Y‹ìsh-telemetry.raw"
-moz_ingestJexample.comR&
-Host"incoming.telemetry.mozilla.orgRË¿
-content"€¿
+-- This Source Code Form is subject to the terms of the Mozilla Public
+-- License, v. 2.0. If a copy of the MPL was not distributed with this
+-- file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+--[[
+# Generates test data for moz_ingest_common decoder
+--]]
+
+require "string"
+
+local messages = {
+    {
+        Timestamp = 1,
+        Logger = "moz_ingest",
+        Type   = "telemetry.raw",
+        Hostname = "example.com",
+        Fields = {
+            ["X-Forwarded-For"] = "127.0.0.1, 216.160.83.56",
+            uri         = "/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01/saved-session/Firefox/45.0/beta/20151103030248",
+            Host        = "incoming.telemetry.mozilla.org",
+            DNT         = "1",
+            Date        = "Wed, 30 Aug 2017 20:43:39 GMT",
+            ["X-PingSender-Version"] = "1.0",
+            content = [[
+
     {
       "application": {
         "architecture": "x86-64",
@@ -807,27 +827,44 @@ moz_ingestJexample.comR&
       },
       "type": "saved-session",
       "version": 4
-    }R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"127.0.0.1, 192.30.255.112Rl
-uri"e/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01/saved-session/Firefox/45.0/beta/20151103030248€
-ia«ü°HdßçIC’ftelemetry.raw"
-moz_ingestJexample.comR&
-Host"incoming.telemetry.mozilla.orgR
-content" R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"127.0.0.1, 192.30.255.112Rl
-uri"e/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01/saved-session/Firefox/45.0/beta/20151103030248€
-1QÅ¨πIË¢≈eÖ-íÔtelemetry.raw"
-moz_ingestJexample.comR&
-Host"incoming.telemetry.mozilla.orgR
-content" R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"127.0.0.1, 192.30.255.112Rl
-uri"e/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A02/saved-session/Firefox/45.0/beta/20151103030248
+    }]]
+        }
+    },
+    { -- duplicate
+        Timestamp = 1,
+        Logger = "moz_ingest",
+        Type   = "telemetry.raw",
+        Hostname = "example.com",
+        Fields = {
+            ["X-Forwarded-For"] = "127.0.0.1, 216.160.83.56",
+            uri         = "/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01/saved-session/Firefox/45.0/beta/20151103030248",
+            Host        = "incoming.telemetry.mozilla.org",
+            DNT         = "1",
+            Date        = "Wed, 30 Aug 2017 20:43:39 GMT",
+            ["X-PingSender-Version"] = "1.0",
+            content = ""
+        }
+    },
+    { -- schema error
+        Timestamp = 1,
+        Logger = "moz_ingest",
+        Type   = "telemetry.raw",
+        Hostname = "example.com",
+        Fields = {
+            ["X-Forwarded-For"] = "127.0.0.1, 216.160.83.56",
+            uri         = "/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A02/saved-session/Firefox/45.0/beta/20151103030248",
+            Host        = "incoming.telemetry.mozilla.org",
+            DNT         = "1",
+            Date        = "Wed, 30 Aug 2017 20:43:39 GMT",
+            ["X-PingSender-Version"] = "1.0",
+            content = ""
+        }
+    },
+}
+
+function process_message()
+    for i,v in ipairs(messages) do
+        inject_message(v)
+    end
+    return 0
+end
