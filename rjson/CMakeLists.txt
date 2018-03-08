@@ -4,6 +4,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 project(rjson VERSION 1.1.2 LANGUAGES C CXX)
+set(CPACK_DEBIAN_PACKAGE_RELEASE 2)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RapidJSON Lua Module")
 
 include(ExternalProject)
@@ -18,7 +19,7 @@ externalproject_add(
 include_directories(${CMAKE_BINARY_DIR}/${PROJECT_NAME}/rapidjson-prefix/src/rapidjson/include)
 
 set(MODULE_SRCS rjson.cpp rjson.def)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.14), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.13), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1)")
 set(INSTALL_MODULE_PATH ${INSTALL_IOMODULE_PATH})
 if(NOT LUA51)
     find_package(ZLIB)
