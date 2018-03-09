@@ -2,11 +2,8 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
---[[
-# Verifies the test data for moz_ingest common decoder
---]]
-
 require "string"
+local test = require "test_verify_message"
 
 local messages = {
     {Logger = "foo", Type = "validated", Hostname = "example.com", Fields = {
@@ -15,7 +12,7 @@ local messages = {
         geoCity = "Milton",
         geoCountry = "US",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-        submission = [[{"exampleString":"string one"}]],
+        submission = {value = [[{"exampleString":"string one"}]], value_type = 1, representation = "json"},
         user_agent_browser = "Firefox",
         user_agent_version = 59,
         user_agent_os      = "Linux"
@@ -59,30 +56,12 @@ local messages = {
     },
 }
 
-local function verify_fields(idx, fields)
-    for k,v in pairs(fields) do
-        local name = string.format("Fields[%s]", k)
-        local r = read_message(name)
-        assert(v == r, string.format("Test %d Fields[%s] = %s", idx, k, tostring(r)))
-    end
-end
-
-local function verify_message(idx)
-    local msg = messages[idx]
-    for k,v in pairs(msg) do
-        if k == "Fields" then
-            verify_fields(idx, v)
-        else
-            local r = read_message(k)
-            assert(v == r, string.format("Test %d %s = %s", idx, k, tostring(r)))
-        end
-    end
-end
-
 local cnt = 0
 function process_message()
     cnt = cnt + 1
-    verify_message(cnt)
+    local received = decode_message(read_message("raw"))
+    test.fields_array_to_hash(received)
+    test.verify_msg(messages[cnt], received, cnt)
     return 0
 end
 

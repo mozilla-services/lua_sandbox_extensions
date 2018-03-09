@@ -11,13 +11,13 @@ function process_message()
 end
 
 ticks = 0
-function timer_event(ns)
+function timer_event(ns, shutdown)
     local cnt = #alerts
-    if ticks == 15 or cnt == 2 then
+    if shutdown or ticks == 15 or cnt == 2 then
         if cnt == 2 then
             if not string.match(alerts[1][2], "10%% of recent messages failed") then
                 error("failed alert 1: " .. tostring(alerts[1][2]))
-            elseif not string.match(alerts[2][2], "terminate.lua:9: boom") then
+            elseif not string.match(alerts[2][2], "terminate.lua:12: boom") then
                 error("failed alert 2: " .. tostring(alerts[2][2]))
             end
         else

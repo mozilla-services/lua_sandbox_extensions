@@ -8,3 +8,15 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Utility modules for Heka sandboxes")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-cjson (>= 2.1), ${PACKAGE_PREFIX}-lpeg (>= 1.0.10)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)
+
+set(integration_tests
+  decoder_table_to_message
+  input_file
+)
+
+foreach(test IN LISTS integration_tests)
+  add_test(NAME ${PROJECT_NAME}_${test}
+    COMMAND ../run.sh
+    CONFIGURATIONS integration
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/integration/${test})
+endforeach()

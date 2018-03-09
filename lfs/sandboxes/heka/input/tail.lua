@@ -8,6 +8,9 @@ todo: when more than line splitting is needed the file should be read in chunks
 and passed to a generic splitter buffer with a token/match specification and a
 find function similar to the Heka stream reader.
 
+warning: if the file being tailed is not flushed on newline Lua reads and
+returns the partial line before the <eof> so it may be improperly split.
+
 ## Sample Configuration
 ```lua
 filename = "tail.lua"

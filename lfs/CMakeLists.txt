@@ -12,6 +12,12 @@ externalproject_add(
     CMAKE_ARGS ${EP_CMAKE_ARGS} -DPARENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
 )
-externalproject_add_step(ep_lfs copy_cpack 
+externalproject_add_step(ep_lfs copy_cpack
 COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/${PROJECT_NAME}.cpack ${CMAKE_BINARY_DIR}
+COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_CURRENT_BINARY_DIR}
 DEPENDEES install)
+
+add_test(NAME ${PROJECT_NAME}_input_tail
+  COMMAND ../run.sh
+  CONFIGURATIONS integration
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/integration/input_tail)

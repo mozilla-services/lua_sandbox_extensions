@@ -156,7 +156,7 @@ build_lua_sandbox_extensions() {
         (   set -x
             cd release
             install_packages_from_dir .
-            ctest -V -C integration
+            ctest -V -C integration -j 10
         )
     fi
 }

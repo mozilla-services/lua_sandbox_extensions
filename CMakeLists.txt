@@ -28,6 +28,7 @@ if(LUA51) # build against installed lua 5.1
         set(TEST_MODULE_PATH "${CMAKE_BINARY_DIR}/install/${CMAKE_INSTALL_LIBDIR}/${PACKAGE_PREFIX}/?.lua")
         string(REGEX REPLACE "\\.lua$" ".so" TEST_MODULE_CPATH ${TEST_MODULE_PATH})
     endif()
+    set(TEST_MODULE_PATH "${CMAKE_SOURCE_DIR}/common/?.lua;${TEST_MODULE_PATH}")
 else() # lua_sandbox build
     find_package(luasandbox 1.2.1 REQUIRED CONFIG)
     set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})
@@ -47,6 +48,7 @@ else() # lua_sandbox build
         string(REGEX REPLACE "/modules/\\?" "/io_modules/?" TEST_IOMODULE_PATH ${TEST_MODULE_PATH})
         string(REGEX REPLACE "\\.lua$" ".so" TEST_IOMODULE_CPATH ${TEST_IOMODULE_PATH})
     endif()
+    set(TEST_MODULE_PATH "${CMAKE_SOURCE_DIR}/common/?.lua;${TEST_MODULE_PATH}")
     configure_file(${CMAKE_SOURCE_DIR}/cmake/test_module.in.h ${CMAKE_BINARY_DIR}/test_module.h)
 endif()
 

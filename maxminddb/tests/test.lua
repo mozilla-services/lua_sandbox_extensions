@@ -22,6 +22,7 @@ end
 
 local string = require "string"
 local gh = require "maxminddb.heka"
+local test = require "test_verify_message"
 
 local tests = {
     {{}, "remote_addr", nil},
@@ -71,61 +72,10 @@ local tests = {
     },
 }
 
-local function verify_field(idx, k, expected, received)
-    local ev = expected
-    local rv = received
-    if ev.value then
-        if ev.representation ~= rv.representation then
-            error(string.format("test: %d field: %s representation expected: %s received: %s",
-                                idx, k, tostring(ev.representation), tostring(rv.represntation)))
-        end
-        ev = ev.value
-        rv = rv.value
-    end
-
-    if type(ev) == "table" then
-        for i,v in ipairs(ev) do
-            if v ~= rv[i] then
-                error(string.format("test: %d field: %s idx: %d expected: %s received: %s",
-                                    idx, k, i, tostring(v), tostring(rv[i])))
-            end
-        end
-    elseif ev ~= rv then
-        error(string.format("test: %d field: %s expected: %s received: %s",
-                            idx, k, tostring(ev), tostring(rv)))
-    end
-end
-
-
-local function verify_msg_fields(idx, expected, received)
-    if expected == nil and received ~= nil then
-        error(string.format("test: %d failed Fields not nil", idx))
-    end
-    if not expected then return end
-
-    for k,e in pairs(expected) do
-        local r = received[k]
-        local etyp = type(e)
-        local rtyp = type(r)
-        if etyp ~= rtyp then
-            error(string.format("test: %d field: %s type expected: %s received: %s",
-                                idx, k, etyp, rtyp))
-        end
-        if etyp == "table" then
-            verify_field(idx, k, e, r)
-        elseif e ~= r then
-            error(string.format("test: %d field: %s expected: %s received: %s",
-                                idx, k, tostring(e), tostring(r)))
-        end
-    end
-    if idx > 0 then
-        verify_msg_fields(-idx, received, expected)
-    end
-end
 
 for i,v in ipairs(tests) do
     gh.add_geoip(v[1], v[2])
-    verify_msg_fields(i, v[3], v[1].Fields)
+    test.verify_msg_fields(v[3], v[1].Fields, i, true)
 end
 
 
@@ -134,11 +84,11 @@ t._country = nil
 cfg.maxminddb_heka.remove_original_field = true
 local msg = {Fields = {remote_addr = "216.160.83.56"}}
 gh.add_geoip(msg, "remote_addr")
-verify_msg_fields(98, {remote_addr_city = "Milton", remote_addr_isp = "Century Link"}, msg.Fields)
+test.verify_msg_fields({remote_addr_city = "Milton", remote_addr_isp = "Century Link"}, msg.Fields, 98, true)
 cfg.maxminddb_heka.remove_original_field = false
 
 t[""] = t._city -- replace the original field with city
 t._city = nil
 local msg = {Fields = {remote_addr = "216.160.83.56"}}
 gh.add_geoip(msg, "remote_addr")
-verify_msg_fields(99, {remote_addr = "Milton", remote_addr_isp = "Century Link"}, msg.Fields)
+test.verify_msg_fields({remote_addr = "Milton", remote_addr_isp = "Century Link"}, msg.Fields, 99, true)

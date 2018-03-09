@@ -5,6 +5,8 @@
 --[[
 # Generates test data for plugin_monitor
 --]]
+require "io"
+require "string"
 local socket = require "socket"
 
 local inputs = {
@@ -13,7 +15,13 @@ local inputs = {
     {Timestamp = 0, Type = "plugin_monitor_test_success", Payload = "0"},
 }
 
-
+local fn = string.format("%s/input/plugin_tsv.cfg", read_config("sandbox_load_path"))
+local fh = assert(io.open(fn, "w+"))
+fh:write([[filename = "plugins_tsv.lua"
+ticker_interval = 1
+preserve_data = false
+]])
+fh:close()
 
 function process_message()
     socket.sleep(3)

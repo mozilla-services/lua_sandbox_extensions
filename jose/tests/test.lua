@@ -20,10 +20,10 @@ local rsa = [[
   "q": "0M7h_gtxoVoNPLRjYA5zBUD8qmyWiAzjloFOrDRLJwiD4OPHgImUx2WPTiSCjouvGqwfJh1jEEryJV_d0e4iVGyKYbFeXfzadwYXXR2jK4QwO1V_JDHI7HUYwNl6qzZqATi2zNKunPgIwY55gWBKjP2aUvPUBAcTeCsUPvrN_SajPVfc2wSlA2TvEnjmweNvgSTNqtBlMpmpwvEb9WXfv4pl3BfRvoTk3VR4icyvl-PLFedp2y0Fs0aQ4LRQ2ZMKWyGQEam_uAoa1tXrRJ_yQRvtWm1K8GpRZGKwN3TvtAg649PxQ7tJ8cvh3BwQROJyQBZDrlR04wqvDK4SNezlUQ"
 }]]
 
-local symetric = [[{"kty":"oct", "k":"GawgguFyGrWKav7AX4VKUg"}]]
+local symmetric = [[{"kty":"oct", "k":"GawgguFyGrWKav7AX4VKUg"}]]
 
 local jwk = jose.jwk_import(rsa)
-local sjwk = jose.jwk_import(symetric)
+local sjwk = jose.jwk_import(symmetric)
 local hdr = jose.header({alg = "RSA-OAEP", enc = "A256GCM"})
 local chdr = jose.header({alg = "RSA-OAEP", enc = "A256GCM", zip="DEF"})
 local xhdr = jose.header({alg = "RSA-OAEP", enc = "A256GCM", zip="XXX"}) -- unknown compression ignored
