@@ -106,10 +106,8 @@ build_lua_sandbox_extensions() {
                     fi
                     cmake_args="$cmake_args -DEXT_$ext=true"
                 elif [ "$CPACK_GENERATOR" = "RPM" ]; then
-                    if rpm -qa | grep -q compat-openssl10; then
-			# Newer Fedora installs 1.1 by default but also installs a 1.0
-                        # compat package; if we see that installed also grab the devel version
-                        # of it
+                    if [ -f "/etc/redhat-release" ] && grep -q '^Fedora' /etc/redhat-release; then
+			# Newer Fedora installs 1.1 by default, install the 1.0 compat package as well
                         packages="$packages compat-openssl10-devel"
                     else
                         packages="$packages openssl-devel"
