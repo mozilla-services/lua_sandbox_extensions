@@ -11,7 +11,7 @@ into multiple messages.
 ## Decoder Configuration Table
 
 ```lua
-decoders_line_splitter = {
+decoders_moz_logging_line_splitter = {
   -- printf_messages (table/nil) see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/printf.html
   -- sub_decoder (string/table) see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
 }
@@ -32,8 +32,6 @@ Decode and inject the resulting message
   http://mozilla-services.github.io/lua_sandbox/heka/message.html. In the case
   of multiple decoders this may be the message from the previous input/decoding
   step.
-- mutable (bool/nil/none) - Flag indicating if the decoder can modify the
-  default_headers/msg structure in place or if it has to be copied first.
 
 *Return*
 - err (nil, string) or throws an error on invalid data or an inject message
@@ -73,9 +71,9 @@ local err_msg = {
 }
 
 
-function decode(data, dh, mutable)
+function decode(data, dh)
      for line in string.gmatch(data, "([^\n]+)\n*") do
-         local err = sub_decoder(line, dh, mutable)
+         local err = sub_decoder(line, dh)
          if err then
              err_msg.Payload = err
              err_msg.Fields.data = line

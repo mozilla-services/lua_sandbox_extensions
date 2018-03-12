@@ -83,7 +83,7 @@ function verify_msg_headers(expected, received, id, symmetric)
     for k,v in pairs(expected) do
         if k == "Fields" then
             if not received[k] then
-                error(string.format("test: %d header: %s not found", id))
+                error(string.format("test: %d header: %s not found", id, k))
             end
         else
             if v ~= received[k] then
