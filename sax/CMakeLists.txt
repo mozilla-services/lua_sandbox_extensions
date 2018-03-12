@@ -8,7 +8,7 @@ project(sax LANGUAGES NONE)
 externalproject_add(
     ep_sax
     GIT_REPOSITORY https://github.com/trink/symtseries.git
-    GIT_TAG bd2426c93d0d55977ca7b21354105463b0470a49
+    GIT_TAG 62fbe4df396e68de637aca0cdb597e3593bab754
     CMAKE_ARGS ${EP_CMAKE_ARGS}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
 )
