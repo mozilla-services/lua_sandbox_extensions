@@ -15,6 +15,16 @@ RUN yum makecache
 RUN yum install -y git rpm-build c-compiler make curl gcc gcc-c++ \
     autoconf automake
 
+# Use devtoolset-6
+RUN yum install -y centos-release-scl
+RUN yum install -y devtoolset-6
+ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-6/root/usr/lib/perl5:/opt/rh/devtoolset-6/root//usr/share/perl5/vendor_perl'
+ENV X_SCLS=devtoolset-6
+ENV PCP_DIR=/opt/rh/devtoolset-6/root
+ENV LD_LIBRARY_PATH=/opt/rh/devtoolset-6/root/usr/lib64:/opt/rh/devtoolset-6/root/usr/lib
+ENV PATH=/opt/rh/devtoolset-6/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PYTHONPATH=/opt/rh/devtoolset-6/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-6/root/usr/lib/python2.7/site-packages
+
 WORKDIR /root
 RUN curl -OL https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz
 RUN cd /usr && \
@@ -67,4 +77,4 @@ ADD . /root/lua_sandbox_extensions
 RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release && \
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
     ${EXTENSIONS} .. && \
-    make && ctest -E parquet -V && make packages && rpm -i *.rpm
+    make && ctest -V && make packages && rpm -i *.rpm
