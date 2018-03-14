@@ -5,14 +5,15 @@ ARG EXTENSIONS="-DEXT_bloom_filter=true -DEXT_circular_buffer=true -DEXT_cjson=t
     -DEXT_moz_telemetry=true -DEXT_openssl=true -DEXT_postgres=true -DEXT_rjson=true \
     -DEXT_rjson=true -DEXT_sax=true -DEXT_socket=true -DEXT_ssl=true \
     -DEXT_struct=true -DEXT_syslog=true -DEXT_zlib=true -DEXT_moz_security=true \
-    -DEXT_aws=true -DEXT_kafka=true -DEXT_parquet=true"
+    -DEXT_aws=true -DEXT_kafka=true -DEXT_parquet=true -DEXT_jose=true"
 
 FROM centos:7
 ARG EXTENSIONS
 
 RUN yum makecache
 # Install some dependencies for LSB and hindsight build
-RUN yum install -y git rpm-build c-compiler make curl gcc gcc-c++
+RUN yum install -y git rpm-build c-compiler make curl gcc gcc-c++ \
+    autoconf automake
 
 WORKDIR /root
 RUN curl -OL https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz
@@ -38,7 +39,6 @@ RUN curl -OL https://hsadmin.trink.com/packages/centos7/external/awssdk-1.3.7-1.
 RUN rpm -i awssdk-1.3.7-1.x86_64.rpm
 
 # Required for parquet
-RUN echo test
 RUN curl -OL https://hsadmin.trink.com/packages/centos7/external/parquet-cpp-1.3.1-1.x86_64.rpm
 RUN rpm -i parquet-cpp-1.3.1-1.x86_64.rpm
 RUN yum install -y https://packages.red-data-tools.org/centos/red-data-tools-release-1.0.0-1.noarch.rpm
@@ -46,7 +46,16 @@ RUN yum install -y --enablerepo=epel arrow-devel
 
 # Install dependencies for LSB extensions build
 RUN yum install -y zlib-devel openssl-devel postgresql-devel libcurl-devel \
-    librdkafka-devel
+    librdkafka-devel jansson-devel
+
+# Required for jose
+# Right now the jose module requires 0.5.1
+RUN git clone https://github.com/cisco/cjose.git
+RUN cd cjose && git checkout tags/0.5.1 && \
+    autoreconf && env CFLAGS='-g -O2 -I/usr/include/ -I/usr/include -fPIC' \
+    ./configure --with-openssl=/usr --with-jansson=/usr  \
+    --enable-static --disable-shared --prefix=/usr \
+    && make && make install && cp cjose.pc /usr/lib64/pkgconfig/cjose.pc
 
 RUN git clone https://github.com/trink/streaming_algorithms.git
 RUN mkdir -p streaming_algorithms/release && cd streaming_algorithms/release && \
