@@ -42,6 +42,19 @@ decoupling the module and businesss logic maintenance and deployment.
     ctest
     nmake packages
 
+### Docker Images
+
+Docker images [are built](https://hub.docker.com/r/mozilla/lua_sandbox_extensions/) from
+the `dev` and `master` branches. These images contain [hindsight](https://github.com/mozilla-services/hindsight),
+[lua_sandbox](https://github.com/mozilla-services/lua_sandbox) and have all of the extensions
+from this repository installed.
+
+    # Get master branch docker image
+    docker pull mozilla/lua_sandbox_extensions:master
+    
+    # Get dev branch docker image
+    docker pull mozilla/lua_sandbox_extensions:dev
+
 ## Releases
 
 * The master branch is the current release and is considered stable at all
