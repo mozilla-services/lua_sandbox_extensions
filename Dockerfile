@@ -73,3 +73,9 @@ RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
     ${EXTENSIONS} .. && \
     make && ctest -V && make packages && rpm -i *.rpm
+
+# Install dependencies for mozilla-pipeline-schemas build
+RUN yum install -y jq
+RUN git clone https://github.com/mozilla-services/mozilla-pipeline-schemas.git
+RUN mkdir -p mozilla-pipeline-schemas/release && cd mozilla-pipeline-schemas/release && \
+    cmake .. && make && cpack -G RPM && rpm -i *.rpm

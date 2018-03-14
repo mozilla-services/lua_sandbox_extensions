@@ -65,7 +65,7 @@ local msg = {
     Type   = "telemetry.raw",
     Hostname = "test.pioneer.com",
     Fields = {
-        ["X-Forwarded-For"]         = "192.30.255.112, 127.0.0.1",
+        ["X-Forwarded-For"]         = "127.0.0.1, 216.160.83.56",
         ["X-PingSender-Version"]    = "1.0",
         Host    = "incoming.telemetry.mozilla.org",
         DNT     = "1",
@@ -111,7 +111,7 @@ function process_message()
     cnt = cnt + 1
     msg.Fields.uri = string.format(uri_template, cnt)
     local jwe = jose.jwe_encrypt(jwk, submissions[1][1], hdr)
-    msg.Fields.content = string.format(envelope, string.gsub(jwe:export(), ".$", "X"), v[2], v[3], v[4], v[5])
+    msg.Fields.content = string.format(envelope, string.gsub(jwe:export(), "...$", "oqX"), v[2], v[3], v[4], v[5])
     inject_message(msg)
 
     return 0

@@ -1,326 +1,0 @@
-Õ
-¡_6CU™>~8N≈üÂûÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgRÏ
-content"‡{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.pIbRPnpaTJevExrA-21Z2MgFO8iCThYlMB-o3pJDssxlTOtTkWtsUBViwm6H-5K9q1ozny0c4Foz6_ux7MZA88vArpuxTUCUr6s6jAnxOD_EuzNIFLd7XahFdqADWBFWyV65sWF6AgpBPaw0Jn9rncGpLry1Arh4UF7rw9c73fXR7fKULT9k0fEddyL918_4aiDasZc68fx6eviqdHIo4LZQfsDBIRRtBgC3o7P60Yh1xq-UHllKquCnoBmQon73mBKCjweQ0XFZZIJIOtHiT76peN4Dau4p1xi-GNSWmGbVAPmfKUtAc6xV9V209VlfS8KSVWvsa_zM3sesJFtRPPs8DAkXdiDdEQHrnHLxv8caIKPrX9bnqRVpUe4U8PqFhYuMPv-MQMPZu1E2fUaTnQOaArSfvTDVga1bYRWFp2KHtpV9x6S0GQXYvbmBAxFfhibvPiS7Ww4njE34H1-pzSwZPByieuKD52SHtt5Shzo8gL1rCrBg-oKuTY-J__uRAQBGCPZ0G_2b6Iw4tZXTBCIf0mu51vMinnzGk0fVigJn9g0YBFmQzUorQY8VzKGds_fvP-mmUVH_kJuup7K1XLIY_Q-G3SRwBJRwq_sI3qO0NdvTO-2LzxUbg3elAftb0mMIZi-bxm5VTu-dThyQxyZmSCSNiJP68iJgI-X0KIM.erKFwK3wyF9TNplx.Jp9br4LSqL8nQbvmxIdhdM1Q_kQ1faShANvfkzuVHg.r0qF-gZbZdUzPxgNG6sjwA",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01/pioneer-study/Firefox/45.0/release/20151103030248Õ
-B∫g·Lê°c,WT˜XÜı†ÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgRÏ
-content"‡{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.pIbRPnpaTJevExrA-21Z2MgFO8iCThYlMB-o3pJDssxlTOtTkWtsUBViwm6H-5K9q1ozny0c4Foz6_ux7MZA88vArpuxTUCUr6s6jAnxOD_EuzNIFLd7XahFdqADWBFWyV65sWF6AgpBPaw0Jn9rncGpLry1Arh4UF7rw9c73fXR7fKULT9k0fEddyL918_4aiDasZc68fx6eviqdHIo4LZQfsDBIRRtBgC3o7P60Yh1xq-UHllKquCnoBmQon73mBKCjweQ0XFZZIJIOtHiT76peN4Dau4p1xi-GNSWmGbVAPmfKUtAc6xV9V209VlfS8KSVWvsa_zM3sesJFtRPPs8DAkXdiDdEQHrnHLxv8caIKPrX9bnqRVpUe4U8PqFhYuMPv-MQMPZu1E2fUaTnQOaArSfvTDVga1bYRWFp2KHtpV9x6S0GQXYvbmBAxFfhibvPiS7Ww4njE34H1-pzSwZPByieuKD52SHtt5Shzo8gL1rCrBg-oKuTY-J__uRAQBGCPZ0G_2b6Iw4tZXTBCIf0mu51vMinnzGk0fVigJn9g0YBFmQzUorQY8VzKGds_fvP-mmUVH_kJuup7K1XLIY_Q-G3SRwBJRwq_sI3qO0NdvTO-2LzxUbg3elAftb0mMIZi-bxm5VTu-dThyQxyZmSCSNiJP68iJgI-X0KIM.erKFwK3wyF9TNplx.Jp9br4LSqL8nQbvmxIdhdM1Q_kQ1faShANvfkzuVHg.r0qF-gZbZdUzPxgNG6sjwA",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A01/pioneer-study/Firefox/45.0/release/20151103030248≥
-fJÌK§¨:‹3π+¯˚º–¨ÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgR“
-content"∆{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.ds7LT3vtshHRibx3twJQSKb8n_W6EtvpD7597KjMBsA4NySKTF0cgGE4m7MvMDXzYUeJq5K1sAnuYNAFdUML2my06rXWB3Q8gP6PRjF2hYzj84NKYVBwBr0XdgSfGqx_ja3XZX0f8LKkCUppRDo_9YuK-7kkw4_NDMLen-f3o9ta87w9Nn9lbw1m62yhkR8S2jiK3W4jpCnbxIeyZMyo-u-iCdEN4gdtH3ledcpeSZXn6b-L6d_4iQx2Y98Y5xvkSakXkipowsDd9FI7yE_gprV1pJDV29lDmH7Km_9ZSGA6NQTZs0fkOcJIhZprW4Bq_aP2tlPBU343dC-6lrVitQLxGgYgUDZduR4E0T3XJ4LJaPNIJKsTx-s9UXGur0U0qCIBT-bJKD3bBeVJmSA7ZMcuOGHktCQsx0Fr84IOInFaOCZSulPS_H0IThB23Z-Z9e-dX-c1s-YfjSUvMiyuG_mciDLo27AsN2FMOPQD-tKkOgnz231Ri3GTK777OYpsYTr8Q0vBRdVLJIi_-dIMTSuRHX3RCwduVpR_EnPdvMh_O7949W45gLoyz_Z96BarU6WDssPrCLGPkHHVDQqCO7nHz8RB5l5Jpq0Y2D_2Aaq14qDZBfldgkZJC6QufefoVtwqWWdd_R_PE_gqazJmGTsesHtgTnvT8VydnmxeyIo.LM9z4RRfWVynWd0u.SQehWUthukk7EUX2.L8zyxPzzWbDalhMdLlCPhg",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A02/pioneer-study/Firefox/45.0/release/20151103030248√
-Úçb∆BN¸®ÃzÍä¿vŸ˙íªÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgR‚
-content"÷{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.jQ5cFJYEg60b-XuRIvUxQUqdiEOLOILKu8tdCZg7hShMRWA86NXn-x0Tauv23ISJnyC7O0wkZzxnExMgImhrCbk__aDWs-4_OukDu5aQH4qzZlEIUouaEoaPuymaaDkry5oP2iy4mTQGmf1FFW83bMRzLQ6ilkEjZ3TALFABxROEuA5gPZVNyAc_YuLPzvpSQDP-ZPc3cbOUldxF1XBa14uybBA1UK5yPpJukghM_KyYczyY8ZHkcH-kY0IwC_ucNYsH0xS2Pwl2s_wN_obkFH72NU20K68K5dYlU0yXkBrmpbrbyBN7-e6zB1FLiUwkIRZZELrjFgo4XR_MOUj4-2TiFrP0J38RSZWXrvrD7T3PNT9S1UJGYzKdgJDp7NwCk-ykcyRVFDGzMyg07EXMqAn5om9xaT9PG5w36D8QFaE-Rn1SAa3CtUorc3bKTcok22tXschOb0M6gCTNGYS20czYh_-A5dz_YsjBHUI-vy621OwSq9hoWjopIFpQTgEx1ytRTgwsyfI_VzXdVVWY68aL4kGAAb-rVn9JeSA8qqVYr7ta9eYSRjry2aLp47n9jXn4_onKeYpPTUTwhxCW6BsZbqoe6GtEEYuxj9KcCsBmZOr5gnET3HNKmJGb8t49aAygPAqcI4G8mopLr_xfX9gg1YrAc5mvT4DaS9zrB8c.ZJm6UQ6kpTro4Evo.vT76DxXLH-KdyXOziVzT3C_2WTSbCPwS.561TISFGGa9y1pS_qfPJoA",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A03/pioneer-study/Firefox/45.0/release/20151103030248Õ
-àÁå⁄G8F2¶=7J√cêµÇÜ»ÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgRÏ
-content"‡{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.fyBsSBWr_usZSf_bMfByok4YVj0Oc53UzzboheQynFH6kT9YPYO3Kb6Zy57o4jA1xxNblhjmbcRRQQ_EzAgyErtsKj5HsnIdhpEeqIcuuYWte6cEqoeVkbgHMiDvXew_IsYoBXO0I2dY45NmPm7Bn6y0CIe-oO95IbiXwrqkub6_GuuEkrWJHh0_vtOJPNwEuG3gn3xM5LIfRjQ4CaL1OzV9t-_cqOW0NLVKgL6HWaCDz6MH7OEqyV_gbmZJli9R02uj5wwYOg58KeXaB2KOVJFbuoGQZqz_rKx5eYm-h5-0sQp9h7UaFRsZr66pZa8IWGdp4yI1MNy70NOK2dW5yePvKfLvzrfg32nQgsyT1ZCE_AM3Kzqp0Fhlc5bt70v1IEl9ptGwA5fv4BrbCcAMXFECr8EHHHtLuzjMRceuAggBTh1W-SC-3ibGL0y24bTnwbO8QFp408NNUNd8DAaeB5zjcX-AmIR_2tyCetu6pPs58NLb2rL6VAQp6jlE-GxJrApNlO9iyI3UnH06tBmPfPQmBbGR-tEmLecu2te-U8lkSkP95ELHKnbCa9EgEpfF10PM7wmfOzJZQXr-KSQ3EPWDt_Mtzhs_776DO6J7txJZS8CUeq5_BJjt2Ed-95FDTlztnjePdCpF46AT427nm26quOcYs8ZTfeQDqDjalvY.wSk9bv31sP0nvbf1.xzyKbItnGr4WdZpGSp9tGSTiityQiyZeWX83SqCFLA.LMkDKUijBQ8IRP16uwq-ag",
-        "encryptionKeyId": "pioneer-20200901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A04/pioneer-study/Firefox/45.0/release/20151103030248Õ
-ÛÕ∑5´C]®-GÌΩ€u∂˙”ÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgRÏ
-content"‡{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.ra0kT5oBH0YL0Oic1z6O7BZiAZSGcwoGklKAIuCvfPeWvv_t4uAfaynEJLsa90I_EB4NGf4EVEYK4HupZyW2draPQLpZYIJNCs__3tpihxBLjOk_FSQ4ZsdsnDE2_LrdwAWjKux2-fmQ7HPfggdoFqGneiWAiaXg3fNtUibgYzq_wlRsQyRYrwyDV9wkbh1qSYPTEwGoxjzZAKSQMUGXmgLlbX7BZx_uIkgz7sQbbdudCkRrcAN59n6Tj6GBWGuLh2kbdGE8aJNxMPF4KDMf_2eejGv4WvV24xN_bl7TU2RBQASneJ_NRGcBA0rhrNpQBAiP2rYH_jABQtlj1WuNeb6b60KWuxcYJxHva5JNE1rR8JCWkjwy4eFqs0lwe6WcvNs1ficY2CZrQTggrgY1X-xS3F9RkS5IreSK33mODJuAOjMrsw2xWReYBaJeKwAIWai3R8nlqnYHhcgVYz5uPogjNuGpKSzGTZeoVQKRMgZvRhh1UBlOKEaII82ZhhZNmkvwt4CO4X3uyp_X4LbXefi4rFOF7iR6fxo_8ykvLuv8Ip3fOnRmsWSlftuH3RXf8EKjjDEezxVJrf-0xSjBU3mG4GHegXsf92q7PrM-LGnqkxW-A1hx-SuD0vg4atPbkq7-AEygzCifQexnIW2To7wBbqd79SJKoXqpfSbY5Hw.2oz5ctcpuLwlzBoS.Djhbu3FKr-ozvFiXLws2coZnbNAamlYq59yucjyPzA.X7U9WjF0FNvf04B8GUCg1A",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "bogus",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A05/pioneer-study/Firefox/45.0/release/20151103030248Õ
-•gPÏüFNÊ£V0Fπ¡˚™ÄçÏÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgRÏ
-content"‡{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.hMmrA7tOaRZHyOmtr-nnP9ndd3VkSGfs5TkS2257m2LtxETQOOWh5hzqU5rvSvV3AQbDWI30EMkjLY4XsD4qOaqwQkSIkYjGMInc1BSUh9d3_6vsegts0SeTKB-u6JlrZPvkGe8jXbM55yTUA9g1Z2QcpaURYeZ45qx2HwktqGNUDSS6a4m6e9pcJIRRnncAZ6S0hox9FSXL6IzokGdRBNO59Xla14fFf2CMhLWiYhG1akwzPj1NO7z1rMLwQv7D2U1ccrnKCz8N47qOTskUp9vPShVZ3D5mljMZwoDd9rZdER2SqRUmiFNKuXiKixdjh0l3PT6wJF5ov6K4UCkGtnlIYlFQLdE_CFgaBjDqE93BSHe-Rl5kNIoULtSRnCwW5QRJbTAWlTVvA5d-eRxOpPQ48maeDubNwbn3lQONVoOg48ZfQiXlleF9ScV9ze-wxCK9eFPXT5FINvwgXekYWpqmCebvLSAKf6iWP2kJmG4V61XWNrrO0wa3P4Dn4lzs8e5EvB5vkdGErq_U2h2c265l43vyLdX1ezuRTGLf1L7_p9nU6Flo1rg37WXMjqnvT5W6q0gyVdU11Po1-Qm6ugIDKEquR7D2gUC_WqyHMMldPhWyVZbUavxbEnSrob06vQDWbSRCim8-69HkmD_SuOQcsXukAdY0t-mlPjd4bhk.902ztILvlae1YEOZ.68B6nE7eU48JPqFX-I6gKPSzbS7QGIbF8QTpSH7qjw.OZYc3Wztsx8yXT699W3ugw",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 2
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A06/pioneer-study/Firefox/45.0/release/20151103030248Î
-¥»aÈsFÎ°çÌ/K»§‰ΩÓÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgR
-content" R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A07/pioneer-study/Firefox/45.0/release/20151103030248Ì
-0Ù‹œ:˚EΩ°Ê
-ß˛¥[„‰ÓÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgR
-content"{}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A08/pioneer-study/Firefox/45.0/release/20151103030248€
-∆D:)äEkßöb€>RÚïÔÛÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgR˙
-content"Ó{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "xxxxxxxxxxxxxxxx",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A09/pioneer-study/Firefox/45.0/release/20151103030248Õ
-3/€m*êK{¶.Ö-:xÛÇ√ÅÙÙõﬂ¯telemetry.raw"
-moz_ingestJtest.pioneer.comR&
-Host"incoming.telemetry.mozilla.orgRÏ
-content"‡{
-      "id": "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-      "creationDate": "2015-11-05T01:25:43.312Z",
-      "type": "pioneer-study",
-      "version": 4,
-      "application": {
-        "architecture": "x86-64",
-        "buildId": "20151103030248",
-        "channel": "beta",
-        "name": "Firefox",
-        "platformVersion": "45.0",
-        "vendor": "Mozilla",
-        "version": "45.0",
-        "displayVersion": "45.0b6",
-        "xpcomAbi": "x86_64-gcc3"
-      },
-      "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.FFS7WtYiCO4t9I5eNICzh_DaMhNENkDYRsYNbguqIRO7IUzXCBx3boSciI3vXxcplb3aIq57-vaNWmQxTsITKkz8CaRQ09uIx0rW1_G11Brj6KsXjGdEgg7Ti_Dgl00X20U5vLrpcOaoLay-yUzoolHokOJvo6_OmaQxsXCG77x7I44CDN775m_4BhvIst2-xTiec1qFN26oP0wLT40nac1FsT1Me2K3aM9pW5jBr_2-NVtEqv11qqp_BCHfKOGFzO4ma4yR3DGgJdWs6m5UDKVhd8a4JsWGsb7h_AL9_gBqG_1vekcX-232g7KyzwgIjqQrNcXusFMWIFrCM0ipOVe2BuklPxSjp9TlRlYEK8dg5X9S5_Jun3kMVenLXbNfnZ_GV9JTeHax7SNmWv5ikacUnuKISirMKTb-S76RTAbIe--1C7QM3uFkFTi8ZILCkGU2-Lj84QjnjOCVwb2qcNU9Jq4ukHfEMBcffj7WsKTvUcdqIg_SSE3iJ2pFv7a4h_wCXuEqWIeLv-3RmI6q8LnjUVpW7-9QQzkdWRMvFZklJoofBaQ-jSAIiDtOPZKHYvA9SXNYEHRexiDdMLcF8or9pCt-H6tJoMJmKQ44okmiaav3iQyK_wVC0wnUZpJooo4VijNRshW8vmjffZyI8IXCIbz1DBKfP3odOb-u00o.aljuTlKWtWMA2kmP.lnn5UuZ50JCu2BVyIDTSSQRjPfwD_uItnR7ugaiagg.KJE0Leox2PqRHPIF1pdc5X",
-        "encryptionKeyId": "pioneer-20170901",
-        "pioneerId": "11111111-1111-1111-1111-111111111111",
-        "studyName": "test-study",
-        "schemaName": "event",
-        "schemaVersion": 1
-      }
-}
-}R
-DNT"1R%
-Date"Wed, 30 Aug 2017 20:43:39 GMTR
-X-PingSender-Version"1.0R,
-X-Forwarded-For"192.30.255.112, 127.0.0.1Ro
-uri"h/submit/telemetry/0055FAC4-8A1A-4FCA-B380-EBFDC8571A10/pioneer-study/Firefox/45.0/release/20151103030248

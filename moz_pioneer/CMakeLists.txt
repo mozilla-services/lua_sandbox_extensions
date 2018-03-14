@@ -9,7 +9,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-moz-ingest (>= 0.0.1), ${PAC
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)
 
-add_test(NAME ${MODULE_NAME}_hindsight
-  COMMAND run.sh
-  CONFIGURATIONS hindsight
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/hindsight)
+add_test(NAME ${PROJECT_NAME}_decoder_moz_ingest_pioneer
+  COMMAND ../run.sh
+  CONFIGURATIONS integration
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/integration/decoder_moz_ingest_pioneer)
