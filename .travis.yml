@@ -7,7 +7,7 @@ script:
   - docker build -t mozilla/lua_sandbox_extensions .
   - |
     docker run --rm mozilla/lua_sandbox_extensions \
-    bash -c 'cd /root/lua_sandbox_extensions/release && ctest -V -C integration'
+    bash -c 'cd /root/lua_sandbox_extensions/release && ctest -V -E parquet -C integration'
   - mkdir dist
   - |
     docker run -v `pwd`/dist:/dist --rm mozilla/lua_sandbox_extensions \
