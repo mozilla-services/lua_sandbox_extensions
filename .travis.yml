@@ -3,18 +3,23 @@ sudo: required
 services:
   - docker
 
-env:
-    matrix:
-        - DOCKER_IMAGE=centos:6 CMAKE_URL=auto
-        - DOCKER_IMAGE=centos:7 CMAKE_URL=auto
-        - DOCKER_IMAGE=debian:7 CMAKE_URL=auto
-        - DOCKER_IMAGE=debian:8 CMAKE_URL=auto
-        - DOCKER_IMAGE=debian:8 CMAKE_URL=auto CC=clang CXX=clang++
-        - DOCKER_IMAGE=debian:stretch
-        - DOCKER_IMAGE=fedora:latest
-        - DOCKER_IMAGE=ubuntu:12.04 CMAKE_URL=auto
-        - DOCKER_IMAGE=ubuntu:latest CMAKE_URL=auto # LTS
-        - DOCKER_IMAGE=ubuntu:devel
-
 script:
-    - ./build/run.sh build
+  - docker build -t mozilla/lua_sandbox_extensions .
+  - |
+    docker run --rm mozilla/lua_sandbox_extensions \
+    bash -c 'cd /root/lua_sandbox_extensions/release && ctest -V -C integration'
+  - mkdir dist
+  - |
+    docker run -v `pwd`/dist:/dist --rm mozilla/lua_sandbox_extensions \
+    bash -c 'cp /root/lua_sandbox_extensions/release/*.rpm /dist'
+  - sha256sum dist/*
+
+deploy:
+  - provider: script
+    script: bash docker_push.sh master
+    on:
+      branch: master
+  - provider: script
+    script: bash docker_push.sh dev
+    on:
+      branch: dev
