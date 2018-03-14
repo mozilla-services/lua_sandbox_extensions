@@ -9,7 +9,14 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-streaming-algorithms (>= 0.0
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
 include(sandbox_module)
 
-add_test(NAME ${MODULE_NAME}_hindsight
-  COMMAND run.sh
-  CONFIGURATIONS hindsight
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/hindsight)
+set(integration_tests
+  moz_security_hh
+  moz_security_sshd_login_monitor
+)
+
+foreach(test IN LISTS integration_tests)
+  add_test(NAME ${PROJECT_NAME}_${test}
+    COMMAND ../run.sh
+    CONFIGURATIONS integration
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/integration/${test})
+endforeach()

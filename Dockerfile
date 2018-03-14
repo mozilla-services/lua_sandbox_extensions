@@ -1,4 +1,13 @@
+ARG EXTENSIONS="-DEXT_bloom_filter=true -DEXT_circular_buffer=true -DEXT_cjson=true \
+    -DEXT_compat=true -DEXT_cuckoo_filter=true -DEXT_elasticsearch=true \
+    -DEXT_hindsight=true -DEXT_heka=true -DEXT_hyperloglog=true -DEXT_lfs=true \
+    -DEXT_lpeg=true -DEXT_lsb=true -DEXT_maxminddb=true -DEXT_moz_ingest=true \
+    -DEXT_moz_telemetry=true -DEXT_openssl=true -DEXT_postgres=true -DEXT_rjson=true \
+    -DEXT_rjson=true -DEXT_sax=true -DEXT_socket=true -DEXT_ssl=true \
+    -DEXT_struct=true -DEXT_syslog=true -DEXT_zlib=true -DEXT_moz_security=true"
+
 FROM centos:7
+ARG EXTENSIONS
 
 RUN yum makecache
 # Install some dependencies for LSB and hindsight build
@@ -26,14 +35,13 @@ RUN yum install -y libmaxminddb-devel libmaxminddb
 # Install dependencies for LSB extensions build
 RUN yum install -y zlib-devel openssl-devel postgresql-devel
 
+RUN git clone https://github.com/trink/streaming_algorithms.git
+RUN mkdir -p streaming_algorithms/release && cd streaming_algorithms/release && \
+    cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM .. && \
+    make && ctest && make packages && rpm -i *.rpm
+
 ADD . /root/lua_sandbox_extensions
 RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release && \
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
-    -DEXT_bloom_filter=true -DEXT_circular_buffer=true -DEXT_cjson=true \
-    -DEXT_compat=true -DEXT_cuckoo_filter=true -DEXT_elasticsearch=true \
-    -DEXT_hindsight=true -DEXT_heka=true -DEXT_hyperloglog=true -DEXT_lfs=true \
-    -DEXT_lpeg=true -DEXT_lsb=true -DEXT_maxminddb=true -DEXT_moz_ingest=true \
-    -DEXT_moz_telemetry=true -DEXT_openssl=true -DEXT_postgres=true -DEXT_rjson=true \
-    -DEXT_rjson=true -DEXT_sax=true -DEXT_socket=true -DEXT_ssl=true \
-    -DEXT_struct=true -DEXT_syslog=true -DEXT_zlib=true .. && \
+    ${EXTENSIONS} .. && \
     make && ctest -V && make packages && rpm -i *.rpm
