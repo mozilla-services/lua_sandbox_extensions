@@ -13,3 +13,13 @@ script:
     docker run -v `pwd`/dist:/dist --rm mozilla/lua_sandbox_extensions \
     bash -c 'cp /root/lua_sandbox_extensions/release/*.rpm /dist'
   - sha256sum dist/*
+
+deploy:
+  - provider: script
+    script: bash docker_push.sh master
+    on:
+      branch: master
+  - provider: script
+    script: bash docker_push.sh dev
+    on:
+      branch: dev
