@@ -10,8 +10,8 @@ string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE
 include(sandbox_module)
 
 set(integration_tests
-  moz_security_hh
-  moz_security_sshd_login_monitor
+  analysis_hh
+  analysis_sshd_login_monitor
 )
 
 foreach(test IN LISTS integration_tests)
