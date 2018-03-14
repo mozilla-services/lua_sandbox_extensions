@@ -10,5 +10,5 @@ else
 fi
 
 docker tag mozilla/lua_sandbox_extensions $tag
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
 docker push $tag
