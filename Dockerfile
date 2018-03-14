@@ -1,11 +1,4 @@
-ARG EXTENSIONS="-DEXT_bloom_filter=true -DEXT_circular_buffer=true -DEXT_cjson=true \
-    -DEXT_compat=true -DEXT_cuckoo_filter=true -DEXT_elasticsearch=true \
-    -DEXT_hindsight=true -DEXT_heka=true -DEXT_hyperloglog=true -DEXT_lfs=true \
-    -DEXT_lpeg=true -DEXT_lsb=true -DEXT_maxminddb=true -DEXT_moz_ingest=true \
-    -DEXT_moz_telemetry=true -DEXT_openssl=true -DEXT_postgres=true -DEXT_rjson=true \
-    -DEXT_rjson=true -DEXT_sax=true -DEXT_socket=true -DEXT_ssl=true \
-    -DEXT_struct=true -DEXT_syslog=true -DEXT_zlib=true -DEXT_moz_security=true \
-    -DEXT_aws=true -DEXT_kafka=true -DEXT_parquet=true -DEXT_jose=true"
+ARG EXTENSIONS="-DENABLE_ALL_EXT=true"
 
 FROM centos:7
 ARG EXTENSIONS
@@ -72,7 +65,9 @@ RUN mkdir -p streaming_algorithms/release && cd streaming_algorithms/release && 
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM .. && \
     make && ctest && make packages && rpm -i *.rpm
 
-# XXX bypass testing for parquet module which fails right now
+# Required for systemd
+RUN yum install -y systemd-devel
+
 ADD . /root/lua_sandbox_extensions
 RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release && \
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
