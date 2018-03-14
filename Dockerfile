@@ -4,7 +4,8 @@ ARG EXTENSIONS="-DEXT_bloom_filter=true -DEXT_circular_buffer=true -DEXT_cjson=t
     -DEXT_lpeg=true -DEXT_lsb=true -DEXT_maxminddb=true -DEXT_moz_ingest=true \
     -DEXT_moz_telemetry=true -DEXT_openssl=true -DEXT_postgres=true -DEXT_rjson=true \
     -DEXT_rjson=true -DEXT_sax=true -DEXT_socket=true -DEXT_ssl=true \
-    -DEXT_struct=true -DEXT_syslog=true -DEXT_zlib=true -DEXT_moz_security=true"
+    -DEXT_struct=true -DEXT_syslog=true -DEXT_zlib=true -DEXT_moz_security=true \
+    -DEXT_aws=true"
 
 FROM centos:7
 ARG EXTENSIONS
@@ -32,8 +33,12 @@ RUN mkdir -p hindsight/release && cd hindsight/release && \
 RUN yum install -y epel-release
 RUN yum install -y libmaxminddb-devel libmaxminddb
 
+# Required for AWS
+RUN curl -OL https://hsadmin.trink.com/packages/centos7/external/awssdk-1.3.7-1.x86_64.rpm
+RUN rpm -i awssdk-1.3.7-1.x86_64.rpm
+
 # Install dependencies for LSB extensions build
-RUN yum install -y zlib-devel openssl-devel postgresql-devel
+RUN yum install -y zlib-devel openssl-devel postgresql-devel libcurl-devel
 
 RUN git clone https://github.com/trink/streaming_algorithms.git
 RUN mkdir -p streaming_algorithms/release && cd streaming_algorithms/release && \
