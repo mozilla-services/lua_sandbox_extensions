@@ -7,6 +7,7 @@
 --]]
 
 require "string"
+local test = require "test_verify_message"
 
 local messages = {
     {Logger = "telemetry", Type = "telemetry", Fields = {
@@ -15,7 +16,7 @@ local messages = {
         appVersion = "45.0",
         studyName = "test-study",
         pioneerId = "11111111-1111-1111-1111-111111111111",
-        submission = '{"eventId":"enrolled"}',
+        submission = {value = '{"eventId":"enrolled"}', value_type = 1, representation = "json"},
         appUpdateChannel = "beta",
         normalizedChannel = "beta",
         creationTimestamp = 1.446686743312e+18,
@@ -24,7 +25,7 @@ local messages = {
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         appName = "Firefox"
         }
     },
@@ -42,16 +43,16 @@ local messages = {
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         appName = "Firefox"
         }
     },
     {Logger = "telemetry", Type = "telemetry.duplicate", Fields = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
         docType = "pioneer-study",
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         geoCountry = "US",
-        duplicateDelta = 0
+        duplicateDelta = {value = 0, value_type = 2, representation = "1m"}
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
@@ -74,7 +75,7 @@ local messages = {
         "xpcomAbi": "x86_64-gcc3"
       },
       "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.ds7LT3vtshHRibx3twJQSKb8n_W6EtvpD7597KjMBsA4NySKTF0cgGE4m7MvMDXzYUeJq5K1sAnuYNAFdUML2my06rXWB3Q8gP6PRjF2hYzj84NKYVBwBr0XdgSfGqx_ja3XZX0f8LKkCUppRDo_9YuK-7kkw4_NDMLen-f3o9ta87w9Nn9lbw1m62yhkR8S2jiK3W4jpCnbxIeyZMyo-u-iCdEN4gdtH3ledcpeSZXn6b-L6d_4iQx2Y98Y5xvkSakXkipowsDd9FI7yE_gprV1pJDV29lDmH7Km_9ZSGA6NQTZs0fkOcJIhZprW4Bq_aP2tlPBU343dC-6lrVitQLxGgYgUDZduR4E0T3XJ4LJaPNIJKsTx-s9UXGur0U0qCIBT-bJKD3bBeVJmSA7ZMcuOGHktCQsx0Fr84IOInFaOCZSulPS_H0IThB23Z-Z9e-dX-c1s-YfjSUvMiyuG_mciDLo27AsN2FMOPQD-tKkOgnz231Ri3GTK777OYpsYTr8Q0vBRdVLJIi_-dIMTSuRHX3RCwduVpR_EnPdvMh_O7949W45gLoyz_Z96BarU6WDssPrCLGPkHHVDQqCO7nHz8RB5l5Jpq0Y2D_2Aaq14qDZBfldgkZJC6QufefoVtwqWWdd_R_PE_gqazJmGTsesHtgTnvT8VydnmxeyIo.LM9z4RRfWVynWd0u.SQehWUthukk7EUX2.L8zyxPzzWbDalhMdLlCPhg",
+        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.jR9EbyqYXQwNmPiZM9AZvWPM6Vv6ChjpLeq64O4Il7wQU5MUPHk90LTj6ELiyDseyl8OoslcXM3pjPzGy23Yum7-uI92vE-L0jVS5C6-UcAwdX7Z2ZMbUo0qcUIiNXupnCmUKUfRdWtFAU7TRt8u_8VulhvwYA1H9UEEkKQzPCpCVtDidzYellE-f4tp_GrL_PP2tuSI06-HRP5AyTItXxneDA5mqbgs9BfRVlWXJFqj76JdFMHwmvnOWhlffGy1HzqYoG1gqEPQIFOMZMmHLhyfEm6VCbVue-yxL93D1g-XXCCy1xCY43MF06d-rzWMhtzEAd7hoxfftBTt4u3LEL8GenBstiA4WacyNl7WOyf3b-8p6KnM7r0XzB-N5SZeg4dt3VWJmNb-0ZTP4pd5KCFUzSIyVq7CTewDh8Z4vlxPJOA4kqXpMKFdHLGf714me8QWfXlcMS6TCXNK0YYK7_FYEa-BmlgAtXO0AnmqRXH1sz4CBU4fXKDxwlslqQ7a4UYEBKsOcZkyWOY9Ppo4N-_aZ0s2iL3mH_6Ttpb40oM7hTb9qja36JAqpnWSf9PkxLke6lHqeoroOLYemn-3srfkRC-EVwWxS--LpanT5RsmP9k15XD6b1dK65-J3Y7ofvPjhoFY6kWapIjFvBw6wvYLjJJAjNFxb3Gu8PJ_4JU.5_H8dYZUyKLK5TZn.ZXwVWvDgKKyKw6gy.furesZOKHF8-YlTSWn-SlQ",
         "encryptionKeyId": "pioneer-20170901",
         "pioneerId": "11111111-1111-1111-1111-111111111111",
         "studyName": "test-study",
@@ -102,7 +103,7 @@ local messages = {
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A02",
-        geoCity = "San Francisco",
+        geoCity = "Milton",
         appName = "Firefox"
         }
     },
@@ -148,30 +149,12 @@ local messages = {
     },
 }
 
-local function verify_fields(idx, fields)
-    for k,v in pairs(fields) do
-        local name = string.format("Fields[%s]", k)
-        local r = read_message(name)
-        assert(v == r, string.format("Test %d Fields[%s] = %s", idx, k, tostring(r)))
-    end
-end
-
-local function verify_message(idx)
-    local msg = messages[idx]
-    for k,v in pairs(msg) do
-        if k == "Fields" then
-            verify_fields(idx, v)
-        else
-            local r = read_message(k)
-            assert(v == r, string.format("Test %d %s = %s", idx, k, tostring(r)))
-        end
-    end
-end
-
 local cnt = 0
 function process_message()
     cnt = cnt + 1
-    verify_message(cnt)
+    local received = decode_message(read_message("raw"))
+    test.fields_array_to_hash(received)
+    test.verify_msg(messages[cnt], received, cnt)
     return 0
 end
 
