@@ -68,3 +68,7 @@ RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
     ${EXTENSIONS} .. && \
     make && ctest -V && make packages && rpm -i *.rpm
+
+# Add a hindsight user and default RUN command
+RUN groupadd hindsight && useradd -g hindsight -s /bin/bash -m hindsight
+CMD /usr/bin/su - hindsight -c 'cd /home/hindsight && hindsight hindsight.cfg 7'
