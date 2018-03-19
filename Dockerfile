@@ -63,11 +63,15 @@ RUN git clone https://github.com/cisco/cjose.git && \
     cmake .. && make && cpack -G RPM && rpm -i *.rpm
 
 # Add our extensions repo, build all of them, test and install the RPMs in the image
+#
+# As a final step here as well, place the RPMs generated from some of the external
+# dependencies in the release directory with the lua_sandbox_extensions packages
 ADD . /root/lua_sandbox_extensions
 RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release && \
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
     ${EXTENSIONS} .. && \
-    make && ctest -V && make packages && rpm -i *.rpm
+    make && ctest -V && make packages && rpm -i *.rpm && \
+    cp ../../streaming_algorithms/release/luasandbox-streaming-algorithms* .
 
 # Add a hindsight user and default RUN command
 RUN groupadd hindsight && useradd -g hindsight -s /bin/bash -m hindsight
