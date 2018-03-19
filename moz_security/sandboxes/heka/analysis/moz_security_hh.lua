@@ -135,15 +135,15 @@ function timer_event(ns)
     end
 
     local violations = {}
-    local i = 1
+    local vindex = 1
     for i,ip in ipairs(slist) do
         local cnt = list[ip]
         if cnt > threshold then
             if not send_tigerblood then
                 add_to_payload(ip, "\t", cnt, "\n")
             else
-                violations[i] = {ip = ip, violation = violation_type}
-                i = i + 1
+                violations[vindex] = {ip = ip, violation = violation_type}
+                vindex = vindex + 1
             end
         end
     end
