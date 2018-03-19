@@ -9,7 +9,7 @@ WORKDIR /root
 RUN yum makecache && \
     yum install -y git rpm-build c-compiler make curl gcc gcc-c++ systemd-devel \
     autoconf automake centos-release-scl epel-release zlib-devel openssl-devel \
-    postgresql-devel libcurl-devel && \
+    postgresql-devel libcurl-devel lua-devel && \
     yum install -y https://packages.red-data-tools.org/centos/red-data-tools-release-1.0.0-1.noarch.rpm && \
     yum install -y libmaxminddb-devel jq libmaxminddb librdkafka-devel jansson-devel devtoolset-6 && \
     yum install -y --enablerepo=epel arrow-devel && \
@@ -24,7 +24,10 @@ RUN yum makecache && \
     curl -OL https://hsadmin.trink.com/packages/centos7/external/parquet-cpp-1.3.1-1.x86_64.rpm && \
     if [[ `sha256sum parquet-cpp-1.3.1-1.x86_64.rpm | awk '{print $1}'` != \
         "7170c4d9d4bc114053ad8e59a2eb4b18ab54580d104179f1d53602f792513374" ]]; then exit 1; fi && \
-    rpm -i parquet-cpp-1.3.1-1.x86_64.rpm
+    rpm -i parquet-cpp-1.3.1-1.x86_64.rpm && \
+    cat /etc/yum.conf | grep -v override_install_langs > /etc/yum.conf.lang && \
+    cp /etc/yum.conf.lang /etc/yum.conf && \
+    yum reinstall -y glibc-common
 
 # Use devtoolset-6
 ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-6/root/usr/lib/perl5:/opt/rh/devtoolset-6/root//usr/share/perl5/vendor_perl' \
@@ -60,7 +63,13 @@ RUN git clone https://github.com/cisco/cjose.git && \
     make && ctest && make packages && rpm -i *.rpm && cd ../.. && \
     git clone https://github.com/mozilla-services/mozilla-pipeline-schemas.git && \
     mkdir -p mozilla-pipeline-schemas/release && cd mozilla-pipeline-schemas/release && \
-    cmake .. && make && cpack -G RPM && rpm -i *.rpm
+    cmake .. && make && cpack -G RPM && rpm -i *.rpm && cd ../.. && \
+    git clone https://github.com/trink/lua_date.git && \
+    mkdir -p lua_date/release && cd lua_date && \
+    git submodule init && git submodule update && \
+    cd release && \
+    cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM .. && make && \
+    ctest && make packages && rpm -i iana*rpm luasandbox*rpm
 
 # Add our extensions repo, build all of them, test and install the RPMs in the image
 #
@@ -71,7 +80,10 @@ RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
     ${EXTENSIONS} .. && \
     make && ctest -V && make packages && rpm -i *.rpm && \
-    cp ../../streaming_algorithms/release/luasandbox-streaming-algorithms* .
+    cp ../../streaming_algorithms/release/luasandbox-streaming-algorithms* . && \
+    cp ../../lua_date/release/iana*rpm ../../lua_date/release/luasandbox*rpm . && \
+    cp ../../hindsight/release/*.rpm . && \
+    cp ../../lua_sandbox/release/*.rpm .
 
 # Add a hindsight user and default RUN command
 RUN groupadd hindsight && useradd -g hindsight -s /bin/bash -m hindsight
