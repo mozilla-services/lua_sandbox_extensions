@@ -153,4 +153,10 @@ function timer_event(ns)
     else
         tbsend(violations)
     end
+
+    list = {}
+    list_size = 0
+    list_min = HUGE
+    list_min_id = nil
+    cms:clear()
 end
