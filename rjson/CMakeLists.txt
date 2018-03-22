@@ -3,21 +3,21 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(rjson VERSION 1.1.2 LANGUAGES C CXX)
-set(CPACK_DEBIAN_PACKAGE_RELEASE 2)
+project(rjson VERSION 1.1.3 LANGUAGES C CXX)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RapidJSON Lua Module")
 
 include(ExternalProject)
 externalproject_add(
     rapidjson
     GIT_REPOSITORY https://github.com/miloyip/rapidjson.git
-    GIT_TAG v1.1.0
+    GIT_TAG 67a17cfdbc25ff1fc8d01714be87e242b03a4cc9
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "no configure"
     BUILD_COMMAND ${CMAKE_COMMAND} -E echo "no build"
     INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "no install"
 )
 include_directories(${CMAKE_BINARY_DIR}/${PROJECT_NAME}/rapidjson-prefix/src/rapidjson/include)
 
+add_definitions(-DRAPIDJSON_SCHEMA_USE_INTERNALREGEX=0 -DRAPIDJSON_SCHEMA_USE_STDREGEX=1)
 set(MODULE_SRCS rjson.cpp rjson.def)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.13), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1)")
 set(INSTALL_MODULE_PATH ${INSTALL_IOMODULE_PATH})
