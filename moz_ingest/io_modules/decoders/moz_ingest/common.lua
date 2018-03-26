@@ -21,6 +21,7 @@ decoders_moz_ingest_common = {
 
     -- String used to specify GeoIP city database location on disk.
     city_db_file = "/usr/share/geoip/GeoIP2-City.mmdb", -- optional, if not specified no city/country geoip lookup is performed
+    city_report_geoname_id = true, -- optional, if not specified then geoname_id isn't reported
 
     isp_db_file = "/usr/share/geoip/GeoIP2-ISP.mmdb", -- optional
     isp_docTypes = {customStudy = true}, -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined
@@ -85,6 +86,7 @@ local inject_message       = inject_message
 local sub_decoders  = {}
 local maxminddb
 local city_db
+local city_report_geoname_id
 local isp_db
 local dedupe
 local duplicateDelta
@@ -119,6 +121,7 @@ local function load_decoder_cfg()
     if cfg.city_db_file then
         maxminddb = require "maxminddb"
         city_db = assert(maxminddb.open(cfg.city_db_file))
+        city_report_geoname_id = cfg.city_report_geoname_id
     end
 
     if cfg.isp_db_file then
@@ -159,23 +162,35 @@ setfenv(1, M) -- Remove external access to contain everything in the module
 local cfg = load_decoder_cfg()
 
 local UNK_GEO = "??"
+local GEONAME = {value = nil, value_type = 2}
 -- Track the hour to facilitate reopening city_db hourly.
 local hour = floor(os.time() / 3600)
 
 local function get_geo_city(ip_addr)
     local city = UNK_GEO
+    local city_geoname_id = nil
     local country = UNK_GEO
 
     local ok, ip = pcall(city_db.lookup, city_db, ip_addr)
-    if not ok then return city, country end
+    if not ok then return city, city_geoname_id, country end
 
     ok, city = pcall(ip.get, ip, "city", "names", "en")
     if not ok then city = UNK_GEO end
 
+    if city_report_geoname_id then
+        ok, city_geoname_id = pcall(ip.get, ip, "city", "geoname_id")
+        if not ok then
+            city_geoname_id = nil
+        else
+            GEONAME.value = city_geoname_id
+            city_geoname_id = GEONAME
+        end
+    end
+
     ok, country = pcall(ip.get, ip, "country", "iso_code")
     if not ok then country = UNK_GEO end
 
-    return city, country
+    return city, city_geoname_id, country
 end
 
 local function get_geo_isp(ip_addr)
@@ -291,7 +306,7 @@ function transform_message(hsr, msg)
         if not ip_addr then
             ip_addr = hsr:read_message("Fields[remote_addr]")
         end
-        msg.Fields.geoCity, msg.Fields.geoCountry = get_geo_city(ip_addr)
+        msg.Fields.geoCity, msg.Fields.geoCityGeonameId, msg.Fields.geoCountry = get_geo_city(ip_addr)
         if cfg.isp_docTypes and cfg.isp_docTypes[msg.Fields.docType] then
             msg.Fields.geoISP = get_geo_isp(ip_addr)
         end
