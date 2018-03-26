@@ -24,6 +24,7 @@ local messages = {
         DecodeErrorType = "skipped",
         DecodeError = "no sub decoder",
         geoCity = "Milton",
+        geoSubdivision1 = "WA",
         geoCountry = "US",
         docVersion = 1
         }
@@ -33,6 +34,7 @@ local messages = {
         docType = "foobar",
         duplicateDelta = {value = 0, value_type = 2, representation = "1m"},
         geoCity = "Milton",
+        geoSubdivision1 = "WA",
         geoCountry = "US",
         docVersion = 1
         }
@@ -55,6 +57,7 @@ local messages = {
         DecodeErrorType = "skipped",
         DecodeError = "no sub decoder",
         geoCity = "Milton",
+        geoSubdivision1 = "WA",
         geoCountry = "US",
         geoISP = "Century Link",
         docVersion = 99
