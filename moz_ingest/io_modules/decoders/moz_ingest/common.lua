@@ -23,6 +23,10 @@ decoders_moz_ingest_common = {
     city_db_file = "/usr/share/geoip/GeoIP2-City.mmdb", -- optional, if not specified no city/country geoip lookup is performed
     city_report_geoname_id = true, -- optional, if not specified then geoname_id isn't reported
 
+    -- String used to specify geoname cities > (1000|5000|15000) csv location on disk.
+    -- Cities not in this list will be considered too specific and won't report geoCity.
+    city_size_file = "/usr/share/geoip/cities1000.txt", -- optional, if not specified no limiting is performed
+
     isp_db_file = "/usr/share/geoip/GeoIP2-ISP.mmdb", -- optional
     isp_docTypes = {customStudy = true}, -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined
 
@@ -87,6 +91,8 @@ local sub_decoders  = {}
 local maxminddb
 local city_db
 local city_report_geoname_id
+local io
+local city_size_set
 local isp_db
 local dedupe
 local duplicateDelta
@@ -122,6 +128,16 @@ local function load_decoder_cfg()
         maxminddb = require "maxminddb"
         city_db = assert(maxminddb.open(cfg.city_db_file))
         city_report_geoname_id = cfg.city_report_geoname_id
+    end
+
+    if cfg.city_size_file then
+        io = require "io"
+        city_size_set = {}
+        for line in io.lines(cfg.city_size_file) do
+            geoname = tonumber(line:match("^%d+"))
+            assert(geoname ~= nil, "city_size_file lines must all start with integer geoname_id")
+            city_size_set[geoname] = true
+        end
     end
 
     if cfg.isp_db_file then
@@ -177,13 +193,26 @@ local function get_geo_city(ip_addr)
     ok, city = pcall(ip.get, ip, "city", "names", "en")
     if not ok then city = UNK_GEO end
 
-    if city_report_geoname_id then
+    if city_report_geoname_id or city_size_set then
         ok, city_geoname_id = pcall(ip.get, ip, "city", "geoname_id")
         if not ok then
             city_geoname_id = nil
         else
             GEONAME.value = city_geoname_id
             city_geoname_id = GEONAME
+        end
+
+        if city_size_set then
+            -- geoname_id must be in city_size_set
+            if not city_geoname_id or not city_size_set[city_geoname_id.value] then
+                city = UNK_GEO
+                city_geoname_id = nil
+            end
+        end
+
+        if not city_report_geoname_id then
+            -- don't report geoname_id, it was only needed for filtering on city size
+            city_geoname_id = nil
         end
     end
 
