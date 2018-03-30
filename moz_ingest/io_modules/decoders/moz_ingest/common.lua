@@ -82,6 +82,7 @@ local assert        = assert
 local pairs         = pairs
 local pcall         = pcall
 local setmetatable  = setmetatable
+local tonumber      = tonumber
 
 local create_stream_reader = create_stream_reader
 local decode_message       = decode_message
