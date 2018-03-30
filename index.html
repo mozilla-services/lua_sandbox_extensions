@@ -2163,7 +2163,7 @@
                 <a href="moz_ingest/">
             
                     
-                    moz_ingest (0.0.5)
+                    moz_ingest (0.0.6)
             
                 </a>
             
@@ -2785,7 +2785,7 @@
                 <a href="moz_security/">
             
                     
-                    moz_security (0.0.8)
+                    moz_security (0.0.11)
             
                 </a>
             
@@ -3796,7 +3796,7 @@
                 <a href="rjson/">
             
                     
-                    rjson (1.1.2)
+                    rjson (1.1.3)
             
                 </a>
             
@@ -4730,6 +4730,16 @@ cmake -DCMAKE_BUILD_TYPE=release -G &quot;NMake Makefiles&quot; -DEXT_lpeg=on ..
 nmake
 ctest
 nmake packages
+</code></pre><h3 id="Docker_Images">2.3. Docker Images</h3>
+<p>Docker images <a href="https://hub.docker.com/r/mozilla/lua_sandbox_extensions/" target="_blank">are built</a> from
+the <code>dev</code> and <code>master</code> branches. These images contain <a href="https://github.com/mozilla-services/hindsight" target="_blank">hindsight</a>,
+<a href="https://github.com/mozilla-services/lua_sandbox" target="_blank">lua_sandbox</a> and have all of the extensions
+from this repository installed.</p>
+<pre><code># Get master branch docker image
+docker pull mozilla/lua_sandbox_extensions:master
+
+# Get dev branch docker image
+docker pull mozilla/lua_sandbox_extensions:dev
 </code></pre><h2 id="Releases">3. Releases</h2>
 <ul>
 <li>The master branch is the current release and is considered stable at all
@@ -4810,7 +4820,7 @@ userdata</li>
 </ul>
 </li>
 </ul>
-<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Sandbox">Heka Sandbox</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Installation">2. Installation</a></li><ul><li><a href="#Prerequisites">2.1. Prerequisites</a></li><ul><li><a href="#Optional_(used_for_documentation)">2.1.1. Optional (used for documentation)</a></li></ul><li><a href="#CMake_Build_Instructions">2.2. CMake Build Instructions</a></li></ul><li><a href="#Releases">3. Releases</a></li><li><a href="#Contributions">4. Contributions</a></li><li><a href="#Decoder_API_Convention">5. Decoder API Convention</a></li><ul><li><a href="#decode">5.1. decode</a></li></ul><li><a href="#Encoder_API_Convention">6. Encoder API Convention</a></li><ul><li><a href="#encode">6.1. encode</a></li></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Sandbox">Heka Sandbox</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Installation">2. Installation</a></li><ul><li><a href="#Prerequisites">2.1. Prerequisites</a></li><ul><li><a href="#Optional_(used_for_documentation)">2.1.1. Optional (used for documentation)</a></li></ul><li><a href="#CMake_Build_Instructions">2.2. CMake Build Instructions</a></li><li><a href="#Docker_Images">2.3. Docker Images</a></li></ul><li><a href="#Releases">3. Releases</a></li><li><a href="#Contributions">4. Contributions</a></li><li><a href="#Decoder_API_Convention">5. Decoder API Convention</a></li><ul><li><a href="#decode">5.1. decode</a></li></ul><li><a href="#Encoder_API_Convention">6. Encoder API Convention</a></li><ul><li><a href="#encode">6.1. encode</a></li></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -4849,7 +4859,7 @@ userdata</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Lua Sandbox Extensions","level":"1.1","depth":1,"next":{"title":"aws (0.0.3)","level":"1.2","depth":1,"path":"aws/README.md","ref":"aws/README.md","articles":[{"title":"sandboxes","level":"1.2.1","depth":2,"path":"aws/sandboxes/README.md","ref":"aws/sandboxes/README.md","articles":[{"title":"heka","level":"1.2.1.1","depth":3,"path":"aws/sandboxes/heka/README.md","ref":"aws/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.2.1.1.1","depth":4,"path":"aws/sandboxes/heka/input/README.md","ref":"aws/sandboxes/heka/input/README.md","articles":[{"title":"kinesis","level":"1.2.1.1.1.1","depth":5,"path":"aws/sandboxes/heka/input/kinesis.md","ref":"aws/sandboxes/heka/input/kinesis.md","articles":[]}]},{"title":"output","level":"1.2.1.1.2","depth":4,"path":"aws/sandboxes/heka/output/README.md","ref":"aws/sandboxes/heka/output/README.md","articles":[{"title":"kinesis_single","level":"1.2.1.1.2.1","depth":5,"path":"aws/sandboxes/heka/output/kinesis_single.md","ref":"aws/sandboxes/heka/output/kinesis_single.md","articles":[]}]}]}]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2018-03-13T20:27:35.393Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-03-13T20:27:44.719Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Lua Sandbox Extensions","level":"1.1","depth":1,"next":{"title":"aws (0.0.3)","level":"1.2","depth":1,"path":"aws/README.md","ref":"aws/README.md","articles":[{"title":"sandboxes","level":"1.2.1","depth":2,"path":"aws/sandboxes/README.md","ref":"aws/sandboxes/README.md","articles":[{"title":"heka","level":"1.2.1.1","depth":3,"path":"aws/sandboxes/heka/README.md","ref":"aws/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.2.1.1.1","depth":4,"path":"aws/sandboxes/heka/input/README.md","ref":"aws/sandboxes/heka/input/README.md","articles":[{"title":"kinesis","level":"1.2.1.1.1.1","depth":5,"path":"aws/sandboxes/heka/input/kinesis.md","ref":"aws/sandboxes/heka/input/kinesis.md","articles":[]}]},{"title":"output","level":"1.2.1.1.2","depth":4,"path":"aws/sandboxes/heka/output/README.md","ref":"aws/sandboxes/heka/output/README.md","articles":[{"title":"kinesis_single","level":"1.2.1.1.2.1","depth":5,"path":"aws/sandboxes/heka/output/kinesis_single.md","ref":"aws/sandboxes/heka/output/kinesis_single.md","articles":[]}]}]}]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2018-03-30T17:31:29.160Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-03-30T17:31:41.855Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
