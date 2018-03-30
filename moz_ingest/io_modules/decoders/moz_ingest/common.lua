@@ -21,6 +21,11 @@ decoders_moz_ingest_common = {
 
     -- String used to specify GeoIP city database location on disk.
     city_db_file = "/usr/share/geoip/GeoIP2-City.mmdb", -- optional, if not specified no city/country geoip lookup is performed
+    geo_report_subdivisions = true, -- optional, if not specified then subdivision1 and subdivision2 aren't reported
+
+    -- String used to specify geoname cities > (1000|5000|15000) csv location on disk.
+    -- Cities not in this list will be considered too specific and won't report geoCity.
+    city_size_file = "/usr/share/geoip/cities1000.txt", -- optional, if not specified no limiting is performed
 
     isp_db_file = "/usr/share/geoip/GeoIP2-ISP.mmdb", -- optional
     isp_docTypes = {customStudy = true}, -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined
@@ -85,6 +90,9 @@ local inject_message       = inject_message
 local sub_decoders  = {}
 local maxminddb
 local city_db
+local geo_report_subdivisions
+local io
+local city_size_set
 local isp_db
 local dedupe
 local duplicateDelta
@@ -119,6 +127,17 @@ local function load_decoder_cfg()
     if cfg.city_db_file then
         maxminddb = require "maxminddb"
         city_db = assert(maxminddb.open(cfg.city_db_file))
+        geo_report_subdivisions = cfg.geo_report_subdivisions
+    end
+
+    if cfg.city_size_file then
+        io = require "io"
+        city_size_set = {}
+        for line in io.lines(cfg.city_size_file) do
+            geoname = tonumber(line:match("^%d+"))
+            assert(geoname ~= nil, "city_size_file lines must all start with integer geoname_id")
+            city_size_set[geoname] = true
+        end
     end
 
     if cfg.isp_db_file then
@@ -164,18 +183,34 @@ local hour = floor(os.time() / 3600)
 
 local function get_geo_city(ip_addr)
     local city = UNK_GEO
+    local subdivision1 = nil
+    local subdivision2 = nil
     local country = UNK_GEO
 
     local ok, ip = pcall(city_db.lookup, city_db, ip_addr)
-    if not ok then return city, country end
+    if not ok then return city, subdivision1, subdivision2, country end
 
     ok, city = pcall(ip.get, ip, "city", "names", "en")
     if not ok then city = UNK_GEO end
 
+    if city_size_set then
+        -- geoname_id must be in city_size_set
+        local ok, geoname = pcall(ip.get, ip, "city", "geoname_id")
+        if not ok or not city_size_set[geoname] then city = UNK_GEO end
+    end
+
+    if geo_report_subdivisions then
+        -- subdivisions has at most two items
+        ok, subdivision1 = pcall(ip.get, ip, "subdivisions", 0, "iso_code")
+        if not ok then subdivision1 = nil end
+        ok, subdivision2 = pcall(ip.get, ip, "subdivisions", 1, "iso_code")
+        if not ok then subdivision2 = nil end
+    end
+
     ok, country = pcall(ip.get, ip, "country", "iso_code")
     if not ok then country = UNK_GEO end
 
-    return city, country
+    return city, subdivision1, subdivision2, country
 end
 
 local function get_geo_isp(ip_addr)
@@ -267,6 +302,14 @@ function transform_message(hsr, msg)
             if cfg.city_db_file then
                 city_db = assert(maxminddb.open(cfg.city_db_file))
             end
+            if cfg.city_size_file then
+                city_size_set = {}
+                for line in io.lines(cfg.city_size_file) do
+                    geoname = tonumber(line:match("^%d+"))
+                    assert(geoname ~= nil, "city_size_file lines must all start with integer geoname_id")
+                    city_size_set[geoname] = true
+                end
+            end
             if cfg.isp_db_file then
                 isp_db = assert(maxminddb.open(cfg.isp_db_file))
             end
@@ -291,7 +334,7 @@ function transform_message(hsr, msg)
         if not ip_addr then
             ip_addr = hsr:read_message("Fields[remote_addr]")
         end
-        msg.Fields.geoCity, msg.Fields.geoCountry = get_geo_city(ip_addr)
+        msg.Fields.geoCity, msg.Fields.geoSubdivision1, msg.Fields.geoSubdivision2, msg.Fields.geoCountry = get_geo_city(ip_addr)
         if cfg.isp_docTypes and cfg.isp_docTypes[msg.Fields.docType] then
             msg.Fields.geoISP = get_geo_isp(ip_addr)
         end
