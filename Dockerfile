@@ -27,7 +27,13 @@ RUN yum makecache && \
     rpm -i parquet-cpp-1.3.1-1.x86_64.rpm && \
     cat /etc/yum.conf | grep -v override_install_langs > /etc/yum.conf.lang && \
     cp /etc/yum.conf.lang /etc/yum.conf && \
-    yum reinstall -y glibc-common
+    yum reinstall -y glibc-common && \
+    yum install -y stow && \
+    curl -OL https://hsadmin.trink.com/packages/centos7/external/grpc_stow.tgz && \
+    if [[ `sha256sum grpc_stow.tgz | awk '{print $1}'` != \
+        "65dba4a11ccc09ced4dad64ef196cab6299736a5f5e0df83fef6f1046213797b" ]]; then exit 1; fi && \
+    tar -C / -zxf grpc_stow.tgz && \
+    stow -d /usr/local/stow protobuf-3 grpc googleapis
 
 # Use devtoolset-6
 ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-6/root/usr/lib/perl5:/opt/rh/devtoolset-6/root//usr/share/perl5/vendor_perl' \
@@ -35,7 +41,8 @@ ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root//usr/lib64/perl5/vendor_perl:/o
     PCP_DIR=/opt/rh/devtoolset-6/root \
     LD_LIBRARY_PATH=/opt/rh/devtoolset-6/root/usr/lib64:/opt/rh/devtoolset-6/root/usr/lib \
     PATH=/opt/rh/devtoolset-6/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
-    PYTHONPATH=/opt/rh/devtoolset-6/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-6/root/usr/lib/python2.7/site-packages
+    PYTHONPATH=/opt/rh/devtoolset-6/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-6/root/usr/lib/python2.7/site-packages \
+    PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 # Compile and install lua_sandbox and hindsight using master branch
 RUN git clone https://github.com/mozilla-services/lua_sandbox && \
