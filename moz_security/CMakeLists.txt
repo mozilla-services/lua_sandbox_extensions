@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(moz-security VERSION 0.0.11 LANGUAGES C)
+project(moz-security VERSION 0.0.12 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Infrastructure Security Analysis")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-streaming-algorithms (>= 0.0.2)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
@@ -12,6 +12,7 @@ include(sandbox_module)
 set(integration_tests
   analysis_hh
   analysis_sshd_login_monitor
+  analysis_auth_ip_geo
 )
 
 foreach(test IN LISTS integration_tests)

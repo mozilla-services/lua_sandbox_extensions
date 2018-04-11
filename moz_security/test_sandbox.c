@@ -43,9 +43,23 @@ static char* test_hawk()
 }
 
 
+static char* test_iputils()
+{
+  lsb_lua_sandbox *sb = lsb_create(NULL, "iputils.lua",
+                                   TEST_MODULE_PATH "\nlog_level = 7", &logger);
+  mu_assert(sb, "lsb_create() received: NULL");
+  lsb_err_value ret = lsb_init(sb, NULL);
+  mu_assert(!ret, "lsb_init() received: %s %s", ret, lsb_get_error(sb));
+  e = lsb_destroy(sb);
+  mu_assert(!e, "lsb_destroy() received: %s", e);
+  return NULL;
+}
+
+
 static char* all_tests()
 {
   mu_run_test(test_hawk);
+  mu_run_test(test_iputils);
   return NULL;
 }
 
