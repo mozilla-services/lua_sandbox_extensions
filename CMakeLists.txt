@@ -67,6 +67,7 @@ set(EP_CMAKE_ARGS
 
 set(extensions
 aws
+bit
 bloom_filter
 circular_buffer
 cjson
