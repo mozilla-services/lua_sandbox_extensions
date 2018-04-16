@@ -113,9 +113,6 @@ function process_message()
     local geocountry = read_message(geocountry_field)
 
     local spec = userspec[user]
-    if not spec then
-        print(string.format("warning, spec for user %s not found", user))
-    end
 
     local escalate = false
     if spec then
