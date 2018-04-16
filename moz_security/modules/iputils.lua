@@ -55,6 +55,7 @@ local tonumber  = tonumber
 local tostring  = tostring
 local type      = type
 
+local ipa       = require("lpeg.ip_address")
 local bit       = require("bit")
 local string    = require("string")
 
@@ -78,27 +79,7 @@ end
 
 
 local function split_octets(input)
-    local pos = 0
-    local prev = 0
-    local octs = {}
-
-    for i=1,4 do
-        pos = string.find(input, ".", prev, true)
-        if pos then
-            if i == 4 then
-                return nil
-            end
-            octs[i] = string.sub(input, prev, pos-1)
-        elseif i == 4 then
-            octs[i] = string.sub(input, prev, -1)
-            break
-        else
-            return nil
-        end
-        prev = pos + 1
-    end
-
-    return octs
+    return ipa.v4_octets:match(input)
 end
 
 
