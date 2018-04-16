@@ -36,6 +36,19 @@ user_field = "Fields[user]" -- required, field to extract username from
 srcip_field = "Fields[ssh_remote_ipaddr]" -- required, field to extract source IP from
 geocity_field = "Fields[ssh_remote_ipaddr_city"] -- required, field to extract geo city
 geocountry_field = "Fields[ssh_remote_ipaddr_country"] -- required, field to extract geo country
+
+userspec = {
+    riker = {
+        ip = { "192.168.1.0/24", "10.0.0.0/24" },
+        geo = { "Toronto/CA" }
+    },
+    worf = {
+        geo = { "Milton/US" }
+    },
+    ipauthgeoany = { -- special key that applies to any user
+        ip = "192.168.0.0/24"
+    }
+}
 ```
 --]]
 --
@@ -99,6 +112,15 @@ function check_geo(city, country, spec)
 end
 
 
+function check_spec(spec, srcip, geocity, geocountry)
+    if not spec then return false end
+
+    if check_ip(srcip, spec) then return true end
+    if check_geo(geocity, geocountry, spec) then return true end
+    return false
+end
+
+
 function process_message()
     local ts = math.floor(read_message("Timestamp") / 1e9)
     local hn = read_message(authhost_field) or "unknown"
@@ -113,15 +135,22 @@ function process_message()
     local geocountry = read_message(geocountry_field)
 
     local spec = userspec[user]
+    local matchanyspec = userspec.authipgeoany
 
     local escalate = false
-    if spec then
-        local ipok = check_ip(srcip, spec)
-        if not ipok then
-            local geook = check_geo(geocity, geocountry, spec)
-            if not geook then escalate = true end
+    local matchanymatch = false
+    if not check_spec(spec, srcip, geocity, geocountry) then
+        matchanymatch = true
+        if not check_spec(matchanyspec, srcip, geocity, geocountry) then
+            matchanymatch = false
+            escalate = true
         end
     end
+    -- If escalate is true here, no spec matched. It's possible this is a case where
+    -- the user had no spec configured, and no matchany matched either. If this is the case,
+    -- toggle escalated off and we will generate an alert indicating no specification was
+    -- found for the user.
+    if escalate and not userspec[user] then escalate = false end
 
     -- At this point, we know if the event should be escalated or not. First, update
     -- the alert message with the default information since we always send there.
@@ -142,7 +171,7 @@ function process_message()
             msg.Fields[3].value[2] = string.format(string.format("<%s>", user_email), user)
         end
         msg.Payload = "Escalation flag set, authentication source does not match user specification\n"
-    elseif not spec then
+    elseif not spec and not matchanymatch then
         msg.Fields[2].value = "NOSPEC " .. msg.Fields[2].value
         msg.Payload = "No user specification present for comparison against authentication\n"
     end
