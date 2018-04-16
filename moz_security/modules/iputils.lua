@@ -102,19 +102,13 @@ local function ip2bin(ip)
     end
 
     -- Return the binary representation of an IP and a table of binary octets
-    local bin_octets = {}
     local bin_ip = 0
 
     for i,octet in ipairs(octets) do
-        local bin_octet = tonumber(octet)
-        if not bin_octet or bin_octet < 0 or bin_octet > 255 then
-            return nil
-        end
-        bin_octets[i] = bin_octet
-        bin_ip = bit.bor(bit.lshift(bin_octet, 8*(4-i) ), bin_ip)
+        bin_ip = bit.bor(bit.lshift(octet, 8*(4-i) ), bin_ip)
     end
 
-    return unsign(bin_ip), bin_octets
+    return unsign(bin_ip), octets
 end
 
 
