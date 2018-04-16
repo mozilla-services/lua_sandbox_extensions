@@ -14,11 +14,13 @@
 * `host_field` - returns the host as a Heka message field table `{value="127.0.0.1", representation="ipv4"}`
 * 'v4_field' - converts a version 4 ip address into a Heka message field
 * `v6_field` - converts a version 6 ip address into a Heka message field
+* 'v4_octets' - converts a version 4 ip address into an array of octets
 --]]
 
 -- Imports
 local string = require "string"
 local l = require "lpeg"
+local tonumber = tonumber
 l.locale(l)
 
 local M = {}
@@ -31,6 +33,8 @@ local d8    = "1" * l.digit * l.digit
               + l.digit
 v4          = d8 * "." * d8 * "." * d8 * "." * d8
 
+local octet = d8 / tonumber
+v4_octets = l.Ct(octet * "." * octet * "." * octet * "." * octet)
 
 local h16   = l.xdigit * l.xdigit^-3
 local hg    = h16 * ":"

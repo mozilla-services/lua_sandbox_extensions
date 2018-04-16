@@ -51,6 +51,15 @@ add_custom_target(${MODULE_NAME}_copy_tests ALL COMMAND ${CMAKE_COMMAND} -E copy
 ${CMAKE_CURRENT_SOURCE_DIR}/tests
 ${CMAKE_CURRENT_BINARY_DIR})
 
+if(COPY_TEST_MAXMINDDB)
+    add_custom_target(${MODULE_NAME}_copy_test_maxminddb ALL COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/maxminddb/tests/GeoIP2-City-Test.mmdb
+        ${CMAKE_CURRENT_BINARY_DIR}/GeoIP2-City-Test.mmdb)
+    add_custom_target(${MODULE_NAME}_copy_test_maxminddb_isp ALL COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/maxminddb/tests/GeoIP2-ISP-Test.mmdb
+	${CMAKE_CURRENT_BINARY_DIR}/GeoIP2-ISP-Test.mmdb)
+endif()
+
 include_directories(${CMAKE_BINARY_DIR})
 if(LUA51) # build against the installed Lua 5.1
     set(CPACK_PACKAGE_NAME "lua51-${PROJECT_NAME}")
