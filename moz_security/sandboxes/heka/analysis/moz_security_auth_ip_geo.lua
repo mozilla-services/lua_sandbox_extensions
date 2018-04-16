@@ -56,10 +56,7 @@ local srcip_field       = read_config("srcip_field") or error("srcip_field must 
 local geocity_field     = read_config("geocity_field") or error("geocity_field must be configured")
 local geocountry_field  = read_config("geocountry_field") or error("geocountry_field must be configured")
 local cephost           = read_config("Hostname") or "unknown"
-
--- Don't make this mandatory here and check it later, so we can potentially support loading
--- the user specification from somewhere other than the config file
-local userspec = read_config("userspec")
+local userspec          = read_config("userspec") or error("userspec must be configured")
 
 
 local msg = {
@@ -103,10 +100,6 @@ end
 
 
 function process_message()
-    if not userspec then
-        error("no userspec configured")
-    end
-
     local ts = math.floor(read_message("Timestamp") / 1e9)
     local hn = read_message(authhost_field) or "unknown"
 
