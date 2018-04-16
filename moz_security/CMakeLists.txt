@@ -7,6 +7,7 @@ project(moz-security VERSION 0.0.12 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Infrastructure Security Analysis")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-streaming-algorithms (>= 0.0.2)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
+set(COPY_TEST_MAXMINDDB TRUE)
 include(sandbox_module)
 
 set(integration_tests
