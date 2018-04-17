@@ -157,6 +157,30 @@ local function extract_lua_docs(path, paths)
 end
 
 
+local function output_md(fh, path)
+    local t = {}
+    local tp = assert(io.popen(string.format("ls %s/*.md", path)))
+    for line in tp:lines() do
+        local name = line:match("([%w_]+)%.md$")
+        if not line:match("^gh%-pages") and not line:match("^release") and name ~= "index" and name ~= "README" then
+            t[#t + 1] = string.format("    * [%s](%s)", name, line)
+            local sfh = assert(io.open(line))
+            local md = sfh:read("*a")
+            sfh:close()
+            local ofh = assert(io.open(string.format("%s/%s", output_dir, line), "w"))
+            ofh:write(md)
+            ofh:close()
+        end
+    end
+    tp:close()
+    if #t > 0 then
+        table.sort(t)
+        fh:write(table.concat(t, "\n"))
+        fh:write("\n")
+    end
+end
+
+
 local function output_extensions(fh)
     local ph = assert(io.popen("ls -1d */"))
     for dir in ph:lines() do
@@ -167,6 +191,7 @@ local function output_extensions(fh)
             extract_lua_docs(path, paths)
             output_tree(fh, {}, path, paths.entries[path], "")
         end
+        output_md(fh, path)
     end
     ph:close()
 end

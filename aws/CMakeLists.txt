@@ -14,5 +14,6 @@ find_package(aws-cpp-sdk-monitoring 1.1.46 REQUIRED CONFIG)
 
 set(MODULE_SRCS kinesis.cpp aws.def)
 set(INSTALL_MODULE_PATH ${INSTALL_IOMODULE_PATH})
+set(TEST_CONFIGURATION "aws")
 include(sandbox_module)
 target_link_libraries(aws aws-cpp-sdk-kinesis aws-cpp-sdk-monitoring)

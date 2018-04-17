@@ -74,6 +74,7 @@ cjson
 compat
 cuckoo_filter
 elasticsearch
+gcp
 # geoip # deprecated use maxminddb
 hindsight
 heka

@@ -148,8 +148,8 @@ local ret = producer:send(topic, -1, sequence_id, message)
 * topic (string) - Name of the topic
 * partition (number) - Topic partition number (-1 for automatic assignment)
 * sequence_id
-    * lua_sandbox (lightuserdata/nil/none) - Opaque pointer for checkpointing
-    * Lua 5.1 (number/nil/none) - range: zero to UINTPTR_MAX
+    * lua_sandbox (lightuserdata) - Opaque pointer for checkpointing
+    * Lua 5.1 (number) - range: zero to UINTPTR_MAX
 * message
     * heka_sandbox (string/userdata)
         * string - message to send
@@ -170,7 +170,7 @@ Polls the provided Kafka producer for events and invokes callback.  This should
 be called after every send.
 
 ```lua
-local failures, sequence_id = producer:poll()
+local sequence_id, failures = producer:poll()
 
 ```
 
