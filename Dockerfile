@@ -17,11 +17,11 @@ RUN yum makecache && \
     if [[ `sha256sum cmake-3.10.2-Linux-x86_64.tar.gz | awk '{print $1}'` != \
         "7a82b46c35f4e68a0807e8dc04e779dee3f36cd42c6387fd13b5c29fe62a69ea" ]]; then exit 1; fi && \
     (cd /usr && tar --strip-components=1 -zxf /root/cmake-3.10.2-Linux-x86_64.tar.gz) && \
-    curl -OL https://hsadmin.trink.com/packages/centos7/external/awssdk-1.3.7-1.x86_64.rpm && \
+    curl -OL https://s3-us-west-2.amazonaws.com/net-mozaws-data-us-west-2-ops-ci-artifacts/mozilla-services/lua_sandbox_extensions/external/centos7/awssdk-1.3.7-1.x86_64.rpm && \
     if [[ `sha256sum awssdk-1.3.7-1.x86_64.rpm | awk '{print $1}'` != \
         "d78b164b774848d9b6adf99b59d2651832d3cfe52bae5727fb5afeb33eb13191" ]]; then exit 1; fi && \
     rpm -i awssdk-1.3.7-1.x86_64.rpm && \
-    curl -OL https://hsadmin.trink.com/packages/centos7/external/parquet-cpp-1.3.1-1.x86_64.rpm && \
+    curl -OL https://s3-us-west-2.amazonaws.com/net-mozaws-data-us-west-2-ops-ci-artifacts/mozilla-services/lua_sandbox_extensions/external/centos7/parquet-cpp-1.3.1-1.x86_64.rpm && \
     if [[ `sha256sum parquet-cpp-1.3.1-1.x86_64.rpm | awk '{print $1}'` != \
         "7170c4d9d4bc114053ad8e59a2eb4b18ab54580d104179f1d53602f792513374" ]]; then exit 1; fi && \
     rpm -i parquet-cpp-1.3.1-1.x86_64.rpm && \
@@ -29,7 +29,7 @@ RUN yum makecache && \
     cp /etc/yum.conf.lang /etc/yum.conf && \
     yum reinstall -y glibc-common && \
     yum install -y stow && \
-    curl -OL https://hsadmin.trink.com/packages/centos7/external/grpc_stow.tgz && \
+    curl -OL https://s3-us-west-2.amazonaws.com/net-mozaws-data-us-west-2-ops-ci-artifacts/mozilla-services/lua_sandbox_extensions/external/centos7/grpc_stow.tgz && \
     if [[ `sha256sum grpc_stow.tgz | awk '{print $1}'` != \
         "65dba4a11ccc09ced4dad64ef196cab6299736a5f5e0df83fef6f1046213797b" ]]; then exit 1; fi && \
     tar -C / -zxf grpc_stow.tgz && \

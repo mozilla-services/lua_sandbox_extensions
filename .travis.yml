@@ -16,10 +16,13 @@ script:
 
 deploy:
   - provider: script
-    script: bash docker_push.sh master
+    script: bash artifact_push.sh
+    skip_cleanup: true
     on:
-      branch: master
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^dev|master$
   - provider: script
-    script: bash docker_push.sh dev
+    script: bash docker_push.sh $TRAVIS_BRANCH
     on:
-      branch: dev
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^dev|master$
