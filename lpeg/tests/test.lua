@@ -5,11 +5,12 @@
 local files = {
     "common_log_format.lua",
     "date_time.lua",
+    "escape_sequences.lua",
     "ip_address.lua",
+    "logfmt.lua",
+    "lpeg_heka.lua",
     "mysql.lua",
     "postfix.lua",
-    "escape_sequences.lua",
-    "logfmt.lua",
     "printf.lua",
 }
 
@@ -17,4 +18,3 @@ for i,v in ipairs(files) do
     local f = assert(loadfile(v))
     f()
 end
-
