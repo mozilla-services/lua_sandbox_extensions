@@ -10,7 +10,7 @@ require "string"
 
 local results = {
     nightly = [[
-The average message size has changed by 11.9583% (current avg: 167B)
+The average message size has changed by 1%d.%d+%% %(current avg: 16%dB%)
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.size.html
 ]],
@@ -25,13 +25,13 @@ max_percent_error: 4
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.ingestion_error.html
 
-Diagnostic (count/error)
+Diagnostic %(count/error%)
 ========================
 48	foobar
 ]],
     release =
 [[
-48% of submissions received after 24 hours expected up to 20%
+48%% of submissions received after 24 hours expected up to 20%%
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.latency.html
 ]],
@@ -61,7 +61,7 @@ graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor
 ]],
     beta =
 [[
-historical: 28800 current: 36000  delta: 25%
+historical: 28800 current: 36000  delta: 25%%
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.volume.html
 ]]
@@ -71,7 +71,7 @@ local cnt = 0
 function process_message()
     local id = read_message("Fields[id]")
     local payload = read_message("Payload")
-    assert(results[id] == payload, payload)
+    assert(payload:match(results[id]), payload)
     cnt = cnt + 1
     return 0
 end
