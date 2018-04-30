@@ -10,7 +10,7 @@ require "string"
 
 local results = {
     nightly = [[
-The average message size has changed by 10.0069% (current avg: 165B)
+The average message size has changed by 11.9583% (current avg: 167B)
 
 graph: https://integration_test/dashboard_output/graphs/analysis.doctype_monitor.size.html
 ]],
