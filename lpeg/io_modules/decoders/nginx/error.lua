@@ -3,7 +3,24 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Nginx Error Log Decoder Module
+# Nginx Error Log Decoder Module (DEPRECATED)
+
+We are moving to a configuration based setup to allow for more flexible
+transformations. The following will produce the equivalent behavior.
+```lua
+
+decoder_module  = {
+  {
+    {"lpeg.common_log_format#nginx_error_grammar"},
+    {
+      time      = "lpeg.heka#set_timestamp",
+      msg       = "lpeg.heka#set_payload",
+      severity  = "lpeg.heka#set_severity",
+      pid       = "lpeg.heka#set_pid"
+    }
+  }
+}
+```
 
 ## Decoder Configuration Table
 - none

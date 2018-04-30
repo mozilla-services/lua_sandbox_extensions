@@ -3,7 +3,29 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Nginx Access Log Decoder Module
+# Nginx Access Log Decoder Module (DEPRECATED)
+
+We are moving to a configuration based setup to allow for more flexible
+transformations. The following will produce the equivalent default behavior.
+```lua
+log_format = '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"'
+
+decoder_module  = {
+  {
+    {"lpeg.common_log_format#build_nginx_grammar", log_format},
+    {
+      time = "lpeg.heka#set_timestamp",
+      Payload = "lpeg.heka#remove_payload",
+      --http_user_agent = "lpeg.heka#add_normalized_user_agent",
+    }
+  }
+}
+
+lpeg_heka = {
+    user_agent_normalized_field_name = "user_agent", -- set to override the original field name prefix
+    user_agent_remove = true, -- remove the user agent field after a successful normalization
+}
+```
 
 ## Decoder Configuration Table (required)
 
