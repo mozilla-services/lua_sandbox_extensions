@@ -80,6 +80,8 @@ local req_headers = {
     ["connection"]      = "keep-alive",
 }
 
+local batch_count   = 0
+
 local function send_request() -- hand coded since socket.http doesn't support keep-alive connections
     if not client then client, err = pcreate_client() end
     if err then print(err); return false; end
@@ -107,9 +109,30 @@ local function send_request() -- hand coded since socket.http doesn't support ke
             local ok, doc = pcall(rjson.parse, response)
             if ok then
                 if doc:value(doc:find("errors")) then
-                    print(string.format("ElasticSearch server reported errors processing the submission, not all messages were indexed"))
-                    -- todo track partial batch failure counts https://github.com/mozilla-services/lua_sandbox_extensions/issues/89
-                    -- the partial failure is most likely due to bad input, so no retry is attempted as it would just fail again
+                    local retriable_error_count = 0
+                    local total_error_count = 0
+                    local items = doc:find("items")
+                    for _,i in doc:iter(items) do
+                        for _,a in doc:iter(i) do
+                            local status = doc:value(doc:find(a, "status")) or 0
+                            -- only consider 403 as retriable for now
+                            if status == 403 then
+                                retriable_error_count = retriable_error_count + 1
+                            end
+                            if status >= 400 then
+                                total_error_count = total_error_count + 1
+                            end
+                        end
+                    end
+
+                    if retriable_error_count >= batch_count then
+                        success = false
+                        print(string.format("ElasticSearch rejected all %d messages, batch will be retried (check your cluster)", retriable_error_count))
+                    else
+                        print(string.format("ElasticSearch server reported errors processing the submission, not all messages were indexed (err: %d, tot: %d)", total_error_count, batch_count))
+                        -- todo track partial batch failure counts https://github.com/mozilla-services/lua_sandbox_extensions/issues/89
+                        -- the partial failure is most likely due to bad input, so no retry is attempted as it would just fail again
+                    end
                 end
             else
                 print(string.format("HTTP response didn't contain valid JSON. err: %s", doc))
@@ -136,7 +159,6 @@ local psend_request = socket.protect(function() return send_request() end)
 
 local send_on_start = false
 local last_flush    = time()
-local batch_count   = 0
 local retry_count   = 0
 local batch = assert(io.open(batch_file, "a+"))
 for _ in io.lines(batch_file) do  -- ensure we have a correct count when resuming after an abort
