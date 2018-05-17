@@ -7,6 +7,9 @@ an IRC server. The implementation lacks most features, and is intended primarily
 to provide an simple output mechanism for writing real-time operational data from
 a Lua sandbox to an IRC channel.
 
+This package also contains an integration with the Heka alert module that can be used
+by plugins to dispatch alerts to an IRC channel.
+
 ## Module
 
 ### Example Usage
