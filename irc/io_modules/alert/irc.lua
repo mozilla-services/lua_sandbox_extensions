@@ -20,7 +20,7 @@ alert = {
                 server      = "irc.server",
                 port        = 6697, -- optional, default shown
                 channel     = "#hindsight",
-                key         = "channelkey", -- optional, omit for no key required
+                _key        = "channelkey", -- optional, omit for no key required
             },
             {
                 nick        = "othernick",
@@ -75,8 +75,8 @@ for _,v in ipairs(cfg) do
     if not v.port then v.port = 6697 end
     local k = v.server .. v.channel
     local c
-    if v.key then
-        c = irc.new(v.nick, v.server, v.port, v.channel, v.key)
+    if v._key then
+        c = irc.new(v.nick, v.server, v.port, v.channel, v._key)
     else
         c = irc.new(v.nick, v.server, v.port, v.channel)
     end
