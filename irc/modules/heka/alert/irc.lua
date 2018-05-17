@@ -5,11 +5,15 @@
 --[[
 # Heka IRC Alert Configuration Module
 
+The target configuration specifies which server/channel should receive the
+alert message, in format "<server><channel>". A * can be used to indicate that
+all configured connections in the alert module should receive the alert.
+
 ## Sample Configuration
 ```lua
 alert = {
     modules = {
-        irc = { channel_output = true } -- if true, write alerts to channel
+        irc = { target = "irc.server#channel" } -- target for messages, * for all
     }
 }
 
@@ -22,9 +26,9 @@ local cfg = read_config("alert")
 cfg = cfg.modules[module_name]
 assert(type(cfg) == "table", "alert.modules." .. module_name .. " configuration must be a table")
 
-local co = cfg.channel_output
-if type(co) ~= "boolean" then
-    error("channel_output must be boolean")
+local co = cfg.target
+if type(co) ~= "string" then
+    error("target must be string")
 end
 
-return {{name = module_name .. ".channel_output", value = co}}
+return {{name = module_name .. ".target", value = co}}
