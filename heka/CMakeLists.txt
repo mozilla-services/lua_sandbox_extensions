@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(heka VERSION 1.1.18 LANGUAGES C)
+project(heka VERSION 1.1.19 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Utility modules for Heka sandboxes")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-cjson (>= 2.1), ${PACKAGE_PREFIX}-lpeg (>= 1.0.10), ${PACKAGE_PREFIX}-lfs (>= 1.6.6)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})

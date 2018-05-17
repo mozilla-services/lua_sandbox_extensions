@@ -70,7 +70,7 @@ function process_message()
             end
         else
             rv = -1
-            err = string.format("alert module '%s' is not configured", k)
+            err = string.format("alert module '%s' is not configured", name)
         end
     end
     return rv, err
