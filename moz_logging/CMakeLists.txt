@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(moz-logging VERSION 0.0.6 LANGUAGES C)
+project(moz-logging VERSION 0.0.7 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mozilla Infrastructure Logging Module")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${PACKAGE_PREFIX}-lpeg (>= 1.0.8)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})

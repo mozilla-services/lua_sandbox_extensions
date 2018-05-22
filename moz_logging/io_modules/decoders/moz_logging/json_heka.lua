@@ -67,12 +67,12 @@ function decode(data, dh)
                  util.table_to_fields(msg, fields, nil, ".", 4)
                  msg = {Fields = fields}
              end
-             if msg.Type then
-                 if dh.Type then
+             if dh and dh.Type then
+                 if msg.Type then
                      msg.Type = string.format("%s|%s", dh.Type, msg.Type)
+                 else
+                     msg.Type = dh.Type
                  end
-             else
-                 msg.Type = dh.Type
              end
 
              if msg.Fields then
