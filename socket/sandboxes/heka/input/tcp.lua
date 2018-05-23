@@ -53,7 +53,7 @@ local socket = require "socket"
 require "string"
 require "table"
 local sdu       = require "lpeg.sub_decoder_util"
-local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.protobuf", read_config("printf_messages"))
+local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.payload", read_config("printf_messages"))
 
 local address           = read_config("address") or "127.0.0.1"
 local port              = read_config("port") or 5566
