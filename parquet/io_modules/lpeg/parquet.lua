@@ -85,10 +85,12 @@ Constructs a parquet schema from the Parquet schema specification.
 *Arguments*
 - spec (string) Parquet schema spec
 - hive_compatible (bool, nil/none default: false) - column naming convention
-- metadata_group (string, nil/none) - top level group containing message header/field names
+- metadata_group (string, nil/none) - top level group containing Heka message header/field names (Heka sandbox only)
+- metadata_prefix (string, nil/none) - top level prefix identifing Heka message header/field names as metadata (Heka sandbox only)
 
 *Return*
 - schema (userdata) or an error is thrown
+- load_metadata (function/nil) Function to add metadata into the record (Heka sandbox only)
 
 --]]
 
@@ -157,50 +159,80 @@ local function load_fields(ps, parent)
 end
 
 
-local function get_metadata_function(ms)
-    if not ms then return nil end
+local function get_metadata_function(ms, tlms, metadata_group)
+    if not ms and not tlms then return nil end
 
-    local md = {}
-    local ms_len = #ms
-    local f = function()
-        for i = 1, ms_len do
-            md[ms[i][2]] = read_message(ms[i][1])
+    local ms_len
+    local tlms_len
+    if ms then ms_len = #ms end
+    if tlms then tlms_len = #tlms end
+
+    local f = function(t)
+        if ms_len then
+            local md = {}
+            for i = 1, ms_len do
+                md[ms[i][2]] = read_message(ms[i][1])
+            end
+            t[metadata_group] = md
         end
-        return md
+        if tlms_len then
+            for i = 1, tlms_len do
+                t[tlms[i][2]] = read_message(tlms[i][1])
+            end
+        end
     end
     return f
 end
 
 
-local function load_metadata_spec(ps, metadata_group)
-    local ms
-    for i = 1, #ps do
-        local s = ps[i]
-        if s.fields and s.name == metadata_group then
-            ms = {}
-            for j = 1, #s.fields do
-                local f = s.fields[j]
-                if f.name == "Timestamp"
-                or f.name == "Type"
-                or f.name == "Logger"
-                or f.name == "Hostname"
-                or f.name == "EnvVersion"
-                or f.name == "Pid"
-                or f.name == "Severity"
-                or f.name == "Payload"
-                or f.name == "Uuid" then
-                    ms[j] = {f.name, f.name}
-                else
-                    ms[j] = {string.format("Fields[%s]", f.name), f.name}
-                end
-            end
-        end
+local function add_spec(t, idx, fname, sname)
+    if fname == "Timestamp"
+    or fname == "Type"
+    or fname == "Logger"
+    or fname == "Hostname"
+    or fname == "EnvVersion"
+    or fname == "Pid"
+    or fname == "Severity"
+    or fname == "Payload"
+    or fname == "Uuid" then
+        t[idx] = {fname, sname}
+    else
+        t[idx] = {string.format("Fields[%s]", fname), sname}
     end
-    return get_metadata_function(ms)
 end
 
 
-function load_parquet_schema(spec, hive_compatible, metadata_group)
+local function load_metadata_spec(ps, metadata_group, metadata_prefix)
+    local ms
+    local tlms
+    local pat
+    if metadata_prefix then
+        pat = string.format("^%s(.+)", metadata_prefix)
+    end
+
+    for i = 1, #ps do
+        local s = ps[i]
+        if s.fields then
+            if s.name == metadata_group then
+                ms = {}
+                for j = 1, #s.fields do
+                    local name = s.fields[j].name
+                    add_spec(ms, j, name, name)
+                end
+            end
+        elseif pat then
+            local name = s.name:match(pat)
+            if name then
+                if not tlms then tlms = {} end
+                add_spec(tlms, #tlms + 1, name, s.name)
+            end
+        end
+    end
+    return get_metadata_function(ms, tlms, metadata_group)
+end
+
+
+function load_parquet_schema(spec, hive_compatible, metadata_group, metadata_prefix)
     local ps = grammar:match(spec)
     if not ps then error("failed parsing the spec", 2) end
     local root = parquet.schema(ps.name, hive_compatible)
@@ -209,9 +241,9 @@ function load_parquet_schema(spec, hive_compatible, metadata_group)
     if not ok then error(err, 2) end
 
     local f
-    if metadata_group then
-        f = load_metadata_spec(ps, metadata_group)
-        if not f then error("no metadata_group '" .. metadata_group .. "' was found") end
+    if metadata_group or metadata_prefix then
+        f = load_metadata_spec(ps, metadata_group, metadata_prefix)
+        if not f then error("no metadata specification was found") end
     end
     return root, f
 end

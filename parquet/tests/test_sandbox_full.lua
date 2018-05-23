@@ -40,8 +40,22 @@ message test {
 }
 ]]
 
+
+local metadata_schema = [[
+message Document {
+    required binary id (UTF8);
+    required group metadata {
+        required binary Hostname;
+    }
+    required boolean md_bool;
+    optional binary name (UTF8);
+}
+]]
+
 local s = parser.load_parquet_schema(schema)
 local hs = parser.load_parquet_schema(schema, true)
+local md, md_load = parser.load_parquet_schema(metadata_schema, true, "metadata")
+local mdtl, mdtl_load = parser.load_parquet_schema(metadata_schema, true, "metadata", "md_")
 function process_message()
     local w = parquet.writer("hm.parquet", s)
     w:dissect_message()
@@ -49,6 +63,18 @@ function process_message()
 
     w = parquet.writer("hm_hive.parquet", hs)
     w:dissect_message()
+    w:close()
+
+    local record = {id = "5xjc79", name = "test1", md_bool = false}
+    md_load(record)
+    w = parquet.writer("metadata.parquet", md)
+    w:dissect_record(record)
+    w:close()
+
+    record = {id = "5xjc79", name = "test1"}
+    mdtl_load(record)
+    w = parquet.writer("metadata_toplevel.parquet", mdtl)
+    w:dissect_record(record)
     w:close()
     return 0
 end

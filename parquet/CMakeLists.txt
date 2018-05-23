@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.5)
-project(parquet VERSION 0.0.10 LANGUAGES C CXX)
+project(parquet VERSION 0.0.11 LANGUAGES C CXX)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Parquet Lua Module")
 
 find_package(parquet-cpp 1.3.1 REQUIRED CONFIG)
