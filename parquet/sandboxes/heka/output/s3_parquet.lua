@@ -61,6 +61,8 @@ parquet_schema = [=[
 -- matches a Heka message header name the data is extracted from 'msg.name'
 -- otherwise the data is extracted from msg.Fields[name]
 metadata_group = "metadata"
+-- metadata_prefix = nil -- if this is set any root level schema object
+                         -- containing this prefix will be treated as metadata
 
 -- Array of Heka message variables containing JSON strings. The decoded JSON
 -- objects are assembled into a record that is dissected based on the parquet
@@ -126,12 +128,13 @@ local writers_cnt   = 0
 local buffer_cnt    = 0
 local time_t        = 0
 
-local hindsight_admin       = read_config("hindsight_admin")
-local hostname              = read_config("Hostname")
-local metadata_group        = read_config("metadata_group")
-local json_objects          = read_config("json_objects")
-local json_decode_null      = read_config("json_decode_null")
-local json_objects_len      = 0
+local hindsight_admin   = read_config("hindsight_admin")
+local hostname          = read_config("Hostname")
+local metadata_group    = read_config("metadata_group")
+local metadata_prefix   = read_config("metadata_prefix")
+local json_objects      = read_config("json_objects")
+local json_decode_null  = read_config("json_decode_null")
+local json_objects_len  = 0
 if type(json_objects) == "table" then
     require "cjson"
     if json_decode_null then
@@ -167,7 +170,7 @@ local default_nil  = "UNKNOWN"
 if hive_compatible then
     default_nil = "__HIVE_DEFAULT_PARTITION__"
 end
-parquet_schema, load_metadata = load_schema(parquet_schema, hive_compatible, metadata_group)
+parquet_schema, load_metadata = load_schema(parquet_schema, hive_compatible, metadata_group, metadata_prefix)
 
 
 local function get_fqfn(path)
@@ -316,9 +319,7 @@ function process_message()
     if json_objects then
         record, err = load_json_objects()
         if err then return -1, err end
-        if load_metadata then
-            record[metadata_group] = load_metadata()
-        end
+        if load_metadata then load_metadata(record) end
     end
 
     local path = get_s3_path(record)
