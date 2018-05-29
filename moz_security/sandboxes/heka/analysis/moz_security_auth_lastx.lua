@@ -92,6 +92,9 @@ function process_message()
     local geocountry    = read_message(geocountry_field)
     local user          = read_message(user_field)
     local track         = nil
+    if not user then
+        return -1, "message was missing required user field"
+    end
     for i,v in ipairs(track_fields) do
         local buf = read_message(v)
         if not buf then return -1, "message was missing a required tracking field" end
@@ -100,9 +103,6 @@ function process_message()
         else
             track = buf
         end
-    end
-    if not user then
-        return -1, "message was missing required user field"
     end
 
     local escalate = false
