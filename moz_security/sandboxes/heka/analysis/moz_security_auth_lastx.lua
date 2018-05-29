@@ -106,7 +106,9 @@ function process_message()
     end
 
     local escalate = false
-    if userdata.user and #userdata.user > 0 then
+    local userdatalen = 0
+    if userdata.user then userdatalen = #userdata.user end
+    if userdatalen > 0 then
         local found = false
         local min = HUGE
         local rem = nil
@@ -124,7 +126,7 @@ function process_message()
         end
         if not found then
             escalate = true
-            if #userdata.user >= lastx then
+            if userdatalen >= lastx then
                 table.remove(userdata.user, rem)
             end
             table.insert(userdata.user, 1, { track, ts })
