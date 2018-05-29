@@ -31,6 +31,9 @@ message_matcher = "Type ~= 'bastion.file.sshd'% && Fields[sshd_authmsg] == 'Acce
 ticker_interval = 0
 process_message_inject_limit = 1
 
+-- preserve the tracking data across process restarts
+preserve_data = true
+
 default_email = "foxsec-dump+OutOfHours@mozilla.com" -- required
 -- user_email = "manatee-%s@moz-svc-ops.pagerduty.com" -- optional user specific email address
 -- drift_email = "captainkirk@mozilla.com" -- optional drift message notification
