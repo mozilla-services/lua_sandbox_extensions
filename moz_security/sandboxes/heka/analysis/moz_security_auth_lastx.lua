@@ -105,34 +105,40 @@ function process_message()
         end
     end
 
+    local delaysec = math.abs(os.time() - ts)
+    local invalidts = false
+    if delaysec > acceptable_message_drift then invalidts = true end
+
     local escalate = false
-    local userdatalen = 0
-    if userdata.user then userdatalen = #userdata.user end
-    if userdatalen > 0 then
-        local found = false
-        local min = HUGE
-        local rem = nil
-        for i,v in ipairs(userdata.user) do
-            -- even if we find it early, iterate over the entire table to also locate
-            -- the minimum ts
-            if v[1] == track then
-                v[2] = ts
-                found = true
+    if not invalidts then
+        local userdatalen = 0
+        if userdata.user then userdatalen = #userdata.user end
+        if userdatalen > 0 then
+            local found = false
+            local min = HUGE
+            local rem = nil
+            for i,v in ipairs(userdata.user) do
+                -- even if we find it early, iterate over the entire table to also locate
+                -- the minimum ts
+                if v[1] == track then
+                    v[2] = ts
+                    found = true
+                end
+                if v[2] < min then
+                    min = v[2]
+                    rem = i
+                end
             end
-            if v[2] < min then
-                min = v[2]
-                rem = i
+            if not found then
+                escalate = true
+                if userdatalen >= lastx then
+                    table.remove(userdata.user, rem)
+                end
+                table.insert(userdata.user, 1, { track, ts })
             end
+        else
+            userdata.user = {{ track, ts }}
         end
-        if not found then
-            escalate = true
-            if userdatalen >= lastx then
-                table.remove(userdata.user, rem)
-            end
-            table.insert(userdata.user, 1, { track, ts })
-        end
-    else
-        userdata.user = {{ track, ts }}
     end
 
     -- At this point, we know if the event should be escalated or not. First, update
@@ -162,8 +168,7 @@ function process_message()
 
     -- Finally, if the message has time drift modify the recipient address and add some additional
     -- information to the payload
-    local delaysec = math.abs(os.time() - ts)
-    if delaysec > acceptable_message_drift then
+    if invalidts then
         if not drift_email then return -1, "dropping event with time drift" end
         msg.Fields[3].value[1] = string.format("<%s>", drift_email)
         msg.Fields[3].value[2] = nil
