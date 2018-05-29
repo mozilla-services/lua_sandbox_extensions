@@ -114,7 +114,7 @@ function process_message()
             -- even if we find it early, iterate over the entire table to also locate
             -- the minimum ts
             if v[1] == track then
-                userdata.user[i][2] = ts
+                v[2] = ts
                 found = true
             end
             if v[2] < min then
