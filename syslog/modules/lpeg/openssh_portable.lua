@@ -115,7 +115,7 @@ printf_messages = {
     {"scanned from %s port %d with %s. Don't panic.", "ssh_remote_ipaddr", "ssh_remote_port", "client_version_string"},
     {"Client version \"%.100s\" uses unsafe RSA signature scheme; disabling use of RSA keys", "remote_version"},
     {"Protocol major versions differ for %s port %d: %.200s vs. %.200s", "ssh_remote_ipaddr", "ssh_remote_port", "server_version_string", "client_version_string"},
-    {"Server listening on %s port %s%s%s.", "ntop", "strport", l.P" rdomain " + l.P"", "rdomain"},
+    {"Server listening on %s port %s%s%s.", "ntop", l.Cg(l.digit^1, "strport"), l.P" rdomain " + l.P"", "rdomain"},
     {"Received signal %d; terminating.", "received_sigterm"},
 
     -- openssh-portable/auth.c
@@ -198,7 +198,7 @@ printf_messages = {
     {"channel %d: ext data for non open", "self"},
     {"channel %d: bad ext data", "self"},
     {"channel %d: rcvd too much extended_data %zu, win %u", "self", "data_len", "local_window"},
-    {"channel %d: open failed: %s%s%s", "self", "reason2txt", l.P": " + l.P"", "msg"},
+    {"channel %d: open failed: %s%s%s", "self", l.Cg((l.P(1) - ":")^0, "reason2txt"), l.P": " + l.P"", "msg"},
     {"Received window adjust for non-open channel %d.", "id"},
     {"%s: %d: unknown", "__func__", "id"},
     {"Received request to connect to host %.100s port %d, but the request was denied.", "host", "port"},
