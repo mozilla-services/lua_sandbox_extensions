@@ -20,10 +20,12 @@ local test = {
         { "sshd", "Accepted publickey for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for picard from 192.168.1.3 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for picard from 192.168.1.4 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 216.160.83.56 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 216.160.83.56 port 4242 ssh2", sdec, 0 }
     },
@@ -48,9 +50,17 @@ local test = {
         { "sshd", "Accepted publickey for riker from 192.168.1.5 port 4242 ssh2", sdec, -14 }
     },
     {
+        -- verify operation with multiple track fields
         { "sshd", "Accepted publickey for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted password for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
+    },
+    {
+        -- verify entry expiration
+        { "sshd", "Accepted publickey for riker from 192.168.1.1 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, -120 },
+        { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, 0 },
     }
 }
 
