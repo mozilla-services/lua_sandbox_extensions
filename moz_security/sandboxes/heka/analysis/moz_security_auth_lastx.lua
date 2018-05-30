@@ -133,8 +133,12 @@ end
 function process_message()
     local ts            = math.floor(read_message("Timestamp") / 1e9)
     local hn            = read_message(authhost_field) or "unknown"
-    local geocity       = read_message(geocity_field)
-    local geocountry    = read_message(geocountry_field)
+    local geocity       = nil
+    local geocountry    = nil
+    if geocity_field and geocountry_field then
+        geocity = read_message(geocity_field)
+        geocountry = read_message(geocountry_field)
+    end
     local user          = read_message(user_field)
     local track         = nil
     if not user then
