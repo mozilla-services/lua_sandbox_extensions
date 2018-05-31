@@ -109,7 +109,7 @@ function process_message()
     if not violations or type(violations) ~= "string" then
         return -1, "invalid argument for violations"
     end
-    local ok, msg = json_request("PUT", "/violations/", violations)
+    local ok, msg = json_request("PUT", "/violations", violations)
     if not ok then
         return -1, msg
     end
