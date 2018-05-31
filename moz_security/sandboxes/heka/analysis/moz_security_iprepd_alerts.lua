@@ -3,9 +3,9 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-#  Mozilla Security Tigerblood Reputation Alerts
+#  Mozilla Security iprepd Reputation Alerts
 
-Monitors Tigerblood log events and generates notices when the reputation of a
+Monitors iprepd log events and generates notices when the reputation of a
 given IP falls below certain thresholds (<=75, <=50, <=25).
 
 The alerting key is generated based on the passed threshold and the IP address,
@@ -14,7 +14,7 @@ to suppress further notifications about changes within a given window.
 ## Sample Configuration
 ```lua
 filename = "moz_security_tb_alerts.lua"
-message_matcher = "Type =~ 'logging.tigerblood.app.docker'%"
+message_matcher = "Type =~ 'logging.iprepd.app.docker'%"
 ticker_interval = 0
 process_message_inject_limit = 1
 
@@ -64,7 +64,7 @@ function process_message()
         return 0
     end
 
-    local t = string.format("[%s] tigerblood adjust %s to %d (set key %s)", prefix, ip, reputation, k)
+    local t = string.format("[%s] iprepd adjust %s to %d (set key %s)", prefix, ip, reputation, k)
     if isviolation then
         t = t .. string.format(" on violation %s", violation)
     else

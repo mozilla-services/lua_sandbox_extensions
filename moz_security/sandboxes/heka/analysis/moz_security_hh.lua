@@ -14,9 +14,9 @@ window (event frequency); identifiers that have made requests that exceeed the a
 threshold cap will be captured in the plugin output. Note the threshold is calculated on each interval
 using the formula shown in the sample configuration.
 
-The plugin by default outputs collected data as TSV; if the send_tigerblood configuration option
-is enabled the plugin will instead output data as Tigerblood violation messages (for consumption by
-for example a Tigerblood output module).
+The plugin by default outputs collected data as TSV; if the send_iprepd configuration option
+is enabled the plugin will instead output data as iprepd violation messages (for consumption by
+for example the iprepd output module).
 
 Heavy hitters will be identified on each interval tick, so ensure the ticker_interval parameter is
 set to a value appropriate for consumption of the intended event stream to ensure the gathered sample
@@ -33,8 +33,8 @@ id_field = "Fields[remote_addr]" -- field to use as the identifier
 -- id_field_capture = ",? *([^,]+)$",  -- optional e.g. extract the last entry in a comma delimited list
 
 -- list_max_size = 10000 -- optional, defaults to 10000 (maximum number of heavy hitter IDs to track)
--- send_tigerblood = false -- optional, if true plugin will generate Tigerblood violation messages
--- violation_type = "fxa:heavy_hitter_ip" -- required in violations mode, Tigerblood violation type
+-- send_iprepd = false -- optional, if true plugin will generate iprepd violation messages
+-- violation_type = "fxa:heavy_hitter_ip" -- required in violations mode, iprepd violation type
 
 threshold_cap = 10 -- Threshold will be calculated average + (calculated average * cap)
 -- cms_epsilon = 1 / 10000 -- optional CMS value for epsilon
@@ -57,9 +57,9 @@ local list_max_size = read_config("list_max_size") or 10000
 
 local tbsend
 local violation_type
-local send_tigerblood = read_config("send_tigerblood")
-if send_tigerblood then
-    tbsend = require "heka.tigerblood".send
+local send_iprepd = read_config("send_iprepd")
+if send_iprepd then
+    tbsend = require "heka.iprepd".send
     violation_type = read_config("violation_type") or error("violation_type must be configured")
 end
 
@@ -128,7 +128,7 @@ function timer_event(ns)
 
     calc_threshold()
 
-    if not send_tigerblood then
+    if not send_iprepd then
         add_to_payload("threshold", "\t", threshold, "\n")
         add_to_payload("list_size", "\t", cms:unique_count(), "\n")
         add_to_payload("event_count", "\t", cms:item_count(), "\n")
@@ -139,7 +139,7 @@ function timer_event(ns)
     for i,ip in ipairs(slist) do
         local cnt = list[ip]
         if cnt > threshold then
-            if not send_tigerblood then
+            if not send_iprepd then
                 add_to_payload(ip, "\t", cnt, "\n")
             else
                 violations[vindex] = {ip = ip, violation = violation_type}
@@ -148,7 +148,7 @@ function timer_event(ns)
         end
     end
 
-    if not send_tigerblood then
+    if not send_iprepd then
         inject_payload("tsv", "statistics")
     else
         tbsend(violations)
