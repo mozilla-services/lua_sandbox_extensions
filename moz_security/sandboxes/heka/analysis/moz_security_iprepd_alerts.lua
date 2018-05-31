@@ -41,8 +41,9 @@ function process_message()
     local ip            = read_message("Fields[ip]")
     local reputation    = read_message("Fields[reputation]")
     local msg           = read_message("Fields[msg]")
+    local exception     = read_message("Fields[exception]")
     local violation     = read_message("Fields[violation]") or "unknown"
-    if not ip or not reputation or not msg then return 0 end
+    if not ip or not reputation or not msg or exception then return 0 end
 
     local isviolation = false
     -- we only care about a couple types of messages here, so make sure that's what we
