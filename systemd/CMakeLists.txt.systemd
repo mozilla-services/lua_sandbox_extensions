@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(systemd VERSION 0.0.0 LANGUAGES C)
+project(systemd VERSION 0.0.1 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua systemd Module")
@@ -113,3 +113,4 @@ src/messages.lua
 )
 
 install(FILES ${SYSTEMD_MODULES} DESTINATION ${INSTALL_IOMODULE_PATH}/systemd)
+install(DIRECTORY ${PARENT_SOURCE_DIR}/sandboxes/ DESTINATION ${INSTALL_SANDBOX_PATH} ${DPERMISSION})
