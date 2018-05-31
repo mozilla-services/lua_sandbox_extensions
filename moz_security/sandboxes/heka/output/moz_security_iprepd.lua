@@ -109,9 +109,13 @@ function process_message()
     if not violations or type(violations) ~= "string" then
         return -1, "invalid argument for violations"
     end
-    local ok, msg = json_request("PUT", "/violations", violations)
-    if not ok then
-        return -1, msg
+    -- send violation notices in groups of <= 100
+    local violations = cjson.decode(violations)
+    for i=1,#violations,100 do
+        local ok, msg = json_request("PUT", "/violations", cjson.encode({unpack(violations, i, i+99)}))
+        if not ok then
+            return -1, msg
+        end
     end
     return 0
 end
