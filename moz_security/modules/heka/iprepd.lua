@@ -3,17 +3,17 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Heka Tigerblood Module
+# Heka iprepd Module
 
-Can be utilized by an analysis module to generate messages for the Tigerblood
+Can be utilized by an analysis module to generate messages for the iprepd
 output module. The send function expects a table containing violations to be forwarded
-to the violations endpoint of the Tigerblood service (e.g., /violations/).
+to the violations endpoint of the iprepd service (e.g., /violations/).
 
 ## Functions
 
 ### send
 
-Send a violation message to be processed by the Tigerblood output plugin.
+Send a violation message to be processed by the iprepd output plugin.
 
 The violations argument should be an array containing tables with a violation
 and ip value set.
@@ -43,7 +43,7 @@ local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 local msg = {
-    Type = "tigerblood",
+    Type = "iprepd",
     Fields = {},
 }
 

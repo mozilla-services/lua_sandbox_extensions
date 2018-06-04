@@ -3,29 +3,29 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# Tigerblood Output Plugin
+# iprepd Output Plugin
 
-Sends tigerblood events to Mozilla Tigerblood IP reputation service using a
+Sends iprepd events to Mozilla iprepd IP reputation service using a
 hawk/JSON request. This output plugin currently only supports submitting
 IP violations to the /violations/ endpoint.
 
-https://github.com/mozilla-services/tigerblood
+https://github.com/mozilla-services/iprepd
 
 ## Sample Configuration
 ```lua
-filename = "moz_security_tigerblood.lua"
-message_matcher = "Type == 'tigerblood'"
+filename = "moz_security_iprepd.lua"
+message_matcher = "Type == 'iprepd'"
 
--- Configuration for pushing violations to Tigerblood
-tigerblood = {
-   base_url     = "https://tigerblood.prod.mozaws.net", -- NB: no trailing slash
+-- Configuration for pushing violations to iprepd
+iprepd = {
+   base_url     = "https://iprepd.prod.mozaws.net", -- NB: no trailing slash
    id           = "fxa_heavy_hitters", -- hawk ID
    _key         = "hawksecret" -- hawk secret
 }
 ```
 --]]
 
-local client_cfg = read_config("tigerblood") or error("no tigerblood configuration specified")
+local client_cfg = read_config("iprepd") or error("no iprepd configuration specified")
 
 local string    = require("string")
 local http      = require("socket.http")
@@ -109,9 +109,13 @@ function process_message()
     if not violations or type(violations) ~= "string" then
         return -1, "invalid argument for violations"
     end
-    local ok, msg = json_request("PUT", "/violations/", violations)
-    if not ok then
-        return -1, msg
+    -- send violation notices in groups of <= 100
+    local violations = cjson.decode(violations)
+    for i=1,#violations,100 do
+        local ok, msg = json_request("PUT", "/violations", cjson.encode({unpack(violations, i, i+99)}))
+        if not ok then
+            return -1, msg
+        end
     end
     return 0
 end

@@ -15,6 +15,7 @@ set(integration_tests
   analysis_sshd_login_monitor
   analysis_auth_ip_geo
   analysis_auth_lastx
+  analysis_iprepd_alerts
 )
 
 foreach(test IN LISTS integration_tests)
