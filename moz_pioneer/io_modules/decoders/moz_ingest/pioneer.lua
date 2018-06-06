@@ -146,9 +146,10 @@ local function process_study(edata, jwk, schema)
         error("json\tinvalid study: " .. err, 0)
     end
 
-    ok, err = doc:validate(schema)
+    local report
+    ok, err, report = doc:validate(schema)
     if not ok then
-        error("json\tstudy validation: " .. err, 0)
+        error(string.format("json\tstudy validation: %s\t%s", err, report), 0)
     end
     return doc
 end
@@ -161,9 +162,10 @@ local function process_envelope(hsr)
         error("json\tinvalid envelope: " .. err, 0)
     end
 
-    ok, err = env:validate(envelope_schema)
+    local report
+    ok, err, report = env:validate(envelope_schema)
     if not ok then
-        error("json\tenvelope validation: ".. err, 0)
+        error(string.format("json\tenvelope validation: %s\t%s", err, report), 0)
     end
     return env
 end

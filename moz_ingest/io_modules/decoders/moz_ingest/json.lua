@@ -101,6 +101,7 @@ local namespaces = load_namespaces(cfg.namespace_path)
 local doc = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
 local submissionField = {value = doc, representation = "json"}
 local function process_json(hsr, msg)
+    local report
     local ok, err = pcall(doc.parse_message, doc, hsr, "Fields[content]", nil, nil, true)
     if not ok then
         error(string.format("json\tinvalid submission: %s", err), 0)
@@ -110,14 +111,16 @@ local function process_json(hsr, msg)
     if schema then schema = schema[msg.Fields.docType] end
     if schema then schema = schema[msg.Fields.docVersion] end
     if schema then
-        ok, err = doc:validate(schema)
+        ok, err, report = doc:validate(schema)
     else
         err = "schema not found"
     end
 
     if err then
-        error(string.format("json\tnamespace: %s schema: %s version: %d error: %s",
-                            msg.Logger, msg.Fields.docType, msg.Fields.docVersion, err), 0)
+        err = string.format("json\tnamespace: %s schema: %s version: %d error: %s",
+                            msg.Logger, msg.Fields.docType, msg.Fields.docVersion, err)
+        if report then err = string.format("%s\t%s", err, report) end
+        error(err, 0)
     end
     msg.Fields.submission = submissionField
 end

@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "rjson"
-assert(rjson.version() == "1.1.3", rjson.version())
+assert(rjson.version() == "1.1.4", rjson.version())
 
 schema_json = [[{
     "type":"object",
@@ -103,7 +103,10 @@ assert(not doc:validate(schema))
 json = [[{"Timestamp":0, "EnvVersion":"unknown"}]]
 doc = rjson.parse(json)
 assert(doc)
-assert(not doc:validate(schema))
+local ok, err, report = doc:validate(schema)
+assert(not ok)
+assert(err == "SchemaURI: #/properties/EnvVersion Keyword: pattern DocumentURI: #/EnvVersion", err)
+assert(report == '{"pattern":{"actual":"unknown","instanceRef":"#/EnvVersion","schemaRef":"#/properties/EnvVersion"}}', report)
 
 json = [[{"array":[1,"string",true,false,[3,4],{"foo":"bar"},null]}]]
 doc = rjson.parse(json)

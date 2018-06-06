@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0)
-project(rjson VERSION 1.1.3 LANGUAGES C CXX)
+project(rjson VERSION 1.1.4 LANGUAGES C CXX)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RapidJSON Lua Module")
 
 include(ExternalProject)
