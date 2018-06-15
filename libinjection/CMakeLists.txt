@@ -17,3 +17,4 @@ externalproject_add(
 externalproject_add_step(ep_libinjection copy_cpack
 COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/${PROJECT_NAME}.cpack ${CMAKE_BINARY_DIR}
 DEPENDEES install)
+include(sandbox_ep_test)
