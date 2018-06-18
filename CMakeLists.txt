@@ -82,6 +82,7 @@ hyperloglog
 irc
 jose
 kafka
+libinjection
 lfs
 lpeg
 lsb
