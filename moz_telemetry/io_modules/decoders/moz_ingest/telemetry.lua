@@ -143,10 +143,10 @@ local function validate_schema(hsr, msg, doc, version)
         schema = dt[version] or default_schema
     end
 
-    ok, err = doc:validate(schema)
+    local ok, err, report = doc:validate(schema)
     if not ok then
-        error(string.format("json\tschema: %s version: %s validation error: %s",
-                            msg.Fields.docType, tostring(version), err), 0)
+        error(string.format("json\tschema: %s version: %s validation error: %s\t%s",
+                            msg.Fields.docType, tostring(version), err, report), 0)
     end
 end
 

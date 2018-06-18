@@ -36,6 +36,7 @@ local messages = {
         docType = "bar",
         DecodeErrorType = "json",
         DecodeError = "namespace: foo schema: bar version: 1 error: SchemaURI: # Keyword: required DocumentURI: #",
+        DecodeErrorDetail = '{"required":{"missing":["exampleString"],"instanceRef":"#","schemaRef":"#"}}',
         geoCity = "Milton",
         geoCountry = "US",
         docVersion = 1,

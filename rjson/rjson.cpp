@@ -284,6 +284,11 @@ static int rjson_validate(lua_State *lua)
     luaL_addstring(&b, " DocumentURI: ");
     luaL_addstring(&b, sb.GetString());
     luaL_pushresult(&b);
+    sb.Clear();
+    rj::Writer<rj::StringBuffer> w(sb);
+    validator.GetError().Accept(w);
+    lua_pushstring(lua, sb.GetString());
+    return 3; // ok, err, report
   } else {
     lua_pushboolean(lua, true);
     lua_pushnil(lua);

@@ -230,7 +230,7 @@ end
 --[[
 Read the raw message, annotate it with our error information, and attempt to inject it.
 --]]
-local function inject_error(hsr, namespace, err_type, err_msg, extra_fields)
+local function inject_error(hsr, namespace, err_type, err_msg, err_detail, extra_fields)
     local len
     local raw  = hsr:read_message("raw")
     local err  = decode_message(raw)
@@ -256,6 +256,10 @@ local function inject_error(hsr, namespace, err_type, err_msg, extra_fields)
     err.Fields[len] = { name = "DecodeErrorType", value = err_type}
     len = len + 1
     err.Fields[len] = { name = "DecodeError",     value = err_msg}
+    if err_detail then
+        len = len + 1
+        err.Fields[len] = { name = "DecodeErrorDetail", value = err_detail}
+    end
 
     if extra_fields then
         -- Add these optional fields to the raw message.
@@ -269,18 +273,18 @@ end
 
 
 local function inject_error_helper(hsr, namespace, err, fields)
-    local et, em = err:match("^(.-)\t(.+)")
+    local et, em, ed = err:match("^([^\t]+)\t([^\t]+)\t?(.*)")
     if et == "inject_message" then
         -- Note: we do NOT pass the extra message fields here,
         -- since it's likely that would simply hit the same
         -- error when injecting.
-        inject_error(hsr, namespace, et, em)
+        inject_error(hsr, namespace, et, em, ed)
     else
         if not et then
             et = "internal"
             em = err
         end
-        inject_error(hsr, namespace, et, em, fields)
+        inject_error(hsr, namespace, et, em, ed, fields)
     end
 end
 
@@ -368,7 +372,7 @@ function transform_message(hsr, msg)
     end
 
     if cfg.error_on_missing_sub_decoder then
-        inject_error(hsr, msg.Logger, "skipped", "no sub decoder", msg.Fields)
+        inject_error(hsr, msg.Logger, "skipped", "no sub decoder", nil, msg.Fields)
     end -- else drop the message
 end
 

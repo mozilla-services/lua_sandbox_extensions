@@ -103,7 +103,7 @@ rjson functions.
 Checks that the JSON document conforms to the specified schema.
 
 ```lua
-local ok, err = doc:validate(schema)
+local ok, err, report = doc:validate(schema)
 assert(ok, err)
 
 ```
@@ -112,7 +112,8 @@ assert(ok, err)
 
 *Return*
 * ok (bool) - true if valid
-* err (string) - error message on failure
+* err (string/nil) - error message on failure
+* report (string/nil) - [schema violation report](http://rapidjson.org/md_doc_schema.html#Reporting) on failure
 
 #### find
 
