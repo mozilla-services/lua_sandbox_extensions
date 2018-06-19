@@ -33,6 +33,10 @@ local urlparamtests = {
         { v = "test value", arg = "@@@@@" }
     },
     {
+        "/request/path?v=test%00test",
+        { v = "testtest" }
+    },
+    {
         "",
         nil
     }

@@ -36,6 +36,7 @@ local function urldecode(s)
         return string.char(tonumber(x, 16))
     end
 
+    s = string.gsub(s, "%%00", "")
     s = string.gsub(s, "+", " ")
     s = string.gsub(s, "%%(%x%x)", h)
     return s
