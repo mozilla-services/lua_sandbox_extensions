@@ -12,6 +12,7 @@ local files = {
     "mysql.lua",
     "postfix.lua",
     "printf.lua",
+    "url.lua",
 }
 
 for i,v in ipairs(files) do
