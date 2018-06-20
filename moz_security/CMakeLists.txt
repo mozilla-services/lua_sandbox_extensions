@@ -17,6 +17,7 @@ set(integration_tests
   analysis_auth_lastx
   analysis_iprepd_alerts
   analysis_error_rate
+  analysis_webinj
 )
 
 foreach(test IN LISTS integration_tests)
