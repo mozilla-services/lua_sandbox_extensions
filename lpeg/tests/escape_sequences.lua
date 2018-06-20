@@ -60,3 +60,22 @@ for i,v in ipairs(json_tests) do
     local r = es.json:match(v[1])
     assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
 end
+
+local percent_tests = {
+    {"%26", "&"},
+}
+
+for i,v in ipairs(percent_tests) do
+    local r = es.percent:match(v[1])
+    assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
+end
+
+local url_tests = {
+    {"%26", "&"},
+    {"+", " "},
+}
+
+for i,v in ipairs(url_tests) do
+    local r = es.url:match(v[1])
+    assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
+end
