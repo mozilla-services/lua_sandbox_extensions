@@ -9,6 +9,8 @@
 ### LPEG Grammars
 * `c` - matches and converts C/C++ escape sequences
 * `json` - matches and converts JSON escape sequences
+* `percent` - matches and converts URI percent escape sequences
+* `url` - matches and converts URL escape sequences (plus and percent)
 
 ## Functions
 
@@ -154,5 +156,9 @@ json = l.Cg(esc_prefix * (
     json_char_set / json_char_lookup
     + u16 * (hex4 / hex_to_utf8)
     ))
+
+percent = l.Cg(l.P"%" * (l.xdigit * l.xdigit / hex_to_char))
+
+url = l.P"+" / " " + percent
 
 return M
