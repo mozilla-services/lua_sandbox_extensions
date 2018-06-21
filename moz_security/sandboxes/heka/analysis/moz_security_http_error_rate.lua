@@ -38,6 +38,7 @@ error_threshold = 50 -- clients generating over error_threshold client errors wi
 --]]
 
 require "table"
+require "string"
 
 local error_threshold   = read_config("error_threshold") or error("error_threshold must be configured")
 local id_field          = read_config("id_field") or error("id_field must be configured")
