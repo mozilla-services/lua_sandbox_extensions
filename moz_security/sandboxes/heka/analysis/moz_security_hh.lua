@@ -37,6 +37,7 @@ id_field = "Fields[remote_addr]" -- field to use as the identifier
 -- violation_type = "fxa:heavy_hitter_ip" -- required in violations mode, iprepd violation type
 
 threshold_cap = 10 -- Threshold will be calculated average + (calculated average * cap)
+-- threshold_min = 100 -- optional calculated threshold minimum otherwise ignore interval
 -- cms_epsilon = 1 / 10000 -- optional CMS value for epsilon
 -- cms_delta = 0.0001 -- optional CMS value for delta
 ```
@@ -49,6 +50,7 @@ local HUGE      = require "math".huge
 local ostime    = require "os".time
 
 local threshold_cap = read_config("threshold_cap") or error("threshold_cap must be configured")
+local threshold_min = read_config("threshold_min")
 local id_field      = read_config("id_field") or error("id_field must be configured")
 local id_fieldc     = read_config("id_field_capture")
 local cms_epsilon   = read_config("cms_epsilon") or 1 / 10000
@@ -121,17 +123,35 @@ function process_message()
 end
 
 
+function clear_list()
+    list = {}
+    list_size = 0
+    list_min = HUGE
+    list_min_id = nil
+    cms:clear()
+end
+
+
 function timer_event(ns)
     local slist = {}
     for n in pairs(list) do table.insert(slist, n) end
     table.sort(slist)
 
     calc_threshold()
+    local low_threshold = false
+    if threshold_min and threshold < threshold_min then low_threshold = true end
 
     if not send_iprepd then
         add_to_payload("threshold", "\t", threshold, "\n")
         add_to_payload("list_size", "\t", cms:unique_count(), "\n")
         add_to_payload("event_count", "\t", cms:item_count(), "\n")
+        add_to_payload("low_threshold", "\t", low_threshold, "\n")
+    end
+
+    if low_threshold then
+        if not send_iprepd then inject_payload("tsv", "statistics") end
+        clear_list()
+        return
     end
 
     local violations = {}
@@ -154,9 +174,5 @@ function timer_event(ns)
         tbsend(violations)
     end
 
-    list = {}
-    list_size = 0
-    list_min = HUGE
-    list_min_id = nil
-    cms:clear()
+    clear_list()
 end
