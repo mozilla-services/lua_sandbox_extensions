@@ -81,11 +81,30 @@ static char* test_limited()
 }
 
 
+static char* test_empty_array()
+{
+  lsb_lua_sandbox *sb = lsb_create(NULL, "empty_array.lua", test_cfg, NULL);
+  mu_assert(sb, "lsb_create() received: NULL");
+
+  lsb_err_value ret = lsb_init(sb, NULL);
+  mu_assert(!ret, "lsb_init() received: %s", ret);
+
+  int result = lsb_test_process(sb, 0);
+  mu_assert(result == 0, "process() received: %d %s", result,
+            lsb_get_error(sb));
+
+  e = lsb_destroy(sb);
+  mu_assert(!e, "lsb_destroy() received: %s", e);
+  return NULL;
+}
+
+
 static char* all_tests()
 {
   mu_run_test(test_core);
   mu_run_test(test_unlimited);
   mu_run_test(test_limited);
+  mu_run_test(test_empty_array);
   return NULL;
 }
 
