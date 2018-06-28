@@ -10,10 +10,21 @@ that has new properties or attributes. In this context, a new attribute may be a
 such as a source IP address, a new geo-location, or any combination of fields present
 in the message.
 
-For messages matching the matcher, the field indicated by user_field is extracted to identify
-the user ID associated with the event. track_fields are then extracted, and concatenated
-together in the order they are specified in the configuration. This value is then compared against
-the last events seen for the user.
+The event_fields configuration parameter controls which fields will be extracted and used
+to indicate various information about the authentication event. event_fields should be a
+table of key = value pairs, where the key is just a descriptive indicator for the event type
+and the value is a table containing fields to extract from the message.
+
+To determine which element from event_fields should be used for a given authentication event,
+select_field is extracted and matched against select_match. If it matches, this field set
+will be used. See the example configuration for more details.
+
+Multiple elements in event_fields are supported such that a single tracking database can be
+applied to more than one event type. This assumes that the username/subject field will be
+consistent across the event types you want to compare.
+
+Once the fields are extracted, track_fields are concatenated in the order they are specified.
+The value is then compared against the last events seen for the user.
 
 The module always generates an alert for an applicable message, but if an event is seen that has
 new data that isn't included in the tracked data the alert is modified to indicate this.
@@ -49,16 +60,30 @@ default_email = "foxsec-dump+OutOfHours@mozilla.com" -- optional, enable email a
 -- drift_email = "captainkirk@mozilla.com" -- optional drift message notification
 -- acceptable_message_drift = 600 -- optional, defaults to 600 seconds if not specified
 
-expireolderthan = 864000 -- optional, tracked entries older than value are removed, defaults to 864000
-authhost_field = "Hostname" -- required, field to extract authenticating host from (destination host)
-user_field = "Fields[user]" -- required, field to extract username from
-track_fields = { "Fields[ssh_remote_ipaddr]" } -- required, fields to extract tracking data from
--- track_fields = { "Fields[ssh_remote_ipaddr_city]", "Fields[ssh_remote_ipaddr_country]" }
+-- expireolderthan = 864000 -- optional, tracked entries older than value are removed, defaults to 864000
+-- lastx = 5 -- optional, track last X entries, defaults to 5
 
--- The geocity_field and geocountry_field values are optional, but if set and they are included
--- with the message and will be appended to the alert text as additional informational data
-geocity_field = "Fields[ssh_remote_ipaddr_city"] -- optional, field to extract geo city
-geocountry_field = "Fields[ssh_remote_ipaddr_country"] -- optional, field to extract geo country
+event_fields = {
+    ssh = {
+        select_field     = "Fields[programname]",
+        select_match     = "^sshd$",
+        subject_field    = "Fields[user]",
+        object_field     = "Hostname",
+        track_fields     = { "Fields[ssh_remote_ipaddr]" },
+        -- track_fields = { "Fields[ssh_remote_ipaddr_city]", "Fields[ssh_remote_ipaddr_country]" }
+        -- The geocity_field and geocountry_field values are optional, but if set and they are included
+        -- with the message and will be appended to the alert text as additional informational data
+        geocity_field    = "Fields[ssh_remote_ipaddr_city]",
+        geocountry_field = "Fields[ssh_remote_ipaddr_country]"
+    },
+    awsconsole = {
+        select_field     = "Fields[eventType]",
+        select_match     = "^AwsConsoleSignIn$",
+        subject_field    = "Fields[userIdentity.userName]",
+        object_field     = "Fields[recipientAccountId]",
+        track_fields     = { "Fields[sourceIpAddress]" }
+    }
+}
 ```
 --]]
 --
@@ -77,13 +102,19 @@ local drift_email               = read_config("drift_email")
 local acceptable_message_drift  = read_config("acceptable_message_drift") or 600
 local lastx                     = read_config("lastx") or 5
 
-local authhost_field    = read_config("authhost_field") or error("authhost_field must be configured")
-local user_field        = read_config("user_field") or error("user_field must be configured")
-local track_fields      = read_config("track_fields") or error("track_fields must be configured")
-local geocity_field     = read_config("geocity_field")
-local geocountry_field  = read_config("geocountry_field")
 local cephost           = read_config("Hostname") or "unknown"
 local expireolderthan   = read_config("expireolderthan") or 864000
+
+local eventfields = read_config("event_fields") or error("event_fields must be configured")
+for _,ec in pairs(eventfields) do
+    if not ec.subject_field or not ec.object_field or not ec.track_fields
+        or not ec.select_field or not ec.select_match then
+        error("event configuration missing required value")
+    end
+    if type(ec.track_fields) ~= "table" or #ec.track_fields == 0 then
+        error("invalid track_fields configuration")
+    end
+end
 
 _PRESERVATION_VERSION = read_config("preservation_version") or 0
 
@@ -130,21 +161,33 @@ function prune_userdata(user, cutoff)
 end
 
 
+function find_event_fields()
+    for k,v in pairs(eventfields) do
+        local x = read_message(v.select_field)
+        if x then if string.match(x, v.select_match) then return k,v end end
+    end
+    return nil
+end
+
+
 function process_message()
+    local et,ef = find_event_fields()
+    if not et then return 0 end -- nothing in event_fields matched, ignore
+
     local ts            = math.floor(read_message("Timestamp") / 1e9)
-    local hn            = read_message(authhost_field) or "unknown"
+    local hn            = read_message(ef.object_field) or "unknown"
     local geocity       = nil
     local geocountry    = nil
-    if geocity_field and geocountry_field then
-        geocity = read_message(geocity_field)
-        geocountry = read_message(geocountry_field)
+    if ef.geocity_field and ef.geocountry_field then
+        geocity = read_message(ef.geocity_field)
+        geocountry = read_message(ef.geocountry_field)
     end
-    local user          = read_message(user_field)
+    local user          = read_message(ef.subject_field)
     local track         = nil
     if not user then
-        return -1, "message was missing required user field"
+        return -1, "message was missing required subject field"
     end
-    for i,v in ipairs(track_fields) do
+    for i,v in ipairs(ef.track_fields) do
         local buf = read_message(v)
         if not buf then return -1, "message was missing a required tracking field" end
         if track then
@@ -197,7 +240,7 @@ function process_message()
 
     -- At this point, we know if the event should be escalated or not. First, update
     -- the alert message with the default information.
-    local subject = string.format("%s authentication %s track:[%s]", user, hn, track)
+    local subject = string.format("%s %s auth %s track:[%s]", user, et, hn, track)
     local defrecip = nil
     local userrecip = nil
     local payload = ""
