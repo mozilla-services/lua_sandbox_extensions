@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(cjson VERSION 2.1.0 LANGUAGES C)
+project(cjson VERSION 2.2.0 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua cjson Module")
@@ -59,7 +59,7 @@ endif()
 
 include(CPack)
 include_directories(${LUA_INCLUDE_DIR})
-add_definitions(-DLUA_SANDBOX -DDIST_VERSION="${PROJECT_VERSION}")
+add_definitions(-DDIST_VERSION="${PROJECT_VERSION}")
 add_library(cjson SHARED lua_cjson.c strbuf.c fpconv.c lua_cjson.def)
 if(MSVC)
   target_link_libraries(cjson ${LUA_LIBRARIES})
