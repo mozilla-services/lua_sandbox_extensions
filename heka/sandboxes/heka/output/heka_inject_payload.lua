@@ -6,6 +6,7 @@ require "io"
 require "lfs"
 require "os"
 require "string"
+local escape_html = require "lpeg.escape_sequences".escape_html
 
 --[[
 # Message Payload Output
@@ -73,7 +74,7 @@ local function output_html(cbfn, logger, pn, nlogger, npn)
     local fh, err = io.open(fn, "w")
     if err then return err end
 
-    local title = string.format("%s [%s]", logger, pn)
+    local title = escape_html(string.format("%s [%s]", logger, pn))
     fh:write(string.format(html_template, cbfn, title))
     fh:close()
 end

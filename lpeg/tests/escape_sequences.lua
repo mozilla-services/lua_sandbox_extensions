@@ -61,6 +61,56 @@ for i,v in ipairs(json_tests) do
     assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
 end
 
+
+local escape_json_tests = {
+    {"\0", "\\u0000"},
+    {"\b", "\\b"},
+    {"\f", "\\f"},
+    {"\n", "\\n"},
+    {"\r", "\\r"},
+    {"\t", "\\t"},
+    {"\\", "\\\\"},
+    {"/", "\\/"},
+    {'"', '\\"'},
+    {"foo\tbar", "foo\\tbar"},
+}
+
+for i,v in ipairs(escape_json_tests) do
+    local r = es.escape_json(v[1])
+    assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
+end
+
+
+local escape_html_tests = {
+    {"\0", "&#0;"},
+    {"\b", "&#8;"},
+    {"&", "&amp;"},
+    {"<", "&lt;"},
+    {">", "&gt;"},
+    {'"', "&quot;"},
+    {"'", "&apos;"},
+    {"`", "&grave;"},
+    {"!", "&excl;"},
+    {"@", "&copy;"},
+    {"$", "&dollar;"},
+    {"%", "&percnt;"},
+    {"(", "&lpar;"},
+    {")", "&rpar;"},
+    {"=", "&equals;"},
+    {"+", "&plus;"},
+    {"{", "&lcub;"},
+    {"}", "&rcub;"},
+    {"[", "&lsqb;"},
+    {"]", "&rsqb;"},
+    {"foo+bar", "foo&plus;bar"},
+}
+
+for i,v in ipairs(escape_html_tests) do
+    local r = es.escape_html(v[1])
+    assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
+end
+
+
 local percent_tests = {
     {"%26", "&"},
 }
