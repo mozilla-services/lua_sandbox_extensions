@@ -23,6 +23,9 @@ Multiple elements in event_fields are supported such that a single tracking data
 applied to more than one event type. This assumes that the username/subject field will be
 consistent across the event types you want to compare.
 
+If the username is not consistent across event types, subject_map can be used for a given
+event type to map values to the desired string.
+
 Once the fields are extracted, track_fields are concatenated in the order they are specified.
 The value is then compared against the last events seen for the user.
 
@@ -82,6 +85,17 @@ event_fields = {
         subject_field    = "Fields[userIdentity.userName]",
         object_field     = "Fields[recipientAccountId]",
         track_fields     = { "Fields[sourceIpAddress]" }
+    },
+    duopull = {
+        select_field     = "Fields[msg]",
+        select_match     = "^duopull event$",
+        subject_field    = "Fields[event_username]",
+        object_field     = "Fields[event_action]",
+        track_fields     = { "Fields[event_description_ip_address]" },
+        subject_map = { -- can be used to map subject values to a different string for this type
+            ["An admin user"]   = "admin",
+            ["Commander Riker"] = "riker"
+        }
     }
 }
 ```
@@ -161,6 +175,12 @@ function prune_userdata(user, cutoff)
 end
 
 
+function subject_map(f, m)
+    if not m or not f then return f end
+    return m[f] or f
+end
+
+
 function find_event_fields()
     for k,v in pairs(eventfields) do
         local x = read_message(v.select_field)
@@ -182,7 +202,7 @@ function process_message()
         geocity = read_message(ef.geocity_field)
         geocountry = read_message(ef.geocountry_field)
     end
-    local user          = read_message(ef.subject_field)
+    local user          = subject_map(read_message(ef.subject_field), ef.subject_map)
     local track         = nil
     if not user then
         return -1, "message was missing required subject field"
