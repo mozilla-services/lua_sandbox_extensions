@@ -20,6 +20,7 @@ set(integration_tests
   analysis_webinj
   analysis_pathsetfreq
   analysis_duo
+  analysis_cloudtrail
 )
 
 foreach(test IN LISTS integration_tests)
