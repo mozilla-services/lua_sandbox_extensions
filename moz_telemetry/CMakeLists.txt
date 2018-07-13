@@ -14,6 +14,7 @@ set(integration_tests
   doctype_monitor
   moz_telemetry_s3
   new_doctype_monitor
+  new_experiment_monitor
 )
 
 foreach(test IN LISTS integration_tests)
