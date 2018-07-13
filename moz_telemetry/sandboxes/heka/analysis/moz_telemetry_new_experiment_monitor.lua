@@ -15,25 +15,20 @@ ticker_interval = 60
 message_matcher = 'Type == "telemetry" && Fields[docType] == "main" && Fields[environment.experiments] != NIL'
 preserve_data = true
 alert = {
-  ['modules'] = {
-    ['email'] = {
-      ['recipients'] = {
-        [1] = 'example@mozilla.com'
-      },
-    },
+  modules = {
+    email = {recipients = {'example@mozilla.com'}},
   },
-  ['throttle'] = 1,
-  ['disabled'] = false,
-  ['prefix'] = false,
+  throttle = 1,
+  disabled = false,
+  prefix = false,
 }
 ```
 --]]
 
-_PRESERVATION_VERSION = 1
-
 local alert = require "heka.alert"
 local cjson = require "cjson"
 local table = require "table"
+local string = require "string"
 
 alerted = {
     ["clicktoplay-rollout"] = true,
@@ -46,7 +41,6 @@ alerted = {
 }
 
 new_experiments = {}
-current_experiments = nil
 
 function process_message()
     local ee_txt = read_message("Fields[environment.experiments]")
@@ -54,15 +48,15 @@ function process_message()
         return 0
     end
 
-    local ok, ee = pcall(cjson.decode, ee_txt)
-    if not ok or not ee then
+    local ee = cjson.decode(ee_txt)
+    if  not ee then
         return 0
     end
 
     for experiment_id, branch_info in pairs(ee) do
         if not alerted[experiment_id] then
             alerted[experiment_id] = true
-            table.insert(new_experiments, "New experiment id observed: " .. experiment_id .. ": " .. cjson.encode(branch_info))
+            table.insert(new_experiments, string.format("New experiment id observed: %s: %s", experiment_id, cjson.encode(branch_info)))
         end
     end
     return 0
@@ -70,9 +64,8 @@ end
 
 function timer_event(ns, shutdown)
     if #new_experiments > 0 then
-        current_experiments = new_experiments
+        local message = table.concat(new_experiments, "\n")
         new_experiments = {}
-        message = table.concat(current_experiments, "\n")
         alert.send("new_experiments", "New experiments observed", message)
     end
 end
