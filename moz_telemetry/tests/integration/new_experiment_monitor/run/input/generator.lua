@@ -13,6 +13,7 @@ local tm = {
     Fields = {
         docType = "main",
         ["environment.experiments"] = nil,
+        submission = nil,
     }
 }
 
@@ -37,9 +38,16 @@ function process_message()
     tm.Fields["environment.experiments"] = '{"e10sCohort": {"branch": "example"}}'
     inject_message(tm)
 
-    -- Send another new experiment. Should generate another alert.
+    -- Send a test message with a new experiment id. Should not generate any alert.
     tm.Timestamp = 5 * 60e9 + 8 * 86400e9
+    tm.Fields["environment.experiments"] = '{"test_experiment": {"branch": "example"}}'
+    tm.Fields["submission"] = '{"payload":{"test": true}}'
+    inject_message(tm)
+
+    -- Send another new experiment. Should generate another alert.
+    tm.Timestamp = 6 * 60e9 + 8 * 86400e9
     tm.Fields["environment.experiments"] = '{"bar": {"branch": "example"}}'
+    tm.Fields["submission"] = nil
     inject_message(tm)
 
     return 0
