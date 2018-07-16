@@ -42,6 +42,31 @@ alerted = {
 
 new_experiments = {}
 
+-- Parse submission_text as JSON and return the value of "payload.testing".
+-- If it is not present, return false.
+function is_test(submission_text)
+    if not submission_text then
+        return false
+    end
+
+    local submission = cjson.decode(submission_text)
+    if not submission then
+        return false
+    end
+
+    local payload = submission["payload"]
+    if not payload or type(payload) ~= "table" then
+        return false
+    end
+
+    local testing = payload["testing"]
+    if type(testing) ~= "boolean" then
+        return false
+    end
+
+    return testing
+end
+
 function process_message()
     local ee_txt = read_message("Fields[environment.experiments]")
     if not ee_txt then
@@ -55,6 +80,11 @@ function process_message()
 
     for experiment_id, branch_info in pairs(ee) do
         if not alerted[experiment_id] then
+            -- Parse `submission` and look for "payload.testing == true". If it matches, ignore this id.
+            if is_test(read_message("Fields[submission]")) then
+                return 0
+            end
+
             alerted[experiment_id] = true
             table.insert(new_experiments, string.format("New experiment id observed: %s: %s", experiment_id, cjson.encode(branch_info)))
         end
