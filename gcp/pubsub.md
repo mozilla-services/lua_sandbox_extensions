@@ -25,7 +25,7 @@ local sub = gcp.pubsub.subscriber(channel, topic, subscription_name, max_async_r
 
 *Arguments*
 * channel (string) e.g. "pubsub.googleapis.com"
-* topic (string) e.g. "projects/MyProject/topics/MyTopic"
+* topic (string) e.g. "projects/MyProject/topics/MyTopic" -- used to validate the subscription topic or create the subscription if necessary
 * subscription_name (string) e.g. "MySubscription"
 * max_async_requests (integer) Defaults to 20 (0 synchronous only)
 

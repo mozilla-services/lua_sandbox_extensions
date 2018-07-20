@@ -29,6 +29,8 @@ int luaopen_gcp_pubsub(lua_State *lua);
 static const char *mt_publisher  = "mozsvc.gcp.pubsub.publisher";
 static const char *mt_subscriber = "mozsvc.gcp.pubsub.subscriber";
 using google::pubsub::v1::AcknowledgeRequest;
+using google::pubsub::v1::GetSubscriptionRequest;
+using google::pubsub::v1::GetTopicRequest;
 using google::pubsub::v1::Publisher;
 using google::pubsub::v1::PublishRequest;
 using google::pubsub::v1::PublishResponse;
@@ -133,10 +135,17 @@ static int publisher_new(lua_State *lua)
     pw->p->stub = std::make_unique<Publisher::Stub>(grpc::CreateChannel(channel, creds));
 
     ClientContext ctx;
-    Topic request, response;
-    request.set_name(topic);
-    auto status = pw->p->stub->CreateTopic(&ctx, request, &response);
-    if (!status.ok() && status.error_code() != grpc::StatusCode::ALREADY_EXISTS) {
+    GetTopicRequest request;
+    Topic response;
+    request.set_topic(topic);
+    auto status = pw->p->stub->GetTopic(&ctx, request, &response);
+    if (!status.ok() && status.error_code() == grpc::StatusCode::NOT_FOUND) {
+      ClientContext ctx1;
+      Topic r;
+      r.set_name(topic);
+      status = pw->p->stub->CreateTopic(&ctx1, r, &response);
+    }
+    if (!status.ok()) {
       lua_pushstring(lua, status.error_message().c_str());
       err = true;
     }
@@ -185,11 +194,23 @@ static int subscriber_new(lua_State *lua)
     sw->s->stub = std::make_unique<Subscriber::Stub>(grpc::CreateChannel(channel, creds));
 
     ClientContext ctx;
-    Subscription request, response;
-    request.set_name(name);
-    request.set_topic(topic);
-    auto status = sw->s->stub->CreateSubscription(&ctx, request, &response);
-    if (!status.ok() && status.error_code() != grpc::StatusCode::ALREADY_EXISTS) {
+    GetSubscriptionRequest request;
+    Subscription response;
+    request.set_subscription(name);
+    auto status = sw->s->stub->GetSubscription(&ctx, request, &response);
+    if (!status.ok() && status.error_code() == grpc::StatusCode::NOT_FOUND) {
+      ClientContext ctx1;
+      Subscription r;
+      r.set_name(name);
+      r.set_topic(topic);
+      status = sw->s->stub->CreateSubscription(&ctx1, r, &response);
+    }
+    if (status.ok()) {
+      if (response.topic() != topic) {
+        lua_pushstring(lua, "specified topic does not match subscription topic");
+        err = true;
+      }
+    } else {
       lua_pushstring(lua, status.error_message().c_str());
       err = true;
     }
@@ -273,7 +294,7 @@ publisher_poll_internal(lua_State *lua, int timeout)
     }
     lua_pushinteger(lua, failures);
   }
-  }
+}
 #endif
   return status;
 }
@@ -605,7 +626,7 @@ static int subscriber_pull_async(lua_State *lua)
   int cnt = subscriber_poll(lua, sw);
   if ((cnt == 0 && sw->s->outstanding_requests != 0)
       || sw->s->outstanding_requests >= sw->s->max_async_requests) {
-      return 2;
+    return 2;
   }
 
   int batch_size = luaL_optint(lua, 2, 1);
