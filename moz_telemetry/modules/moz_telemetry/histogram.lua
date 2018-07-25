@@ -51,7 +51,6 @@ Runs the histogram analysis and output the Histograms data structure as JSON.
 - histograms (table) - Histograms data structure
 - row (integer) - Histogram row to analyze
 - graphs (array) - Collection of debug graphs
-- partition (nil/string) - Optional e.g. "Windows"
 
 *Return*
 - none (all output is written to the payload buffer)
@@ -66,6 +65,18 @@ back to it when applicable.
 
 *Return*
 - none
+
+### output_viewer_html(schema_name, schema_ext)
+
+Outputs the HTML viewer for the histogram data an the first invocation.
+
+*Arguments*
+- name (string) - Data file that this viewer will load
+- extension (string) - Data file extension that this viewer will load
+
+*Return*
+- none
+
 
 ### get_exponential_buckets
 
@@ -123,7 +134,7 @@ histograms = {
            histogram_type   = <integer>,
            buckets          = <hash>,   -- histogram_type == 0, return from get_exponential_buckets
            bucket_size      = <number>, -- histogram_type == 1, size of the linear histogram bucket
-           submissions      = <integer>,-- current row submissions
+           submissions      = <streaming_algorithms.matrix>, -- submission count for each row
            data             = <streaming_algorithms.matrix>,
        }, -- ...
    },
@@ -162,7 +173,7 @@ local function find_histogram(ns, histograms, k, v)
             bucket_count = cnt,
             histogram_type = v.histogram_type,
             data = matrix.new(histograms.rows, cnt),
-            submissions = 0,
+            submissions = matrix.new(histograms.rows, 1),
             }
         if v.histogram_type == 0 then
             local min = v.range[1]
@@ -226,7 +237,7 @@ end
 function clear_row(histograms, row)
     for k,v in pairs(histograms.names) do
       v.data:clear_row(row)
-      v.submissions = 0
+      v.submissions:clear_row(row)
       v.alerted = false
     end
 end
@@ -236,7 +247,7 @@ function process(ns, json, histograms, row)
     if ns > histograms.last_update then histograms.last_update = ns end
     for k,o in pairs(json) do
         local h = find_histogram(ns, histograms, k, o)
-        h.submissions = h.submissions + 1
+        h.submissions:add(row, 1, 1)
         local cnt = 0
         for b,v in pairs(o.values) do
             cnt = cnt + v
@@ -259,31 +270,36 @@ function process(ns, json, histograms, row)
 end
 
 
-function output(histograms, row, graphs, partition)
+function output(histograms, row, graphs)
     local sep = ""
     local last_update = histograms.last_update / 1e9
     for hn, t in pairs(histograms.names) do
         if  last_update - t.updated > 86400 then
             histograms[hn] = nil
         else
-            add_to_payload(string.format('%s"%s":{"alerted":%s,"created":%d,"updated":%d,"bucket_count":%d,"histogram_type":%d,"submissions":%d', sep, escape_json(hn), tostring(t.alerted), t.created, t.updated, t.bucket_count, t.histogram_type, t.submissions))
+            local submissions = t.submissions:get(row, 1)
+            add_to_payload(string.format('%s"%s":{"alerted":%s,"created":%d,"updated":%d,"bucket_count":%d,"histogram_type":%d,"submissions":%d', sep, escape_json(hn), tostring(t.alerted), t.created, t.updated, t.bucket_count, t.histogram_type, submissions))
             local pcc, closest = t.data:pcc(row)
             if pcc then
                 add_to_payload(string.format(',"pcc":%g,"closest_row":%d', pcc, closest))
-                if t.submissions >= alert_submissions
+                if submissions >= alert_submissions
                 and pcc <= alert_pcc
+                and not t.alerted
                 and t.updated - t.created > alert_active
                 and #graphs < 25
-                and not t.alerted
                 and not alert_ignore[k] then
-                    t.alerted = true
-                    local title
-                    if partition then
-                        title = string.format("%s (%s)", tostring(hn), partition)
-                    else
-                        title = tostring(hn)
+                    local alert = false
+                    for i=1, histograms.rows do
+                        -- confirm there is at least one other row with the minimum number of submissions
+                        if i ~= row and t.submissions:get(i, 1) >= alert_submissions then
+                            alert = true
+                            break
+                        end
                     end
-                    debug_histogram_graph(t, pcc, row, closest, escape_html(title), graphs)
+                    if alert then
+                        t.alerted = true
+                        debug_histogram_graph(t, pcc, row, closest, escape_html(tostring(hn)), graphs)
+                    end
                 end
             end
             add_to_payload("}")
@@ -338,6 +354,82 @@ function get_exponential_buckets(min, max, cnt, cache)
         b = exponential_buckets(min, max, cnt)
     end
     return b
+end
+
+
+local histogram_viewer = [[
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.3.1.js">
+</script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
+</script>
+<script type="text/javascript">
+function fetch(url, callback) {
+  var req = new XMLHttpRequest();
+  var caller = this;
+  req.onreadystatechange = function() {
+    if (req.readyState == 4) {
+      if (req.status == 200 ||
+        req.status == 0) {
+        callback(JSON.parse(req.responseText));
+      } else {
+        var p = document.createElement('p');
+        p.innerHTML = "data retrieval failed: " + url;
+        document.body.appendChild(p);
+      }
+    }
+  };
+  req.open("GET", url, true);
+  req.send(null);
+}
+
+function load(schema) {
+  data = [ ];
+  for (key in schema.histograms) {
+    var v = schema.histograms[key];
+    v.name = key;
+    data.push(v);
+  }
+
+  $('#histograms').DataTable( {
+    data: data,
+    order: [ [0, "asc"] ],
+    columns: [
+    { title: "Name", data: "name" },
+    { title: "Alerted", data: "alerted" },
+    { title: "Buckets", data: "bucket_count" },
+    { title: "Type", data: "histogram_type" },
+    { title: "Submissions", data: "submissions" },
+    { title: "PCC", data: "pcc", defaultContent: '' },
+    { title: "ClosestRow", data: "closest_row", defaultContent: '' }
+      ]
+  });
+}
+</script>
+</head>
+<body onload="fetch(']]
+
+local histogram_viewer1 =
+[[', load);">
+<div>
+    <h1>Histograms</h1>
+    <table id="histograms" width="100%">
+    </table>
+</div>
+</body>
+</html>
+]]
+
+function output_viewer_html(name, extension)
+    if histogram_viewer then
+        inject_payload("html", "viewer", histogram_viewer, ha.get_dashboard_uri(name, extension), histogram_viewer1)
+        histogram_viewer = nil
+        histogram_viewer1 = nil
+    end
 end
 
 return M

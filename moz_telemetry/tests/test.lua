@@ -37,7 +37,10 @@ mth.process(12345e9, json, histograms, 2)
 local exp = histograms.names.exp
 assert(exp)
 assert(exp.histogram_type == 0, exp.histogram_type)
-assert(exp.submissions == 1, exp.submissions)
+local v = exp.submissions:get(1, 1)
+assert(v == 0, v)
+v = exp.submissions:get(2, 1)
+assert(v == 1, v)
 assert(exp.created == 12345, exp.created)
 assert(exp.updated == 12345, exp.updated)
 assert(exp.bucket_count == 10, exp.bucket_count)
@@ -52,7 +55,8 @@ mth.process(12346e9, json, histograms, 2)
 local exp1 = exp
 exp = histograms.names.exp
 assert(exp == exp1)
-assert(exp.submissions == 2, exp.submissions)
+v = exp.submissions:get(2, 1)
+assert(v == 2, v)
 assert(exp.updated == 12346, exp.updated)
 for i=1, 10 do
     local v = exp.data:get(2, i)
@@ -67,7 +71,8 @@ mth.process(12335e9, json, histograms, 2)
 local lin = histograms.names.lin
 assert(lin)
 assert(lin.histogram_type == 1, lin.histogram_type)
-assert(lin.submissions == 1, lin.submissions)
+v = lin.submissions:get(2, 1)
+assert(v == 1, v)
 assert(lin.created == 12335, lin.created)
 assert(lin.updated == 12335, lin.updated)
 assert(lin.bucket_count == 10, lin.bucket_count)
@@ -81,7 +86,8 @@ mth.process(12336e9, json, histograms, 2)
 local lin1 = lin
 lin = histograms.names.lin
 assert(lin == lin1)
-assert(lin.submissions == 2, lin.submissions)
+v = lin.submissions:get(2, 1)
+assert(v == 2, v)
 assert(lin.updated == 12336, lin.updated)
 for i=1, 10 do
     local v = lin.data:get(2, i)
@@ -89,8 +95,10 @@ for i=1, 10 do
 end
 
 mth.clear_row(histograms, 2)
-assert(exp.submissions == 0, exp.submissions)
-assert(lin.submissions == 0, lin.submissions)
+v = exp.submissions:get(2, 1)
+assert(v == 0, v)
+v = lin.submissions:get(2, 1)
+assert(v == 0, v)
 for i=1, 10 do
     local v = exp.data:get(2, i)
     assert(v == 0, string.format("index: %d, value: %d", i, v))
