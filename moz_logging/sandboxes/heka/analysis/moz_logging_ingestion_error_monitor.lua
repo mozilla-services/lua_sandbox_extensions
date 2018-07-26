@@ -15,6 +15,7 @@ ticker_interval = 60
 preserve_data = true
 memory_limit = 1024 * 1024 * 64
 timer_event_inject_limit = 100
+-- suppress_graph = "%W" -- suppresses the graph output when the Logger matches this pattern https://bugzilla.mozilla.org/show_bug.cgi?id=1474597
 
 alert = {
   disabled = false,
@@ -25,7 +26,7 @@ alert = {
   },
   thresholds = {
     -- ["input.bastion_systemd_sshd"] = {inactivity_timeout = 60, percent = 0.5} -- a timeout of 60 or more disables the check as the alert window is only one hour
-    _default_ = {inactivity_timeout = 5, -- minutes percent = 0.5} -- if not specified the default is no monitoring
+    ["*"] = {inactivity_timeout = 5, -- minutes percent = 0.5} -- if not specified the default is no monitoring
   }
 }
 ```
@@ -50,6 +51,7 @@ local CREATED           = 1
 local INGESTED          = 2
 local ERROR             = 3
 
+local suppress_graph = read_config("suppress_graph")
 local cnt = 0
 for k,v in pairs(alert.thresholds) do
     assert(type(v.inactivity_timeout) == "number", "inactivity_timeout must be a number")
@@ -193,6 +195,8 @@ function timer_event(ns, shutdown)
                 end
             end
         end
-        inject_payload("cbuf", k, cb)
+        if not (suppress_graph and k:match(suppress_graph)) then
+            inject_payload("cbuf", k, cb)
+        end
     end
 end
