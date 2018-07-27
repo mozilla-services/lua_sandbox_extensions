@@ -67,7 +67,7 @@ RUN git clone https://github.com/cisco/cjose.git && \
     git clone https://github.com/trink/streaming_algorithms.git && \
     mkdir -p streaming_algorithms/release && cd streaming_algorithms/release && \
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM .. && \
-    make && ctest && make packages && cd ../.. && \
+    make && ctest && make packages && rpm -i luasandbox*.rpm && cd ../.. && \
     git clone https://github.com/mozilla-services/mozilla-pipeline-schemas.git && \
     mkdir -p mozilla-pipeline-schemas/release && cd mozilla-pipeline-schemas/release && \
     cmake .. && make && cpack -G RPM && rpm -i *.rpm && cd ../.. && \
@@ -87,7 +87,6 @@ RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
     ${EXTENSIONS} .. && \
     make && ctest -V && make packages && \
-    cp ../../streaming_algorithms/release/luasandbox-streaming-algorithms* . && \
     cp ../../lua_date/release/iana*rpm ../../lua_date/release/luasandbox*rpm . && \
     rpm -i *.rpm && \
     cp ../../hindsight/release/*.rpm . && \
