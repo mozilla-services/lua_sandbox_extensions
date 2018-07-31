@@ -19,7 +19,10 @@ char *e = NULL;
 
 static char* test_core()
 {
-  lsb_lua_sandbox *sb = lsb_create(NULL, "test.lua", TEST_MODULE_PATH, NULL);
+  lsb_lua_sandbox *sb = lsb_create(NULL, "test.lua", TEST_MODULE_PATH
+                                   "\npath = path .. ';/usr/lib/luasandbox/modules/?.lua'"
+                                   "\ncpath = cpath .. ';/usr/lib/luasandbox/modules/?.so'"
+                                   , NULL);
   mu_assert(sb, "lsb_create() received: NULL");
   lsb_err_value ret = lsb_init(sb, NULL);
   mu_assert(!ret, "lsb_init() received: %s %s", ret, lsb_get_error(sb));
