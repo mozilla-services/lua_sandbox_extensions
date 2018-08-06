@@ -19,32 +19,33 @@ extern "C"
 
 int luaopen_aws_kinesis(lua_State *lua);
 }
-
-#include <aws/core/Aws.h>
 #include <aws/core/auth/AWSCredentialsProvider.h>
 #include <aws/core/auth/AWSCredentialsProviderChain.h>
-#include <aws/core/utils/Outcome.h>
+#include <aws/core/Aws.h>
+#include <aws/core/client/ClientConfiguration.h>
+#include <aws/core/utils/DateTime.h>
 #include <aws/core/utils/memory/stl/AWSAllocator.h>
 #include <aws/core/utils/memory/stl/AWSMap.h>
 #include <aws/core/utils/memory/stl/AWSString.h>
 #include <aws/core/utils/memory/stl/AWSStringStream.h>
 #include <aws/core/utils/memory/stl/AWSVector.h>
-#include <aws/core/client/ClientConfiguration.h>
-#include <aws/core/utils/DateTime.h>
+#include <aws/core/utils/Outcome.h>
+#include <aws/identity-management/auth/STSAssumeRoleCredentialsProvider.h>
+#include <aws/kinesis/KinesisClient.h>
 #include <aws/kinesis/model/DescribeStreamRequest.h>
 #include <aws/kinesis/model/GetRecordsRequest.h>
 #include <aws/kinesis/model/GetShardIteratorRequest.h>
 #include <aws/kinesis/model/PutRecordRequest.h>
-#include <aws/kinesis/KinesisClient.h>
 #include <aws/monitoring/CloudWatchClient.h>
 #include <aws/monitoring/model/PutMetricDataRequest.h>
+#include <aws/sts/STSClient.h>
 #include <chrono>
 #include <ctime>
 #include <thread>
 
 static const char *mt_simple_consumer = "mozsvc.aws.kinesis.simple_consumer";
 static const char *mt_simple_producer = "mozsvc.aws.kinesis.simple_producer";
-static const char *cred_types[] = { "CHAIN", "INSTANCE", NULL };
+static const char *cred_types[] = {"INSTANCE", "CHAIN", "ROLE", NULL };
 static char hostname[256] = { 0 };
 static const std::chrono::milliseconds one_second(1000);
 
@@ -209,7 +210,7 @@ static int parse_checkpoints(simple_consumer *sc, const char *checkpoints)
 
 static Aws::String
 get_shard_iterator(simple_consumer *sc, const Aws::String &shardId,
-                   const Aws::String &sequenceId)
+                   Aws::String &sequenceId)
 {
   kin::Model::GetShardIteratorRequest sir;
   sir.SetStreamName(*sc->streamName);
@@ -233,6 +234,9 @@ get_shard_iterator(simple_consumer *sc, const Aws::String &shardId,
   auto outcome = sc->client->GetShardIterator(sir);
   if (!outcome.IsSuccess()) {
     auto e = outcome.GetError();
+    if (!e.ShouldRetry()) {
+      sequenceId.clear(); // issue 354 invalid checkpoint clear/log and retry
+    }
     log_error(sc, __func__, 7, (int)e.GetErrorType(), e.GetMessage());
     return Aws::String();
   }
@@ -301,7 +305,8 @@ static int get_shards(lua_State *lua, simple_consumer *sc, int num_retries)
     auto shardId = sh.GetShardId();
     auto it = sc->shards->find(shardId);
     if (it == sc->shards->end()) {
-      auto sit = get_shard_iterator(sc, shardId, Aws::String());
+      Aws::String sid;
+      auto sit = get_shard_iterator(sc, shardId, sid);
       auto tp = std::chrono::time_point<std::chrono::steady_clock>();
       sc->shards->insert({ shardId, { sit, "", tp, 0, true } });
     } else {
@@ -373,15 +378,23 @@ static int simple_consumer_new(lua_State *lua)
     luaL_typerror(lua, 4, "table, none/nil");
     break;
   }
-  int credType = luaL_checkoption(lua, 5, "INSTANCE", cred_types);
+  int credType = luaL_checkoption(lua, 5, cred_types[0], cred_types);
 
   simple_consumer *sc = static_cast<simple_consumer *>(lua_newuserdata(lua, sizeof*sc));
   switch (credType) {
-  case 0:
+  case 1: // chain
     sc->cwc = new cw::CloudWatchClient(config);
     sc->client = new kin::KinesisClient(config);
     break;
-  default:
+  case 2: // role
+    {
+      const char *role_arn = luaL_checkstring(lua, 6);
+      auto cp = Aws::MakeShared<ath::STSAssumeRoleCredentialsProvider>(mt_simple_consumer, role_arn);
+      sc->cwc = new cw::CloudWatchClient(cp, config);
+      sc->client = new kin::KinesisClient(cp, config);
+    }
+    break;
+  default: // instance
     {
       auto cp = Aws::MakeShared<ath::InstanceProfileCredentialsProvider>(mt_simple_consumer);
       sc->cwc = new cw::CloudWatchClient(cp, config);
@@ -672,12 +685,19 @@ static int simple_producer_new(lua_State *lua)
     luaL_typerror(lua, 1, "table, none/nil");
     break;
   }
-  int credType = luaL_checkoption(lua, 2, "INSTANCE", cred_types);
+  int credType = luaL_checkoption(lua, 2, cred_types[0], cred_types);
 
   simple_producer *sp = static_cast<simple_producer *>(lua_newuserdata(lua, sizeof*sp));
   switch (credType) {
-  case 0:
+  case 1: // chain
     sp->client = new kin::KinesisClient(config);
+    break;
+  case 2: // role
+    {
+      const char *role_arn = luaL_checkstring(lua, 3);
+      auto cp = Aws::MakeShared<ath::STSAssumeRoleCredentialsProvider>(mt_simple_producer, role_arn);
+      sp->client = new kin::KinesisClient(cp, config);
+    }
     break;
   default:
     {

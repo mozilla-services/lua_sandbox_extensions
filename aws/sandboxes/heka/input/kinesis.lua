@@ -10,13 +10,14 @@
 filename            = "kinesis.lua"
 ticker_interval     = 5 -- recover from failure but allow it to be captured in the stats
 
-streamName          = "foobar"
--- iteratorType        = "TRIM_HORIZON"
--- credentialProvider  = "INSTANCE"
+streamName              = "foobar"
+-- iteratorType         = "TRIM_HORIZON"
+-- credentialProvider   = "INSTANCE"
 
 -- table of AWS Client Configuration settings see:
 -- https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html
--- clientConfig        = nil
+-- clientConfig         = nil
+-- roleArn              = nil
 
 -- Heka message table containing the default header values to use, if they are
 -- not populated by the decoder. If 'Fields' is specified it should be in the
@@ -48,6 +49,10 @@ if iteratorType == "MIDNIGHT" then
 end
 
 local credentialProvider    = read_config("credentialProvider") or "INSTANCE"
+local roleArn
+if credentialProvider == "ROLE" then
+    roleArn = read_config("roleArn") or error"roleArn must be set"
+end
 local clientConfig          = read_config("clientConfig") or {}
 assert(type(clientConfig) == "table", "invalid clientConfig type")
 
@@ -65,7 +70,7 @@ local err_msg = {
 
 local is_running = is_running
 function process_message(cp)
-    local reader = aws.kinesis.simple_consumer(streamName, iteratorType, cp, clientConfig, credentialProvider)
+    local reader = aws.kinesis.simple_consumer(streamName, iteratorType, cp, clientConfig, credentialProvider, roleArn)
     while is_running() do
         local ok, records, cp = pcall(reader.receive, reader)
         if not ok then return -1, records end
