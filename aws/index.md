@@ -28,7 +28,7 @@ properly handle splits/merges. However, since it is not distributed it is
 limited to streams with up to ~50 shards on a 1Gb network interface.
 
 ```lua
-local reader = aws.kinesis.simple_consumer(streamName, iteratorType, checkpoints, clientConfig, credentialProvider)
+local reader = aws.kinesis.simple_consumer(streamName, iteratorType, checkpoints, clientConfig, credentialProvider, roleArn)
 ```
 
 *Arguments*
@@ -40,8 +40,10 @@ local reader = aws.kinesis.simple_consumer(streamName, iteratorType, checkpoints
 * checkpoints (string/nil) Value returned by receive()
 * clientConfig (table/nil) https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html
 * credentialProvider (enum/nil)
-    * CHAIN
     * INSTANCE (default)
+    * CHAIN
+    * ROLE
+* roleArn (nil/string) Only used when credentialProvider == ROLE
 
 *Return*
 * reader (userdata) or an error is thrown
@@ -51,14 +53,16 @@ local reader = aws.kinesis.simple_consumer(streamName, iteratorType, checkpoints
 Creates a simple Kinesis producer.
 
 ```lua
-local writer = aws.kinesis.simple_producer(streamName, clientConfig, credentialProvider)
+local writer = aws.kinesis.simple_producer(clientConfig, credentialProvider, roleArn)
 ```
 
 *Arguments*
 * clientConfig (table/nil) https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html
 * credentialProvider (enum/nil)
-    * CHAIN
     * INSTANCE (default)
+    * CHAIN
+    * ROLE
+* roleArn (nil/string) Only used when credentialProvider == ROLE
 
 *Return*
 * writer (userdata) or an error is thrown

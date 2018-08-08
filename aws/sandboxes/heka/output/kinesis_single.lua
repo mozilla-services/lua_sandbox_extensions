@@ -11,10 +11,11 @@ filename            = "kinesis_single.lua"
 message_matcher     = "TRUE"
 ticker_interval     = 0
 
-streamName          = "foobar"
--- partitionField      = "Uuid"
--- credeentialProvider = "INSTANCE"
--- clientConfig        = nil
+streamName              = "foobar"
+-- partitionField       = "Uuid"
+-- credentialProvider   = "INSTANCE"
+-- clientConfig         = nil
+-- roleArn              = nil
 
 -- Specify a module that will encode/convert the Heka message into its output representation.
 encoder_module = "encoders.heka.protobuf" -- default
@@ -26,6 +27,10 @@ require "aws.kinesis"
 local streamName            = read_config("streamName") or error"streamName must be set"
 local partitionField        = read_config("partitionField") or "Uuid"
 local credentialProvider    = read_config("credentialProvider") or "INSTANCE"
+local roleArn
+if credentialProvider == "ROLE" then
+    roleArn = read_config("roleArn") or error"roleArn must be set"
+end
 local clientConfig          = read_config("clientConfig") or {}
 assert(type(clientConfig) == "table", "invalid clientConfig type")
 
@@ -35,7 +40,7 @@ if not encode then
     error(encoder_module .. " does not provide an encode function")
 end
 
-local producer = aws.kinesis.simple_producer(clientConfig, credentialProvider)
+local producer = aws.kinesis.simple_producer(clientConfig, credentialProvider, roleArn)
 
 function process_message()
     local ok, data = pcall(encode)
