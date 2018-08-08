@@ -10,6 +10,7 @@ local files = {
     "logfmt.lua",
     "lpeg_heka.lua",
     "mysql.lua",
+    "phabricator.lua",
     "postfix.lua",
     "printf.lua",
     "uri.lua"
