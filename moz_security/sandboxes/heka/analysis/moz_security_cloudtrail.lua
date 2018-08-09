@@ -55,7 +55,6 @@ aws_account_mapping = {
     ["1234567890"] = "prod"
 }
 
-
 -- module makes use of alert output and needs a valid alert configuration
 alert = {
     modules = { }
@@ -116,9 +115,9 @@ function process_message()
         end
 
         if match_counter == #event.fields then
-              local id = string.format("%s - %s", event.description, event_id)
-              local s = string.format("%s in %s", event.description, get_account_name(account_id))
-              alert.send(id, s, genpayload())
+            local id = string.format("%s - %s", event.description, event_id)
+            local s = string.format("%s in %s", event.description, get_account_name(account_id))
+            alert.send(id, s, genpayload())
         end
     end
     return 0
