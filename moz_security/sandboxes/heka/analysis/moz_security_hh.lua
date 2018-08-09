@@ -22,6 +22,10 @@ Heavy hitters will be identified on each interval tick, so ensure the ticker_int
 set to a value appropriate for consumption of the intended event stream to ensure the gathered sample
 is sufficient.
 
+If enable_metrics is true, the module will submit metrics events for collection by the metrics
+output sandbox. Ensure timer_event_inject_limit is set appropriately, as if enabled timer_event
+will submit up to 2 messages (the violation notice, and the metric event).
+
 ## Sample Configuration
 ```lua
 filename = "moz_security_heavy_hitters.lua"
@@ -40,6 +44,8 @@ threshold_cap = 10 -- Threshold will be calculated average + (calculated average
 -- threshold_min = 100 -- optional calculated threshold minimum otherwise ignore interval
 -- cms_epsilon = 1 / 10000 -- optional CMS value for epsilon
 -- cms_delta = 0.0001 -- optional CMS value for delta
+
+-- enable_metrics = false -- optional, if true enable secmetrics submission
 ```
 --]]
 
@@ -66,6 +72,11 @@ if send_iprepd then
 end
 
 local cms = require "streaming_algorithms.cm_sketch".new(cms_epsilon, cms_delta)
+
+local secm
+if read_config("enable_metrics") then
+    secm = require "heka.secmetrics".new()
+end
 
 local threshold
 
@@ -99,6 +110,7 @@ function process_message()
         if not id then return 0 end -- no error as the capture may intentionally reject entries
     end
 
+    if secm then secm:inc_accumulator("processed_events") end
     local c = cms:update(id)
 
     if c > list_min or list_size < list_max_size then
@@ -150,6 +162,10 @@ function timer_event(ns)
 
     if low_threshold then
         if not send_iprepd then inject_payload("tsv", "statistics") end
+        if secm then
+            secm:inc_accumulator("low_threshold")
+            secm:send()
+        end
         clear_list()
         return
     end
@@ -162,6 +178,10 @@ function timer_event(ns)
             if not send_iprepd then
                 add_to_payload(ip, "\t", cnt, "\n")
             else
+                if secm then
+                    secm:inc_accumulator("violations_sent")
+                    secm:add_uniqitem("unique_violations", violation_type)
+                end
                 violations[vindex] = {ip = ip, violation = violation_type}
                 vindex = vindex + 1
             end
@@ -173,6 +193,7 @@ function timer_event(ns)
     else
         tbsend(violations)
     end
+    if secm then secm:send() end
 
     clear_list()
 end
