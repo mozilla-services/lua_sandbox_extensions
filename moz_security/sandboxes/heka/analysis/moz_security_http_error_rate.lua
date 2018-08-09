@@ -16,6 +16,10 @@ If send_iprepd is true, violation messages will be generated for the iprepd outp
 specified violation_type. If send_iprepd is false, TSV output will be created containing the violation
 list for the ticker interval.
 
+If enable_metrics is true, the module will submit metrics events for collection by the metrics
+output sandbox. Ensure timer_event_inject_limit is set appropriately, as if enabled timer_event
+will submit up to 2 messages (the violation notice, and the metric event).
+
 ## Sample Configuration
 ```lua
 filename = "moz_security_http_error_rate.lua"
@@ -34,6 +38,8 @@ error_threshold = 50 -- clients generating over error_threshold client errors wi
 
 -- cms_epsilon = 1 / 10000 -- optional CMS value for epsilon
 -- cms_delta = 0.0001 -- optional CMS value for delta
+
+-- enable_metrics = false -- optional, if true enable secmetrics submission
 ```
 --]]
 
@@ -58,6 +64,11 @@ end
 
 local cms = require "streaming_algorithms.cm_sketch".new(cms_epsilon, cms_delta)
 
+local secm
+if read_config("enable_metrics") then
+    secm = require "heka.secmetrics".new()
+end
+
 local list = {}
 local list_size = 0
 
@@ -77,6 +88,7 @@ function process_message()
         if not id then return 0 end -- no error as the capture may intentionally reject entries
     end
 
+    if secm then secm:inc_accumulator("processed_events") end
     local c = cms:update(id)
     if c < error_threshold then return 0 end
 
@@ -102,6 +114,10 @@ function timer_event(ns)
         if not send_iprepd then
             add_to_payload(ip, "\t", cnt, "\n")
         else
+            if secm then
+                secm:inc_accumulator("violations_sent")
+                secm:add_uniqitem("unique_violations", violation_type)
+            end
             violations[i] = {ip = ip, violation = violation_type}
         end
     end
@@ -111,6 +127,7 @@ function timer_event(ns)
     else
         tbsend(violations)
     end
+    if secm then secm:send() end
 
     list = {}
     list_size = 0

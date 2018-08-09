@@ -46,6 +46,10 @@ message.
 If default_irc is set, IRC channel output will occur at the specified target. See the heka IRC
 alerting modules for more infomation on this output mode.
 
+If enable_metrics is true, the module will submit metrics events for collection by the metrics
+output sandbox. Ensure process_message_inject_limit is set appropriately, as if enabled process_event
+will submit up to 2 messages (the alert, and the metric event).
+
 ## Sample Configuration
 ```lua
 filename = "moz_security_auth_lastx.lua"
@@ -98,6 +102,8 @@ event_fields = {
         }
     }
 }
+
+-- enable_metrics = false -- optional, if true enable secmetrics submission
 ```
 --]]
 --
@@ -115,6 +121,11 @@ local user_email                = read_config("user_email")
 local drift_email               = read_config("drift_email")
 local acceptable_message_drift  = read_config("acceptable_message_drift") or 600
 local lastx                     = read_config("lastx") or 5
+
+local secm
+if read_config("enable_metrics") then
+    secm = require "heka.secmetrics".new()
+end
 
 local cephost           = read_config("Hostname") or "unknown"
 local expireolderthan   = read_config("expireolderthan") or 864000
@@ -293,6 +304,15 @@ function process_message()
             userrecip = nil
         end
         payload = payload .. string.format("WARNING, unacceptable drift %d seconds\n", delaysec)
+    end
+
+    if secm then
+        secm:inc_accumulator("total_count")
+        if escalate then secm:inc_accumulator("alert_count") end
+        if invalidts then secm:inc_accumulator("invalidts_count") end
+        secm:add_uniqitem("unique_users", user)
+        secm:add_uniqitem("unique_sources", track)
+        secm:send()
     end
 
     inject_message(get_msg(subject, defrecip, userrecip, default_irc, payload))

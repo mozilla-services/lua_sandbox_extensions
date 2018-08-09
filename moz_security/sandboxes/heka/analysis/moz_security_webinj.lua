@@ -21,6 +21,10 @@ processed during the tick interval. This can result in either TSV output being s
 or if send_iprepd is enabled, violation messages being generated for IP addresses
 associated with the findings.
 
+If enable_metrics is true, the module will submit metrics events for collection by the metrics
+output sandbox. Ensure timer_event_inject_limit is set appropriately, as if enabled timer_event
+will submit up to 2 messages (the violation notice, and the metric event).
+
 ## Sample Configuration
 ```lua
 filename = "moz_security_webinj.lua"
@@ -38,6 +42,8 @@ request_field = "Fields[request] -- field containing HTTP request
 -- send_iprepd = false -- optional, if true plugin will generate iprepd violation messages
 -- xss_violation_type = "fxa:webinj_xss" -- required in violations mode, iprepd violation type
 -- sqli_violation_type = "fxa:webinj_sqli" -- required in violations mode, iprepd violation type
+
+-- enable_metrics = false -- optional, if true enable secmetrics submission
 ```
 --]]
 
@@ -63,6 +69,11 @@ if send_iprepd then
     sqli_violation_type = read_config("sqli_violation_type") or error("sqli_violation_type must be configured")
 end
 
+local secm
+if read_config("enable_metrics") then
+    secm = require "heka.secmetrics".new()
+end
+
 local list = {}
 local list_size = 0
 
@@ -86,6 +97,7 @@ function process_message()
     end
     if strip_nul then req = string.gsub(req, "%%00", "") end
 
+    if secm then secm:inc_accumulator("processed_events") end
     local m = uri.uri_reference:match(req)
     if not m or not m.query then return 0 end
     local params = uri.url_query:match(m.query)
@@ -118,8 +130,16 @@ function process_message()
         end
         if foundtype == "xss" then
             t.lastxss = orig_req
+            if secm then
+                secm:inc_accumulator("detect_xss")
+                secm:add_uniqitem("xss_unique_host", id)
+            end
         else
             t.lastsqli = orig_req
+            if secm then
+                secm:inc_accumulator("detect_sqli")
+                secm:add_uniqitem("sqli_unique_host", id)
+            end
         end
         t.cnt = list[id].cnt + 1
     end
@@ -141,10 +161,12 @@ function timer_event(ns)
                 c.lastsqli, "\n")
         else
             if c.lastxss then
+                if secm then secm:inc_accumulator("violations_sent") end
                 violations[vindex] = {ip = ip, violation = xss_violation_type}
                 vindex = vindex + 1
             end
             if c.lastsqli then
+                if secm then secm:inc_accumulator("violations_sent") end
                 violations[vindex] = {ip = ip, violation = sqli_violation_type}
                 vindex = vindex + 1
             end
@@ -156,6 +178,7 @@ function timer_event(ns)
     else
         tbsend(violations)
     end
+    if secm then secm:send() end
 
     list = {}
     list_size = 0

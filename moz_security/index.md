@@ -14,3 +14,4 @@ Various sandboxes are available under [sandboxes](sandboxes/).
 * hawk
 * iprepd
 * iputils
+* secmetrics
