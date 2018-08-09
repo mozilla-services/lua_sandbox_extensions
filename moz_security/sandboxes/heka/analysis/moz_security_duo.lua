@@ -11,6 +11,10 @@ on various event types.
 This sandbox expects Duo messages generated in the Mozlog format, as occurs with the
 duopull-lambda function (https://github.com/mozilla-services/duopull-lambda).
 
+If enable_metrics is true, the module will submit metrics events for collection by the metrics
+output sandbox. Ensure process_message_inject_limit is set appropriately, as if enabled process_event
+will submit up to 2 messages (the alert, and the metric event).
+
 ## Sample Configuration
 ```lua
 filename = "moz_security_duo.lua"
@@ -31,6 +35,8 @@ anomalous_push = false -- duo anomalous push notification
 alert = {
     modules = { }
 }
+
+-- enable_metrics = false -- optional, if true enable secmetrics submission
 ```
 --]]
 
@@ -46,6 +52,11 @@ local cfgadmin2faerr    = read_config("admin_2fa_error")
 local cfgintegaddup     = read_config("integration_addup")
 local cfgadminaddup     = read_config("admin_addup")
 local cfganompush       = read_config("anomalous_push")
+
+local secm
+if read_config("enable_metrics") then
+    secm = require "heka.secmetrics".new()
+end
 
 -- supplementary fields for merge into the alert payload other than
 -- event_description which has special handling
@@ -115,6 +126,10 @@ function process_message()
     end
 
     if s then
+        if secm then
+            secm:inc_accumulator("total_count")
+            secm:send()
+        end
         alert.send(s, s, genpayload(det))
     end
     return 0
