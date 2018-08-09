@@ -11,6 +11,10 @@ on configured event matchers.
 This sandbox expects raw Cloudtrail "Records", as sent from cloudtrail-streamer
 (https://github.com/mozilla-services/cloudtrail-streamer) or similar.
 
+If enable_metrics is true, the module will submit metrics events for collection by the metrics
+output sandbox. Ensure process_message_inject_limit is set appropriately, as if enabled process_event
+will submit up to 2 messages (the alert, and the metric event).
+
 ## Sample Configuration
 ```lua
 filename = "moz_security_cloudtrail.lua"
@@ -59,6 +63,8 @@ aws_account_mapping = {
 alert = {
     modules = { }
 }
+
+-- enable_metrics = false -- optional, if true enable secmetrics submission
 ```
 --]]
 
@@ -68,6 +74,11 @@ local alert = require "heka.alert"
 
 local cfevents               = read_config("events")
 local cfaccount_name_mapping = read_config("aws_account_mapping")
+
+local secm
+if read_config("enable_metrics") then
+    secm = require "heka.secmetrics".new()
+end
 
 
 function genpayload()
@@ -118,6 +129,10 @@ function process_message()
             local id = string.format("%s - %s", event.description, event_id)
             local s = string.format("%s in %s", event.description, get_account_name(account_id))
             alert.send(id, s, genpayload())
+            if secm then
+                secm:inc_accumulator("total_count")
+                secm:send()
+            end
         end
     end
     return 0
