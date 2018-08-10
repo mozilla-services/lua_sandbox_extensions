@@ -129,3 +129,16 @@ for i,v in ipairs(url_tests) do
     local r = es.url:match(v[1])
     assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
 end
+
+
+local url_allowed = "-_.~abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+local escape_url_tests = {
+    {url_allowed, url_allowed},
+    {"test item!", "test%20item%21"},
+    {"\0\1\128", "%00%01%80"},
+}
+
+for i,v in ipairs(escape_url_tests) do
+    local r = es.escape_url(v[1])
+    assert(r == v[2], string.format("failed test: %d expected: '%s' received: '%s'", i, v[2], tostring(r)))
+end
