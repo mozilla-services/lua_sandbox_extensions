@@ -29,6 +29,8 @@ Decode and inject the resulting message
 --]]
 
 -- Imports
+local sdu   = require "lpeg.sub_decoder_util"
+
 local pairs = pairs
 local type  = type
 
@@ -37,29 +39,9 @@ local inject_message = inject_message
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
-local msg = { }
-
-function decode(data, dh)
+function decode(data, dh, mutable)
+    local msg = sdu.copy_message(dh, mutable)
     msg.Payload = data
-
-    if dh then
-        msg.Uuid        = dh.Uuid
-        msg.Logger      = dh.Logger
-        msg.Hostname    = dh.Hostname
-        msg.Timestamp   = dh.Timestamp
-        msg.Type        = dh.Type
-        -- msg.Payload     = dh.Payload -- always overwritten
-        msg.EnvVersion  = dh.EnvVersion
-        msg.Pid         = dh.Pid
-        msg.Severity    = dh.Severity
-
-        if type(dh.Fields) == "table" then
-            msg.Fields = {}
-            for k,v in pairs(dh.Fields) do
-                msg.Fields[k] = v
-            end
-        end
-    end
     inject_message(msg)
 end
 
