@@ -44,6 +44,7 @@ local publisher = gcp.pubsub.publisher(channel, topic, max_async_requests)
 * channel (string) e.g. "pubsub.googleapis.com"
 * topic (string) e.g. "projects/MyProject/topics/MyTopic"
 * max_async_requests (integer) Defaults to 20 (0 synchronous only)
+* batch_size (integer) Defaults to 1000
 
 *Return*
 * publisher (userdata) or an error is thrown
@@ -69,23 +70,42 @@ local msgs, cnt = subscriber:pull(batch_size)
 
 #### publish/publish_sync
 
-Writes a set of messages to the pub/sub topic.
+Writes a message to the pub/sub topic.
 
 ```lua
-local ret = publisher:publish(sequence_id, msgs)
-local ret = publisher:publish_sync(msgs)
+local ret = publisher:publish(sequence_id, msg, attributes)
+local ret = publisher:publish_sync(msg, attributes)
 ```
 
 *Arguments*
 * sequence_id Used with publish() only
-    * lua_sandbox (lightuserdata) - Opaque pointer for checkpointing
-    * Lua 5.1 (number) - range: zero to UINTPTR_MAX
-* msgs individual or array of (string/userdata (heka_sandbox)) Message(s) to send
+    * lua_sandbox (lightuserdata) Opaque pointer for checkpointing
+    * Lua 5.1 (number) range: zero to UINTPTR_MAX
+* msg (string/(userdata/nil lua_sandbox only)) Message to send
+    * nil uses msg.Payload as the msg and coverts everything else to string attributes
+      (headers overwrite fields if there is a naming conflict)
+* attributes (nil/table) Lua 5.1 only, map of string = tostring(val)
 
 *Return*
-* ret (number) can throw on error
-    - 0 on success
-    - 1 queue full
+* status_code (integer) or throws an error
+    * sent (0)
+    * retry (-3)
+    * batched (-4)
+    * async (-5)
+
+#### flush
+
+Flushes the batched messages over the network.
+
+```lua
+publisher.flush()
+```
+
+*Arguments*
+none
+
+*Return*
+* none or throws an error
 
 #### poll
 
@@ -100,9 +120,9 @@ producer:poll()
 * none
 
 *Return*
-    * Lua 5.1
-        * sequence_id (number/nil) - Sequence number of the last message
-          processed
-        * failures (number) - number of messages that failed
-    * heka_sandbox
-        * none - the checkpoint and error counts are automatically updated
+* Lua 5.1
+    * sequence_id (number/nil) - Sequence number of the last message
+      processed
+    * failures (number) - number of messages that failed
+* lua_sandbox
+    * none - the checkpoint and error counts are automatically updated
