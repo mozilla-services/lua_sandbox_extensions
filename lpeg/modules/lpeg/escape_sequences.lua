@@ -68,7 +68,15 @@ Standard JSON escaping
 - string
 
 
+### escape_url
 
+Standard URL escaping
+
+*Arguments*
+- s (string) - e.g. " " -> "%20"
+
+*Return*
+- string
 --]]
 
 -- Imports
@@ -264,6 +272,16 @@ local escape_html_lookup = {
 }
 function escape_html(s)
     return string.gsub(tostring(s), "[%z\1-\31&<>\"'`!@$%%()=+{}[%]]", escape_html_lookup)
+end
+
+
+local function escape_url_fn(s)
+    return string.format("%%%02x", string.byte(s))
+end
+
+
+function escape_url(s)
+    return string.gsub(tostring(s), "[^-_.~a-zA-Z0-9]", escape_url_fn)
 end
 
 
