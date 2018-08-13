@@ -111,7 +111,7 @@
                 <a href="../../../../aws/">
             
                     
-                    aws (0.0.3)
+                    aws (0.0.4)
             
                 </a>
             
@@ -654,7 +654,7 @@
                 <a href="../../../../gcp/">
             
                     
-                    gcp (0.0.2)
+                    gcp (0.0.3)
             
                 </a>
             
@@ -858,7 +858,7 @@
                 <a href="../../../../heka/">
             
                     
-                    heka (1.1.20)
+                    heka (1.1.21)
             
                 </a>
             
@@ -2049,7 +2049,7 @@
                 <a href="../../../../lpeg/">
             
                     
-                    lpeg (1.0.14)
+                    lpeg (1.0.15)
             
                 </a>
             
@@ -2292,7 +2292,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.7" data-path="../../../../lpeg/modules/lpeg/postfix.html">
+        <li class="chapter " data-level="1.20.2.1.7" data-path="../../../../lpeg/modules/lpeg/phabricator.html">
+            
+                <a href="../../../../lpeg/modules/lpeg/phabricator.html">
+            
+                    
+                    phabricator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20.2.1.8" data-path="../../../../lpeg/modules/lpeg/postfix.html">
             
                 <a href="../../../../lpeg/modules/lpeg/postfix.html">
             
@@ -2305,7 +2318,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.8" data-path="../../../../lpeg/modules/lpeg/printf.html">
+        <li class="chapter " data-level="1.20.2.1.9" data-path="../../../../lpeg/modules/lpeg/printf.html">
             
                 <a href="../../../../lpeg/modules/lpeg/printf.html">
             
@@ -2318,7 +2331,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.9" data-path="../../../../lpeg/modules/lpeg/uri.html">
+        <li class="chapter " data-level="1.20.2.1.10" data-path="../../../../lpeg/modules/lpeg/uri.html">
             
                 <a href="../../../../lpeg/modules/lpeg/uri.html">
             
@@ -3196,7 +3209,7 @@
                 <a href="../../../">
             
                     
-                    moz_security (0.0.19)
+                    moz_security (0.0.20)
             
                 </a>
             
@@ -3271,6 +3284,32 @@
             
                     
                     iprepd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.2" data-path="../../../modules/heka/secmetrics.html">
+            
+                <a href="../../../modules/heka/secmetrics.html">
+            
+                    
+                    secmetrics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.3" data-path="../../../modules/heka/selprinc.html">
+            
+                <a href="../../../modules/heka/selprinc.html">
+            
+                    
+                    selprinc
             
                 </a>
             
@@ -3498,6 +3537,19 @@
             
                     
                     moz_security_iprepd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.3.1.2.2" data-path="../output/moz_security_metrics.html">
+            
+                <a href="../output/moz_security_metrics.html">
+            
+                    
+                    moz_security_metrics
             
                 </a>
             
@@ -5363,22 +5415,24 @@
                                 <h1 id="Mozilla_Security_Authentication_Events__Last_X_attribute(s)_tracking_by_user">Mozilla Security Authentication Events, Last X attribute(s) tracking by user</h1>
 <p>This module can be used to generate alerts if an authentication event is seen for a user
 that has new properties or attributes. In this context, a new attribute may be a field
-such as a source IP address, a new geo-location, or any combination of fields present
-in the message.</p>
-<p>The event_fields configuration parameter controls which fields will be extracted and used
-to indicate various information about the authentication event. event_fields should be a
-table of key = value pairs, where the key is just a descriptive indicator for the event type
-and the value is a table containing fields to extract from the message.</p>
-<p>To determine which element from event_fields should be used for a given authentication event,
-select_field is extracted and matched against select_match. If it matches, this field set
-will be used. See the example configuration for more details.</p>
-<p>Multiple elements in event_fields are supported such that a single tracking database can be
+such as a source IP address, a new geo-location, or any combination of values returned
+in the selprinc match.</p>
+<p>The module makes use of the Heka selprinc module for event matching and normalization, and
+requires a valid selprinc configuration to be present to indicate which events to consider
+as authentication events, and which fields to translate.</p>
+<p>To use geocity and geocountry information in alerting, this plugin expects a valid aux configuration
+in selprinc storing the geocity and geocountry values in the keys &quot;geocity&quot; and &quot;geocountry&quot; in
+the returned selprinc match. If used, this is not required to be present for every event
+category but for any that has these fields available the plugin will incorporate the information
+into alerting.</p>
+<p>Multiple elements in selprinc are supported such that a single tracking database can be
 applied to more than one event type. This assumes that the username/subject field will be
 consistent across the event types you want to compare.</p>
 <p>If the username is not consistent across event types, subject_map can be used for a given
 event type to map values to the desired string.</p>
-<p>Once the fields are extracted, track_fields are concatenated in the order they are specified.
-The value is then compared against the last events seen for the user.</p>
+<p>selprinc_track specifies which element or combination of elements in the returned selprinc
+match you want to compare to identify new attributes. If more than one element is specified,
+the values are concatenated together prior to comparison with previous authentication events.</p>
 <p>The module always generates an alert for an applicable message, but if an event is seen that has
 new data that isn&apos;t included in the tracked data the alert is modified to indicate this.</p>
 <p>The lastx configuration value controls the number of previous attributes that are tracked for
@@ -5391,6 +5445,9 @@ alert message. If the message has unacceptable time drift, drift_email only rece
 message.</p>
 <p>If default_irc is set, IRC channel output will occur at the specified target. See the heka IRC
 alerting modules for more infomation on this output mode.</p>
+<p>If enable_metrics is true, the module will submit metrics events for collection by the metrics
+output sandbox. Ensure process_message_inject_limit is set appropriately, as if enabled process_event
+will submit up to 2 messages (the alert, and the metric event).</p>
 <h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">filename = <span class="hljs-string">&quot;moz_security_auth_lastx.lua&quot;</span>
 message_matcher = <span class="hljs-string">&quot;Type ~= &apos;bastion.file.sshd&apos;% &amp;&amp; Fields[sshd_authmsg] == &apos;Accepted&apos;&quot;</span>
@@ -5410,38 +5467,44 @@ default_email = <span class="hljs-string">&quot;foxsec-dump+OutOfHours@mozilla.c
 <span class="hljs-comment">-- expireolderthan = 864000 -- optional, tracked entries older than value are removed, defaults to 864000</span>
 <span class="hljs-comment">-- lastx = 5 -- optional, track last X entries, defaults to 5</span>
 
-event_fields = {
-    ssh = {
-        select_field     = <span class="hljs-string">&quot;Fields[programname]&quot;</span>,
-        select_match     = <span class="hljs-string">&quot;^sshd$&quot;</span>,
-        subject_field    = <span class="hljs-string">&quot;Fields[user]&quot;</span>,
-        object_field     = <span class="hljs-string">&quot;Hostname&quot;</span>,
-        track_fields     = { <span class="hljs-string">&quot;Fields[ssh_remote_ipaddr]&quot;</span> },
-        <span class="hljs-comment">-- track_fields = { &quot;Fields[ssh_remote_ipaddr_city]&quot;, &quot;Fields[ssh_remote_ipaddr_country]&quot; }</span>
-        <span class="hljs-comment">-- The geocity_field and geocountry_field values are optional, but if set and they are included</span>
-        <span class="hljs-comment">-- with the message and will be appended to the alert text as additional informational data</span>
-        geocity_field    = <span class="hljs-string">&quot;Fields[ssh_remote_ipaddr_city]&quot;</span>,
-        geocountry_field = <span class="hljs-string">&quot;Fields[ssh_remote_ipaddr_country]&quot;</span>
-    },
-    awsconsole = {
-        select_field     = <span class="hljs-string">&quot;Fields[eventType]&quot;</span>,
-        select_match     = <span class="hljs-string">&quot;^AwsConsoleSignIn$&quot;</span>,
-        subject_field    = <span class="hljs-string">&quot;Fields[userIdentity.userName]&quot;</span>,
-        object_field     = <span class="hljs-string">&quot;Fields[recipientAccountId]&quot;</span>,
-        track_fields     = { <span class="hljs-string">&quot;Fields[sourceIpAddress]&quot;</span> }
-    },
-    duopull = {
-        select_field     = <span class="hljs-string">&quot;Fields[msg]&quot;</span>,
-        select_match     = <span class="hljs-string">&quot;^duopull event$&quot;</span>,
-        subject_field    = <span class="hljs-string">&quot;Fields[event_username]&quot;</span>,
-        object_field     = <span class="hljs-string">&quot;Fields[event_action]&quot;</span>,
-        track_fields     = { <span class="hljs-string">&quot;Fields[event_description_ip_address]&quot;</span> },
-        subject_map = { <span class="hljs-comment">-- can be used to map subject values to a different string for this type</span>
-            [<span class="hljs-string">&quot;An admin user&quot;</span>]   = <span class="hljs-string">&quot;admin&quot;</span>,
-            [<span class="hljs-string">&quot;Commander Riker&quot;</span>] = <span class="hljs-string">&quot;riker&quot;</span>
+selprinc_track = { <span class="hljs-string">&quot;sourceip&quot;</span> }
+
+heka_selprinc = {
+    events = {
+        ssh = {
+            select_field     = <span class="hljs-string">&quot;Fields[programname]&quot;</span>,
+            select_match     = <span class="hljs-string">&quot;^sshd$&quot;</span>,
+            subject_field    = <span class="hljs-string">&quot;Fields[user]&quot;</span>,
+            object_field     = <span class="hljs-string">&quot;Hostname&quot;</span>,
+            sourceip_field   = <span class="hljs-string">&quot;Fields[ssh_remote_ipaddr]&quot;</span>,
+
+            aux = {
+                { <span class="hljs-string">&quot;geocity&quot;</span>, <span class="hljs-string">&quot;Fields[ssh_remote_ipaddr_city]&quot;</span> },
+                { <span class="hljs-string">&quot;geocountry&quot;</span>, <span class="hljs-string">&quot;Fields[ssh_remote_ipaddr_country]&quot;</span> }
+            }
+        },
+        awsconsole = {
+            select_field     = <span class="hljs-string">&quot;Fields[eventType]&quot;</span>,
+            select_match     = <span class="hljs-string">&quot;^AwsConsoleSignIn$&quot;</span>,
+            subject_field    = <span class="hljs-string">&quot;Fields[userIdentity.userName]&quot;</span>,
+            object_field     = <span class="hljs-string">&quot;Fields[recipientAccountId]&quot;</span>,
+            sourceip_field   = <span class="hljs-string">&quot;Fields[sourceIPAddress]&quot;</span>
+        },
+        duopull = {
+            select_field     = <span class="hljs-string">&quot;Fields[msg]&quot;</span>,
+            select_match     = <span class="hljs-string">&quot;^duopull event$&quot;</span>,
+            subject_field    = <span class="hljs-string">&quot;Fields[event_username]&quot;</span>,
+            object_field     = <span class="hljs-string">&quot;Fields[event_action]&quot;</span>,
+            sourceip_field   = <span class="hljs-string">&quot;Fields[event_description_ip_address]&quot;</span>,
+            subject_map = {
+                [<span class="hljs-string">&quot;An admin user&quot;</span>]   = <span class="hljs-string">&quot;admin&quot;</span>,
+                [<span class="hljs-string">&quot;Commander Riker&quot;</span>] = <span class="hljs-string">&quot;riker&quot;</span>
+            }
         }
     }
 }
+
+<span class="hljs-comment">-- enable_metrics = false -- optional, if true enable secmetrics submission</span>
 </code></pre>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/moz_security/sandboxes/heka/analysis/moz_security_auth_lastx.lua" target="_blank">moz_security_auth_lastx.lua</a></p>
 <div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Mozilla_Security_Authentication_Events__Last_X_attribute(s)_tracking_by_user">Mozilla Security Authentication Events, Last X attribute(s) tracking by user</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
@@ -5487,7 +5550,7 @@ event_fields = {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"moz_security_auth_lastx","level":"1.26.3.1.1.2","depth":5,"next":{"title":"moz_security_cloudtrail","level":"1.26.3.1.1.3","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","articles":[]},"previous":{"title":"moz_security_auth_ip_geo","level":"1.26.3.1.1.1","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_lastx.md","mtime":"2018-07-31T17:54:58.079Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-07-31T17:55:07.021Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"moz_security_auth_lastx","level":"1.26.3.1.1.2","depth":5,"next":{"title":"moz_security_cloudtrail","level":"1.26.3.1.1.3","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","articles":[]},"previous":{"title":"moz_security_auth_ip_geo","level":"1.26.3.1.1.1","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_lastx.md","mtime":"2018-08-13T19:24:39.880Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-08-13T19:24:46.510Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

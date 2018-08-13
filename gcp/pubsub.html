@@ -111,7 +111,7 @@
                 <a href="../aws/">
             
                     
-                    aws (0.0.3)
+                    aws (0.0.4)
             
                 </a>
             
@@ -654,7 +654,7 @@
                 <a href="./">
             
                     
-                    gcp (0.0.2)
+                    gcp (0.0.3)
             
                 </a>
             
@@ -858,7 +858,7 @@
                 <a href="../heka/">
             
                     
-                    heka (1.1.20)
+                    heka (1.1.21)
             
                 </a>
             
@@ -2049,7 +2049,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.14)
+                    lpeg (1.0.15)
             
                 </a>
             
@@ -2292,7 +2292,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.7" data-path="../lpeg/modules/lpeg/postfix.html">
+        <li class="chapter " data-level="1.20.2.1.7" data-path="../lpeg/modules/lpeg/phabricator.html">
+            
+                <a href="../lpeg/modules/lpeg/phabricator.html">
+            
+                    
+                    phabricator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20.2.1.8" data-path="../lpeg/modules/lpeg/postfix.html">
             
                 <a href="../lpeg/modules/lpeg/postfix.html">
             
@@ -2305,7 +2318,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.8" data-path="../lpeg/modules/lpeg/printf.html">
+        <li class="chapter " data-level="1.20.2.1.9" data-path="../lpeg/modules/lpeg/printf.html">
             
                 <a href="../lpeg/modules/lpeg/printf.html">
             
@@ -2318,7 +2331,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.9" data-path="../lpeg/modules/lpeg/uri.html">
+        <li class="chapter " data-level="1.20.2.1.10" data-path="../lpeg/modules/lpeg/uri.html">
             
                 <a href="../lpeg/modules/lpeg/uri.html">
             
@@ -3196,7 +3209,7 @@
                 <a href="../moz_security/">
             
                     
-                    moz_security (0.0.19)
+                    moz_security (0.0.20)
             
                 </a>
             
@@ -3271,6 +3284,32 @@
             
                     
                     iprepd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.2" data-path="../moz_security/modules/heka/secmetrics.html">
+            
+                <a href="../moz_security/modules/heka/secmetrics.html">
+            
+                    
+                    secmetrics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.3" data-path="../moz_security/modules/heka/selprinc.html">
+            
+                <a href="../moz_security/modules/heka/selprinc.html">
+            
+                    
+                    selprinc
             
                 </a>
             
@@ -3498,6 +3537,19 @@
             
                     
                     moz_security_iprepd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.3.1.2.2" data-path="../moz_security/sandboxes/heka/output/moz_security_metrics.html">
+            
+                <a href="../moz_security/sandboxes/heka/output/moz_security_metrics.html">
+            
+                    
+                    moz_security_metrics
             
                 </a>
             
@@ -5394,6 +5446,7 @@ them in production.</p>
 <li>channel (string) e.g. &quot;pubsub.googleapis.com&quot;</li>
 <li>topic (string) e.g. &quot;projects/MyProject/topics/MyTopic&quot;</li>
 <li>max_async_requests (integer) Defaults to 20 (0 synchronous only)</li>
+<li>batch_size (integer) Defaults to 1000</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
@@ -5415,28 +5468,45 @@ them in production.</p>
 </ul>
 <h3 id="publisher_Methods">2.4. publisher Methods</h3>
 <h4 id="publish_publish_sync">2.4.1. publish/publish_sync</h4>
-<p>Writes a set of messages to the pub/sub topic.</p>
-<pre><code class="lang-lua"><span class="hljs-keyword">local</span> ret = publisher:publish(sequence_id, msgs)
-<span class="hljs-keyword">local</span> ret = publisher:publish_sync(msgs)
+<p>Writes a message to the pub/sub topic.</p>
+<pre><code class="lang-lua"><span class="hljs-keyword">local</span> ret = publisher:publish(sequence_id, msg, attributes)
+<span class="hljs-keyword">local</span> ret = publisher:publish_sync(msg, attributes)
 </code></pre>
 <p><em>Arguments</em></p>
 <ul>
 <li>sequence_id Used with publish() only<ul>
-<li>lua_sandbox (lightuserdata) - Opaque pointer for checkpointing</li>
-<li>Lua 5.1 (number) - range: zero to UINTPTR_MAX</li>
+<li>lua_sandbox (lightuserdata) Opaque pointer for checkpointing</li>
+<li>Lua 5.1 (number) range: zero to UINTPTR_MAX</li>
 </ul>
 </li>
-<li>msgs individual or array of (string/userdata (heka_sandbox)) Message(s) to send</li>
+<li>msg (string/(userdata/nil lua_sandbox only)) Message to send<ul>
+<li>nil uses msg.Payload as the msg and coverts everything else to string attributes
+(headers overwrite fields if there is a naming conflict)</li>
+</ul>
+</li>
+<li>attributes (nil/table) Lua 5.1 only, map of string = tostring(val)</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
-<li>ret (number) can throw on error<ul>
-<li>0 on success</li>
-<li>1 queue full</li>
+<li>status_code (integer) or throws an error<ul>
+<li>sent (0)</li>
+<li>retry (-3)</li>
+<li>batched (-4)</li>
+<li>async (-5)</li>
 </ul>
 </li>
 </ul>
-<h4 id="poll">2.4.2. poll</h4>
+<h4 id="flush">2.4.2. flush</h4>
+<p>Flushes the batched messages over the network.</p>
+<pre><code class="lang-lua">publisher.flush()
+</code></pre>
+<p><em>Arguments</em>
+none</p>
+<p><em>Return</em></p>
+<ul>
+<li>none or throws an error</li>
+</ul>
+<h4 id="poll">2.4.3. poll</h4>
 <p>Polls the CompletionQueue to process the asynchronous publish responses. This
 should be called after every send.</p>
 <pre><code class="lang-lua">producer:poll()
@@ -5446,13 +5516,19 @@ should be called after every send.</p>
 <li>none</li>
 </ul>
 <p><em>Return</em></p>
-<pre><code>* Lua 5.1
-    * sequence_id (number/nil) - Sequence number of the last message
-      processed
-    * failures (number) - number of messages that failed
-* heka_sandbox
-    * none - the checkpoint and error counts are automatically updated
-</code></pre><div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#GCP_Pub_Sub_Module">GCP Pub/Sub Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#subscriber">2.2.1. subscriber</a></li><li><a href="#publisher">2.2.2. publisher</a></li></ul><li><a href="#subscriber_Methods">2.3. subscriber Methods</a></li><ul><li><a href="#pull_pull_sync">2.3.1. pull/pull_sync</a></li></ul><li><a href="#publisher_Methods">2.4. publisher Methods</a></li><ul><li><a href="#publish_publish_sync">2.4.1. publish/publish_sync</a></li><li><a href="#poll">2.4.2. poll</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
+<ul>
+<li>Lua 5.1<ul>
+<li>sequence_id (number/nil) - Sequence number of the last message
+processed</li>
+<li>failures (number) - number of messages that failed</li>
+</ul>
+</li>
+<li>lua_sandbox<ul>
+<li>none - the checkpoint and error counts are automatically updated</li>
+</ul>
+</li>
+</ul>
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#GCP_Pub_Sub_Module">GCP Pub/Sub Module</a></p><li><a href="#Overview">1. Overview</a></li><li><a href="#Module">2. Module</a></li><ul><li><a href="#Example_Usage">2.1. Example Usage</a></li><li><a href="#Functions">2.2. Functions</a></li><ul><li><a href="#subscriber">2.2.1. subscriber</a></li><li><a href="#publisher">2.2.2. publisher</a></li></ul><li><a href="#subscriber_Methods">2.3. subscriber Methods</a></li><ul><li><a href="#pull_pull_sync">2.3.1. pull/pull_sync</a></li></ul><li><a href="#publisher_Methods">2.4. publisher Methods</a></li><ul><li><a href="#publish_publish_sync">2.4.1. publish/publish_sync</a></li><li><a href="#flush">2.4.2. flush</a></li><li><a href="#poll">2.4.3. poll</a></li></ul></ul></ul></div><a href="#Overview" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -5495,7 +5571,7 @@ should be called after every send.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"pubsub","level":"1.10.2","depth":2,"next":{"title":"geoip (0.2.2)","level":"1.11","depth":1,"path":"geoip/README.md","ref":"geoip/README.md","articles":[{"title":"io_modules","level":"1.11.1","depth":2,"path":"geoip/io_modules/README.md","ref":"geoip/io_modules/README.md","articles":[{"title":"geoip","level":"1.11.1.1","depth":3,"path":"geoip/io_modules/geoip/README.md","ref":"geoip/io_modules/geoip/README.md","articles":[{"title":"heka","level":"1.11.1.1.1","depth":4,"path":"geoip/io_modules/geoip/heka.md","ref":"geoip/io_modules/geoip/heka.md","articles":[]}]}]}]},"previous":{"title":"gcp_pubsub","level":"1.10.1.1.2.1","depth":5,"path":"gcp/sandboxes/heka/output/gcp_pubsub.md","ref":"gcp/sandboxes/heka/output/gcp_pubsub.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"gcp/pubsub.md","mtime":"2018-07-31T17:54:57.263Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-07-31T17:55:07.021Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"pubsub","level":"1.10.2","depth":2,"next":{"title":"geoip (0.2.2)","level":"1.11","depth":1,"path":"geoip/README.md","ref":"geoip/README.md","articles":[{"title":"io_modules","level":"1.11.1","depth":2,"path":"geoip/io_modules/README.md","ref":"geoip/io_modules/README.md","articles":[{"title":"geoip","level":"1.11.1.1","depth":3,"path":"geoip/io_modules/geoip/README.md","ref":"geoip/io_modules/geoip/README.md","articles":[{"title":"heka","level":"1.11.1.1.1","depth":4,"path":"geoip/io_modules/geoip/heka.md","ref":"geoip/io_modules/geoip/heka.md","articles":[]}]}]}]},"previous":{"title":"gcp_pubsub","level":"1.10.1.1.2.1","depth":5,"path":"gcp/sandboxes/heka/output/gcp_pubsub.md","ref":"gcp/sandboxes/heka/output/gcp_pubsub.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"gcp/pubsub.md","mtime":"2018-08-13T19:24:39.220Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-08-13T19:24:46.510Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

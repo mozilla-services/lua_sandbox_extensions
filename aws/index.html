@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>aws (0.0.3) · GitBook</title>
+        <title>aws (0.0.4) · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.2">
@@ -111,7 +111,7 @@
                 <a href="./">
             
                     
-                    aws (0.0.3)
+                    aws (0.0.4)
             
                 </a>
             
@@ -654,7 +654,7 @@
                 <a href="../gcp/">
             
                     
-                    gcp (0.0.2)
+                    gcp (0.0.3)
             
                 </a>
             
@@ -858,7 +858,7 @@
                 <a href="../heka/">
             
                     
-                    heka (1.1.20)
+                    heka (1.1.21)
             
                 </a>
             
@@ -2049,7 +2049,7 @@
                 <a href="../lpeg/">
             
                     
-                    lpeg (1.0.14)
+                    lpeg (1.0.15)
             
                 </a>
             
@@ -2292,7 +2292,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.7" data-path="../lpeg/modules/lpeg/postfix.html">
+        <li class="chapter " data-level="1.20.2.1.7" data-path="../lpeg/modules/lpeg/phabricator.html">
+            
+                <a href="../lpeg/modules/lpeg/phabricator.html">
+            
+                    
+                    phabricator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20.2.1.8" data-path="../lpeg/modules/lpeg/postfix.html">
             
                 <a href="../lpeg/modules/lpeg/postfix.html">
             
@@ -2305,7 +2318,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.8" data-path="../lpeg/modules/lpeg/printf.html">
+        <li class="chapter " data-level="1.20.2.1.9" data-path="../lpeg/modules/lpeg/printf.html">
             
                 <a href="../lpeg/modules/lpeg/printf.html">
             
@@ -2318,7 +2331,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.20.2.1.9" data-path="../lpeg/modules/lpeg/uri.html">
+        <li class="chapter " data-level="1.20.2.1.10" data-path="../lpeg/modules/lpeg/uri.html">
             
                 <a href="../lpeg/modules/lpeg/uri.html">
             
@@ -3196,7 +3209,7 @@
                 <a href="../moz_security/">
             
                     
-                    moz_security (0.0.19)
+                    moz_security (0.0.20)
             
                 </a>
             
@@ -3271,6 +3284,32 @@
             
                     
                     iprepd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.2" data-path="../moz_security/modules/heka/secmetrics.html">
+            
+                <a href="../moz_security/modules/heka/secmetrics.html">
+            
+                    
+                    secmetrics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.3" data-path="../moz_security/modules/heka/selprinc.html">
+            
+                <a href="../moz_security/modules/heka/selprinc.html">
+            
+                    
+                    selprinc
             
                 </a>
             
@@ -3498,6 +3537,19 @@
             
                     
                     moz_security_iprepd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.3.1.2.2" data-path="../moz_security/sandboxes/heka/output/moz_security_metrics.html">
+            
+                <a href="../moz_security/sandboxes/heka/output/moz_security_metrics.html">
+            
+                    
+                    moz_security_metrics
             
                 </a>
             
@@ -5345,7 +5397,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >aws (0.0.3)</a>
+        <a href=".." >aws (0.0.4)</a>
     </h1>
 </div>
 
@@ -5380,7 +5432,7 @@
 <p>Creates a simple Kinesis consumer. This client will consume all shards and
 properly handle splits/merges. However, since it is not distributed it is
 limited to streams with up to ~50 shards on a 1Gb network interface.</p>
-<pre><code class="lang-lua"><span class="hljs-keyword">local</span> reader = aws.kinesis.simple_consumer(streamName, iteratorType, checkpoints, clientConfig, credentialProvider)
+<pre><code class="lang-lua"><span class="hljs-keyword">local</span> reader = aws.kinesis.simple_consumer(streamName, iteratorType, checkpoints, clientConfig, credentialProvider, roleArn)
 </code></pre>
 <p><em>Arguments</em></p>
 <ul>
@@ -5394,10 +5446,12 @@ limited to streams with up to ~50 shards on a 1Gb network interface.</p>
 <li>checkpoints (string/nil) Value returned by receive()</li>
 <li>clientConfig (table/nil) <a href="https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html" target="_blank">https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html</a></li>
 <li>credentialProvider (enum/nil)<ul>
-<li>CHAIN</li>
 <li>INSTANCE (default)</li>
+<li>CHAIN</li>
+<li>ROLE</li>
 </ul>
 </li>
+<li>roleArn (nil/string) Only used when credentialProvider == ROLE</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
@@ -5405,16 +5459,18 @@ limited to streams with up to ~50 shards on a 1Gb network interface.</p>
 </ul>
 <h4 id="simple_producer">2.2.2. simple_producer</h4>
 <p>Creates a simple Kinesis producer.</p>
-<pre><code class="lang-lua"><span class="hljs-keyword">local</span> writer = aws.kinesis.simple_producer(streamName, clientConfig, credentialProvider)
+<pre><code class="lang-lua"><span class="hljs-keyword">local</span> writer = aws.kinesis.simple_producer(clientConfig, credentialProvider, roleArn)
 </code></pre>
 <p><em>Arguments</em></p>
 <ul>
 <li>clientConfig (table/nil) <a href="https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html" target="_blank">https://sdk.amazonaws.com/cpp/api/LATEST/struct_aws_1_1_client_1_1_client_configuration.html</a></li>
 <li>credentialProvider (enum/nil)<ul>
-<li>CHAIN</li>
 <li>INSTANCE (default)</li>
+<li>CHAIN</li>
+<li>ROLE</li>
 </ul>
 </li>
+<li>roleArn (nil/string) Only used when credentialProvider == ROLE</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
@@ -5493,7 +5549,7 @@ limited to streams with up to ~50 shards on a 1Gb network interface.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"aws (0.0.3)","level":"1.2","depth":1,"next":{"title":"sandboxes","level":"1.2.1","depth":2,"path":"aws/sandboxes/README.md","ref":"aws/sandboxes/README.md","articles":[{"title":"heka","level":"1.2.1.1","depth":3,"path":"aws/sandboxes/heka/README.md","ref":"aws/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.2.1.1.1","depth":4,"path":"aws/sandboxes/heka/input/README.md","ref":"aws/sandboxes/heka/input/README.md","articles":[{"title":"kinesis","level":"1.2.1.1.1.1","depth":5,"path":"aws/sandboxes/heka/input/kinesis.md","ref":"aws/sandboxes/heka/input/kinesis.md","articles":[]}]},{"title":"output","level":"1.2.1.1.2","depth":4,"path":"aws/sandboxes/heka/output/README.md","ref":"aws/sandboxes/heka/output/README.md","articles":[{"title":"kinesis_single","level":"1.2.1.1.2.1","depth":5,"path":"aws/sandboxes/heka/output/kinesis_single.md","ref":"aws/sandboxes/heka/output/kinesis_single.md","articles":[]}]}]}]},"previous":{"title":"Lua Sandbox Extensions","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"aws/README.md","mtime":"2018-07-31T17:54:56.951Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-07-31T17:55:07.021Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"aws (0.0.4)","level":"1.2","depth":1,"next":{"title":"sandboxes","level":"1.2.1","depth":2,"path":"aws/sandboxes/README.md","ref":"aws/sandboxes/README.md","articles":[{"title":"heka","level":"1.2.1.1","depth":3,"path":"aws/sandboxes/heka/README.md","ref":"aws/sandboxes/heka/README.md","articles":[{"title":"input","level":"1.2.1.1.1","depth":4,"path":"aws/sandboxes/heka/input/README.md","ref":"aws/sandboxes/heka/input/README.md","articles":[{"title":"kinesis","level":"1.2.1.1.1.1","depth":5,"path":"aws/sandboxes/heka/input/kinesis.md","ref":"aws/sandboxes/heka/input/kinesis.md","articles":[]}]},{"title":"output","level":"1.2.1.1.2","depth":4,"path":"aws/sandboxes/heka/output/README.md","ref":"aws/sandboxes/heka/output/README.md","articles":[{"title":"kinesis_single","level":"1.2.1.1.2.1","depth":5,"path":"aws/sandboxes/heka/output/kinesis_single.md","ref":"aws/sandboxes/heka/output/kinesis_single.md","articles":[]}]}]}]},"previous":{"title":"Lua Sandbox Extensions","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"aws/README.md","mtime":"2018-08-13T19:24:38.996Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-08-13T19:24:46.510Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
