@@ -7,27 +7,29 @@
 
 This module can be used to generate alerts if an authentication event is seen for a user
 that has new properties or attributes. In this context, a new attribute may be a field
-such as a source IP address, a new geo-location, or any combination of fields present
-in the message.
+such as a source IP address, a new geo-location, or any combination of values returned
+in the selprinc match.
 
-The event_fields configuration parameter controls which fields will be extracted and used
-to indicate various information about the authentication event. event_fields should be a
-table of key = value pairs, where the key is just a descriptive indicator for the event type
-and the value is a table containing fields to extract from the message.
+The module makes use of the Heka selprinc module for event matching and normalization, and
+requires a valid selprinc configuration to be present to indicate which events to consider
+as authentication events, and which fields to translate.
 
-To determine which element from event_fields should be used for a given authentication event,
-select_field is extracted and matched against select_match. If it matches, this field set
-will be used. See the example configuration for more details.
+To use geocity and geocountry information in alerting, this plugin expects a valid aux configuration
+in selprinc storing the geocity and geocountry values in the keys "geocity" and "geocountry" in
+the returned selprinc match. If used, this is not required to be present for every event
+category but for any that has these fields available the plugin will incorporate the information
+into alerting.
 
-Multiple elements in event_fields are supported such that a single tracking database can be
+Multiple elements in selprinc are supported such that a single tracking database can be
 applied to more than one event type. This assumes that the username/subject field will be
 consistent across the event types you want to compare.
 
 If the username is not consistent across event types, subject_map can be used for a given
 event type to map values to the desired string.
 
-Once the fields are extracted, track_fields are concatenated in the order they are specified.
-The value is then compared against the last events seen for the user.
+selprinc_track specifies which element or combination of elements in the returned selprinc
+match you want to compare to identify new attributes. If more than one element is specified,
+the values are concatenated together prior to comparison with previous authentication events.
 
 The module always generates an alert for an applicable message, but if an event is seen that has
 new data that isn't included in the tracked data the alert is modified to indicate this.
@@ -70,35 +72,39 @@ default_email = "foxsec-dump+OutOfHours@mozilla.com" -- optional, enable email a
 -- expireolderthan = 864000 -- optional, tracked entries older than value are removed, defaults to 864000
 -- lastx = 5 -- optional, track last X entries, defaults to 5
 
-event_fields = {
-    ssh = {
-        select_field     = "Fields[programname]",
-        select_match     = "^sshd$",
-        subject_field    = "Fields[user]",
-        object_field     = "Hostname",
-        track_fields     = { "Fields[ssh_remote_ipaddr]" },
-        -- track_fields = { "Fields[ssh_remote_ipaddr_city]", "Fields[ssh_remote_ipaddr_country]" }
-        -- The geocity_field and geocountry_field values are optional, but if set and they are included
-        -- with the message and will be appended to the alert text as additional informational data
-        geocity_field    = "Fields[ssh_remote_ipaddr_city]",
-        geocountry_field = "Fields[ssh_remote_ipaddr_country]"
-    },
-    awsconsole = {
-        select_field     = "Fields[eventType]",
-        select_match     = "^AwsConsoleSignIn$",
-        subject_field    = "Fields[userIdentity.userName]",
-        object_field     = "Fields[recipientAccountId]",
-        track_fields     = { "Fields[sourceIpAddress]" }
-    },
-    duopull = {
-        select_field     = "Fields[msg]",
-        select_match     = "^duopull event$",
-        subject_field    = "Fields[event_username]",
-        object_field     = "Fields[event_action]",
-        track_fields     = { "Fields[event_description_ip_address]" },
-        subject_map = { -- can be used to map subject values to a different string for this type
-            ["An admin user"]   = "admin",
-            ["Commander Riker"] = "riker"
+selprinc_track = { "sourceip" }
+
+heka_selprinc = {
+    events = {
+        ssh = {
+            select_field     = "Fields[programname]",
+            select_match     = "^sshd$",
+            subject_field    = "Fields[user]",
+            object_field     = "Hostname",
+            sourceip_field   = "Fields[ssh_remote_ipaddr]",
+
+            aux = {
+                { "geocity", "Fields[ssh_remote_ipaddr_city]" },
+                { "geocountry", "Fields[ssh_remote_ipaddr_country]" }
+            }
+        },
+        awsconsole = {
+            select_field     = "Fields[eventType]",
+            select_match     = "^AwsConsoleSignIn$",
+            subject_field    = "Fields[userIdentity.userName]",
+            object_field     = "Fields[recipientAccountId]",
+            sourceip_field   = "Fields[sourceIPAddress]"
+        },
+        duopull = {
+            select_field     = "Fields[msg]",
+            select_match     = "^duopull event$",
+            subject_field    = "Fields[event_username]",
+            object_field     = "Fields[event_action]",
+            sourceip_field   = "Fields[event_description_ip_address]",
+            subject_map = {
+                ["An admin user"]   = "admin",
+                ["Commander Riker"] = "riker"
+            }
         }
     }
 }
@@ -114,6 +120,7 @@ require "os"
 require "table"
 
 local HUGE      = require "math".huge
+local selprinc  = require "heka.selprinc"
 
 local default_email             = read_config("default_email")
 local default_irc               = read_config("default_irc")
@@ -129,17 +136,7 @@ end
 
 local cephost           = read_config("Hostname") or "unknown"
 local expireolderthan   = read_config("expireolderthan") or 864000
-
-local eventfields = read_config("event_fields") or error("event_fields must be configured")
-for _,ec in pairs(eventfields) do
-    if not ec.subject_field or not ec.object_field or not ec.track_fields
-        or not ec.select_field or not ec.select_match then
-        error("event configuration missing required value")
-    end
-    if type(ec.track_fields) ~= "table" or #ec.track_fields == 0 then
-        error("invalid track_fields configuration")
-    end
-end
+local sm_track          = read_config("selprinc_track") or error("selprinc_track must be configured")
 
 _PRESERVATION_VERSION = read_config("preservation_version") or 0
 
@@ -186,41 +183,21 @@ function prune_userdata(user, cutoff)
 end
 
 
-function subject_map(f, m)
-    if not m or not f then return f end
-    return m[f] or f
-end
-
-
-function find_event_fields()
-    for k,v in pairs(eventfields) do
-        local x = read_message(v.select_field)
-        if x then if string.match(x, v.select_match) then return k,v end end
-    end
-    return nil
-end
-
-
 function process_message()
-    local et,ef = find_event_fields()
-    if not et then return 0 end -- nothing in event_fields matched, ignore
+    local sm = selprinc.match()
+    if not sm then return 0 end -- nothing in the selprinc cfg matched, ignore
 
     local ts            = math.floor(read_message("Timestamp") / 1e9)
-    local hn            = read_message(ef.object_field) or "unknown"
-    local geocity       = nil
-    local geocountry    = nil
-    if ef.geocity_field and ef.geocountry_field then
-        geocity = read_message(ef.geocity_field)
-        geocountry = read_message(ef.geocountry_field)
-    end
-    local user          = subject_map(read_message(ef.subject_field), ef.subject_map)
+    local hn            = sm.object or "unknown"
+    local geocity       = sm.geocity
+    local geocountry    = sm.geocountry
+    local user          = sm.subject
+    local sourceip      = sm.sourceip
     local track         = nil
-    if not user then
-        return -1, "message was missing required subject field"
-    end
-    for i,v in ipairs(ef.track_fields) do
-        local buf = read_message(v)
-        if not buf then return -1, "message was missing a required tracking field" end
+
+    for i,v in ipairs(sm_track) do
+        local buf = sm[v]
+        if not buf then return -1, "event did not contain required tracking field" end
         if track then
             track = string.format("%s+%s", track, buf)
         else
@@ -271,7 +248,7 @@ function process_message()
 
     -- At this point, we know if the event should be escalated or not. First, update
     -- the alert message with the default information.
-    local subject = string.format("%s %s auth %s track:[%s]", user, et, hn, track)
+    local subject = string.format("%s %s auth %s track:[%s]", user, sm.category, hn, track)
     local defrecip = nil
     local userrecip = nil
     local payload = ""
