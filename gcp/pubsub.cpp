@@ -22,9 +22,19 @@ int luaopen_gcp_pubsub(lua_State *lua);
 
 #include <chrono>
 #include <exception>
+#include <google/protobuf/map.h>
 #include <google/pubsub/v1/pubsub.grpc.pb.h>
 #include <grpc++/grpc++.h>
+#include <iomanip>
 #include <memory>
+#include <string>
+#include <sstream>
+
+#ifdef LUA_SANDBOX
+#include "common.h"
+#endif
+
+typedef google::protobuf::MapPair<std::string, std::string> MapPairString;
 
 static const char *mt_publisher  = "mozsvc.gcp.pubsub.publisher";
 static const char *mt_subscriber = "mozsvc.gcp.pubsub.subscriber";
@@ -45,8 +55,8 @@ using grpc::ClientContext;
 
 struct async_pub_request {
   void            *sequence_id;
+  PublishRequest  *request;
   ClientContext   ctx;
-  PublishRequest  request;
   PublishResponse response;
   grpc::Status    status;
   std::unique_ptr<grpc::ClientAsyncResponseReader<PublishResponse> > rpc;
@@ -72,8 +82,10 @@ struct publisher {
 #ifdef LUA_SANDBOX
   const lsb_logger *logger;
 #endif
+  PublishRequest                    *request;
   std::unique_ptr<Publisher::Stub>  stub;
   std::string                       topic_name;
+  int                               batch_size;
   int                               max_async_requests;
   int                               outstanding_requests;
   grpc::CompletionQueue             cq;
@@ -108,7 +120,8 @@ static int publisher_new(lua_State *lua)
   luaL_argcheck(lua, n >= 2 && n <= 3, n, "incorrect number of arguments");
   const char *channel = luaL_checkstring(lua, 1);
   const char *topic   = luaL_checkstring(lua, 2);
-  int max_async       = luaL_optint(lua, 3, 0);
+  int max_async       = luaL_optint(lua, 3, 20);
+  int batch_size      = luaL_optint(lua, 4, 1000);
 
   publisher_wrapper *pw = static_cast<publisher_wrapper *>(lua_newuserdata(lua, sizeof*pw));
   pw->p = new struct publisher;
@@ -116,7 +129,10 @@ static int publisher_new(lua_State *lua)
 
   pw->p->topic_name = topic;
   pw->p->max_async_requests = max_async;
+  pw->p->batch_size = batch_size;
   pw->p->outstanding_requests = 0;
+  pw->p->request = new PublishRequest;
+  pw->p->request->set_topic(topic);
 #ifdef LUA_SANDBOX
   lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
   lsb_lua_sandbox *lsb = reinterpret_cast<lsb_lua_sandbox *>(lua_touserdata(lua, -1));
@@ -257,6 +273,7 @@ publisher_poll_internal(lua_State *lua, int timeout)
                             apr->status.error_message().c_str());
 #endif
         }
+        delete apr->request;
         delete apr;
         --pw->p->outstanding_requests;
       }
@@ -316,6 +333,7 @@ static int publisher_gc(lua_State *lua)
   publisher_wrapper *pw = static_cast<publisher_wrapper *>(luaL_checkudata(lua, 1, mt_publisher));
   pw->p->cq.Shutdown();
   while (publisher_poll_internal(lua, 1000) != grpc::CompletionQueue::NextStatus::SHUTDOWN);
+  delete pw->p->request;
   delete pw->p;
   pw->p = nullptr;
   return 0;
@@ -381,19 +399,48 @@ static int subscriber_gc(lua_State *lua)
 }
 
 
-static void load_batch(lua_State *lua, int idx, PublishRequest *r)
+void publish_async(publisher_wrapper *pw, void *sequence_id)
 {
-  size_t alen = lua_objlen(lua, idx);
-  size_t len;
-  for (size_t i = 1; i <= alen; ++i) {
-    lua_rawgeti(lua, idx, i);
-    const char *s = lua_tolstring(lua, -1, &len);
-    if (s) {
-      auto msg = r->add_messages();
-      msg->set_data((void *)s, len);
-    }
-    lua_pop(lua, 1);
+  auto apr = new struct async_pub_request;
+  apr->request = pw->p->request;
+  pw->p->request = new PublishRequest;
+  pw->p->request->set_topic(pw->p->topic_name);
+  apr->sequence_id = sequence_id;
+  apr->rpc = pw->p->stub->AsyncPublish(&apr->ctx, *apr->request, &pw->p->cq);
+  apr->rpc->Finish(&apr->response, &apr->status, (void *)apr);
+  ++pw->p->outstanding_requests;
+}
+
+
+bool publish_sync(lua_State *lua, publisher_wrapper *pw)
+{
+  bool err = false;
+  ClientContext ctx;
+  PublishResponse response;
+  google::protobuf::Empty empty;
+  auto status = pw->p->stub->Publish(&ctx, *pw->p->request, &response);
+  if (!status.ok()) {
+    lua_pushstring(lua, status.error_message().c_str());
+    err = true;
   }
+  pw->p->request->Clear();
+  pw->p->request->set_topic(pw->p->topic_name);
+  return err;
+}
+
+
+static void* get_sequence_id(lua_State *lua, int idx)
+{
+#ifdef LUA_SANDBOX
+  luaL_checktype(lua, idx, LUA_TLIGHTUSERDATA);
+  return lua_touserdata(lua, idx);
+#else
+  lua_Number sid = lua_tonumber(lua, idx);
+  if (sid < 0 || sid > UINTPTR_MAX) {
+    luaL_error(lua, "sequence_id out of range");
+  }
+  return (uintptr_t)sid;
+#endif
 }
 
 
@@ -408,20 +455,10 @@ static int publish(lua_State *lua, bool async_api)
       lua_pushinteger(lua, 1);
       return 1;
     }
-#ifdef LUA_SANDBOX
-    luaL_checktype(lua, 2, LUA_TLIGHTUSERDATA);
-    sequence_id = lua_touserdata(lua, 2);
-#else
-    lua_Number sid = lua_tonumber(lua, 2);
-    if (sid < 0 || sid > UINTPTR_MAX) {
-      return luaL_error(lua, "sequence_id out of range");
-    }
-    uintptr_t sequence_id = (uintptr_t)sid;
-#endif
+    sequence_id = get_sequence_id(lua, 2);
     msg_idx = 3;
   }
 
-  bool batch = false;
   bool free_data = false;
   size_t len = 0;
   const char *data = NULL;
@@ -429,10 +466,9 @@ static int publish(lua_State *lua, bool async_api)
   case LUA_TSTRING:
     data = lua_tolstring(lua, msg_idx, &len);
     break;
-  case LUA_TTABLE:
-    batch = true;
-    break;
 #ifdef LUA_SANDBOX
+  case LUA_TNIL:
+    break;
   case LUA_TUSERDATA:
     {
       lua_CFunction fp = lsb_get_zero_copy_function(lua, msg_idx);
@@ -495,42 +531,76 @@ static int publish(lua_State *lua, bool async_api)
     break;
 #endif
   default:
-    return luaL_typerror(lua, msg_idx,
-                         "string, array or userdata (heka sandbox only)");
+    return luaL_typerror(lua, msg_idx, "string or userdata (heka sandbox only)");
     break;
   }
 
+  ++msg_idx;
   bool err = false;
   try {
-    if (async_api) {
-      auto apr = new struct async_pub_request;
-      apr->sequence_id = sequence_id;
-      apr->request.set_topic(pw->p->topic_name);
-      if (batch) {
-        load_batch(lua, msg_idx, &apr->request);
+    if (pw->p->request->messages_size() < pw->p->batch_size) {
+      auto msg = pw->p->request->add_messages();
+#ifdef LUA_SANDBOX
+      if (data) {
+        msg->set_data(data, len);
       } else {
-        auto msg = apr->request.add_messages();
-        msg->set_data((void *)data, len);
+        lua_getfield(lua, LUA_REGISTRYINDEX, LSB_HEKA_THIS_PTR);
+        lsb_heka_sandbox *hsb = static_cast<lsb_heka_sandbox *>(lua_touserdata(lua, -1));
+        lua_pop(lua, 1); // remove this ptr
+        if (!hsb) {
+          throw std::runtime_error("invalid lsb_heka_this_ptr");
+        }
+        const lsb_heka_message *hm = lsb_heka_get_message(hsb);
+        if (!hm || !hm->raw.s) {
+          throw std::runtime_error("parse_message() no active message");
+        }
+        if (hm->payload.s) {
+          msg->set_data(hm->payload.s, hm->payload.len);
+        } else {
+          msg->set_data("");
+        }
+        auto attrs = msg->mutable_attributes();
+        gcp_fields_to_map(hm, attrs);
+        gcp_headers_to_map(hm, attrs); // headers will overwrite on name collision
       }
-      apr->rpc = pw->p->stub->AsyncPublish(&apr->ctx, apr->request, &pw->p->cq);
-      apr->rpc->Finish(&apr->response, &apr->status, (void *)apr);
-      ++pw->p->outstanding_requests;
+#else
+      msg->set_data((void *)data, len);
+      switch (lua_type(lua, msg_idx)) {
+      case LUA_TNIL:
+        break;
+      case LUA_TTABLE:
+        {
+          auto attrs = msg->mutable_attributes();
+          lua_pushnil(lua);
+          while (lua_next(lua, msg_idx) != 0) {
+            if (lua_type(lua, -2) != LUA_TSTRING) {
+              throw std::runtime_error("attribute key must be a string");
+            }
+            attrs->insert(MapPairString(lua_tostring(lua, -2), lua_tostring(lua, -1)));
+            lua_pop(lua, 1);
+          }
+        }
+        break;
+      default:
+        throw std::runtime_error("attributes must be a table");
+      }
+#endif
+    }
+
+    if (pw->p->request->messages_size() == pw->p->batch_size) {
+      if (async_api) {
+        publish_async(pw, sequence_id);
+      } else {
+        err = publish_sync(lua, pw);
+      }
+      if (!err) {
+        lua_pushinteger(lua, 0);
+      }
     } else {
-      ClientContext ctx;
-      PublishRequest request;
-      PublishResponse response;
-      google::protobuf::Empty empty;
-      request.set_topic(pw->p->topic_name);
-      if (batch) {
-        load_batch(lua, msg_idx, &request);
+      if (async_api) {
+        lua_pushinteger(lua, -5);
       } else {
-        auto msg = request.add_messages();
-        msg->set_data((void *)data, len);
-      }
-      auto status = pw->p->stub->Publish(&ctx, request, &response);
-      if (!status.ok()) {
-        lua_pushstring(lua, status.error_message().c_str());
-        err = true;
+        lua_pushinteger(lua, -4);
       }
     }
   } catch (std::exception &e) {
@@ -544,8 +614,23 @@ static int publish(lua_State *lua, bool async_api)
     free((void *)data);
   }
   if (err) return lua_error(lua);
-  lua_pushinteger(lua, 0);
   return 1;
+}
+
+
+static int publisher_flush(lua_State *lua)
+{
+  publisher_wrapper *pw = static_cast<publisher_wrapper *>(luaL_checkudata(lua, 1, mt_publisher));
+  if (pw->p->request->messages_size() > 0) {
+    if (pw->p->max_async_requests == 0) {
+      if (publish_sync(lua, pw)) {
+        return lua_error(lua);
+      }
+    } else {
+      publish_async(pw, get_sequence_id(lua, 2));
+    }
+  }
+  return 0;
 }
 
 
@@ -581,8 +666,20 @@ static int subscriber_poll(lua_State *lua, subscriber_wrapper *sw)
             for (auto it = msgs.pointer_begin(); it != msgs.pointer_end(); ++it) {
               auto msg = (*it);
               if (msg->has_message()) {
+                lua_newtable(lua);
                 auto data = msg->message().data();
                 lua_pushlstring(lua, data.c_str(), data.size());
+                lua_rawseti(lua, -2, 1);
+                if (msg->message().attributes_size() == 0) {
+                  lua_pushnil(lua);
+                } else {
+                  lua_newtable(lua);
+                  for (auto& kv : msg->message().attributes()) {
+                    lua_pushlstring(lua, kv.second.c_str(), kv.second.size());
+                    lua_setfield(lua, -2, kv.first.c_str());
+                  }
+                }
+                lua_rawseti(lua, -2, 2);
                 lua_rawseti(lua, -2, ++cnt);
                 aar->request.add_ack_ids(msg->ack_id());
               }
@@ -718,6 +815,7 @@ static const struct luaL_reg publisher_lib_m[] = {
   { "poll", publisher_poll },
   { "publish", publisher_publish_async },
   { "publish_sync", publisher_publish_sync },
+  { "flush", publisher_flush },
   { "__gc", publisher_gc },
   { NULL, NULL }
 };

@@ -19,7 +19,7 @@ max_async_requests  = 20 -- default (0 synchronous only)
 async_buffer_size   = max_async_requests * batch_size
 
 -- Specify a module that will encode/convert the Heka message into its output representation.
-encoder_module = "encoders.heka.protobuf" -- default
+encoder_module = nil -- default uses msg.Payload as the data and converts the headers and non-binary fields to string attributes
 ```
 --]]
 
@@ -28,7 +28,6 @@ require "string"
 
 local channel   = read_config("channel") or "pubsub.googleapis.com"
 local project   = read_config("project") or error"project must be set"
-
 local topic     = read_config("topic") or error"topic must be set"
 topic = string.format("%s/topics/%s", project, topic)
 
@@ -36,122 +35,68 @@ local batch_size = read_config("batch_size") or 1000
 assert(batch_size > 0 and batch_size <= 1000)
 
 local max_async_requests = read_config("max_async_requests") or 20
+assert(max_async_requests >= 0)
 
-local encoder_module = read_config("encoder_module") or "encoders.heka.protobuf"
-local encode = require(encoder_module).encode
-if not encode then
-    error(encoder_module .. " does not provide an encode function")
+local encoder_module = read_config("encoder_module")
+local encode
+if encoder_module then
+    encode = require(encoder_module).encode
+    if not encode then
+        error(encoder_module .. " does not provide an encode function")
+    end
 end
 
+
 local publisher = gcp.pubsub.publisher(channel, topic, max_async_requests)
-
-if batch_size == 1 then
-    if max_async_requests > 0 then
-        function process_message(sequence_id)
-            publisher:poll()
-            local ok, data = pcall(encode)
+local timer = true
+if max_async_requests > 0 then
+    local sid
+    function process_message(sequence_id)
+        publisher:poll()
+        sid = sequence_id
+        local ok, data
+        if encode then
+            ok, data = pcall(encode)
             if not ok then return -1, data end
             if not data then return -2 end
-
-            local ok, err = pcall(publisher.publish, publisher, sequence_id, data)
-            if not ok then return -1, err end
-            if err == 1 then
-                return -3, "queue full"
-            end
-            return -5 -- asynchronous checkpoint management
         end
 
-        function timer_event(ns)
-            publisher:poll()
+        local ok, status_code = pcall(publisher.publish, publisher, sequence_id, data)
+        if not ok then return -1, status_code end
+        if status_code == 0 then -- batch complete, flushed to network
+            status_code = -5
+            timer = false
         end
-    else
-        function process_message()
-            local ok, data = pcall(encode)
-            if not ok then return -1, data end
-            if not data then return -2 end
+        return status_code
+    end
 
-            local ok, err = pcall(publisher.publish_sync, publisher, data)
-            if not ok then return -1, err end
-            return 0
+    function timer_event(ns)
+        publisher:poll()
+        if timer or shutdown then
+            pcall(publisher.flush, publisher, sid)
         end
-
-        function timer_event()
-        end
+        timer = true
     end
 else
-    local batch_cnt = 0
-    local batch = {}
-    local timer = true
-
-    if max_async_requests > 0 then
-        local sid
-        local function flush_batch(sequence_id)
-            publisher:publish(sequence_id, batch)
-            batch = {}
-            batch_cnt = 0
-            timer = false
-        end
-
-        function process_message(sequence_id)
-            publisher:poll()
-            sid = sequence_id
-            local ok, data = pcall(encode)
+    function process_message()
+        local ok, data
+        if encode then
+            ok, data = pcall(encode)
             if not ok then return -1, data end
             if not data then return -2 end
-
-            batch_cnt = batch_cnt + 1
-            batch[batch_cnt] = tostring(data)
-            if batch_cnt >= batch_size then
-                local ok, err = pcall(flush_batch, sid)
-                if not ok then
-                    batch[batch_cnt] = nil
-                    batch_cnt = batch_cnt - 1
-                    return -3, err -- retry
-                end
-            end
-            return -5 -- asynchronous checkpoint management
         end
 
-        function timer_event(ns, shutdown)
-            publisher:poll()
-            if batch_cnt > 0 and (timer or shutdown) then
-                pcall(flush_batch, sid)
-            end
-            timer = true
-        end
-    else
-        local function flush_batch()
-            publisher:publish_sync(batch)
-            batch = {}
-            batch_cnt = 0
-            timer = false
-        end
+        local ok, status_code = pcall(publisher.publish_sync, publisher, data)
+        if not ok then return -1, status_code end
+        if status_code == 0 then timer = false end
+        return status_code
+    end
 
-        function process_message()
-            local ok, data = pcall(encode)
-            if not ok then return -1, data end
-            if not data then return -2 end
-
-            batch_cnt = batch_cnt + 1
-            batch[batch_cnt] = tostring(data)
-            if batch_cnt >= batch_size then
-                local ok, err = pcall(flush_batch)
-                if not ok then
-                    batch[batch_cnt] = nil
-                    batch_cnt = batch_cnt - 1
-                    return -3, err -- retry
-                end
-                return 0
-            end
-            return -4 -- batch
+    function timer_event(ns, shutdown)
+        if timer or shutdown then
+            local ok, err = pcall(publisher.flush, publisher)
+            if ok then update_checkpoint() end
         end
-
-        function timer_event(ns, shutdown)
-            if batch_cnt > 0 and (timer or shutdown) then
-                local ok, err = pcall(flush_batch)
-                if ok then update_checkpoint() end
-            end
-            timer = true
-        end
+        timer = true
     end
 end
