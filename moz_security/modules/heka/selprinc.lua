@@ -22,6 +22,9 @@ include the category of the event that matched.
 For an event to successfully match, the subject_field, object_field, and sourceip_field
 must be present in the message.
 
+object_static can be specified instead of object_field in order to place a static object
+value into the returned table instead of doing a field lookup to obtain the value.
+
 If the subject_map configuration option is used in an event configuration, the value
 extracted for the subject will be converted according to the subject_map table before
 being returned.
@@ -46,6 +49,7 @@ heka_selprinc = {
             select_match     = "^sshd$",
             subject_field    = "Fields[user]",
             object_field     = "Hostname",
+            -- object_static = "Ten Forward",
             sourceip_field   = "Fields[ssh_remote_ipaddr]",
 
             aux = {
@@ -80,7 +84,7 @@ local cnt = 0
 for _,v in pairs(cfg.events) do
     cnt = cnt + 1
     if not v.select_field or not v.select_match or not v.subject_field or not
-        v.object_field or not v.sourceip_field then
+        (v.object_field or v.object_static) or not v.sourceip_field then
         error("selprinc configuration missing required parameters")
     end
     if v.aux then
@@ -118,7 +122,7 @@ function match()
     ret = {
         category    = et,
         subject     = subject_map(read_message(ef.subject_field), ef.subject_map),
-        object      = read_message(ef.object_field),
+        object      = ef.object_static or read_message(ef.object_field),
         sourceip    = read_message(ef.sourceip_field),
     }
     if not ret.subject or not ret.object or not ret.sourceip then return nil end
