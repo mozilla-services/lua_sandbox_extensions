@@ -26,18 +26,21 @@ process_message_inject_limit = 1
 events = {
     {
         description = "mfa disabled",
+        resource = "requestParameters.userName",
         fields = {
             { "eventName", "^DeleteVirtualMFADevice$" },
         }
     },
     {
         description = "mfa disabled",
+        resource = "requestParameters.userName",
         fields = {
             { "eventName", "^DeactivateMFADevice$" },
         }
     },
     {
         description = "access key created",
+        resource = "requestParameters.userName",
         fields = {
             { "eventName", "^CreateAccessKey$" }
         }
@@ -101,6 +104,26 @@ function get_account_name(account_id)
     return account_id
 end
 
+function get_identity_name()
+  local identity_type = read_message("Fields[userIdentity.type]")
+
+  local key = ""
+  if identity_type == "IAMUser" then
+    key = "userIdentity.userName"
+  elseif identity_type == "AssumedRole" then
+    key = "userIdentity.sessionContext.sessionIssuer.userName"
+  elseif identity_type == "AWSService" then
+    key = "userIdentity.invokedBy"
+  elseif identity_type == "AWSAccount" then
+    key = "userIdentity.accountId"
+  end
+
+  identity_name = read_message(string.format("Fields[%s]", key))
+  if identity_name then return identity_name end
+
+  return ""
+end
+
 function process_message()
     local event_id   = read_message("Fields[eventID]")
     local account_id = read_message("Fields[recipientAccountId]")
@@ -127,7 +150,15 @@ function process_message()
 
         if match_counter == #event.fields then
             local id = string.format("%s - %s", event.description, event_id)
-            local s = string.format("%s in %s", event.description, get_account_name(account_id))
+            local s = string.format("%s in %s by %s", event.description, get_account_name(account_id), get_identity_name())
+            if event.resource then
+              s = string.format(
+                  "%s on %s",
+                  s,
+                  read_message(string.format("Fields[%s]", event.resource))
+              )
+            end
+
             alert.send(id, s, genpayload())
             if secm then
                 secm:inc_accumulator("total_count")
