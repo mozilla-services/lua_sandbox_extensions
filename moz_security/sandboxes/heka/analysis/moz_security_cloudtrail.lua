@@ -46,9 +46,9 @@ events = {
         description = "IAM action in production account from console without mfa",
         fields = {
             { "eventSource", "^iam.amazonaws.com$" },
-            { "recipientAccountId", "^1234567890$" },
+            { "recipientAccountId", "^1234567890$", "^1122954321$" },
             { "userIdentity.invokedBy", "^signin.amazonaws.com$" },
-            { "userIdentity.sessionContext.attributes.mfaAuthenticated", "^false$" }
+            { "userIdentity.sessionContext.attributes.mfaAuthenticated", "[^true]" }
         }
     }
 }
@@ -119,9 +119,14 @@ function process_message()
             end
 
             if det[field[1]] then
-                if string.match(det[field[1]], field[2]) then
+              -- All items in the event field after the first one are potential matches
+              local i = 2
+              while field[i] do
+                if string.match(det[field[1]], field[i]) then
                     match_counter = match_counter + 1
                 end
+                i = i + 1
+              end
             end
         end
 
