@@ -118,10 +118,7 @@ function get_identity_name()
     key = "userIdentity.accountId"
   end
 
-  identity_name = read_message(string.format("Fields[%s]", key))
-  if identity_name then return identity_name end
-
-  return ""
+  return read_message(string.format("Fields[%s]", key))
 end
 
 function process_message()
@@ -150,7 +147,7 @@ function process_message()
 
         if match_counter == #event.fields then
             local id = string.format("%s - %s", event.description, event_id)
-            local s = string.format("%s in %s by %s", event.description, get_account_name(account_id), get_identity_name())
+            local s = string.format("%s in %s by %s", event.description, get_account_name(account_id), get_identity_name() or "unknown")
             if event.resource then
               s = string.format(
                   "%s on %s",
