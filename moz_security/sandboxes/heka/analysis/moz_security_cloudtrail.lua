@@ -48,7 +48,7 @@ events = {
             { "eventSource", "^iam.amazonaws.com$" },
             { "recipientAccountId", "^1234567890$", "^1122954321$" },
             { "userIdentity.invokedBy", "^signin.amazonaws.com$" },
-            { "userIdentity.sessionContext.attributes.mfaAuthenticated", "[^true]" }
+            { "userIdentity.sessionContext.attributes.mfaAuthenticated", "^false$" }
         }
     }
 }
@@ -124,6 +124,7 @@ function process_message()
               while field[i] do
                 if string.match(det[field[1]], field[i]) then
                     match_counter = match_counter + 1
+                    break
                 end
                 i = i + 1
               end
