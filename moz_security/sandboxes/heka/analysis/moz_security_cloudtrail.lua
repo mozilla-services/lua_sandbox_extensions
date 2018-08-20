@@ -107,7 +107,6 @@ end
 function get_identity_name()
   local identity_type = read_message("Fields[userIdentity.type]")
 
-  local key = ""
   if identity_type == "IAMUser" then
     return read_message("Fields[userIdentity.userName]")
   elseif identity_type == "AssumedRole" then
