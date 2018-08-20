@@ -105,19 +105,19 @@ function get_account_name(account_id)
 end
 
 function get_identity_name()
-  local identity_type = read_message("Fields[userIdentity.type]")
+    local identity_type = read_message("Fields[userIdentity.type]")
 
-  if identity_type == "IAMUser" then
-    return read_message("Fields[userIdentity.userName]")
-  elseif identity_type == "AssumedRole" then
-    return read_message("Fields[userIdentity.sessionContext.sessionIssuer.userName]")
-  elseif identity_type == "AWSService" then
-    return read_message("Fields[userIdentity.invokedBy]")
-  elseif identity_type == "AWSAccount" then
-    return read_message("Fields[userIdentity.accountId]")
-  end
+    if identity_type == "IAMUser" then
+        return read_message("Fields[userIdentity.userName]")
+    elseif identity_type == "AssumedRole" then
+        return read_message("Fields[userIdentity.sessionContext.sessionIssuer.userName]")
+    elseif identity_type == "AWSService" then
+        return read_message("Fields[userIdentity.invokedBy]")
+    elseif identity_type == "AWSAccount" then
+        return read_message("Fields[userIdentity.accountId]")
+    end
 
-  return nil
+    return nil
 end
 
 function process_message()
@@ -148,8 +148,8 @@ function process_message()
             local id = string.format("%s - %s", event.description, event_id)
             local s = string.format("%s in %s by %s", event.description, get_account_name(account_id), get_identity_name() or "unknown")
             if event.resource then
-              r = read_message(string.format("Fields[%s]", event.resource))
-              s = string.format("%s on %s", s, r or "unknown")
+                r = read_message(string.format("Fields[%s]", event.resource))
+                s = string.format("%s on %s", s, r or "unknown")
             end
 
             alert.send(id, s, genpayload())
