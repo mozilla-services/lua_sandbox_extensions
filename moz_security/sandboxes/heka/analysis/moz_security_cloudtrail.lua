@@ -26,18 +26,21 @@ process_message_inject_limit = 1
 events = {
     {
         description = "mfa disabled",
+        resource = "requestParameters.userName",
         fields = {
             { "eventName", "^DeleteVirtualMFADevice$" },
         }
     },
     {
         description = "mfa disabled",
+        resource = "requestParameters.userName",
         fields = {
             { "eventName", "^DeactivateMFADevice$" },
         }
     },
     {
         description = "access key created",
+        resource = "requestParameters.userName",
         fields = {
             { "eventName", "^CreateAccessKey$" }
         }
@@ -101,6 +104,22 @@ function get_account_name(account_id)
     return account_id
 end
 
+function get_identity_name()
+    local identity_type = read_message("Fields[userIdentity.type]")
+
+    if identity_type == "IAMUser" then
+        return read_message("Fields[userIdentity.userName]")
+    elseif identity_type == "AssumedRole" then
+        return read_message("Fields[userIdentity.sessionContext.sessionIssuer.userName]")
+    elseif identity_type == "AWSService" then
+        return read_message("Fields[userIdentity.invokedBy]")
+    elseif identity_type == "AWSAccount" then
+        return read_message("Fields[userIdentity.accountId]")
+    end
+
+    return nil
+end
+
 function process_message()
     local event_id   = read_message("Fields[eventID]")
     local account_id = read_message("Fields[recipientAccountId]")
@@ -133,7 +152,12 @@ function process_message()
 
         if match_counter == #event.fields then
             local id = string.format("%s - %s", event.description, event_id)
-            local s = string.format("%s in %s", event.description, get_account_name(account_id))
+            local s = string.format("%s in %s by %s", event.description, get_account_name(account_id), get_identity_name() or "unknown")
+            if event.resource then
+                r = read_message(string.format("Fields[%s]", event.resource))
+                s = string.format("%s on %s", s, r or "unknown")
+            end
+
             alert.send(id, s, genpayload())
             if secm then
                 secm:inc_accumulator("total_count")

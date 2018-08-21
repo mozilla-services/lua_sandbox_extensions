@@ -5,8 +5,9 @@
 require "string"
 
 local results = {
-    "access key created in prod",
-    "IAM action in production account from console without mfa in prod"
+    "access key created in prod by uhura on guinan",
+    "IAM action in production account from console without mfa in prod by picard",
+    "IAM action in production account from console without mfa in prod by unknown"
 }
 
 local cnt = 1
