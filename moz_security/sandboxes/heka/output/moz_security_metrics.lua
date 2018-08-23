@@ -27,20 +27,24 @@ ticker_interval = 28800
 
 require "cjson"
 
+local ostime = require "os".time
+local flr    = require "math".floor
+
 local debug         = read_config("debug")
 local recipient     = read_config("email_recipient")
 local cephost       = read_config("Hostname")
 
 _PRESERVATION_VERSION = read_config("preservation_version") or 0
 
-z = {} -- global, reload on startup
+z       = {}       -- global, reload on startup
+startts = ostime() -- global, reload on startup
 
 local malert
 if recipient then
     malert = require "alert.email"
 end
 
-local function fold()
+local function fold(endts)
     local ret = {}
     for k,v in pairs(z) do
         ret[k] = {}
@@ -56,6 +60,8 @@ local function fold()
             ret[k][x] = cnt
         end
     end
+    ret.startts = startts
+    ret.endts = endts
     return ret
 end
 
@@ -95,7 +101,8 @@ function process_message()
 end
 
 function timer_event(ns)
-    c = cjson.encode(fold(z))
+    local cts = flr(ns / 1e9)
+    local c = cjson.encode(fold(cts))
     if debug then
         print(c)
     else
@@ -117,4 +124,5 @@ function timer_event(ns)
         end
     end
     z = {}
+    startts = cts
 end
