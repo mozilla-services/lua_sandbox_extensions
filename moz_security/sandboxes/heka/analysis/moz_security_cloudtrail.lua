@@ -11,6 +11,8 @@ on configured event matchers.
 This sandbox expects raw Cloudtrail "Records", as sent from cloudtrail-streamer
 (https://github.com/mozilla-services/cloudtrail-streamer) or similar.
 
+Event field matchers are processed using lpeg.re (http://www.inf.puc-rio.br/~roberto/lpeg/re.html).
+
 If enable_metrics is true, the module will submit metrics events for collection by the metrics
 output sandbox. Ensure process_message_inject_limit is set appropriately, as if enabled process_event
 will submit up to 2 messages (the alert, and the metric event).
@@ -28,30 +30,30 @@ events = {
         description = "mfa disabled",
         resource = "requestParameters.userName",
         fields = {
-            { "eventName", "^DeleteVirtualMFADevice$" },
+            { "eventName", "'DeleteVirtualMFADevice' !." },
         }
     },
     {
         description = "mfa disabled",
         resource = "requestParameters.userName",
         fields = {
-            { "eventName", "^DeactivateMFADevice$" },
+            { "eventName", "'DeactivateMFADevice' !." },
         }
     },
     {
         description = "access key created",
         resource = "requestParameters.userName",
         fields = {
-            { "eventName", "^CreateAccessKey$" }
+            { "eventName", "'CreateAccessKey' !." }
         }
     },
     {
         description = "IAM action in production account from console without mfa",
         fields = {
-            { "eventSource", "^iam.amazonaws.com$" },
-            { "recipientAccountId", "^1234567890$", "^1122954321$" },
-            { "userIdentity.invokedBy", "^signin.amazonaws.com$" },
-            { "userIdentity.sessionContext.attributes.mfaAuthenticated", "^false$" }
+            { "eventSource", "'iam.amazonaws.com' !." },
+            { "recipientAccountId", "('1122334455' / '1234567890') !." },
+            { "userIdentity.invokedBy", "'signin.amazonaws.com' !." },
+            { "userIdentity.sessionContext.attributes.mfaAuthenticated", "!('true' !.)" }
         }
     }
 }
@@ -59,7 +61,8 @@ events = {
 -- mapping of aws account ids to human-friendly names (optional)
 aws_account_mapping = {
     ["5555555555"] = "dev",
-    ["1234567890"] = "prod"
+    ["1234567890"] = "prod",
+    ["1122334455"] = "prod2"
 }
 
 -- module makes use of alert output and needs a valid alert configuration
@@ -72,6 +75,7 @@ alert = {
 --]]
 
 require "cjson"
+require "re"
 
 local alert = require "heka.alert"
 
@@ -138,15 +142,9 @@ function process_message()
             end
 
             if det[field[1]] then
-              -- All items in the event field after the first one are potential matches
-              local i = 2
-              while field[i] do
-                if string.match(det[field[1]], field[i]) then
+                if re.match(det[field[1]], field[2]) then
                     match_counter = match_counter + 1
-                    break
                 end
-                i = i + 1
-              end
             end
         end
 
