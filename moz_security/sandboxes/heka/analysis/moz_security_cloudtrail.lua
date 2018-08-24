@@ -74,8 +74,8 @@ alert = {
 ```
 --]]
 
-require "cjson"
 require "re"
+require "table"
 
 local alert = require "heka.alert"
 
@@ -87,18 +87,14 @@ if read_config("enable_metrics") then
     secm = require "heka.secmetrics".new()
 end
 
-
 function genpayload()
     local msg = decode_message(read_message("raw"))
     local p = {}
-    for _, kvpair in ipairs(msg.Fields) do
-        if #kvpair.value == 1 then
-            p[kvpair.name] = kvpair.value[1]
-        else
-            p[kvpair.name] = kvpair.value
-        end
+    table.sort(msg.Fields, function(a,b) return a.name < b.name end)
+    for i, kvpair in ipairs(msg.Fields) do
+        p[i] = string.format("%s: %s", kvpair.name, tostring(kvpair.value[1]))
     end
-    return cjson.encode(p)
+    return table.concat(p, "\n")
 end
 
 function get_account_name(account_id)
