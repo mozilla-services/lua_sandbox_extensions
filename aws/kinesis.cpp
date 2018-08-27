@@ -33,6 +33,7 @@ int luaopen_aws_kinesis(lua_State *lua);
 #include <aws/identity-management/auth/STSAssumeRoleCredentialsProvider.h>
 #include <aws/kinesis/KinesisClient.h>
 #include <aws/kinesis/model/DescribeStreamRequest.h>
+#include <aws/kinesis/model/DescribeStreamSummaryRequest.h>
 #include <aws/kinesis/model/GetRecordsRequest.h>
 #include <aws/kinesis/model/GetShardIteratorRequest.h>
 #include <aws/kinesis/model/PutRecordRequest.h>
@@ -80,10 +81,6 @@ typedef struct simple_consumer
 typedef struct simple_producer
 {
   kin::KinesisClient            *client;
-  Aws::String                   *streamName;
-#ifdef LUA_SANDBOX
-  const lsb_logger *logger;
-#endif
 } simple_producer;
 
 
@@ -706,15 +703,6 @@ static int simple_producer_new(lua_State *lua)
     }
     break;
   }
-#ifdef LUA_SANDBOX
-  lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
-  lsb_lua_sandbox *lsb = reinterpret_cast<lsb_lua_sandbox *>(lua_touserdata(lua, -1));
-  lua_pop(lua, 1); // remove this ptr
-  if (!lsb) {
-    return luaL_error(lua, "invalid " LSB_THIS_PTR);
-  }
-  sp->logger = lsb_get_logger(lsb);
-#endif
   luaL_getmetatable(lua, mt_simple_producer);
   lua_setmetatable(lua, -2);
 
@@ -740,7 +728,7 @@ static int simple_send(lua_State *lua)
   size_t len = 0;
   auto streamName = luaL_checkstring(lua, 2);
   auto data       = reinterpret_cast<const unsigned char *>(luaL_checklstring(lua, 3, &len));
-  auto *key       = luaL_checkstring(lua, 4);
+  auto key        = luaL_checkstring(lua, 4);
 
   kin::Model::PutRecordRequest rr;
   rr.SetStreamName(streamName);
@@ -748,12 +736,75 @@ static int simple_send(lua_State *lua)
   rr.SetPartitionKey(key);
   auto outcome = sp->client->PutRecord(rr);
   if (outcome.IsSuccess()) {
+    lua_pushinteger(lua, 0);
     lua_pushnil(lua);
   } else {
     auto e = outcome.GetError();
-    lua_pushfstring(lua, "error: %d message: %s", (int)e.GetErrorType(), e.GetMessage().c_str());
+    switch (e.GetErrorType()) {
+    case kin::KinesisErrors::THROTTLING:
+    case kin::KinesisErrors::SLOW_DOWN:
+    case kin::KinesisErrors::K_M_S_THROTTLING:
+    case kin::KinesisErrors::LIMIT_EXCEEDED:
+    case kin::KinesisErrors::PROVISIONED_THROUGHPUT_EXCEEDED:
+      lua_pushinteger(lua, -3);
+      break;
+    default:
+      if (e.ShouldRetry()) {
+        lua_pushinteger(lua, -3);
+      } else {
+        lua_pushinteger(lua, -1);
+      }
+      break;
+    }
+    lua_pushfstring(lua, "%d message: %s", (int)e.GetErrorType(), e.GetMessage().c_str());
   }
-  return 1;
+  return 2;
+}
+
+
+static int simple_open_shard_count(lua_State *lua)
+{
+  static time_t wait = 0;
+  simple_producer *sp = static_cast<simple_producer *>(luaL_checkudata(lua, 1, mt_simple_producer));
+  const char *streamName  = luaL_checkstring(lua, 2);
+
+  if (wait && wait == time(NULL)) {
+    std::this_thread::sleep_for(one_second);
+    wait = 0;
+  }
+
+  bool fatal = false;
+  {
+    kin::Model::DescribeStreamSummaryRequest dss;
+    dss.SetStreamName(streamName);
+    auto outcome = sp->client->DescribeStreamSummary(dss);
+    if (outcome.IsSuccess()) {
+      lua_pushinteger(lua, outcome.GetResult().GetStreamDescriptionSummary().GetOpenShardCount());
+      lua_pushnil(lua);
+    } else {
+      auto e = outcome.GetError();
+      switch (e.GetErrorType()) {
+      case kin::KinesisErrors::THROTTLING:
+      case kin::KinesisErrors::SLOW_DOWN:
+      case kin::KinesisErrors::K_M_S_THROTTLING:
+      case kin::KinesisErrors::LIMIT_EXCEEDED:
+      case kin::KinesisErrors::PROVISIONED_THROUGHPUT_EXCEEDED:
+        lua_pushinteger(lua, -3);
+        wait = time(NULL);
+        break;
+      default:
+        if (e.ShouldRetry()) {
+          wait = time(NULL);
+        } else {
+          fatal = true;
+        }
+        break;
+      }
+      lua_pushnil(lua);
+      lua_pushfstring(lua, "%d message: %s", (int)e.GetErrorType(), e.GetMessage().c_str());
+    }
+  }
+  return fatal ? lua_error(lua) : 2;
 }
 
 
@@ -772,6 +823,7 @@ static const struct luaL_reg simple_consumer_lib_m[] = {
 
 static const struct luaL_reg simple_producer_lib_m[] = {
   { "send", simple_send },
+  { "open_shard_count", simple_open_shard_count },
   { "__gc", simple_producer_gc },
   { NULL, NULL }
 };
