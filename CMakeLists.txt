@@ -103,6 +103,7 @@ ssl
 struct
 syslog
 systemd
+xxhash
 zlib
 )
 
