@@ -315,6 +315,7 @@ function capture_followed_by(name, match)
 end
 
 severity    = syslog_severity_text
+facility    = syslog_facility_text
 integer     = (l.P"-"^-1 * l.digit^1) / tonumber
 float       = (l.P"-"^-1 * l.digit^1 * (l.P"." * l.digit^1)^1) / tonumber
 notspace    = (l.P(1)-l.P" ")^0
