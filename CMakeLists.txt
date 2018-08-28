@@ -93,6 +93,7 @@ moz_pioneer
 moz_security
 moz_telemetry
 openssl
+papertrail
 parquet
 postgres
 rjson

@@ -8,6 +8,7 @@
 ## Variables
 ### LPEG Grammars
 * `severity` - LPEG grammar to parse a syslog severity string and return the numeric value
+* `facility` - LPEG grammar to parse a syslog facility string and return the numeric value
 * `integer` - converts an integer string to a number
 * `float` - converts a floating point string to a number
 * `notspace` - consumes everything that is not a space
