@@ -8,6 +8,7 @@
 ## Variables
 ### LPEG Grammars
 * `severity` - LPEG grammar to parse a syslog severity string and return the numeric value
+* `facility` - LPEG grammar to parse a syslog facility string and return the numeric value
 * `integer` - converts an integer string to a number
 * `float` - converts a floating point string to a number
 * `notspace` - consumes everything that is not a space
@@ -315,6 +316,7 @@ function capture_followed_by(name, match)
 end
 
 severity    = syslog_severity_text
+facility    = syslog_facility_text
 integer     = (l.P"-"^-1 * l.digit^1) / tonumber
 float       = (l.P"-"^-1 * l.digit^1 * (l.P"." * l.digit^1)^1) / tonumber
 notspace    = (l.P(1)-l.P" ")^0
