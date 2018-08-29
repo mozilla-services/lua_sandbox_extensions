@@ -88,11 +88,10 @@ local records, checkpoints = reader:receive()
 
 #### send
 
-Writes a single record at a time to the Kinesis stream. Low volume, limited to
-1000 records per second.
+Writes a record to the Kinesis stream.
 
 ```lua
-local err = writer:send(streamName, data, key)
+local rv, err = writer:send(streamName, data, key)
 ```
 
 *Arguments*
@@ -101,4 +100,23 @@ local err = writer:send(streamName, data, key)
 * key (string) Key for shard partitioning
 
 *Return*
+* rv  (integer) Return value
+    * 0 - success
+    * -1 - error
+    * -3 - retry
+* err (string/nil) nil on success
+
+#### open_shard_count
+
+Returns the open number of shards in the stream.
+
+```lua
+local cnt = writer:open_shard_count(streamName)
+```
+
+*Arguments*
+* streamName (string) Kinesis stream name
+
+*Return*
+* cnt (integer/nil) Number of open shards (nil when the request can/should be retried, throws on fatal error)
 * err (string/nil) nil on success

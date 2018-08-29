@@ -20,8 +20,8 @@ function process_message(cp)
     local reader = aws.kinesis.simple_consumer(streamName, "LATEST", nil, clientConfig)
     local writer = aws.kinesis.simple_producer(clientConfig)
     for i,v in ipairs(tests) do
-        local err = writer:send(streamName, v[1], v[2])
-        if err then print(err) end
+        local rv, err = writer:send(streamName, v[1], v[2])
+        if rv ~= 0 and err then print(err) end
     end
 
     local cnt = 0

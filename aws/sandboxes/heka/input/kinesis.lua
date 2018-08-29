@@ -31,7 +31,7 @@ streamName              = "foobar"
 -- Supports the same syntax as an individual sub decoder
 -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
 -- Default:
--- decoder_module = "decoders.heka.protobuf"
+-- decoder_module = "decoders.heka.framed_protobuf"
 ```
 --]]
 
@@ -39,7 +39,7 @@ require "aws.kinesis"
 require "string"
 require "os"
 local sdu       = require "lpeg.sub_decoder_util"
-local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.protobuf", read_config("printf_messages"))
+local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.framed_protobuf", read_config("printf_messages"))
 
 local streamName    = read_config("streamName") or error"streamName must be set"
 local iteratorType  = read_config("iteratorType") or "TRIM_HORIZON"
