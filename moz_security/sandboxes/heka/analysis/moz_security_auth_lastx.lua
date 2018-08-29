@@ -68,6 +68,7 @@ default_email = "foxsec-dump+OutOfHours@mozilla.com" -- optional, enable email a
 -- user_email = "manatee-%s@moz-svc-ops.pagerduty.com" -- optional user specific email address
 -- drift_email = "captainkirk@mozilla.com" -- optional drift message notification
 -- acceptable_message_drift = 600 -- optional, defaults to 600 seconds if not specified
+-- alert_on_first = false -- optional, alert on first attribute seen for a user
 
 -- expireolderthan = 864000 -- optional, tracked entries older than value are removed, defaults to 864000
 -- lastx = 5 -- optional, track last X entries, defaults to 5
@@ -128,6 +129,7 @@ local user_email                = read_config("user_email")
 local drift_email               = read_config("drift_email")
 local acceptable_message_drift  = read_config("acceptable_message_drift") or 600
 local lastx                     = read_config("lastx") or 5
+local alert_on_first            = read_config("alert_on_first")
 
 local secm
 if read_config("enable_metrics") then
@@ -241,7 +243,7 @@ function process_message()
                 userdata[user][userdatalen] = { track, ts }
             end
         else
-            escalate = true
+            if alert_on_first then escalate = true end
             userdata[user] = {{ track, ts }}
         end
     end
