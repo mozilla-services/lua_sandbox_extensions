@@ -12,7 +12,7 @@ variables renamed, moved, and cast to their desired types.
 ## Decoder Configuration Table
 
 ```lua
-decoders_table_to_message = {
+decoders_heka_table_to_message = {
     module_name     = "lpeg.logfmt"
     module_grammar  = "grammar" -- or -- module_function = "decode"
 
