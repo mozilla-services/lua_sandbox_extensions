@@ -30,6 +30,59 @@ index 95edf95..ddd88b6 100644
    else if (strcmp(meth, "SSLv23_server") == 0)
      method = SSLv23_server_method();  /* SSLv3 but can rollback to v2 */
    else if (strcmp(meth, "SSLv23_client") == 0)
+diff --git a/src/th-lock.c b/src/th-lock.c
+index d5ac394..605c2e2 100644
+--- a/src/th-lock.c
++++ b/src/th-lock.c
+@@ -318,29 +318,34 @@ void CRYPTO_thread_setup(void)
+ {
+   int i;
+ 
+-  lock_cs = OPENSSL_malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+-  lock_count = OPENSSL_malloc(CRYPTO_num_locks() * sizeof(long));
+-  for (i = 0; i < CRYPTO_num_locks(); i++)
++  if (!CRYPTO_get_locking_callback())
+   {
+-    lock_count[i] = 0;
+-    pthread_mutex_init(&(lock_cs[i]), NULL);
++    lock_cs = OPENSSL_malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
++    lock_count = OPENSSL_malloc(CRYPTO_num_locks() * sizeof(long));
++    for (i = 0; i < CRYPTO_num_locks(); i++)
++    {
++      lock_count[i] = 0;
++      pthread_mutex_init(&(lock_cs[i]), NULL);
++    }
++
++    CRYPTO_set_id_callback((unsigned long (*)())pthreads_thread_id);
++    CRYPTO_set_locking_callback((void (*)())pthreads_locking_callback);
+   }
+-
+-  CRYPTO_set_id_callback((unsigned long (*)())pthreads_thread_id);
+-  CRYPTO_set_locking_callback((void (*)())pthreads_locking_callback);
+ }
+ 
+ void thread_cleanup(void)
+ {
+   int i;
+ 
+-  CRYPTO_set_locking_callback(NULL);
+-  for (i = 0; i < CRYPTO_num_locks(); i++)
+-  {
+-    pthread_mutex_destroy(&(lock_cs[i]));
++  if (CRYPTO_get_locking_callback() == &pthreads_locking_callback) {
++    CRYPTO_set_locking_callback(NULL);
++    for (i = 0; i < CRYPTO_num_locks(); i++)
++    {
++      pthread_mutex_destroy(&(lock_cs[i]));
++    }
++    OPENSSL_free(lock_cs);
++    OPENSSL_free(lock_count);
+   }
+-  OPENSSL_free(lock_cs);
+-  OPENSSL_free(lock_count);
+ }
+ 
+ static void pthreads_locking_callback(int mode, int type, const char *file, int line)
 diff --git a/src/xalgor.c b/src/xalgor.c
 index db9204f..c8ffe1d 100644
 --- a/src/xalgor.c
