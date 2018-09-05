@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
-project(openssl VERSION 0.5.1 LANGUAGES C)
+project(openssl VERSION 0.5.2 LANGUAGES C)
 
 include(CheckFunctionExists)
 
