@@ -2,6 +2,19 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+local cfg = {
+    taskcluster_decoder = {
+        username_field = "username",
+        matchers = {
+          "'mozilla-auth0/ad|Mozilla-LDAP|' (s <- {%w+}) '/'"
+        }
+    }
+}
+
+function read_config(k)
+    return cfg[k]
+end
+
 local taskcluster = require "taskcluster"
 local string = require "string"
 

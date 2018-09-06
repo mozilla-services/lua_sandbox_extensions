@@ -25,6 +25,12 @@ username is found, do nothing.
 - none - the message is modified in place if a username is found
 
 ## Configuration examples
+taskcluster_decoder = {
+    username_field = "username",
+    matchers = {
+      "'mozilla-auth0/ad|Mozilla-LDAP|' (s <- {%w+}) '/'"
+    }
+}
 decoder_module = {
     {
         { "decoders.heka.table_to_fields" },
@@ -33,7 +39,15 @@ decoder_module = {
 }
 --]]
 
-local re = require "re"
+local module_name = "taskcluster_decoder"
+local cfg         = read_config(module_name) or error(module_name .. " configuration not found")
+assert(type(cfg.matchers) == "table", "matchers configuration must be a table")
+
+local username_field = cfg.username_field or "username"
+
+local re     = require "re"
+local ipairs = ipairs
+
 
 local M = {}
 setfenv(1, M)
@@ -42,9 +56,12 @@ function add_username(msg, field_name)
     if not msg.Fields then return end
     local clientid = msg.Fields[field_name]
 
-    username = re.match(clientid, "'mozilla-auth0/ad|Mozilla-LDAP|' (s <- {%w+}) '/'")
-    if username then
-      msg.Fields["username"] = username
+    for _, matcher in ipairs(cfg.matchers) do
+      username = re.match(clientid, matcher)
+      if username then
+        msg.Fields["username"] = username
+        break
+      end
     end
 end
 
