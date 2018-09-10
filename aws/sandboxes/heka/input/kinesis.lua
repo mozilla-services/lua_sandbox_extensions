@@ -11,7 +11,7 @@ filename            = "kinesis.lua"
 ticker_interval     = 5 -- recover from failure but allow it to be captured in the stats
 
 streamName              = "foobar"
--- iteratorType         = "TRIM_HORIZON"
+-- iteratorType         = "LATEST"
 -- credentialProvider   = "INSTANCE"
 
 -- table of AWS Client Configuration settings see:
@@ -42,7 +42,7 @@ local sdu       = require "lpeg.sub_decoder_util"
 local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.framed_protobuf", read_config("printf_messages"))
 
 local streamName    = read_config("streamName") or error"streamName must be set"
-local iteratorType  = read_config("iteratorType") or "TRIM_HORIZON"
+local iteratorType  = read_config("iteratorType") or "LATEST"
 if iteratorType == "MIDNIGHT" then
     local t = os.time()
     iteratorType = t - t % 86400
@@ -82,8 +82,8 @@ function process_message(cp)
                 err_msg.Fields.data = data
                 pcall(inject_message, err_msg)
             end
-            if cp then inject_message(nil, cp) end
         end
+        if cp then inject_message(nil, cp) end
     end
     return 0
 end
