@@ -25,7 +25,7 @@ username is found, do nothing.
 - none - the message is modified in place if a username is found
 
 ## Configuration examples
-taskcluster_decoder = {
+taskcluster = {
     username_field = "username",
     matchers = {
       "'mozilla-auth0/ad|Mozilla-LDAP|' (s <- {%w+}) '/'"
@@ -39,7 +39,7 @@ decoder_module = {
 }
 --]]
 
-local module_name = "taskcluster_decoder"
+local module_name = ...
 local cfg         = read_config(module_name) or error(module_name .. " configuration not found")
 assert(type(cfg.matchers) == "table", "matchers configuration must be a table")
 

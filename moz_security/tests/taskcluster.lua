@@ -3,7 +3,7 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 local cfg = {
-    taskcluster_decoder = {
+    taskcluster = {
         username_field = "username",
         matchers = {
           "'mozilla-auth0/ad|Mozilla-LDAP|' (s <- {%w+}) '/'"
