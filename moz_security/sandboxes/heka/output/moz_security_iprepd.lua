@@ -110,12 +110,14 @@ function process_message()
         return -1, "invalid argument for violations"
     end
     -- send violation notices in groups of <= 100
-    local violations = cjson.decode(violations)
-    for i=1,#violations,100 do
-        local ok, msg = json_request("PUT", "/violations", cjson.encode({unpack(violations, i, i+99)}))
-        if not ok then
-            return -1, msg
+    local ok, ret = pcall(cjson.decode, violations)
+    if ok then
+        for i=1,#ret,100 do
+            local ok, msg = json_request("PUT", "/violations", cjson.encode({unpack(ret, i, i+99)}))
+            if not ok then return -1, msg end
         end
+    else
+        return -1, ret
     end
     return 0
 end
