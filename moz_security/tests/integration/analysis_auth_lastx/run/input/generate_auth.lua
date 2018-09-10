@@ -61,6 +61,15 @@ local test = {
         { "sshd", "Accepted publickey for riker from 192.168.1.2 port 4242 ssh2", sdec, 0 },
         { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, -120 },
         { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, 0 },
+    },
+    {
+        -- verify lookup operation
+        { "sshd", "Accepted publickey for worf from 192.168.1.1 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for worf from 192.168.1.2 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for worf from 192.168.1.2 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for riker from 192.168.1.3 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for geordi from 192.168.1.4 port 4242 ssh2", sdec, 0 },
+        { "sshd", "Accepted publickey for geordi from 192.168.1.4 port 4242 ssh2", sdec, 0 },
     }
 }
 

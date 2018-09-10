@@ -37,16 +37,19 @@ new data that isn't included in the tracked data the alert is modified to indica
 The lastx configuration value controls the number of previous attributes that are tracked for
 a given user ID. By default lastx is 5.
 
-This module uses custom alerting integration in order to modify the recipient address, and supports
-email and IRC based alert generating for the alert output module.
+This module requires use of a lookup module in the alert configuration. See the documentation for
+the alert modules for more information. The lookup data send to the alerting module is adjusted
+based on the configuration of this sandbox and the alert contents itself.
 
-If default_email is set, email based alerting is enabled and this recipient always receives a copy
-of the alert message. If the message has new tracking data, user_recip also recieves a copy of the
-alert message. If the message has unacceptable time drift, drift_email only receives a copy of the
-message.
+sendglobal is always set to true in the lookup data, for every applicable message. Likewise, the
+subject field in the lookup data is always set to the resolved selprinc subject.
 
-If default_irc is set, IRC channel output will occur at the specified target. See the heka IRC
-alerting modules for more infomation on this output mode.
+If the alert indicates new tracking data, and the user_notify configuration option is set to
+true, the senduser flag is set to true.
+
+If the message has unacceptable time drift and the drift_notify configuration option is set to
+true, all lookup data flags are toggled off and the only flag toggled on will be senderror.
+If drift_notify is set to false the message is ignored.
 
 If enable_metrics is true, the module will submit metrics events for collection by the metrics
 output sandbox. Ensure process_message_inject_limit is set appropriately, as if enabled process_event
@@ -63,10 +66,8 @@ process_message_inject_limit = 1
 preserve_data = true
 -- preservation_version = 0 -- optional, increment if config is changed
 
-default_email = "foxsec-dump+OutOfHours@mozilla.com" -- optional, enable email alerting
--- default_irc = "irc.server#channel" -- optional, enable IRC alerting
--- user_email = "manatee-%s@moz-svc-ops.pagerduty.com" -- optional user specific email address
--- drift_email = "captainkirk@mozilla.com" -- optional drift message notification
+user_notify = true  -- send direct user notifications
+drift_notify = true -- send notifications on unacceptable drift
 -- acceptable_message_drift = 600 -- optional, defaults to 600 seconds if not specified
 -- alert_on_first = false -- optional, alert on first attribute seen for a user
 
@@ -110,6 +111,29 @@ heka_selprinc = {
     }
 }
 
+alert = {
+    lookup = "idrouter",
+    modules = {
+        idrouter = {
+            subjects = {
+                riker =  {
+                    mapfrom = { "riker" },
+                },
+                picard =  {
+                    mapfrom = { "picard" },
+                    email = {
+                        direct = "jean-luc@uss-enterprise"
+                    }
+                },
+            },
+            email = {
+                direct = "%s@uss-enterprise",
+                global = "main-engineering@uss-enterprise"
+            }
+        }
+    }
+}
+
 -- enable_metrics = false -- optional, if true enable secmetrics submission
 ```
 --]]
@@ -122,11 +146,12 @@ require "table"
 
 local HUGE      = require "math".huge
 local selprinc  = require "heka.selprinc"
+local alert     = require "heka.alert"
 
-local default_email             = read_config("default_email")
-local default_irc               = read_config("default_irc")
-local user_email                = read_config("user_email")
-local drift_email               = read_config("drift_email")
+if not alert.has_lookup() then error("alerting configuration must use lookup function") end
+
+local user_notify               = read_config("user_notify")
+local drift_notify              = read_config("drift_notify")
 local acceptable_message_drift  = read_config("acceptable_message_drift") or 600
 local lastx                     = read_config("lastx") or 5
 local alert_on_first            = read_config("alert_on_first")
@@ -144,33 +169,6 @@ _PRESERVATION_VERSION = read_config("preservation_version") or 0
 
 -- global, we want to serialize this to reload on startup
 userdata = {}
-
-
-function get_msg(subject, defrecip, userrecip, defirc, payload)
-    local msg = {
-        Type = "alert",
-        Payload = payload,
-        Severity = 1,
-        Fields = {
-            { name = "id", value = "auth_lastx" },
-            { name = "summary", value = subject },
-        }
-    }
-    local i = 3
-    if defrecip then
-        if userrecip then
-            msg.Fields[i] = {name = "email.recipients", value = {defrecip, userrecip}}
-        else
-            msg.Fields[i] = {name = "email.recipients", value = {defrecip}}
-        end
-        i = i + 1
-    end
-    if defirc then
-        msg.Fields[i] = {name = "irc.target", value = defirc}
-    end
-    return msg
-end
-
 
 function prune_userdata(user, cutoff)
     if not userdata[user] then return 0 end
@@ -251,10 +249,13 @@ function process_message()
     -- At this point, we know if the event should be escalated or not. First, update
     -- the alert message with the default information.
     local subject = string.format("%s %s auth %s track:[%s]", user, sm.category, hn, track)
-    local defrecip = nil
-    local userrecip = nil
     local payload = ""
-    if default_email then defrecip = string.format("<%s>", default_email) end
+    local ldata = {
+        sendglobal  = true,
+        senduser    = false,
+        senderror   = false,
+        subject     = user,
+    }
 
     -- If we also have city and country information, add that to the subject
     if geocity and geocountry then
@@ -265,9 +266,7 @@ function process_message()
     if escalate then
         subject = "LASTX_NEWATTR " .. subject
         payload = "Escalation flag set, authentication with new tracking attributes\n"
-        if user_email and defrecip then
-            userrecip = string.format(string.format("<%s>", user_email), user)
-        end
+        if user_notify then ldata.senduser = true end
     end
 
     -- Add some additional details to the message body
@@ -277,12 +276,12 @@ function process_message()
     -- Finally, if the message has time drift modify the recipient address and add some additional
     -- information to the payload
     if invalidts then
-        if not drift_email then return -1, "dropping event with time drift" end
-        if defrecip then
-            defrecip = string.format("<%s>", drift_email)
-            userrecip = nil
-        end
+        if not drift_notify then return -1, "dropping event with time drift" end
         payload = payload .. string.format("WARNING, unacceptable drift %d seconds\n", delaysec)
+
+        ldata.sendglobal    = false
+        ldata.senduser      = false
+        ldata.senderror     = true
     end
 
     if secm then
@@ -294,7 +293,7 @@ function process_message()
         secm:send()
     end
 
-    inject_message(get_msg(subject, defrecip, userrecip, default_irc, payload))
+    alert.send("auth_lastx", subject, payload, 0, ldata)
     return 0
 end
 
