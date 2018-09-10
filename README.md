@@ -4,7 +4,7 @@
 
 Package management for [Lua Sandbox](http://mozilla-services.github.io/lua_sandbox/)
 modules and sandboxes. The goal is to simplify the lua_sandbox core by
-decoupling the module and businesss logic maintenance and deployment.
+decoupling the module and business logic maintenance and deployment.
 
 [Full Documentation](http://mozilla-services.github.io/lua_sandbox_extensions)
 
@@ -15,7 +15,7 @@ decoupling the module and businesss logic maintenance and deployment.
 * CMake (3.6+) - http://cmake.org/cmake/resources/software.html
 * Git http://git-scm.com/download
 * luasandbox (1.2+) https://github.com/mozilla-services/lua_sandbox
-* Module specific (i.e. if buiding the ssl module openssl will be required)
+* Module specific (i.e. if building the ssl module openssl will be required)
 
 #### Optional (used for documentation)
 * gitbook (2.3) - https://www.gitbook.com/
