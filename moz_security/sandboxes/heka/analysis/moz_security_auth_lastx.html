@@ -111,7 +111,7 @@
                 <a href="../../../../aws/">
             
                     
-                    aws (0.0.5)
+                    aws (0.0.6)
             
                 </a>
             
@@ -858,7 +858,7 @@
                 <a href="../../../../heka/">
             
                     
-                    heka (1.1.22)
+                    heka (1.1.23)
             
                 </a>
             
@@ -3222,7 +3222,7 @@
                 <a href="../../../">
             
                     
-                    moz_security (0.0.21)
+                    moz_security (0.0.23)
             
                 </a>
             
@@ -3291,7 +3291,39 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.26.2.1.1" data-path="../../../modules/heka/iprepd.html">
+        <li class="chapter " data-level="1.26.2.1.1" data-path="../../../modules/heka/alert/">
+            
+                <a href="../../../modules/heka/alert/">
+            
+                    
+                    alert
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.26.2.1.1.1" data-path="../../../modules/heka/alert/idrouter.html">
+            
+                <a href="../../../modules/heka/alert/idrouter.html">
+            
+                    
+                    idrouter
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.2" data-path="../../../modules/heka/iprepd.html">
             
                 <a href="../../../modules/heka/iprepd.html">
             
@@ -3304,7 +3336,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.26.2.1.2" data-path="../../../modules/heka/secmetrics.html">
+        <li class="chapter " data-level="1.26.2.1.3" data-path="../../../modules/heka/secmetrics.html">
             
                 <a href="../../../modules/heka/secmetrics.html">
             
@@ -3317,7 +3349,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.26.2.1.3" data-path="../../../modules/heka/selprinc.html">
+        <li class="chapter " data-level="1.26.2.1.4" data-path="../../../modules/heka/selprinc.html">
             
                 <a href="../../../modules/heka/selprinc.html">
             
@@ -4301,7 +4333,7 @@
                 <a href="../../../../openssl/">
             
                     
-                    openssl (0.5.1)
+                    openssl (0.5.2)
             
                 </a>
             
@@ -5565,14 +5597,16 @@ the values are concatenated together prior to comparison with previous authentic
 new data that isn&apos;t included in the tracked data the alert is modified to indicate this.</p>
 <p>The lastx configuration value controls the number of previous attributes that are tracked for
 a given user ID. By default lastx is 5.</p>
-<p>This module uses custom alerting integration in order to modify the recipient address, and supports
-email and IRC based alert generating for the alert output module.</p>
-<p>If default_email is set, email based alerting is enabled and this recipient always receives a copy
-of the alert message. If the message has new tracking data, user_recip also recieves a copy of the
-alert message. If the message has unacceptable time drift, drift_email only receives a copy of the
-message.</p>
-<p>If default_irc is set, IRC channel output will occur at the specified target. See the heka IRC
-alerting modules for more infomation on this output mode.</p>
+<p>This module requires use of a lookup module in the alert configuration. See the documentation for
+the alert modules for more information. The lookup data send to the alerting module is adjusted
+based on the configuration of this sandbox and the alert contents itself.</p>
+<p>sendglobal is always set to true in the lookup data, for every applicable message. Likewise, the
+subject field in the lookup data is always set to the resolved selprinc subject.</p>
+<p>If the alert indicates new tracking data, and the user_notify configuration option is set to
+true, the senduser flag is set to true.</p>
+<p>If the message has unacceptable time drift and the drift_notify configuration option is set to
+true, all lookup data flags are toggled off and the only flag toggled on will be senderror.
+If drift_notify is set to false the message is ignored.</p>
 <p>If enable_metrics is true, the module will submit metrics events for collection by the metrics
 output sandbox. Ensure process_message_inject_limit is set appropriately, as if enabled process_event
 will submit up to 2 messages (the alert, and the metric event).</p>
@@ -5586,11 +5620,10 @@ process_message_inject_limit = <span class="hljs-number">1</span>
 preserve_data = <span class="hljs-keyword">true</span>
 <span class="hljs-comment">-- preservation_version = 0 -- optional, increment if config is changed</span>
 
-default_email = <span class="hljs-string">&quot;foxsec-dump+OutOfHours@mozilla.com&quot;</span> <span class="hljs-comment">-- optional, enable email alerting</span>
-<span class="hljs-comment">-- default_irc = &quot;irc.server#channel&quot; -- optional, enable IRC alerting</span>
-<span class="hljs-comment">-- user_email = &quot;manatee-%s@moz-svc-ops.pagerduty.com&quot; -- optional user specific email address</span>
-<span class="hljs-comment">-- drift_email = &quot;captainkirk@mozilla.com&quot; -- optional drift message notification</span>
+user_notify = <span class="hljs-keyword">true</span>  <span class="hljs-comment">-- send direct user notifications</span>
+drift_notify = <span class="hljs-keyword">true</span> <span class="hljs-comment">-- send notifications on unacceptable drift</span>
 <span class="hljs-comment">-- acceptable_message_drift = 600 -- optional, defaults to 600 seconds if not specified</span>
+<span class="hljs-comment">-- alert_on_first = false -- optional, alert on first attribute seen for a user</span>
 
 <span class="hljs-comment">-- expireolderthan = 864000 -- optional, tracked entries older than value are removed, defaults to 864000</span>
 <span class="hljs-comment">-- lastx = 5 -- optional, track last X entries, defaults to 5</span>
@@ -5627,6 +5660,29 @@ heka_selprinc = {
             subject_map = {
                 [<span class="hljs-string">&quot;An admin user&quot;</span>]   = <span class="hljs-string">&quot;admin&quot;</span>,
                 [<span class="hljs-string">&quot;Commander Riker&quot;</span>] = <span class="hljs-string">&quot;riker&quot;</span>
+            }
+        }
+    }
+}
+
+alert = {
+    lookup = <span class="hljs-string">&quot;idrouter&quot;</span>,
+    modules = {
+        idrouter = {
+            subjects = {
+                riker =  {
+                    mapfrom = { <span class="hljs-string">&quot;riker&quot;</span> },
+                },
+                picard =  {
+                    mapfrom = { <span class="hljs-string">&quot;picard&quot;</span> },
+                    email = {
+                        direct = <span class="hljs-string">&quot;jean-luc@uss-enterprise&quot;</span>
+                    }
+                },
+            },
+            email = {
+                direct = <span class="hljs-string">&quot;%s@uss-enterprise&quot;</span>,
+                global = <span class="hljs-string">&quot;main-engineering@uss-enterprise&quot;</span>
             }
         }
     }
@@ -5678,7 +5734,7 @@ heka_selprinc = {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"moz_security_auth_lastx","level":"1.26.3.1.1.2","depth":5,"next":{"title":"moz_security_cloudtrail","level":"1.26.3.1.1.3","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","articles":[]},"previous":{"title":"moz_security_auth_ip_geo","level":"1.26.3.1.1.1","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_lastx.md","mtime":"2018-08-29T16:24:02.044Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-08-29T16:24:12.588Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"moz_security_auth_lastx","level":"1.26.3.1.1.2","depth":5,"next":{"title":"moz_security_cloudtrail","level":"1.26.3.1.1.3","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_cloudtrail.md","articles":[]},"previous":{"title":"moz_security_auth_ip_geo","level":"1.26.3.1.1.1","depth":5,"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","ref":"moz_security/sandboxes/heka/analysis/moz_security_auth_ip_geo.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_security/sandboxes/heka/analysis/moz_security_auth_lastx.md","mtime":"2018-09-10T20:15:30.260Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-09-10T20:15:36.405Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>

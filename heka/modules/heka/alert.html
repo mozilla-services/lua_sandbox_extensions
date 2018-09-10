@@ -111,7 +111,7 @@
                 <a href="../../../aws/">
             
                     
-                    aws (0.0.5)
+                    aws (0.0.6)
             
                 </a>
             
@@ -858,7 +858,7 @@
                 <a href="../../">
             
                     
-                    heka (1.1.22)
+                    heka (1.1.23)
             
                 </a>
             
@@ -3222,7 +3222,7 @@
                 <a href="../../../moz_security/">
             
                     
-                    moz_security (0.0.21)
+                    moz_security (0.0.23)
             
                 </a>
             
@@ -3291,7 +3291,39 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.26.2.1.1" data-path="../../../moz_security/modules/heka/iprepd.html">
+        <li class="chapter " data-level="1.26.2.1.1" data-path="../../../moz_security/modules/heka/alert/">
+            
+                <a href="../../../moz_security/modules/heka/alert/">
+            
+                    
+                    alert
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.26.2.1.1.1" data-path="../../../moz_security/modules/heka/alert/idrouter.html">
+            
+                <a href="../../../moz_security/modules/heka/alert/idrouter.html">
+            
+                    
+                    idrouter
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.2.1.2" data-path="../../../moz_security/modules/heka/iprepd.html">
             
                 <a href="../../../moz_security/modules/heka/iprepd.html">
             
@@ -3304,7 +3336,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.26.2.1.2" data-path="../../../moz_security/modules/heka/secmetrics.html">
+        <li class="chapter " data-level="1.26.2.1.3" data-path="../../../moz_security/modules/heka/secmetrics.html">
             
                 <a href="../../../moz_security/modules/heka/secmetrics.html">
             
@@ -3317,7 +3349,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.26.2.1.3" data-path="../../../moz_security/modules/heka/selprinc.html">
+        <li class="chapter " data-level="1.26.2.1.4" data-path="../../../moz_security/modules/heka/selprinc.html">
             
                 <a href="../../../moz_security/modules/heka/selprinc.html">
             
@@ -4301,7 +4333,7 @@
                 <a href="../../../openssl/">
             
                     
-                    openssl (0.5.1)
+                    openssl (0.5.2)
             
                 </a>
             
@@ -5541,8 +5573,38 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="Heka_Alert_Module">Heka Alert Module</h1>
-<h2 id="Sample_Configuration">1. Sample Configuration</h2>
+<p>Sends alert messages for consumption by the alert output sandbox.</p>
+<p>Plugins that make use of this module require a valid alert configuration.</p>
+<p>At a high level there are two modes of operation for this module, static alerting and
+alerting with a lookup module. The mode of operation is dependent on if the lookup configuration
+parameter is set, and the sub-modules specified in the modules configuration.</p>
+<p>Static operating mode will always send alerts to the same destination. This mode is useful if
+a plugin does not need to modify a destination for an alert. Static operating mode is set
+by not setting a lookup plugin, and by specifying the required Heka alert modules in the modules
+configuration.</p>
+<p>If the lookup parameter is set, it should be set to the name of a valid alerting lookup
+module. In this mode, the get_message function of the lookup plugin will be called with
+lookup data, and the lookup plugin will make a decision on where to route the alert and return
+an alert message for submission. In lookup mode, the modules configuration should include only
+a configuration for the desired lookup module.</p>
+<h2 id="Lookup_Data">1. Lookup Data</h2>
+<p>When using a lookup module, the plugin calling the alert.send function needs to provide
+lookup data for the lookup plugin to make a decision on alert routing.</p>
+<pre><code class="lang-lua"><span class="hljs-comment">-- example lookup data</span>
+<span class="hljs-keyword">local</span> ldata = {
+    sendglobal = <span class="hljs-keyword">true</span>,      <span class="hljs-comment">-- The alert should be sent to a global alerting destination (nil/false for off)</span>
+    senderror  = <span class="hljs-keyword">false</span>,     <span class="hljs-comment">-- Don&apos;t send the alert to any error destination (nil/false for off)</span>
+    senduser   = <span class="hljs-keyword">true</span>,      <span class="hljs-comment">-- The alert should be sent directly to the identity (nil/false for off)</span>
+    subject    = <span class="hljs-string">&quot;userid&quot;</span>   <span class="hljs-comment">-- This alert is for this specific identity (nil for none)</span>
+}
+<span class="hljs-comment">-- send the alert, specifying our lookup data</span>
+alert.send(<span class="hljs-string">&quot;myalert&quot;</span>, subject, payload, <span class="hljs-number">0</span>, ldata)
+</code></pre>
+<p>Any combination of parameters is valid and it is up to the configured lookup module to determine
+how to route the alert.</p>
+<h2 id="Sample_Configuration">2. Sample Configuration</h2>
 <pre><code class="lang-lua">alert = {
+    lookup   = <span class="hljs-keyword">nil</span>,   <span class="hljs-comment">-- optional, if specified a string indicating a heka alerting lookup module</span>
     disabled = <span class="hljs-keyword">false</span>, <span class="hljs-comment">-- optional</span>
     prefix   = <span class="hljs-keyword">false</span>, <span class="hljs-comment">-- optional prefix plugin information to the summary and detail strings</span>
     throttle = <span class="hljs-number">90</span>,    <span class="hljs-comment">-- optional number of minutes to wait before another alert with this ID will be sent</span>
@@ -5555,12 +5617,12 @@
     }
 }
 </code></pre>
-<h2 id="Variables">2. Variables</h2>
+<h2 id="Variables">3. Variables</h2>
 <ul>
 <li>thresholds - the thresholds configuration table</li>
 </ul>
-<h2 id="Functions">3. Functions</h2>
-<h3 id="get_dashboard_uri">3.1. get_dashboard_uri</h3>
+<h2 id="Functions">4. Functions</h2>
+<h3 id="get_dashboard_uri">4.1. get_dashboard_uri</h3>
 <p>Returns the URI of the dashboard output</p>
 <p><em>Arguments</em></p>
 <ul>
@@ -5571,7 +5633,7 @@
 <ul>
 <li>URI (string)</li>
 </ul>
-<h3 id="get_threshold">3.2. get_threshold</h3>
+<h3 id="get_threshold">4.2. get_threshold</h3>
 <p>Gets the value of the threshold setting associated with the specified id. If
 the id is not found the value of the &apos;*&apos; key is returned otherwise nil
 is returned.</p>
@@ -5583,7 +5645,7 @@ is returned.</p>
 <ul>
 <li>threshold - configuration value</li>
 </ul>
-<h3 id="throttled">3.3. throttled</h3>
+<h3 id="throttled">4.3. throttled</h3>
 <p>Check if an alert is currently throttled, this is useful to avoid running
 expensive tests.</p>
 <p><em>Arguments</em></p>
@@ -5596,22 +5658,32 @@ value)</li>
 <ul>
 <li>throttled (boolean) - true if the alert is currently throttled</li>
 </ul>
-<h3 id="send">3.4. send</h3>
+<h3 id="has_lookup">4.4. has_lookup</h3>
+<p>Return true if the alert module has a lookup function associated with it.</p>
+<p><em>Arguments</em></p>
+<ul>
+<li>None</li>
+</ul>
+<p><em>Return</em></p>
+<ul>
+<li>func (boolean) - true if alert module has lookup function</li>
+</ul>
+<h3 id="send">4.5. send</h3>
 <p>Send an alert message</p>
 <p><em>Arguments</em></p>
 <ul>
 <li>id (string) - unique id for alert throttling</li>
 <li>summary (string) - alert summary</li>
 <li>detail (string) - alert detail</li>
-<li>throttle (integer, nil) - override the throttle value (nil uses the configured
-value)</li>
+<li>throttle (integer, nil) - override the throttle value (nil for configured, 0 for none)</li>
+<li>ldata (table, nil) - lookup data table, used if module is in lookup mode</li>
 </ul>
 <p><em>Return</em></p>
 <ul>
 <li>sent (boolean) - true if sent, false if throttled/disabled/empty</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/heka/modules/heka/alert.lua" target="_blank">alert.lua</a></p>
-<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Alert_Module">Heka Alert Module</a></p><li><a href="#Sample_Configuration">1. Sample Configuration</a></li><li><a href="#Variables">2. Variables</a></li><li><a href="#Functions">3. Functions</a></li><ul><li><a href="#get_dashboard_uri">3.1. get_dashboard_uri</a></li><li><a href="#get_threshold">3.2. get_threshold</a></li><li><a href="#throttled">3.3. throttled</a></li><li><a href="#send">3.4. send</a></li></ul></ul></div><a href="#Sample_Configuration" id="goTop"><i class="fa fa-arrow-up"></i></a>
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Heka_Alert_Module">Heka Alert Module</a></p><li><a href="#Lookup_Data">1. Lookup Data</a></li><li><a href="#Sample_Configuration">2. Sample Configuration</a></li><li><a href="#Variables">3. Variables</a></li><li><a href="#Functions">4. Functions</a></li><ul><li><a href="#get_dashboard_uri">4.1. get_dashboard_uri</a></li><li><a href="#get_threshold">4.2. get_threshold</a></li><li><a href="#throttled">4.3. throttled</a></li><li><a href="#has_lookup">4.4. has_lookup</a></li><li><a href="#send">4.5. send</a></li></ul></ul></div><a href="#Lookup_Data" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -5654,7 +5726,7 @@ value)</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"alert","level":"1.12.2.1.1","depth":4,"next":{"title":"msg_interpolate","level":"1.12.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},"previous":{"title":"heka","level":"1.12.2.1","depth":3,"path":"heka/modules/heka/README.md","ref":"heka/modules/heka/README.md","articles":[{"title":"alert","level":"1.12.2.1.1","depth":4,"path":"heka/modules/heka/alert.md","ref":"heka/modules/heka/alert.md","articles":[]},{"title":"msg_interpolate","level":"1.12.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},{"title":"util","level":"1.12.2.1.3","depth":4,"path":"heka/modules/heka/util.md","ref":"heka/modules/heka/util.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/modules/heka/alert.md","mtime":"2018-08-29T16:24:01.540Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-08-29T16:24:12.588Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"alert","level":"1.12.2.1.1","depth":4,"next":{"title":"msg_interpolate","level":"1.12.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},"previous":{"title":"heka","level":"1.12.2.1","depth":3,"path":"heka/modules/heka/README.md","ref":"heka/modules/heka/README.md","articles":[{"title":"alert","level":"1.12.2.1.1","depth":4,"path":"heka/modules/heka/alert.md","ref":"heka/modules/heka/alert.md","articles":[]},{"title":"msg_interpolate","level":"1.12.2.1.2","depth":4,"path":"heka/modules/heka/msg_interpolate.md","ref":"heka/modules/heka/msg_interpolate.md","articles":[]},{"title":"util","level":"1.12.2.1.3","depth":4,"path":"heka/modules/heka/util.md","ref":"heka/modules/heka/util.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"heka/modules/heka/alert.md","mtime":"2018-09-10T20:15:29.704Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-09-10T20:15:36.405Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>
