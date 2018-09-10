@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.5)
-project(aws VERSION 0.0.5 LANGUAGES C CXX)
+project(aws VERSION 0.0.6 LANGUAGES C CXX)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AWS Lua Modules")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox-lpeg (>= 1.0.9), luasandbox-heka (>= 1.1.22), luasandbox-xxhash (>= 0.0.1)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
