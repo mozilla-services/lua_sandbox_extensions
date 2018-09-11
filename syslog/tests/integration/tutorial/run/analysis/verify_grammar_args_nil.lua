@@ -10,7 +10,7 @@ local messages = {
         Type = "error.decode",
         Logger = "input.grammar_args_nil",
         Hostname = "integration_test",
-        Payload = ".../lib/luasandbox/io_modules/lpeg/sub_decoder_util.lua:146: reference to absent extra argument #1",
+        Payload = ".../lib/luasandbox/io_modules/lpeg/sub_decoder_util.lua:154: reference to absent extra argument #1",
         Fields = {
             data = 'Feb 14 19:20:21 ubuntu someapp[3453]: foo=bar a=14 baz="hello kitty" cool%story=bro f %^asdf ip=216.160.83.56'
         }

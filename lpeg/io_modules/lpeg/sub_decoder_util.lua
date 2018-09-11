@@ -33,7 +33,13 @@ sub_decoders = {
        -- original message produced by the parent decoder.
     -- array:
        -- column 1: (string/array)
-          -- string: Sample message (see above)
+          -- string: Sample message (see above) or a decoder module specification
+            -- A decoder module specification is used when transformations need
+            -- to be applied to a standard decoder output.
+              -- Caveats:
+              -- 1) the decoder output must be a Lua Heka message table
+              -- 2) this must be the only entry in the configuration array
+              -- 3) printf_messages must not be defined
           -- array:
             -- printf.build_grammar format specification
             -- module reference to a grammar builder function, any additional columns are passed to the function
@@ -66,15 +72,13 @@ sub_decoders = {
 *Return*
 - sub_decoders (table)
 
-### load_sub_decoder
+### load_decoder
 
-Returns the decode function for a single sub_decoder.
+Returns the decode function for a single decoder. `load_sub_decoder` is an alias
+to this function and has been kept for backwards compatibility.
 
 *Arguments*
-- sub_decoder (string/table) sub_decoder configuration entry
-```lua
-sub_decoder = "decoders.nginx.access"
-```
+- decoder (string/table) decoder configuration entry
 - printf_messages (table/nil) printf_message table (see above)
 
 *Return*
@@ -113,13 +117,17 @@ local printf    = require "lpeg.printf"
 
 local error         = error
 local ipairs        = ipairs
+local next          = next
 local pairs         = pairs
 local require       = require
 local setmetatable  = setmetatable
 local type          = type
 local unpack        = unpack
 
-local inject_message    = inject_message
+local real_inject_message = inject_message
+local function interpose_inject_message(im)
+    inject_message = im
+end
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -136,7 +144,7 @@ local function grammar_decode_fn(g)
         if not fields then return "parse failed" end
         local msg = copy_message(dh, mutable)
         add_fields(msg, fields)
-        inject_message(msg)
+        real_inject_message(msg)
     end
 end
 
@@ -179,7 +187,7 @@ local function grammar_pick_fn(sd, nomatch_action)
                 return "parse failed"
             end
         end
-        inject_message(msg)
+        real_inject_message(msg)
     end
 end
 
@@ -198,36 +206,79 @@ local function get_module_ref(s)
 end
 
 
-local function load_sub_decoder_impl(sd, grammars, sdk)
-    local sdt = type(sd)
+local function get_decode_function(module_name)
+    local decode = require(module_name).decode
+    if type(decode) ~= "function"  then
+        error(string.format("no decode function defined: %s", module_name))
+    end
+    return decode
+end
+
+
+local function load_transformations(t)
+    for k,v in pairs(t) do
+        local fn
+        local mname, fname = string.match(v, mod_ref)
+        if mname then fn = require(mname)[fname] end
+        if type(fn) ~= "function" then
+            error(string.format("invalid transformation function %s=%s", k, v))
+        end
+        t[k] = fn
+    end
+end
+
+
+local function get_transform_decode_function(module_name, transformations)
+    load_transformations(transformations)
+    local im = function(msg, cp)
+        if type(msg) ~= "table" then error("transformations expect msg to be a table") end
+        for k,f in pairs(transformations) do
+            f(msg, k)
+        end
+        real_inject_message(msg, cp)
+    end
+    interpose_inject_message(im)
+    local decode = require(module_name).decode
+    interpose_inject_message(real_inject_message)
+    if type(decode) ~= "function"  then
+        error(string.format("no decode function defined: %s", module_name))
+    end
+    return decode
+end
+
+
+local function load_decoder_impl(dcfg, grammars, sdk)
+    local sdt = type(dcfg)
     if sdt == "string" then
-        if sd:match("^decoders%.") then
-            local decode = require(sd).decode
-            if type(decode) ~= "function"  then
-                error(string.format("sub_decoder, no decode function defined: %s", sdk))
-            end
-            return decode
+        if dcfg:match("^decoders%.") then
+            return get_decode_function(dcfg)
         else
-            local g = get_module_ref(sd)
+            local g = get_module_ref(dcfg)
             if type(g) ~= "userdata" then
                 error(string.format("sub_decoder, no grammar defined: %s", sdk))
             end
             return grammar_decode_fn(g)
         end
-    elseif sdt == "table" then -- cherry pick grammars
+    elseif sdt == "table" then
         local nomatch_action
-        for i,cpg in ipairs(sd) do
+        for i,cpg in ipairs(dcfg) do
             if type(cpg) ~= "table" then
                 cpg = {cpg}
-                sd[i] = cpg
+                dcfg[i] = cpg
             end
 
             local fn
             local typ = type(cpg[1])
             if typ == "string" then
-                if (cpg[1] == DROP_TOKEN or cpg[1] == FAIL_TOKEN) and sd[i + 1] == nil then
+                if string.match(cpg[1], "^decoders%.") and #dcfg == 1 and not next(grammars) then
+                    if not cpg[2] then
+                        return get_decode_function(cpg[1])
+                    else
+                        return get_transform_decode_function(cpg[1], cpg[2])
+                    end
+                elseif (cpg[1] == DROP_TOKEN or cpg[1] == FAIL_TOKEN) and dcfg[i + 1] == nil then
                     nomatch_action = cpg[1]
-                    sd[i] = nil
+                    dcfg[i] = nil
                     break
                 end
                 local g = printf.match_sample(grammars, cpg[1])
@@ -258,43 +309,33 @@ local function load_sub_decoder_impl(sd, grammars, sdk)
                 error(string.format("sub_decoder: %s invalid entry: %d", sdk, i))
             end
             cpg[1] = fn
-
-            if cpg[2] then
-                for k,v in pairs(cpg[2]) do
-                    local fn
-                    local mname, fname = string.match(v, mod_ref)
-                    if mname then fn = require(mname)[fname] end
-                    if type(fn) ~= "function" then
-                        error(string.format("invalid transformation function %s=%s", k, v))
-                    end
-                    cpg[2][k] = fn
-                end
-            end
+            if cpg[2] then load_transformations(cpg[2]) end
         end
-        return grammar_pick_fn(sd, nomatch_action)
+        return grammar_pick_fn(dcfg, nomatch_action)
     else
         error(string.format("sub_decoder: %s invalid type: %s", sdk, sdt))
     end
 end
 
 
-function load_sub_decoder(sd, pfm)
+function load_decoder(dcfg, pfm)
     local grammars = printf.load_messages(pfm or {})
-    return load_sub_decoder_impl(sd, grammars, "")
+    return load_decoder_impl(dcfg, grammars, "")
 end
+load_sub_decoder = load_decoder
 
 
 function load_sub_decoders(sds, pfm)
     local sub_decoders  = {}
     local grammars = printf.load_messages(pfm or {})
 
-    for sdk,sd in pairs(sds or {}) do
+    for sdk,dcfg in pairs(sds or {}) do
         if sdk == "*" then
-            local fn = load_sub_decoder_impl(sd, grammars, sdk)
+            local fn = load_decoder_impl(dcfg, grammars, sdk)
             local mt = {__index = function(t, k) return fn end }
             setmetatable(sub_decoders, mt);
         else
-            sub_decoders[sdk] = load_sub_decoder_impl(sd, grammars, sdk)
+            sub_decoders[sdk] = load_decoder_impl(dcfg, grammars, sdk)
         end
     end
     return sub_decoders
