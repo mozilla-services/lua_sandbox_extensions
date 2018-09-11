@@ -87,9 +87,9 @@ RUN mkdir -p lua_sandbox_extensions/release && cd lua_sandbox_extensions/release
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM \
     ${EXTENSIONS} .. && \
     make && ctest -V && make packages && \
-    cp ../../streaming_algorithms/release/luasandbox-streaming-algorithms* . && \
     cp ../../lua_date/release/iana*rpm ../../lua_date/release/luasandbox*rpm . && \
     rpm -i *.rpm && \
+    cp ../../streaming_algorithms/release/luasandbox-streaming-algorithms* . && \
     cp ../../hindsight/release/*.rpm . && \
     cp ../../lua_sandbox/release/*.rpm .
 
