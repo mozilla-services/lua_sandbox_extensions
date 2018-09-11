@@ -136,10 +136,11 @@ function get_message(id, summary, detail, ldata)
         Severity    = 1,
 
         Fields = {
-            id      = id,
-            summary = summary,
+            { name = "id", value = id },
+            { name = "summary", value = summary },
         }
     }
+    local findex = 3
 
     local eur
     local eer
@@ -175,17 +176,20 @@ function get_message(id, summary, detail, ldata)
         if eer then table.insert(n, eer) end
         if egr then table.insert(n, egr) end
         if eur then table.insert(n, eur) end
-        msg.Fields["email.recipients"] = n
+        msg.Fields[findex] = { name = "email.recipients", value = n }
+        findex = findex + 1
     end
 
     -- only support a single irc target, prioritize user, error, then global
+    local itv
     if iut then
-        msg.Fields["irc.target"] = iut
+        itv = iut
     elseif iet then
-        msg.Fields["irc.target"] = iet
+        itv = iet
     elseif igt then
-        msg.Fields["irc.target"] = igt
+        itv = igt
     end
+    if itv then msg.Fields[findex] = { name = "irc.target", value = itv } end
 
     return msg
 end
