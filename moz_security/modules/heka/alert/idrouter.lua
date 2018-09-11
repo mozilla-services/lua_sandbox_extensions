@@ -157,7 +157,7 @@ function get_message(id, summary, detail, ldata)
 
     if ldata.senderror then
         eer = vget("email", "error", u, udata)
-        iet = vget("irc", "direct", u, udata)
+        iet = vget("irc", "error", u, udata)
     end
 
     if ldata.sendglobal then
