@@ -112,7 +112,7 @@ function process_message()
             ncache[v.id] = true
             local m = composite(v)
             local ok, err = pcall(decode, m, default_headers)
-            if not ok then
+            if not ok or err then
                 err_msg.Payload = err
                 err_msg.Fields.data = m
                 pcall(inject_message, err_msg)
