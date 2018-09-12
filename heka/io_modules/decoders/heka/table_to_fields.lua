@@ -16,10 +16,10 @@ table is then used as message Fields with the default headers.
 ## Decoder Configuration Table
 
 ```lua
-decoders_table_to_fields = {
-    module_name     = "cjson"
-    module_function = "decode" -- or module_grammar to use a grammar
-    -- max_depth = 5 -- optional, maximum depth for nested table conversion (default no limit)
+decoders_heka_table_to_fields = {
+    module_name     = "cjson",
+    module_function = "decode", -- or module_grammar to use a grammar
+    -- max_depth = 5, -- optional, maximum depth for nested table conversion (default no limit)
     -- separator = "." -- optional, override default nested table key seperator in util.table_to_fields
 }
 ```
