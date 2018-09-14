@@ -59,7 +59,7 @@ function add_username(msg, field_name)
     for _, matcher in ipairs(cfg.matchers) do
       username = re.match(clientid, matcher)
       if username then
-        msg.Fields["username"] = username
+        msg.Fields[username_field] = username
         break
       end
     end
