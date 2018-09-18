@@ -33,7 +33,7 @@ taskcluster = {
 }
 decoder_module = {
     {
-        { "decoders.heka.table_to_fields" },
+        "decoders.heka.table_to_fields",
         { clientid = "taskcluster#add_username"}
     }
 }
