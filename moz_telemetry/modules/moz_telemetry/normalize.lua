@@ -203,6 +203,31 @@ function os_version(v)
     end
 end
 
+
+local normalize_mobile_os_grammar =
+(l.P"iOS" + anywhere"iPhone") / "iOS" +
+l.P"Android" / "Android" +
+l.Cc"Other"
+
+function mobile_os(name)
+    if type(name) ~= "string" then name = "Other" end
+    return normalize_mobile_os_grammar:match(name)
+end
+
+
+local normalize_mobile_app_name_grammar =
+l.P"Fennec" / "Fennec" +
+l.P"Focus" / "Focus" +
+l.P"Klar" / "Klar" +
+(anywhere"FirefoxReality") / "FirefoxReality" +
+l.Cc"Other"
+
+function mobile_app_name(name)
+    if type(name) ~= "string" then name = "Other" end
+    return normalize_mobile_app_name_grammar:match(name)
+end
+
+
 -- https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 local country_names = {
     "Other","AD","AE","AF","AG","AI","AL","AM","AO","AQ","AR","AS","AT","AU",
