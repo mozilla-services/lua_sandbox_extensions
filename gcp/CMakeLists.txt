@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.6)
-project(gcp VERSION 0.0.3 LANGUAGES C CXX)
+project(gcp VERSION 0.0.4 LANGUAGES C CXX)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GCP Lua Modules")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "luasandbox-lpeg (>= 1.0.15)")
 string(REGEX REPLACE "[()]" "" CPACK_RPM_PACKAGE_REQUIRES ${CPACK_DEBIAN_PACKAGE_DEPENDS})
@@ -17,8 +17,17 @@ include_directories(${GOOGLE_APIS_DIR})
 set(GOOGLE_SRCS
   ${GOOGLE_APIS_DIR}/google/api/annotations.pb.cc
   ${GOOGLE_APIS_DIR}/google/api/http.pb.cc
+  ${GOOGLE_APIS_DIR}/google/api/label.pb.cc
+  ${GOOGLE_APIS_DIR}/google/api/monitored_resource.pb.cc
+  ${GOOGLE_APIS_DIR}/google/logging/type/http_request.pb.cc
+  ${GOOGLE_APIS_DIR}/google/logging/type/log_severity.pb.cc
+  ${GOOGLE_APIS_DIR}/google/logging/v2/log_entry.pb.cc
+  ${GOOGLE_APIS_DIR}/google/logging/v2/log_entry.pb.cc
+  ${GOOGLE_APIS_DIR}/google/logging/v2/logging.grpc.pb.cc
+  ${GOOGLE_APIS_DIR}/google/logging/v2/logging.pb.cc
   ${GOOGLE_APIS_DIR}/google/pubsub/v1/pubsub.grpc.pb.cc
   ${GOOGLE_APIS_DIR}/google/pubsub/v1/pubsub.pb.cc
+  ${GOOGLE_APIS_DIR}/google/rpc/status.pb.cc
 )
 
 foreach(SRC IN LISTS GOOGLE_SRCS)
@@ -27,6 +36,7 @@ endforeach()
 
 set(MODULE_SRCS
   common.cpp
+  logging.cpp
   pubsub.cpp
   ${GOOGLE_SRCS}
   gcp.def

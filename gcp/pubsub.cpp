@@ -117,7 +117,7 @@ typedef struct subscriber_wrapper
 static int publisher_new(lua_State *lua)
 {
   int n = lua_gettop(lua);
-  luaL_argcheck(lua, n >= 2 && n <= 3, n, "incorrect number of arguments");
+  luaL_argcheck(lua, n >= 2 && n <= 4, n, "incorrect number of arguments");
   const char *channel = luaL_checkstring(lua, 1);
   const char *topic   = luaL_checkstring(lua, 2);
   int max_async       = luaL_optint(lua, 3, 20);
@@ -331,8 +331,10 @@ static int publisher_poll(lua_State *lua)
 static int publisher_gc(lua_State *lua)
 {
   publisher_wrapper *pw = static_cast<publisher_wrapper *>(luaL_checkudata(lua, 1, mt_publisher));
-  pw->p->cq.Shutdown();
-  while (publisher_poll_internal(lua, 1000) != grpc::CompletionQueue::NextStatus::SHUTDOWN);
+  if (pw->p->max_async_requests != 0) {
+    pw->p->cq.Shutdown();
+    while (publisher_poll_internal(lua, 1000) != grpc::CompletionQueue::NextStatus::SHUTDOWN);
+  }
   delete pw->p->request;
   delete pw->p;
   pw->p = nullptr;

@@ -1,2 +1,3 @@
 EXPORTS
+luaopen_gcp_logging
 luaopen_gcp_pubsub

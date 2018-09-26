@@ -19,6 +19,7 @@ extern "C"
 #include <string>
 
 typedef google::protobuf::Map<std::string, std::string> MapString;
+typedef google::protobuf::MapPair<std::string, std::string> MapPairString;
 
 /**
  * Loads the Heka message headers into the map.

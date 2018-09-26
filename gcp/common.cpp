@@ -12,8 +12,6 @@
 #include <iomanip>
 #include <sstream>
 
-typedef google::protobuf::MapPair<std::string, std::string> MapPairString;
-
 void gcp_headers_to_map(const lsb_heka_message *hm, MapString* m)
 {
   m->insert(MapPairString("heka_message", "1"));

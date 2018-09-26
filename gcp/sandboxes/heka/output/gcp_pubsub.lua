@@ -47,7 +47,7 @@ if encoder_module then
 end
 
 
-local publisher = gcp.pubsub.publisher(channel, topic, max_async_requests)
+local publisher = gcp.pubsub.publisher(channel, topic, max_async_requests, batch_size)
 local timer = true
 if max_async_requests > 0 then
     local sid
@@ -70,7 +70,7 @@ if max_async_requests > 0 then
         return status_code
     end
 
-    function timer_event(ns)
+    function timer_event(ns, shutdown)
         publisher:poll()
         if timer or shutdown then
             pcall(publisher.flush, publisher, sid)
