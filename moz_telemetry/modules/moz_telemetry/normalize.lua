@@ -206,24 +206,26 @@ end
 
 local normalize_mobile_os_grammar =
 (l.P"iOS" + anywhere"iPhone") / "iOS" +
-l.P"Android" / "Android" +
+l.C"Android" +
 l.Cc"Other"
 
 function mobile_os(name)
-    if type(name) ~= "string" then name = "Other" end
+    if type(name) ~= "string" then name = "" end
     return normalize_mobile_os_grammar:match(name)
 end
 
 
 local normalize_mobile_app_name_grammar =
-l.P"Fennec" / "Fennec" +
-l.P"Focus" / "Focus" +
-l.P"Klar" / "Klar" +
-(anywhere"FirefoxReality") / "FirefoxReality" +
+l.C"Fennec" + l.C"Focus" + l.C"Klar" +
+l.C"FirefoxForFireTV" + l.C"Focus-TV" +
+l.C"Zerda" + l.C"Zerda_cn" + l.C"Scryer" +
+l.C"WebXR" + l.C"FirefoxReality_oculusvr" + l.C"FirefoxReality_googlevr" + l.C"FirefoxReality_wavevr" +
+l.C"Lockbox" +
+l.C"FirefoxConnect" +
 l.Cc"Other"
 
 function mobile_app_name(name)
-    if type(name) ~= "string" then name = "Other" end
+    if type(name) ~= "string" then name = "" end
     return normalize_mobile_app_name_grammar:match(name)
 end
 
