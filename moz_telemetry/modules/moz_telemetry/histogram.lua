@@ -172,7 +172,7 @@ local function find_histogram(ns, histograms, k, v)
             updated = 0,
             bucket_count = cnt,
             histogram_type = v.histogram_type,
-            data = matrix.new(histograms.rows, cnt),
+            data = matrix.new(histograms.rows, cnt, "float"),
             submissions = matrix.new(histograms.rows, 1),
             }
         if v.histogram_type == 0 then
@@ -253,7 +253,7 @@ function process(ns, json, histograms, row)
             cnt = cnt + v
         end
         for b,v in pairs(o.values) do
-            local corrected  = v / cnt * 1000 -- todo we may want to create a matrix of floats
+            local corrected  = v / cnt
             if corrected == corrected then
                 local bucket = tonumber(b)
                 if h.histogram_type == 0 then
@@ -275,7 +275,7 @@ function output(histograms, row, graphs)
     local last_update = histograms.last_update / 1e9
     for hn, t in pairs(histograms.names) do
         if  last_update - t.updated > 86400 then
-            histograms[hn] = nil
+            histograms.names[hn] = nil
         else
             local submissions = t.submissions:get(row, 1)
             add_to_payload(string.format('%s"%s":{"alerted":%s,"created":%d,"updated":%d,"bucket_count":%d,"histogram_type":%d,"submissions":%d', sep, escape_json(hn), tostring(t.alerted), t.created, t.updated, t.bucket_count, t.histogram_type, submissions))
@@ -287,7 +287,7 @@ function output(histograms, row, graphs)
                 and not t.alerted
                 and t.updated - t.created > alert_active
                 and #graphs < 25
-                and not alert_ignore[k] then
+                and not alert_ignore[hn] then
                     local alert = false
                     for i=1, histograms.rows do
                         -- confirm there is at least one other row with the minimum number of submissions

@@ -48,7 +48,7 @@ assert(exp.alerted == false, exp.alerted)
 verify_buckets(exp.buckets, expected)
 for i=1, 10 do
     local v = exp.data:get(2, i)
-    assert(v == math.floor(i / 55 * 1000), string.format("index: %d, value: %d", i, v))
+    assert(math.abs(i / 55 - v) < 0.00001, string.format("index: %d, value: %g", i, v))
 end
 
 mth.process(12346e9, json, histograms, 2)
@@ -60,7 +60,7 @@ assert(v == 2, v)
 assert(exp.updated == 12346, exp.updated)
 for i=1, 10 do
     local v = exp.data:get(2, i)
-    assert(v == math.floor(i / 55 * 1000) * 2, string.format("index: %d, value: %d", i, v))
+    assert(math.abs(i / 55 * 2 - v) < 0.00001, string.format("index: %d, value: %g", i, v))
 end
 
 
@@ -79,7 +79,7 @@ assert(lin.bucket_count == 10, lin.bucket_count)
 assert(lin.alerted == false, lin.alerted)
 for i=1, 10 do
     local v = lin.data:get(2, i)
-    assert(v == math.floor(i / 55 * 1000), string.format("index: %d, value: %d", i, v))
+    assert(math.abs(i / 55 - v) < 0.00001, string.format("index: %d, value: %g", i, v))
 end
 
 mth.process(12336e9, json, histograms, 2)
@@ -91,7 +91,7 @@ assert(v == 2, v)
 assert(lin.updated == 12336, lin.updated)
 for i=1, 10 do
     local v = lin.data:get(2, i)
-    assert(v == math.floor(i / 55 * 1000) * 2, string.format("index: %d, value: %d", i, v))
+    assert(math.abs(i / 55 * 2 - v) < 0.00001, string.format("index: %d, value: %g", i, v))
 end
 
 mth.clear_row(histograms, 2)
@@ -101,9 +101,9 @@ v = lin.submissions:get(2, 1)
 assert(v == 0, v)
 for i=1, 10 do
     local v = exp.data:get(2, i)
-    assert(v == 0, string.format("index: %d, value: %d", i, v))
+    assert(v ~= v, string.format("index: %d, value: %g", i, v))
     v = lin.data:get(2, i)
-    assert(v == 0, string.format("index: %d, value: %d", i, v))
+    assert(v ~= v, string.format("index: %d, value: %g", i, v))
 end
 
 return 0

@@ -34,7 +34,7 @@ alert = {
 }
 ```
 --]]
-_PRESERVATION_VERSION = read_config("preservation_version") or 0
+_PRESERVATION_VERSION = read_config("preservation_version") or 1
 ebuckets    = {} -- cache for the exponential histogram bucket hash
 data        = nil
 
@@ -81,6 +81,8 @@ local function find_build(ns, bid, bts)
                 b = data.builds[key]
                 data.builds[key] = nil
                 b.ts = bts
+                b.created = ns
+                b.submissions = 0
                 mth.clear_row(data.histograms, b.row)
                 data.builds[bid] = b
             else
