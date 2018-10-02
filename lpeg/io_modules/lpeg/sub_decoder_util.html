@@ -654,7 +654,7 @@
                 <a href="../../../gcp/">
             
                     
-                    gcp (0.0.3)
+                    gcp (0.0.4)
             
                 </a>
             
@@ -737,7 +737,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.10.1.1.2.1" data-path="../../../gcp/sandboxes/heka/output/gcp_pubsub.html">
+        <li class="chapter " data-level="1.10.1.1.2.1" data-path="../../../gcp/sandboxes/heka/output/gcp_logging.html">
+            
+                <a href="../../../gcp/sandboxes/heka/output/gcp_logging.html">
+            
+                    
+                    gcp_logging
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.1.1.2.2" data-path="../../../gcp/sandboxes/heka/output/gcp_pubsub.html">
             
                 <a href="../../../gcp/sandboxes/heka/output/gcp_pubsub.html">
             
@@ -765,7 +778,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.10.2" data-path="../../../gcp/pubsub.html">
+        <li class="chapter " data-level="1.10.2" data-path="../../../gcp/logging.html">
+            
+                <a href="../../../gcp/logging.html">
+            
+                    
+                    logging
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.3" data-path="../../../gcp/pubsub.html">
             
                 <a href="../../../gcp/pubsub.html">
             
@@ -2062,7 +2088,7 @@
                 <a href="../../">
             
                     
-                    lpeg (1.0.15)
+                    lpeg (1.0.16)
             
                 </a>
             
@@ -3222,7 +3248,7 @@
                 <a href="../../../moz_security/">
             
                     
-                    moz_security (0.0.23)
+                    moz_security (0.0.24)
             
                 </a>
             
@@ -3251,6 +3277,19 @@
             
                     
                     hawk
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26.1.2" data-path="../../../moz_security/io_modules/taskcluster.html">
+            
+                <a href="../../../moz_security/io_modules/taskcluster.html">
+            
+                    
+                    taskcluster
             
                 </a>
             
@@ -3640,7 +3679,7 @@
                 <a href="../../../moz_telemetry/">
             
                     
-                    moz_telemetry (1.2.21)
+                    moz_telemetry (1.2.22)
             
                 </a>
             
@@ -4346,7 +4385,7 @@
                 <a href="../../../papertrail/">
             
                     
-                    papertrail
+                    papertrail (0.1.2)
             
                 </a>
             
@@ -5597,7 +5636,13 @@
      <span class="hljs-comment">-- original message produced by the parent decoder.</span>
   <span class="hljs-comment">-- array:</span>
      <span class="hljs-comment">-- column 1: (string/array)</span>
-        <span class="hljs-comment">-- string: Sample message (see above)</span>
+        <span class="hljs-comment">-- string: Sample message (see above) or a decoder module specification</span>
+          <span class="hljs-comment">-- A decoder module specification is used when transformations need</span>
+          <span class="hljs-comment">-- to be applied to a standard decoder output.</span>
+            <span class="hljs-comment">-- Caveats:</span>
+            <span class="hljs-comment">-- 1) the decoder output must be a Lua Heka message table</span>
+            <span class="hljs-comment">-- 2) this must be the only entry in the configuration array</span>
+            <span class="hljs-comment">-- 3) printf_messages must not be defined</span>
         <span class="hljs-comment">-- array:</span>
           <span class="hljs-comment">-- printf.build_grammar format specification</span>
           <span class="hljs-comment">-- module reference to a grammar builder function, any additional columns are passed to the function</span>
@@ -5632,13 +5677,12 @@ foo = {
 <ul>
 <li>sub_decoders (table)</li>
 </ul>
-<h3 id="load_sub_decoder">1.2. load_sub_decoder</h3>
-<p>Returns the decode function for a single sub_decoder.</p>
+<h3 id="load_decoder">1.2. load_decoder</h3>
+<p>Returns the decode function for a single decoder. <code>load_sub_decoder</code> is an alias
+to this function and has been kept for backwards compatibility.</p>
 <p><em>Arguments</em></p>
 <ul>
-<li>sub_decoder (string/table) sub_decoder configuration entry<pre><code class="lang-lua">sub_decoder = <span class="hljs-string">&quot;decoders.nginx.access&quot;</span>
-</code></pre>
-</li>
+<li>decoder (string/table) decoder configuration entry</li>
 <li>printf_messages (table/nil) printf_message table (see above)</li>
 </ul>
 <p><em>Return</em></p>
@@ -5671,7 +5715,7 @@ a new message with defaults.</li>
 <li>none - msg is modified in place</li>
 </ul>
 <p>source code: <a href="https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/lpeg/io_modules/lpeg/sub_decoder_util.lua" target="_blank">sub_decoder_util.lua</a></p>
-<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Sub_Decoder_Utility_Module">Sub Decoder Utility Module</a></p><li><a href="#Functions">1. Functions</a></li><ul><li><a href="#load_sub_decoders">1.1. load_sub_decoders</a></li><li><a href="#load_sub_decoder">1.2. load_sub_decoder</a></li><li><a href="#copy_message">1.3. copy_message</a></li><li><a href="#add_fields">1.4. add_fields</a></li></ul></ul></div><a href="#Functions" id="goTop"><i class="fa fa-arrow-up"></i></a>
+<div id="anchors-navbar"><i class="fa fa-anchor"></i><ul><p><a href="#Sub_Decoder_Utility_Module">Sub Decoder Utility Module</a></p><li><a href="#Functions">1. Functions</a></li><ul><li><a href="#load_sub_decoders">1.1. load_sub_decoders</a></li><li><a href="#load_decoder">1.2. load_decoder</a></li><li><a href="#copy_message">1.3. copy_message</a></li><li><a href="#add_fields">1.4. add_fields</a></li></ul></ul></div><a href="#Functions" id="goTop"><i class="fa fa-arrow-up"></i></a>
                                 
                                 </section>
                             
@@ -5714,7 +5758,7 @@ a new message with defaults.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"sub_decoder_util","level":"1.20.1.2.2","depth":4,"next":{"title":"modules","level":"1.20.2","depth":2,"path":"lpeg/modules/README.md","ref":"lpeg/modules/README.md","articles":[{"title":"lpeg","level":"1.20.2.1","depth":3,"path":"lpeg/modules/lpeg/README.md","ref":"lpeg/modules/lpeg/README.md","articles":[{"title":"common_log_format","level":"1.20.2.1.1","depth":4,"path":"lpeg/modules/lpeg/common_log_format.md","ref":"lpeg/modules/lpeg/common_log_format.md","articles":[]},{"title":"date_time","level":"1.20.2.1.2","depth":4,"path":"lpeg/modules/lpeg/date_time.md","ref":"lpeg/modules/lpeg/date_time.md","articles":[]},{"title":"escape_sequences","level":"1.20.2.1.3","depth":4,"path":"lpeg/modules/lpeg/escape_sequences.md","ref":"lpeg/modules/lpeg/escape_sequences.md","articles":[]},{"title":"ip_address","level":"1.20.2.1.4","depth":4,"path":"lpeg/modules/lpeg/ip_address.md","ref":"lpeg/modules/lpeg/ip_address.md","articles":[]},{"title":"logfmt","level":"1.20.2.1.5","depth":4,"path":"lpeg/modules/lpeg/logfmt.md","ref":"lpeg/modules/lpeg/logfmt.md","articles":[]},{"title":"mysql","level":"1.20.2.1.6","depth":4,"path":"lpeg/modules/lpeg/mysql.md","ref":"lpeg/modules/lpeg/mysql.md","articles":[]},{"title":"phabricator","level":"1.20.2.1.7","depth":4,"path":"lpeg/modules/lpeg/phabricator.md","ref":"lpeg/modules/lpeg/phabricator.md","articles":[]},{"title":"postfix","level":"1.20.2.1.8","depth":4,"path":"lpeg/modules/lpeg/postfix.md","ref":"lpeg/modules/lpeg/postfix.md","articles":[]},{"title":"printf","level":"1.20.2.1.9","depth":4,"path":"lpeg/modules/lpeg/printf.md","ref":"lpeg/modules/lpeg/printf.md","articles":[]},{"title":"uri","level":"1.20.2.1.10","depth":4,"path":"lpeg/modules/lpeg/uri.md","ref":"lpeg/modules/lpeg/uri.md","articles":[]}]}]},"previous":{"title":"heka","level":"1.20.1.2.1","depth":4,"path":"lpeg/io_modules/lpeg/heka.md","ref":"lpeg/io_modules/lpeg/heka.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lpeg/io_modules/lpeg/sub_decoder_util.md","mtime":"2018-09-10T20:15:30.024Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-09-10T20:15:36.405Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"sub_decoder_util","level":"1.20.1.2.2","depth":4,"next":{"title":"modules","level":"1.20.2","depth":2,"path":"lpeg/modules/README.md","ref":"lpeg/modules/README.md","articles":[{"title":"lpeg","level":"1.20.2.1","depth":3,"path":"lpeg/modules/lpeg/README.md","ref":"lpeg/modules/lpeg/README.md","articles":[{"title":"common_log_format","level":"1.20.2.1.1","depth":4,"path":"lpeg/modules/lpeg/common_log_format.md","ref":"lpeg/modules/lpeg/common_log_format.md","articles":[]},{"title":"date_time","level":"1.20.2.1.2","depth":4,"path":"lpeg/modules/lpeg/date_time.md","ref":"lpeg/modules/lpeg/date_time.md","articles":[]},{"title":"escape_sequences","level":"1.20.2.1.3","depth":4,"path":"lpeg/modules/lpeg/escape_sequences.md","ref":"lpeg/modules/lpeg/escape_sequences.md","articles":[]},{"title":"ip_address","level":"1.20.2.1.4","depth":4,"path":"lpeg/modules/lpeg/ip_address.md","ref":"lpeg/modules/lpeg/ip_address.md","articles":[]},{"title":"logfmt","level":"1.20.2.1.5","depth":4,"path":"lpeg/modules/lpeg/logfmt.md","ref":"lpeg/modules/lpeg/logfmt.md","articles":[]},{"title":"mysql","level":"1.20.2.1.6","depth":4,"path":"lpeg/modules/lpeg/mysql.md","ref":"lpeg/modules/lpeg/mysql.md","articles":[]},{"title":"phabricator","level":"1.20.2.1.7","depth":4,"path":"lpeg/modules/lpeg/phabricator.md","ref":"lpeg/modules/lpeg/phabricator.md","articles":[]},{"title":"postfix","level":"1.20.2.1.8","depth":4,"path":"lpeg/modules/lpeg/postfix.md","ref":"lpeg/modules/lpeg/postfix.md","articles":[]},{"title":"printf","level":"1.20.2.1.9","depth":4,"path":"lpeg/modules/lpeg/printf.md","ref":"lpeg/modules/lpeg/printf.md","articles":[]},{"title":"uri","level":"1.20.2.1.10","depth":4,"path":"lpeg/modules/lpeg/uri.md","ref":"lpeg/modules/lpeg/uri.md","articles":[]}]}]},"previous":{"title":"heka","level":"1.20.1.2.1","depth":4,"path":"lpeg/io_modules/lpeg/heka.md","ref":"lpeg/io_modules/lpeg/heka.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"lpeg/io_modules/lpeg/sub_decoder_util.md","mtime":"2018-10-02T14:16:31.179Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-10-02T14:16:42.644Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>
