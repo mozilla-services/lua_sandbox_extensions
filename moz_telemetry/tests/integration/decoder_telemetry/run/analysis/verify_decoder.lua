@@ -91,6 +91,30 @@ local messages = {
         appName = "Firefox",
     }
     },
+    {Logger = "telemetry", Type = "telemetry", Hostname = "example.com", Fields = {
+        ["appUpdateChannel"] = "release",
+        ["sourceVersion"] = "9",
+        ["normalizedOs"] = "Android",
+        ["normalizedAppName"] = "Fennec",
+        ["submissionDate"] = "19700101",
+        ["appVersion"] = "62.0.2",
+        ["DNT"] = "1",
+        ["appBuildId"] = "20180920131237",
+        ["appName"] = "Fennec",
+        ["submission"] = {value = '{"sessions":1,"clientId":"7cac7c8f-6c0f-4a33-b1f9-e4c2519f53cb","os":"Android","created":"2018-09-29","tz":330,"defaultSearch":null,"experiments":["leanplum-start","custom-tabs","top-addons-menu","process-background-telemetry","download-content-catalog-sync","hls-video-playback","bookmark-history-menu"],"accessibilityServices":["com.symantec.mobilesecurity/.appadvisor.ScanAccessibilityService"],"locale":"en-IN","flashUsage":0,"defaultBrowser":false,"v":9,"displayVersion":"62.0.2","profileDate":17795,"durations":32,"arch":"arm64-v8a","osversion":"27","device":"10or-E","seq":13}', value_type = 1, representation = "json"},
+        ["Date"] = "Sat, 29 Sep 2018 10:43:39 GMT",
+        ["sampleId"] = 46,
+        ["normalizedChannel"] = "release",
+        ["sourceName"] = "telemetry",
+        ["clientId"]= "7cac7c8f-6c0f-4a33-b1f9-e4c2519f53cb",
+        ["documentId"] = "3a6f7d87-6c10-40d9-b341-852c005c673d",
+        ["docType"] = "core",
+        ["geoCountry"] = "US",
+        ["Host"] = "incoming.telemetry.mozilla.org",
+        ["geoCity"] = "Milton",
+        ["geoSubdivision1"] = "WA"
+    }
+    },
 }
 
 local cnt = 0

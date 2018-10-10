@@ -252,7 +252,7 @@ local function process_json(hsr, msg)
 
         -- The "telemetryEnabled" flag does not apply to this type of ping.
     elseif doc:value(doc:find("v")) then
-        -- This is a Fennec "core" ping
+        -- This is mobile ping ("core", "mobile-event", "mobile-metrics" or "focus-event")
         local sourceVersion = doc:value(doc:find("v"))
         validate_schema(hsr, msg, doc, sourceVersion)
         msg.Fields.sourceVersion = tostring(sourceVersion)
@@ -260,6 +260,10 @@ local function process_json(hsr, msg)
         msg.Fields.clientId = clientId
         submissionField.value = doc
         msg.Fields.submission = submissionField
+
+        -- Normalize os and appName
+        msg.Fields.normalizedOs = mtn.mobile_os(doc:value(doc:find("os")))
+        msg.Fields.normalizedAppName = mtn.mobile_app_name(msg.Fields.appName)
     else
         -- Everything else. Just store the submission in the submission field by default.
         validate_schema(hsr, msg, doc, 1)

@@ -860,6 +860,53 @@ local messages = {
             content = ""
         }
     },
+    { -- core ping
+        Timestamp = 1,
+        Logger = "moz_ingest",
+        Type   = "telemetry.raw",
+        Hostname = "example.com",
+        Fields = {
+            ["X-Forwarded-For"] = "127.0.0.1, 216.160.83.56",
+            uri         = "/submit/telemetry/3a6f7d87-6c10-40d9-b341-852c005c673d/core/Fennec/62.0.2/release/20180920131237",
+            Host        = "incoming.telemetry.mozilla.org",
+            DNT         = "1",
+            Date        = "Sat, 29 Sep 2018 10:43:39 GMT",
+            ["X-PingSender-Version"] = "1.0",
+            content = [[
+
+    {
+      "sessions": 1,
+      "clientId": "7cac7c8f-6c0f-4a33-b1f9-e4c2519f53cb",
+      "os": "Android",
+      "created": "2018-09-29",
+      "tz": 330,
+      "defaultSearch": null,
+      "experiments": [
+        "leanplum-start",
+        "custom-tabs",
+        "top-addons-menu",
+        "process-background-telemetry",
+        "download-content-catalog-sync",
+        "hls-video-playback",
+        "bookmark-history-menu"
+      ],
+      "accessibilityServices": [
+        "com.symantec.mobilesecurity/.appadvisor.ScanAccessibilityService"
+      ],
+      "locale": "en-IN",
+      "flashUsage": 0,
+      "defaultBrowser": false,
+      "v": 9,
+      "displayVersion": "62.0.2",
+      "profileDate": 17795,
+      "durations": 32,
+      "arch": "arm64-v8a",
+      "osversion": "27",
+      "device": "10or-E",
+      "seq": 13
+    }]]
+        }
+    },
 }
 
 function process_message()
