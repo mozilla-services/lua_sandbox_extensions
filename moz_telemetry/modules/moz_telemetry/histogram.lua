@@ -263,6 +263,11 @@ function process(ns, json, histograms, row)
                         bucket = math.floor(bucket / h.bucket_size + 0.5) + 1
                     end
                 end
+                if bucket < 0 then
+                    bucket = 0
+                elseif bucket >= h.bucket_count then
+                    bucket = h.bucket_count - 1
+                end
                 h.data:add(row, bucket + 1, corrected)
             end
         end
