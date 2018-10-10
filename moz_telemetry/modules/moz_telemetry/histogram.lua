@@ -210,6 +210,7 @@ local function debug_histogram_graph(h, pcc, row, closest, title, graphs)
     local curr = h.data:get_row(row)
     local cdata = {}
     for x,y in ipairs(curr) do
+        if y ~= y then y = 0 end
         cdata[x] = string.format("{x:%d,y:%g}", x, y)
     end
 
@@ -219,6 +220,7 @@ local function debug_histogram_graph(h, pcc, row, closest, title, graphs)
     local prev = h.data:get_row(closest)
     local pdata = {}
     for x,y in ipairs(prev) do
+        if y ~= y then y = 0 end
         pdata[x] = string.format("{x:%d,y:%g}", x, y)
     end
 
