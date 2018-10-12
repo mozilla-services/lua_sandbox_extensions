@@ -5,6 +5,9 @@ ARG EXTENSIONS
 
 WORKDIR /root
 
+COPY docker.arrow.keys.txt /root/docker.arrow.keys.txt
+RUN rpm --import /root/docker.arrow.keys.txt
+
 # Install most of our package dependencies here
 RUN yum makecache && \
     yum install -y git rpm-build c-compiler make curl gcc gcc-c++ systemd-devel \
