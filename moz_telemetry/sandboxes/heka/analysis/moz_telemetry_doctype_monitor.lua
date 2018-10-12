@@ -7,7 +7,7 @@
 # Mozilla Telemetry docType Monitor
 
 Monitors a specific docType for volume, shape, size, duplicate, ingestion_error
-and latency issues by normalied channel name.
+and latency issues by normalized channel name.
 
 * volume - monitors for inactivity (no data) and optionally a percent change in
   the number of submissions compared to the same 24 hour time period of the

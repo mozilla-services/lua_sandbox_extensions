@@ -15,7 +15,7 @@ RUN yum makecache && \
     postgresql-devel libcurl-devel lua-devel && \
     yum install -y https://packages.red-data-tools.org/centos/red-data-tools-release-1.0.0-1.noarch.rpm && \
     yum install -y libmaxminddb-devel jq libmaxminddb librdkafka-devel jansson-devel devtoolset-6 && \
-    yum install -y --enablerepo=epel --nogpgcheck arrow-devel-0.9.0 && \
+    yum install -y --enablerepo=epel arrow-devel-0.9.0 && \
     curl -OL https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz && \
     if [[ `sha256sum cmake-3.10.2-Linux-x86_64.tar.gz | awk '{print $1}'` != \
         "7a82b46c35f4e68a0807e8dc04e779dee3f36cd42c6387fd13b5c29fe62a69ea" ]]; then exit 1; fi && \
