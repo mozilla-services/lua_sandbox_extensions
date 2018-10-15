@@ -6,7 +6,7 @@
 # Mozilla Telemetry Build Monitor
 
 Analyzes all the histograms looking for any significant differences between the
-current and previous builds partitioned by normalized OS.
+current and previous builds.
 
 ## Sample Configuration
 
@@ -14,12 +14,17 @@ current and previous builds partitioned by normalized OS.
 filename = "moz_telemetry_build_monitor.lua"
 ticker_interval = 600
 preserve_data = true
-message_matcher = "Uuid < '\003' && Fields[os] =~ 'Windows' && Fields[normalizedChannel] == 'release' && Fields[docType] == 'main' && Fields[appVendor] == 'Mozilla' && Fields[payload.histograms] != NIL" -- slightly greater than a 1% sample
+message_matcher = "Uuid < '\003'" .. -- slightly greater than a 1% sample
+" && Fields[os] =~ 'Windows'" ..
+" && Fields[normalizedChannel] == 'release'" ..
+" && Fields[docType] == 'main'" ..
+" && Fields[appVendor] == 'Mozilla'" ..
+" && Fields[payload.histograms] != NIL"
 
 number_of_builds = 5 -- default, number of builds to monitor >= 2
 
 alert = {
-  disabled = false,
+  -- disabled = false,
   prefix = true,
   throttle = ticker_interval,
   modules = {
@@ -28,32 +33,36 @@ alert = {
   thresholds = {
     -- pcc = 0.3,    -- default minimum correlation coefficient (less than or equal alerts)
     -- submissions = 1000, -- default minimum number of submissions before alerting in at least the current and one previous build
-    -- ignore = {} -- hash of histograms to ignore e.g. 'histogram_name = true'
-    active = 3600, -- number of seconds after histogram/build creation before alerting
+    -- ignore = {}, -- hash of histograms to ignore e.g. 'histogram_name = true'
+    -- active = 3600, -- number of seconds after histogram/build creation before alerting
   }
 }
 ```
 --]]
-_PRESERVATION_VERSION = read_config("preservation_version") or 1
+_PRESERVATION_VERSION = read_config("preservation_version") or 2
 ebuckets    = {} -- cache for the exponential histogram bucket hash
 data        = nil
 
 require "cjson"
 require "os"
 require "string"
+local alert = require "heka.alert"
 local l     = require "lpeg";l.locale(l)
 local mth   = require "moz_telemetry.histogram"
 
-local alert_active  = read_config("alert").thresholds.active or 3600
+local alert_submissions = alert.get_threshold("submissions") or 1000
+local alert_active      = alert.get_threshold("active") or 3600
 alert_active = alert_active * 1e9
 local number_of_builds = read_config("number_of_builds") or 5
 assert(number_of_builds >= 2, "number_of_build must be >= 2")
 data  = {
+    oldest_bts      = 0,
     current_row     = 0,
     builds_count    = 0,
     builds          = {},
     histograms      = mth.create(number_of_builds, ebuckets)
 }
+buildids = {}
 
 local grammar = l.Ct(
     l.Cg(l.digit^-4, "year")
@@ -68,6 +77,23 @@ local grammar = l.Ct(
 local function find_build(ns, bid, bts)
     local b = data.builds[bid]
     if not b then
+        if data.oldest_bts == 0 or bts > data.oldest_bts then
+            local tmp = buildids[bid]
+            if tmp then
+                tmp.submissions = tmp.submissions + 1
+                if tmp.submissions < alert_submissions then
+                    return
+                else
+                    buildids[bid] = nil
+                end
+            else
+                buildids[bid]= {created = ns, ts = bts, submissions = 1}
+                return
+            end
+        else
+            return
+        end
+
         if data.builds_count == number_of_builds then
             local oldest = bts
             local key = nil
@@ -78,6 +104,7 @@ local function find_build(ns, bid, bts)
                 end
             end
             if key then
+                data.oldest_bts = oldest
                 b = data.builds[key]
                 data.builds[key] = nil
                 b.ts = bts
@@ -86,6 +113,7 @@ local function find_build(ns, bid, bts)
                 mth.clear_row(data.histograms, b.row)
                 data.builds[bid] = b
             else
+                if bts > data.oldest_bts then data.oldest_bts = bts end
                 return -- old build ignore
             end
         else
@@ -148,4 +176,11 @@ function timer_event(ns, shutdown)
         mth.alert(graphs)
     end
     mth.output_viewer_html(schema_name, schema_ext)
+
+    -- prune old buildids and clean out bogus builds
+    for k, v in pairs(buildids) do
+        if v.ts <= data.oldest_bts or ns - v.created >= 86400e9 then
+            buildids[k] = nil
+        end
+    end
 end
