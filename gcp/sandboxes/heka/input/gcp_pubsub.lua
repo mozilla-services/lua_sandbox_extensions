@@ -11,7 +11,7 @@ filename            = "gcp_pubsub.lua"
 ticker_interval     = 1
 
 channel             = "pubsub.googleapis.com"
-project             = "projects/mozilla-data-poc-198117"
+project             = "mozilla-data-poc-198117"
 topic               = "pubsub_grpc"
 subscription_name   = "test"
 batch_size          = 1000 -- default/maximum
@@ -43,9 +43,10 @@ local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoder
 
 local channel   = read_config("channel") or "pubsub.googleapis.com"
 local project   = read_config("project") or error"project must be set"
+project         = project:match("^projects/.+") or "projects/" .. project
 
 local topic     = read_config("topic") or error"topic must be set"
-topic = string.format("%s/topics/%s", project, topic)
+topic           = topic:match("^projects/.+") or string.format("%s/topics/%s", project, topic)
 
 local subscription_name = read_config("subscription_name") or string.format("%s_%s", read_config("Hostname"), read_config("Logger"))
 subscription_name = string.format("%s/subscriptions/%s", project, subscription_name)

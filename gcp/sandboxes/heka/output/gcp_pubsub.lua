@@ -12,7 +12,7 @@ message_matcher     = "TRUE"
 ticker_interval     = 1 -- this should be zero when batch_size == 1 and max_async_requests == 0
 
 channel             = "pubsub.googleapis.com"
-project             = "projects/mozilla-data-poc-198117"
+project             = "mozilla-data-poc-198117"
 topic               = "pubsub_grpc"
 batch_size          = 1000 -- default/maximum
 max_async_requests  = 20 -- default (0 synchronous only)
@@ -28,8 +28,9 @@ require "string"
 
 local channel   = read_config("channel") or "pubsub.googleapis.com"
 local project   = read_config("project") or error"project must be set"
+project         = project:match("^projects/.+") or "projects/" .. project
 local topic     = read_config("topic") or error"topic must be set"
-topic = string.format("%s/topics/%s", project, topic)
+topic           = topic:match("^projects/.+") or string.format("%s/topics/%s", project, topic)
 
 local batch_size = read_config("batch_size") or 1000
 assert(batch_size > 0 and batch_size <= 1000)
