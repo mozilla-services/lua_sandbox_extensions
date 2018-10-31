@@ -75,7 +75,7 @@ local messages = {
         "xpcomAbi": "x86_64-gcc3"
       },
       "payload" : {
-        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.jR9EbyqYXQwNmPiZM9AZvWPM6Vv6ChjpLeq64O4Il7wQU5MUPHk90LTj6ELiyDseyl8OoslcXM3pjPzGy23Yum7-uI92vE-L0jVS5C6-UcAwdX7Z2ZMbUo0qcUIiNXupnCmUKUfRdWtFAU7TRt8u_8VulhvwYA1H9UEEkKQzPCpCVtDidzYellE-f4tp_GrL_PP2tuSI06-HRP5AyTItXxneDA5mqbgs9BfRVlWXJFqj76JdFMHwmvnOWhlffGy1HzqYoG1gqEPQIFOMZMmHLhyfEm6VCbVue-yxL93D1g-XXCCy1xCY43MF06d-rzWMhtzEAd7hoxfftBTt4u3LEL8GenBstiA4WacyNl7WOyf3b-8p6KnM7r0XzB-N5SZeg4dt3VWJmNb-0ZTP4pd5KCFUzSIyVq7CTewDh8Z4vlxPJOA4kqXpMKFdHLGf714me8QWfXlcMS6TCXNK0YYK7_FYEa-BmlgAtXO0AnmqRXH1sz4CBU4fXKDxwlslqQ7a4UYEBKsOcZkyWOY9Ppo4N-_aZ0s2iL3mH_6Ttpb40oM7hTb9qja36JAqpnWSf9PkxLke6lHqeoroOLYemn-3srfkRC-EVwWxS--LpanT5RsmP9k15XD6b1dK65-J3Y7ofvPjhoFY6kWapIjFvBw6wvYLjJJAjNFxb3Gu8PJ_4JU.5_H8dYZUyKLK5TZn.ZXwVWvDgKKyKw6gy.furesZOKHF8-YlTSWn-SlQ",
+        "encryptedData": "eyJlbmMiOiAiQTI1NkdDTSIsICJhbGciOiAiUlNBLU9BRVAiLCAiemlwIjogIkRFRiIsICJraWQiOiAiMjk0MDkyMWUtMzY0Ni00NTFjLTg1MTAtOTcxNTUyNzU0ZTc0In0.N1n0JDBGFb8eiDM7CutG5MHfkpWgLtMBt3MXtAQFB5jX792vbJmvr0a3rUxLh3wOdff-xIV1sdmoV_svyVj-y043Jm3KxrHDzDGm9NoydsKbQJtsmDYgaAjoalmm7tQrp-0hYV5l39G7UIH1_mkNOTBO187aZ5JXc4hsDuULqVWc_pp7iGSSo_tTcoqWraimI1-pecMTJ8GCduLivjZY2miSnAY10fCkISp54xdZCAH9MNYk0yBAEwpjeO6Vk4epS10keRZEo4iZpxZWDhjCUdc0pdo-G40DXhLn6eK_NMd6U9k7KmkrknnxVaNN0QeHCBGPvFIiOcF6RVjI1vdAr5bbHklaEOIek2SdbpjylZLc0Fu0YJNZtxJJQnGKexci8i4agNVmfBKY-oojQWEDQcGPsp0WjQssL1dv71UfcUCjYfEbr4Rm_UMmi0j3xetLrSR_PArIiEOAkT357fzexlUnISkzXYI3DpBUFG-SL3nTUvm4_Xln4fpW0gte1T8ZF6Sf6_SrK7Jg2o6ZeQhg1GPkV5ePYmQqnVbIy7E7PnaeHkvK2KQRigCgXHXVsas7XDmpHyWtNIDVdQHY3vELD-eLSy3tRJhyEUA4mUliniobJqYrp9BHE2koQPXVMcRrBkQ7Eny8anlhIcY5HGKZDyUj2ZP0LyhRHrxV4lce0ho.ou76dtr-FiasUBSB.u15NVFawDnuxwFZs.CePzeSog14yBe5lB31dVrA",
         "encryptionKeyId": "pioneer-20170901",
         "pioneerId": "11111111-1111-1111-1111-111111111111",
         "studyName": "test-study",
@@ -125,6 +125,43 @@ local messages = {
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "schema",
         DecodeError = "no schema: event.2 study: test-study"
+        }
+    },
+    {Logger = "telemetry", Type = "telemetry", Fields = {
+        schemaName = "shield-study",
+        schemaVersion = 3,
+        appVersion = "45.0",
+        studyName = "test-study",
+        pioneerId = "11111111-1111-1111-1111-111111111111",
+        submission = {value = [[{"version":3,"study_name":"test-study","branch":"control","addon_version":"0.1.1","shield_version":"1.2.3","testing":true,"type":"shield-study","data":{"study_state":"ineligible"}}]], value_type = 1, representation = "json"},
+        appUpdateChannel = "beta",
+        normalizedChannel = "beta",
+        creationTimestamp = 1.446686743312e+18,
+        docType = "pioneer-study",
+        appBuildId = "20151103030248",
+        geoCountry = "US",
+        appVendor = "Mozilla",
+        documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A07",
+        geoCity = "Milton",
+        appName = "Firefox"
+        }
+    },
+    {Logger = "telemetry", Type = "telemetry.metadata", Fields = {
+        schemaName = "shield-study",
+        schemaVersion = 3,
+        appVersion = "45.0",
+        studyName = "test-study",
+        pioneerId = "11111111-1111-1111-1111-111111111111",
+        appUpdateChannel = "beta",
+        normalizedChannel = "beta",
+        creationTimestamp = 1.446686743312e+18,
+        docType = "pioneer-study",
+        appBuildId = "20151103030248",
+        geoCountry = "US",
+        appVendor = "Mozilla",
+        documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A07",
+        geoCity = "Milton",
+        appName = "Firefox"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {

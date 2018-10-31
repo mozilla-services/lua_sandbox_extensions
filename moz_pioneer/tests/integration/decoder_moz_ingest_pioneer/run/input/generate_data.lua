@@ -58,6 +58,17 @@ local submissions = {
     {'{ "eventId" : "foobar"}', 'pioneer-20200901', "test-study", "event", 1}, -- no encryption key
     {'{ "eventId" : "foobar"}', 'pioneer-20170901', "test-study", "bogus", 1}, -- no schema
     {'{ "eventId" : "foobar"}', 'pioneer-20170901', "test-study", "event", 2}, -- no version
+    {[[{"version": 3,
+        "study_name": "test-study",
+        "branch": "control",
+        "addon_version": "0.1.1",
+        "shield_version": "1.2.3",
+        "testing": true,
+        "type": "shield-study",
+        "data": {
+          "study_state": "ineligible"
+        }
+       }]], 'pioneer-20170901', "test-study", "shield-study", 3},
 }
 
 local msg = {
