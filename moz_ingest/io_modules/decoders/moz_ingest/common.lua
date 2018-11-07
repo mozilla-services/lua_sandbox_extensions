@@ -66,7 +66,7 @@ Decode and inject the message given as argument, using a module-internal stream 
 - throws on error
 --]]
 
-_PRESERVATION_VERSION = read_config("preservation_version") or _PRESERVATION_VERSION or 0
+_PRESERVATION_VERSION = _PRESERVATION_VERSION or read_config("preservation_version") or 0
 
 -- Imports
 local module_name   = ...
