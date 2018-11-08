@@ -79,6 +79,60 @@ for i,v in ipairs(tests) do
 end
 
 
+cfg.maxminddb_heka.xff = "last"
+local tests_last = {
+    {{Fields = {xff_addrs = "192.168.1.1, 216.160.83.56"}},
+        "xff_addrs",
+        {
+            xff_addrs = "192.168.1.1, 216.160.83.56",
+            xff_addrs_city = "Milton",
+            xff_addrs_country = "US",
+            xff_addrs_isp = "Century Link"
+        }
+    },
+}
+for i,v in ipairs(tests_last) do
+    gh.add_geoip_xff(v[1], v[2])
+    test.verify_msg_fields(v[3], v[1].Fields, i, true)
+end
+
+cfg.maxminddb_heka.xff = "all"
+local tests_all = {
+    {{Fields = {xff_addrs = "216.160.83.56, 192.168.1.1"}},
+        "xff_addrs",
+        {
+            xff_addrs = "216.160.83.56, 192.168.1.1",
+            xff_addrs_city = {"Milton", ""},
+            xff_addrs_country = {"US", ""},
+            xff_addrs_isp = {"Century Link", ""}
+        }
+    },
+}
+
+for i,v in ipairs(tests_all) do
+    gh.add_geoip_xff(v[1], v[2])
+    test.verify_msg_fields(v[3], v[1].Fields, i, true)
+end
+
+
+cfg.maxminddb_heka.xff = "first"
+local tests_first = {
+    {{Fields = {xff_addrs = "216.160.83.56, 192.168.1.1"}},
+        "xff_addrs",
+        {
+            xff_addrs = "216.160.83.56, 192.168.1.1",
+            xff_addrs_city = "Milton",
+            xff_addrs_country = "US",
+            xff_addrs_isp = "Century Link"
+        }
+    },
+}
+for i,v in ipairs(tests_first) do
+    gh.add_geoip_xff(v[1], v[2])
+    test.verify_msg_fields(v[3], v[1].Fields, i, true)
+end
+
+
 local t = cfg.maxminddb_heka.databases["GeoIP2-City-Test.mmdb"]
 t._country = nil
 cfg.maxminddb_heka.remove_original_field = true
