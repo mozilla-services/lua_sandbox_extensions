@@ -190,7 +190,7 @@ end
 
 local function inactivity_alert(ns, th, k, vcnt, cb, e)
     local iato = th.inactivity_timeout
-    if vcnt == 0 or iato == 0 then return end
+    if vcnt == 0 or not iato then return end
 
     if MINS_IN_HOUR - vcnt > iato then
         local _, cnt = stats.sum(cb:get_range(INGESTED, e - ((iato - 1) * 60e9))) -- include the current minute
@@ -209,8 +209,9 @@ function timer_event(ns, shutdown)
     for k, v in pairs(inputs) do
         local cb = v[1]
         local latency = v[3]:estimate(2) / 1e9
-        v[3]:clear()
+        if latency ~= latency then latency = 0 end
         cb:set(ns, LATENCY, latency)
+        v[3]:clear()
 
         local diags = v[2]
         diagnostic_prune(ns, diags)
@@ -221,7 +222,7 @@ function timer_event(ns, shutdown)
             local s = e - ((MINS_IN_HOUR - 1) * 60e9)
             local vcnt = error_alert(ns, th, k, cb, s, e)
             inactivity_alert(ns, th, k, vcnt, cb, e)
-            if th.latency > 0 and latency > th.latency then
+            if th.latency and latency > th.latency then
                 local err = string.format("Median latency: %d", latency)
                 if alert.send(k, "latency error", err) then
                     cb:annotate(ns, LATENCY, "alert", err)
