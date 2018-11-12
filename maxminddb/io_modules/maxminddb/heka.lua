@@ -26,6 +26,19 @@ queried.
 *Return*
 - none - the message is modified in place or an error is thrown
 
+### add_geoip_xff
+
+Given a Heka message add the geoip entries based on the specified field name
+containing an `x_forwarded_for` string. Use the `xff` configuration option to
+control the address selection.
+
+*Arguments*
+- msg (table) - original message
+- field_name (string) - field name in the message to lookup
+
+*Return*
+- none - the message is modified in place or an error is thrown
+
 ## Configuration examples
 ```lua
 maxminddb_heka = {
@@ -39,6 +52,8 @@ maxminddb_heka = {
         },
     },
     remove_original_field = false, -- remove the original field after a successful lookup
+    -- xff = "last|first|all", -- default last
+
 }
 ```
 --]]
@@ -46,6 +61,11 @@ local module_name = ...
 local module_cfg  = require "string".gsub(module_name, "%.", "_")
 local cfg         = read_config(module_cfg) or error(module_name .. " configuration not found")
 assert(type(cfg.databases) == "table", "databases configuration must be a table")
+if cfg.xff then
+    assert(cfg.xff == "last" or cfg.xff == "first" or cfg.xff == "all", "invalid xff cfg value")
+else
+    cfg.xff = "last"
+end
 
 local mm        = require "maxminddb"
 local databases = {}
@@ -59,7 +79,7 @@ for k,v in pairs(cfg.databases) do
 end
 assert(next(databases) ~= nil, "databases must contain at least one entry")
 
-local smatch    = string.match
+local string    = require "string"
 local assert    = assert
 local ipairs    = ipairs
 local pairs     = pairs
@@ -70,10 +90,8 @@ local unpack    = unpack
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module.
 
-local function validate_ip(ip)
-    local sl = #ip
-    return not (sl < 7 or sl > 15 or not smatch(ip, "^%d+%.%d+%.%d+%.%d+$"))
-end
+local ip_pattern  = "%d%d?%d?%.%d%d?%d?%.%d%d?%d?%.%d%d?%d?"
+local ip_anchored = "^" .. ip_pattern .. "$"
 
 
 local function add_array(msg, field_name, values)
@@ -83,7 +101,7 @@ local function add_array(msg, field_name, values)
         local ips = {}
         local cnt = 0
         for i,j in ipairs(values) do
-            if validate_ip(j) then
+            if j:match(ip_anchored) then
                 local ok, ret = pcall(t.db.lookup, t.db, j)
                 if ok then
                     ips[i] = ret
@@ -122,6 +140,27 @@ local function add_array(msg, field_name, values)
 end
 
 
+local function lookup(msg, field_name, ip)
+    local found = false
+    for _, t in pairs(databases) do
+        local ok, ret = pcall(t.db.lookup, t.db, ip)
+        if ok then
+            for suffix, path in pairs(t.lookups) do
+                local ok, value = pcall(ret.get, ret, unpack(path))
+                if ok then
+                    found = true
+                    msg.Fields[field_name .. suffix] = value
+                end
+            end
+        end
+    end
+
+    if found and cfg.remove_original_field then
+        msg.Fields[field_name] = nil
+    end
+end
+
+
 function add_geoip(msg, field_name)
     if not msg.Fields then return end
     local value = msg.Fields[field_name]
@@ -136,24 +175,29 @@ function add_geoip(msg, field_name)
             return
         end
     end
-    if vt ~= "string" or not validate_ip(value) then return end
+    if vt ~= "string" or not value:match(ip_anchored) then return end
+    lookup(msg, field_name, value)
+end
 
-    local found = false
-    for _, t in pairs(databases) do
-        local ok, ret = pcall(t.db.lookup, t.db, value)
-        if ok then
-            for suffix, path in pairs(t.lookups) do
-                local ok, value = pcall(ret.get, ret, unpack(path))
-                if ok then
-                    found = true
-                    msg.Fields[field_name .. suffix] = value
-                end
-            end
-        end
+
+function add_geoip_xff(msg, field_name)
+    if not msg.Fields then return end
+    local value = msg.Fields[field_name]
+    if type(value) ~= "string" then return end
+
+    local ips = {}
+    for ip in value:gmatch(ip_pattern) do
+        ips[#ips + 1] = ip
     end
+    local cnt = #ips
+    if cnt == 0 then return end
 
-    if found and cfg.remove_original_field then
-        msg.Fields[field_name] = nil
+    if cfg.xff == "last" then
+        lookup(msg, field_name, ips[cnt])
+    elseif cfg.xff == "first" then
+        lookup(msg, field_name, ips[1])
+    else
+        add_array(msg, field_name, ips)
     end
 end
 
