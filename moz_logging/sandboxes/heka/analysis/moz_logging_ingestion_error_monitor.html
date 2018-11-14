@@ -654,7 +654,7 @@
                 <a href="../../../../gcp/">
             
                     
-                    gcp (0.0.4)
+                    gcp (0.0.5)
             
                 </a>
             
@@ -2486,7 +2486,7 @@
                 <a href="../../../../maxminddb/">
             
                     
-                    maxminddb (0.2.2)
+                    maxminddb (0.2.3)
             
                 </a>
             
@@ -2556,7 +2556,7 @@
                 <a href="../../../../moz_ingest/">
             
                     
-                    moz_ingest (0.0.7)
+                    moz_ingest (0.0.8)
             
                 </a>
             
@@ -3692,7 +3692,7 @@
                 <a href="../../../../moz_telemetry/">
             
                     
-                    moz_telemetry (1.2.23)
+                    moz_telemetry (1.2.24)
             
                 </a>
             
@@ -5625,7 +5625,8 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="Mozilla_Logging_Ingestion_Error_Monitor">Mozilla Logging Ingestion Error Monitor</h1>
-<p>Monitors ingestion errors on all inputs.</p>
+<p>Monitors ingestion errors on all inputs, with optional inactivity and latency
+alerts.</p>
 <h2 id="Sample_Configuration">1. Sample Configuration</h2>
 <pre><code class="lang-lua">filename = <span class="hljs-string">&apos;moz_logging_ingestion_error_monitor.lua&apos;</span>
 message_matcher = <span class="hljs-string">&quot;TRUE&quot;</span>
@@ -5642,8 +5643,17 @@ alert = {
     email = {recipients = {<span class="hljs-string">&quot;trink@mozilla.com&quot;</span>}},
   },
   thresholds = {
-    <span class="hljs-comment">-- [&quot;input.bastion_systemd_sshd&quot;] = {inactivity_timeout = 60, percent = 0.5} -- a timeout of 60 or more disables the check as the alert window is only one hour</span>
-    _default_ = {inactivity_timeout = <span class="hljs-number">5</span>, <span class="hljs-comment">-- minutes percent = 0.5} -- if not specified the default is no monitoring</span>
+    <span class="hljs-comment">-- [&quot;&lt;input_name&gt;&quot;] = {</span>
+        <span class="hljs-comment">-- percent            - required (0 - 100), maximum percent error before alerting</span>
+        <span class="hljs-comment">-- inactivity_timeout - optional (1 - 3600 seconds), time with no data before alerting</span>
+           <span class="hljs-comment">-- rounded up to the nearest minute; specified in seconds to keep the units consistent</span>
+        <span class="hljs-comment">-- latency            - optional (1 - 3600 seconds), median latency before alerting</span>
+    <span class="hljs-comment">-- },</span>
+    [<span class="hljs-string">&quot;*&quot;</span>] = { <span class="hljs-comment">-- if not specified the default is no monitoring</span>
+        percent = <span class="hljs-number">0.5</span>,
+        inactivity_timeout = <span class="hljs-number">300</span>,
+        latency = <span class="hljs-number">60</span>
+    }
   }
 }
 </code></pre>
@@ -5691,7 +5701,7 @@ alert = {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"moz_logging_ingestion_error_monitor","level":"1.24.2.1.1.15","depth":5,"next":{"title":"moz_logging_unique_items","level":"1.24.2.1.1.16","depth":5,"path":"moz_logging/sandboxes/heka/analysis/moz_logging_unique_items.md","ref":"moz_logging/sandboxes/heka/analysis/moz_logging_unique_items.md","articles":[]},"previous":{"title":"moz_logging_http_status","level":"1.24.2.1.1.14","depth":5,"path":"moz_logging/sandboxes/heka/analysis/moz_logging_http_status.md","ref":"moz_logging/sandboxes/heka/analysis/moz_logging_http_status.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_logging/sandboxes/heka/analysis/moz_logging_ingestion_error_monitor.md","mtime":"2018-10-15T21:03:01.231Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-10-15T21:03:09.847Z"},"basePath":"../../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"moz_logging_ingestion_error_monitor","level":"1.24.2.1.1.15","depth":5,"next":{"title":"moz_logging_unique_items","level":"1.24.2.1.1.16","depth":5,"path":"moz_logging/sandboxes/heka/analysis/moz_logging_unique_items.md","ref":"moz_logging/sandboxes/heka/analysis/moz_logging_unique_items.md","articles":[]},"previous":{"title":"moz_logging_http_status","level":"1.24.2.1.1.14","depth":5,"path":"moz_logging/sandboxes/heka/analysis/moz_logging_http_status.md","ref":"moz_logging/sandboxes/heka/analysis/moz_logging_http_status.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","navigator"],"pluginsConfig":{"collapsible-menu":{},"navigator":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"moz_logging/sandboxes/heka/analysis/moz_logging_ingestion_error_monitor.md","mtime":"2018-11-14T14:50:40.894Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2018-11-14T14:50:47.840Z"},"basePath":"../../../..","book":{"language":""}});
         });
     </script>
 </div>
