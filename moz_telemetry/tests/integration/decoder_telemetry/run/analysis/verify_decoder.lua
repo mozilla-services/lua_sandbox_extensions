@@ -52,7 +52,8 @@ local messages = {
             ["environment.build"] = {value = '{"applicationId":"{ec8030f7-c20a-464f-9b0e-13a3a9e97384}","applicationName":"Firefox","architecture":"x86-64","architecturesInBinary":"i386-x86_64","buildId":"20151103030248","hotfixVersion":"20150225.01","platformVersion":"45.0","vendor":"Mozilla","version":"45.0","xpcomAbi":"x86_64-gcc3"}', value_type = 1, representation = "json"},
             ["X-PingSender-Version"] = "1.0",
             ["geoCity"] = "Milton",
-            ["geoSubdivision1"] = "WA"
+            ["geoSubdivision1"] = "WA",
+            ["geoISP"] = "Century Link"
         }
     },
     {Logger = "telemetry", Type = "telemetry.duplicate", Hostname = "integration_test", Fields = {
@@ -61,6 +62,7 @@ local messages = {
         geoCity = "Milton",
         geoSubdivision1 = "WA",
         geoCountry = "US",
+        geoISP = "Century Link",
         duplicateDelta = {value = 0, value_type = 2, representation = "1m"},
         appUpdateChannel = "beta",
         appBuildId = "20151103030248",
@@ -85,6 +87,7 @@ local messages = {
         geoCity = "Milton",
         geoSubdivision1 = "WA",
         geoCountry = "US",
+        geoISP = "Century Link",
         normalizedChannel = "beta",
         appBuildId = "20151103030248",
         appVersion = "45.0",
@@ -112,7 +115,8 @@ local messages = {
         ["geoCountry"] = "US",
         ["Host"] = "incoming.telemetry.mozilla.org",
         ["geoCity"] = "Milton",
-        ["geoSubdivision1"] = "WA"
+        ["geoSubdivision1"] = "WA",
+        ["geoISP"] = "Century Link"
     }
     },
 }
