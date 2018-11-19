@@ -28,7 +28,7 @@ decoders_moz_ingest_common = {
     city_size_file = "/usr/share/geoip/cities1000.txt", -- optional, if not specified no limiting is performed
 
     isp_db_file = "/usr/share/geoip/GeoIP2-ISP.mmdb", -- optional
-    isp_docTypes = {customStudy = true}, -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined
+    isp_docTypes = {customStudy = true}, -- docTypes to perform ISP geoip lookups on, must be set if isp_db_file is defined, use `["*"] = true` to enable for everything
 
     -- WARNING if the cuckoo filter settings are altered the plugin's
     -- `preservation_version` should be incremented
@@ -145,6 +145,10 @@ local function load_decoder_cfg()
         maxminddb = require "maxminddb"
         isp_db = assert(maxminddb.open(cfg.isp_db_file))
         assert(type(cfg.isp_docTypes) == "table", "isp_docTypes table must be set")
+        if cfg.isp_docTypes["*"] then
+            local mt = {__index = function(t, k) return true end }
+            setmetatable(cfg.isp_docTypes, mt);
+        end
     else
         assert(cfg.isp_docTypes == nil, "isp_docTypes cannot be defined without isp_db_file")
     end
