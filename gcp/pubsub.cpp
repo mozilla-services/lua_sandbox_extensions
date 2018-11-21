@@ -689,7 +689,7 @@ static int subscriber_poll(lua_State *lua, subscriber_wrapper *sw)
                   lua_pushnil(lua);
                 } else {
                   lua_newtable(lua);
-                  for (auto& kv : msg->message().attributes()) {
+                  for (auto &kv : msg->message().attributes()) {
                     lua_pushlstring(lua, kv.second.c_str(), kv.second.size());
                     lua_setfield(lua, -2, kv.first.c_str());
                   }
@@ -794,8 +794,20 @@ static int subscriber_pull_sync(lua_State *lua)
       for (auto it = msgs.pointer_begin(); it != msgs.pointer_end(); ++it) {
         auto msg = (*it);
         if (msg->has_message()) {
+          lua_newtable(lua);
           auto data = msg->message().data();
           lua_pushlstring(lua, data.c_str(), data.size());
+          lua_rawseti(lua, -2, 1);
+          if (msg->message().attributes_size() == 0) {
+            lua_pushnil(lua);
+          } else {
+            lua_newtable(lua);
+            for (auto &kv : msg->message().attributes()) {
+              lua_pushlstring(lua, kv.second.c_str(), kv.second.size());
+              lua_setfield(lua, -2, kv.first.c_str());
+            }
+          }
+          lua_rawseti(lua, -2, 2);
           lua_rawseti(lua, -2, ++cnt);
           ack.add_ack_ids(msg->ack_id());
         }
