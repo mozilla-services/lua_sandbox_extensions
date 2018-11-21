@@ -92,6 +92,7 @@ local ret = publisher:publish_sync(msg, attributes)
     * retry (-3)
     * batched (-4)
     * async (-5)
+* err (nil/string) error message
 
 #### flush
 

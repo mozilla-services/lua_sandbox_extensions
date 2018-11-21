@@ -62,13 +62,13 @@ if max_async_requests > 0 then
             if not data then return -2 end
         end
 
-        local ok, status_code = pcall(publisher.publish, publisher, sequence_id, data)
+        local ok, status_code, err = pcall(publisher.publish, publisher, sequence_id, data)
         if not ok then return -1, status_code end
         if status_code == 0 then -- batch complete, flushed to network
             status_code = -5
             timer = false
         end
-        return status_code
+        return status_code, err
     end
 
     function timer_event(ns, shutdown)
@@ -87,10 +87,10 @@ else
             if not data then return -2 end
         end
 
-        local ok, status_code = pcall(publisher.publish_sync, publisher, data)
+        local ok, status_code, err = pcall(publisher.publish_sync, publisher, data)
         if not ok then return -1, status_code end
         if status_code == 0 then timer = false end
-        return status_code
+        return status_code, err
     end
 
     function timer_event(ns, shutdown)

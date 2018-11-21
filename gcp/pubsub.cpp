@@ -466,8 +466,9 @@ static int publish(lua_State *lua, bool async_api)
   if (async_api) {
     if (pw->p->max_async_requests == 0) return luaL_error(lua, "async is disabled");
     if (pw->p->outstanding_requests >= pw->p->max_async_requests) {
-      lua_pushinteger(lua, 1);
-      return 1;
+      lua_pushinteger(lua, -3);
+      lua_pushstring(lua, "too many outstanding requests");
+      return 2;
     }
     sequence_id = get_sequence_id(lua, 2);
     msg_idx = 3;
