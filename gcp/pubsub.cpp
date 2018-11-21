@@ -148,7 +148,13 @@ static int publisher_new(lua_State *lua)
   bool err = false;
   try {
     auto creds = grpc::GoogleDefaultCredentials();
-    pw->p->stub = std::make_unique<Publisher::Stub>(grpc::CreateChannel(channel, creds));
+    // see https://github.com/googleapis/google-cloud-node/pull/2007
+    // Fix the send/receive size mis-match in
+    // https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L396
+    grpc::ChannelArguments cargs;
+    cargs.SetMaxSendMessageSize(-1); // make sure this remains -1 even if the todo is completed
+    cargs.SetInt(GRPC_ARG_MIN_RECONNECT_BACKOFF_MS, 5000);
+    pw->p->stub = std::make_unique<Publisher::Stub>(grpc::CreateCustomChannel(channel, creds, cargs));
 
     ClientContext ctx;
     GetTopicRequest request;
@@ -207,7 +213,13 @@ static int subscriber_new(lua_State *lua)
   bool err = false;
   try {
     auto creds = grpc::GoogleDefaultCredentials();
-    sw->s->stub = std::make_unique<Subscriber::Stub>(grpc::CreateChannel(channel, creds));
+    // see https://github.com/googleapis/google-cloud-node/pull/2007
+    // Fix the send/receive size mis-match in
+    // https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L396
+    grpc::ChannelArguments cargs;
+    cargs.SetMaxReceiveMessageSize(-1);
+    cargs.SetInt(GRPC_ARG_MIN_RECONNECT_BACKOFF_MS, 5000);
+    sw->s->stub = std::make_unique<Subscriber::Stub>(grpc::CreateCustomChannel(channel, creds, cargs));
 
     ClientContext ctx;
     GetSubscriptionRequest request;
