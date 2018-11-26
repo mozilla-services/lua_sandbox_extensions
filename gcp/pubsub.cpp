@@ -148,7 +148,13 @@ static int publisher_new(lua_State *lua)
   bool err = false;
   try {
     auto creds = grpc::GoogleDefaultCredentials();
-    pw->p->stub = std::make_unique<Publisher::Stub>(grpc::CreateChannel(channel, creds));
+    // see https://github.com/googleapis/google-cloud-node/pull/2007
+    // Fix the send/receive size mis-match in
+    // https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L396
+    grpc::ChannelArguments cargs;
+    cargs.SetMaxSendMessageSize(-1); // make sure this remains -1 even if the todo is completed
+    cargs.SetInt(GRPC_ARG_MIN_RECONNECT_BACKOFF_MS, 5000);
+    pw->p->stub = std::make_unique<Publisher::Stub>(grpc::CreateCustomChannel(channel, creds, cargs));
 
     ClientContext ctx;
     GetTopicRequest request;
@@ -207,7 +213,13 @@ static int subscriber_new(lua_State *lua)
   bool err = false;
   try {
     auto creds = grpc::GoogleDefaultCredentials();
-    sw->s->stub = std::make_unique<Subscriber::Stub>(grpc::CreateChannel(channel, creds));
+    // see https://github.com/googleapis/google-cloud-node/pull/2007
+    // Fix the send/receive size mis-match in
+    // https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L396
+    grpc::ChannelArguments cargs;
+    cargs.SetMaxReceiveMessageSize(-1);
+    cargs.SetInt(GRPC_ARG_MIN_RECONNECT_BACKOFF_MS, 5000);
+    sw->s->stub = std::make_unique<Subscriber::Stub>(grpc::CreateCustomChannel(channel, creds, cargs));
 
     ClientContext ctx;
     GetSubscriptionRequest request;
@@ -454,8 +466,9 @@ static int publish(lua_State *lua, bool async_api)
   if (async_api) {
     if (pw->p->max_async_requests == 0) return luaL_error(lua, "async is disabled");
     if (pw->p->outstanding_requests >= pw->p->max_async_requests) {
-      lua_pushinteger(lua, 1);
-      return 1;
+      lua_pushinteger(lua, -3);
+      lua_pushstring(lua, "too many outstanding requests");
+      return 2;
     }
     sequence_id = get_sequence_id(lua, 2);
     msg_idx = 3;
@@ -676,7 +689,7 @@ static int subscriber_poll(lua_State *lua, subscriber_wrapper *sw)
                   lua_pushnil(lua);
                 } else {
                   lua_newtable(lua);
-                  for (auto& kv : msg->message().attributes()) {
+                  for (auto &kv : msg->message().attributes()) {
                     lua_pushlstring(lua, kv.second.c_str(), kv.second.size());
                     lua_setfield(lua, -2, kv.first.c_str());
                   }
@@ -781,8 +794,20 @@ static int subscriber_pull_sync(lua_State *lua)
       for (auto it = msgs.pointer_begin(); it != msgs.pointer_end(); ++it) {
         auto msg = (*it);
         if (msg->has_message()) {
+          lua_newtable(lua);
           auto data = msg->message().data();
           lua_pushlstring(lua, data.c_str(), data.size());
+          lua_rawseti(lua, -2, 1);
+          if (msg->message().attributes_size() == 0) {
+            lua_pushnil(lua);
+          } else {
+            lua_newtable(lua);
+            for (auto &kv : msg->message().attributes()) {
+              lua_pushlstring(lua, kv.second.c_str(), kv.second.size());
+              lua_setfield(lua, -2, kv.first.c_str());
+            }
+          }
+          lua_rawseti(lua, -2, 2);
           lua_rawseti(lua, -2, ++cnt);
           ack.add_ack_ids(msg->ack_id());
         }

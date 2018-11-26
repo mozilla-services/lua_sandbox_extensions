@@ -90,10 +90,12 @@ local ktype_suffix  = (l.P"_int" + l.P"_dbl" + l.P"_bool" + l.Cc"_str") * l.P(-1
 local ktype         = l.C((l.P(1) - ktype_suffix)^1) * (ktype_suffix / ktype_lookup)
 
 local subscriber = gcp.pubsub.subscriber(channel, topic, subscription_name, max_async_requests)
+local pull = subscriber.pull
+if max_async_requests == 0 then pull = subscriber.pull_sync end
 local is_running = is_running
 function process_message()
     while is_running() do
-        local ok, msgs, cnt = pcall(subscriber.pull, subscriber, batch_size)
+        local ok, msgs, cnt = pcall(pull, subscriber, batch_size)
         if not ok then return -1, msgs end
 
         if cnt > 0 then

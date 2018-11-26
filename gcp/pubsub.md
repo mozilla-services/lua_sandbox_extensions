@@ -63,7 +63,10 @@ local msgs, cnt = subscriber:pull(batch_size)
 * batch_size (integer) Number of items in a single request (1-1000)
 
 *Returns*
-* msgs (array/nil) One or more more message (can throw on error)
+* msgs (array/nil) One or more messages (can throw on error)
+    The array contains an array for each message, column one is the data
+    payload and column two is nil or the attribute table
+    `msgs = { {data, attribute_table}, ...}`
 * cnt (string/nil) Number of messsages returned
 
 ### publisher Methods
@@ -92,6 +95,7 @@ local ret = publisher:publish_sync(msg, attributes)
     * retry (-3)
     * batched (-4)
     * async (-5)
+* err (nil/string) error message
 
 #### flush
 
