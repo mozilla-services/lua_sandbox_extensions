@@ -74,6 +74,8 @@ alert = {
 ```
 --]]
 
+require "cjson"
+require "lpeg"
 require "re"
 require "table"
 
@@ -87,7 +89,33 @@ if read_config("enable_metrics") then
     secm = require "heka.secmetrics".new()
 end
 
-function genpayload()
+
+local rnsep  = lpeg.P"."
+local rnkey  = (lpeg.P(1) - rnsep)^1
+local rngram = lpeg.Ct(lpeg.C(rnkey * (rnsep * rnkey)^-1) * (rnsep * lpeg.C(rnkey))^0)
+local function read_nested(key)
+    local a = rngram:match(key)
+    if not a then return end
+
+    local len = #a
+    local f = read_message(string.format("Fields[%s]", a[1]))
+    if len == 1 then
+        return f
+    else
+        local ok, j = pcall(cjson.decode, f)
+        if not ok or type(j) ~= "table" then return end
+        for i = 2, len do
+            j = j[a[i]]
+            if type(j) ~= "table" then
+                if i == len then return j end
+                return
+            end
+        end
+    end
+end
+
+
+local function genpayload()
     local msg = decode_message(read_message("raw"))
     local p = {}
     table.sort(msg.Fields, function(a,b) return a.name < b.name end)
@@ -97,20 +125,22 @@ function genpayload()
     return table.concat(p, "\n")
 end
 
-function get_account_name(account_id)
+
+local function get_account_name(account_id)
     if cfaccount_name_mapping then
         return cfaccount_name_mapping[account_id] or account_id
     end
     return account_id
 end
 
-function get_identity_name()
+
+local function get_identity_name()
     local identity_type = read_message("Fields[userIdentity.type]")
 
     if identity_type == "IAMUser" then
         return read_message("Fields[userIdentity.userName]")
     elseif identity_type == "AssumedRole" then
-        return read_message("Fields[userIdentity.sessionContext.sessionIssuer.userName]")
+        return read_nested("userIdentity.sessionContext.sessionIssuer.userName")
     elseif identity_type == "AWSService" then
         return read_message("Fields[userIdentity.invokedBy]")
     elseif identity_type == "AWSAccount" then
@@ -119,6 +149,7 @@ function get_identity_name()
 
     return nil
 end
+
 
 function process_message()
     local event_id   = read_message("Fields[eventID]")
@@ -134,7 +165,7 @@ function process_message()
 
         for _, field in ipairs(event.fields) do
             if not det[field[1]] then
-                det[field[1]] = read_message(string.format("Fields[%s]", field[1]))
+                det[field[1]] = read_nested(field[1])
             end
 
             if det[field[1]] then
@@ -148,7 +179,7 @@ function process_message()
             local id = string.format("%s - %s", event.description, event_id)
             local s = string.format("%s in %s by %s", event.description, get_account_name(account_id), get_identity_name() or "unknown")
             if event.resource then
-                r = read_message(string.format("Fields[%s]", event.resource))
+                r = read_nested(event.resource)
                 s = string.format("%s on %s", s, r or "unknown")
             end
 
