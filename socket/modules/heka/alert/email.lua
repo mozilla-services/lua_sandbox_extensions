@@ -14,7 +14,8 @@ email distribution list.
 alert = {
     modules = {
         email = {
-            recipients = {"foo@example.com"}
+            recipients = {"foo@example.com"},
+	    -- footer = "example footer" -- optional
         }
     }
 }
