@@ -121,6 +121,9 @@ local content = {
 function send(msg, mcfg)
     content.headers.subject = msg.Fields[2].value[1]
     content.body = msg.Payload
+    if type(mcfg.footer) == "string" then
+        content.body = content.body .. mcfg.footer
+    end
 
     email.rcpt      = mcfg.recipients
     email.user      = cfg.user
