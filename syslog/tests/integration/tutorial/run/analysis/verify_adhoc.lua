@@ -2,12 +2,13 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+require "os"
 require "string"
 local test = require "test_verify_message"
 
 local messages = {
     {
-        Timestamp = 1516697403000000000,
+        Timestamp = os.time({year = os.date("%Y"), month = 1, day = 23, hour = 8, min = 50, sec = 3}) * 1e9,
         Logger = "input.adhoc",
         Hostname = "ubuntu",
         Payload = "/tmp/input.tsv:23: invalid line",

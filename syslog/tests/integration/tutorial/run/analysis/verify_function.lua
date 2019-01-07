@@ -2,12 +2,13 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+require "os"
 require "string"
 local test = require "test_verify_message"
 
 local messages = {
     {
-        Timestamp = 1516697402000000000,
+        Timestamp = os.time({year = os.date("%Y"), month = 1, day = 23, hour = 8, min = 50, sec = 2}) * 1e9,
         Logger = "input.function",
         Hostname = "ubuntu",
         Payload = '127.0.0.1 - - [10/Feb/2014:08:46:41 -0800] "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0"',
