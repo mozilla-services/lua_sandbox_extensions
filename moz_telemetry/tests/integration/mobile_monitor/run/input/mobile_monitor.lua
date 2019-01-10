@@ -11,9 +11,9 @@ require "string"
 local tm = {
     Type = "telemetry",
     Fields = {
+        appName             = "Focus",
         normalizedChannel   = "release",
-        normalizedAppName   = "foo",
-        normalizedOs        = "bar",
+        normalizedOs        = "iOS",
         docType             = "core",
         }
     }
@@ -26,12 +26,14 @@ function process_message()
         ns = ns + 60e9
     end
 
-    ns = ns + 60e9 * 10
-    tm.Timestamp = ns
-    tm.Fields.normalizedAppName = "Other"
-    inject_message(tm) -- trigger the timeout in "foo"
+    tm.Fields.appName = "Klar" -- trigger the timeout in "Focus"
+    for i=1, 6 do
+        tm.Timestamp = ns
+        inject_message(tm)
+        ns = ns + 60e9
+    end
 
-    tm.Fields.normalizedAppName = "foo"
+    tm.Fields.appName = "Focus"
     for i=1, 1000 do
         tm.Timestamp = ns
         inject_message(tm)
@@ -59,7 +61,7 @@ function process_message()
     ns = ns + 60e9
     tm.Timestamp = ns
     tm.Type = "telemetry"
-    tm.Fields.normalizedAppName = "Other"
+    tm.Fields.appName = "Klar"
     tm.Fields.DecodeError = nil
     inject_message(tm) -- trigger the timer event
 

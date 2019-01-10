@@ -36,16 +36,16 @@ alert = {
 --  Fennec = {
 --    Android = {
 --      core = {
---        ingestion_error = 0.1, -- percent error
---        volume          = 5,   -- inactivity timeout in minutes
+--        ingestion_error = 0.1, -- percent error (0.0 - 100.0, nil disables)
+--        volume          = 5,   -- inactivity timeout in minutes (0 - 60, 0 == auto scale, nil disables)
 --      },
 --    }
 --  },
     ["*"] = {
       ["*"] = {
         ["*"] = {
-          ingestion_error = 1, -- percent error (0.0 - 100.0, nil disables)
-          volume          = 0, -- inactivity timeout in minutes (0 - 60, 0 == auto scale, nil disables)
+          ingestion_error = 1,
+          volume          = 0,
         },
       }
     }
@@ -57,17 +57,17 @@ _PRESERVATION_VERSION = read_config("preservation_version") or 0
 data = {}
 
 require "math"
-require "os"
 require "string"
 require "table"
 
 local sats  = require "streaming_algorithms.time_series"
-local p2  = require "streaming_algorithms.p2"
+local p2    = require "streaming_algorithms.p2"
 local alert = require "heka.alert"
+local mtn   = require "moz_telemetry.normalize"
 
 local SEC_IN_MINUTE     = 60
 local TS_ROWS           = 61
-local thresholds        = read_config("alert").thresholds
+local thresholds        = alert.thresholds
 
 local function validate_thresholds()
     for nap, app in pairs(thresholds) do
@@ -122,7 +122,9 @@ local function get_data(ns, nap, nos, dt)
         d = {
             errors      = sats.new(TS_ROWS, SEC_IN_MINUTE * 1e9), -- error count
             volume      = sats.new(TS_ROWS, SEC_IN_MINUTE * 1e9), -- success count
-            median      = p2.quantile(0.5), -- median number of minutes with data in TS_ROWS
+            created     = ns,
+            gapc        = 0, -- count of the gap between data rows
+            gapq        = p2.quantile(0.99),
             diagnostics = {}, -- error message analysis
             tcfg        = tcfg, -- alerting threshold configuration
             }
@@ -144,7 +146,7 @@ end
 
 
 function process_message()
-    local nap   = read_message("Fields[normalizedAppName]") or "Other"
+    local nap   = mtn.mobile_app_name(read_message("Fields[appName]"))
     local nos   = read_message("Fields[normalizedOs]") or "Other"
     local dt    = read_message("Fields[docType]")
     local ns    = read_message("Timestamp")
@@ -170,24 +172,38 @@ local function diagnostic_prune(ns, diag)
 end
 
 
-local function alert_check_volume(name, d, vcnt, vmed)
+local ingestion_volume_template = [[
+%s - No new valid data has been seen in %d minutes
+
+Stats for the last %d minutes
+=============================
+Submissions       : %d
+Minutes with data : %d
+Quantile data gap : %g
+]]
+local function alert_check_volume(name, d, ns, vsum, vcnt, gap)
     local iato = d.tcfg.volume
-    if vcnt == 0 or not iato or alert.throttled(name) then return false end
+    if not iato
+    or vcnt == 0
+    or ns - d.created <= TS_ROWS * 60e9
+    or alert.throttled(name) then
+        return false
+    end
 
     if iato == 0 then
-        if vmed ~= vmed or vmed < 5 then return end -- no estimate yet or very sporadic data, ignore the volume check
-        iato = math.ceil(TS_ROWS / (vmed / 5))
-        if iato > 60 then iato = 60 end
+        if gap ~= gap then return end -- NaN, no estimate yet
+        iato = math.ceil((gap + 1) * 5)
+        if iato >= TS_ROWS then return end -- data is too sporadic, don't monitor
     end
 
     local ct = d.volume:current_time()
     local sum, cnt = d.volume:stats(ct - iato * 60e9, iato + 1) -- include the current active minute
     if cnt == 0 then
         if alert.send(name, "inactivity timeout",
-                      string.format("%s - No new valid data has been seen in %d minutes\n", name, iato)) then
+                      string.format(ingestion_volume_template,
+                                    name, iato, TS_ROWS, vsum, vcnt, gap)) then
             return true
         end
-        d.median:clear()
     end
     return false
 end
@@ -238,25 +254,34 @@ end
 function timer_event(ns, shutdown)
     if shutdown then return end
 
-    local summary = {"App\tOs\tdocType\tvsum\tvcnt\tvcnt_median\tesum\tecnt"}
-    local cnt = 2
+    local summary = {"App\tOs\tdocType\tSubmissions\tSubmissions Active Minutes\tSubmissions Current Data Gap\tSubmissions Quantile Data Gap\tErrors\tErrors Active Minutes"}
+    local cnt = 1
     for nap, app in pairs(data) do
         for nos, os in pairs(app) do
             for dt, d in pairs(os) do
                 -- always advance the time series buffers
-                if not d.volume:get(ns) then d.volume:add(ns, 0) end
+                if not d.volume:get(ns) then
+                    d.volume:add(ns, 0)
+                    d.gapc = d.gapc + 1
+                else
+                    for i=0, d.gapc do
+                        d.gapq:add(i)
+                    end
+                    d.gapc = 0
+                end
                 if not d.errors:get(ns) then d.errors:add(ns, 0) end
                 diagnostic_prune(ns, d.diagnostics)
 
                 local vsum, vcnt = d.volume:stats(nil, TS_ROWS)
                 local esum, ecnt = d.errors:stats(nil, TS_ROWS)
-                local vmed = d.median:add(vcnt)
-                summary[cnt] = string.format("%s\t%s\t%s\t%d\t%d\t%g\t%d\t%d", nap, nos, dt, vsum, vcnt, vmed, esum, ecnt)
+                local gap = d.gapq:estimate(2)
                 cnt = cnt + 1
-
+                summary[cnt] = string.format("%s\t%s\t%s\t%d\t%d\t%d\t%g\t%d\t%d",
+                                             nap, nos, dt, vsum, vcnt,
+                                             d.gapc, gap, esum, ecnt)
                 if d.tcfg then
                     local name = nap .. "_" .. nos .. "_" .. dt
-                    alert_check_volume(name, d, vcnt, vmed)
+                    alert_check_volume(name, d, ns, vsum, vcnt, gap)
                     alert_check_ingestion_error(name, d, vsum, esum)
                 end
             end
