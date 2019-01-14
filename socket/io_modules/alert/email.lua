@@ -67,6 +67,7 @@ smtp.TIMEOUT = cfg.timeout
 local require       = require
 local setmetatable  = setmetatable
 local assert        = assert
+local type          = type
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
