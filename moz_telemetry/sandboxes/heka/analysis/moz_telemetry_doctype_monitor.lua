@@ -7,7 +7,7 @@
 # Mozilla Telemetry docType Monitor
 
 Monitors a specific docType for volume, shape, size, duplicate, ingestion_error
-and latency issues by normalied channel name.
+and latency issues by normalized channel name.
 
 * volume - monitors for inactivity (no data) and optionally a percent change in
   the number of submissions compared to the same 24 hour time period of the
@@ -228,7 +228,7 @@ local function alert_check_volume(ns, channel, cfg, args)
     if MINS_IN_HOUR - args.hour.cnt > iato then
         local _, cnt = stats.sum(volume:get_range(args.col, args.hour.e - ((iato - 1) * 60e9))) -- include the current minute
         if cnt == 0 then
-            if alert.send(channel, "inactivitiy timeout",
+            if alert.send(channel, "inactivity timeout",
                           string.format("No new valid data has been seen in %d minutes\n\ngraph: %s\n",
                                         iato, alert.get_dashboard_uri("volume")), 90) then
                 volume:annotate(ns, args.col, "alert", "inactivitiy timeout")
