@@ -71,6 +71,8 @@ metadata_group = "metadata"
 -- passed as the first value either empty or with some pre-seeded values.
 -- If not specified the schema is applied directly to the Heka message.
 json_objects = {"Fields[submission]", "Fields[environment.system]"}
+-- to reconstruct the entire document use
+-- json_objects = {"<root_variable>", "*"}
 
 s3_path_dimensions  = {
     -- access message data with using read_message()
@@ -279,7 +281,62 @@ local function get_s3_path(json)
 end
 
 
-local function load_json_objects()
+local function load_child(cur, k, record)
+    for w, more in string.gmatch(k, "([^.]+)(%.?)") do
+        if more == "." then
+            local t = cur[w]
+            if not t then
+                t = {}
+                cur[w] = t
+            end
+            cur = t
+        else
+            cur[w] = record
+        end
+    end
+end
+
+
+local function extract_name(k)
+    return k:match("^Fields%[([^%]]*)%]$")
+end
+
+
+local function load_json_all()
+    local ok, msg, root
+    ok, msg = pcall(decode_message, read_message("raw"))
+    if not ok then return nil, msg end
+
+    local fcnt = 0
+    if msg.Fields then fcnt = #msg.Fields end
+    local k = extract_name(json_objects[1])
+    if k then
+        ok, root = false, "root not found"
+        for i=1, fcnt do
+            f = msg.Fields[i]
+            if f.representation == "json" and f.name == k then
+                ok, root = pcall(cjson.decode, f.value[1])
+                break
+            end
+        end
+    else
+        ok, root = pcall(cjson.decode, msg[json_objects[1]])
+    end
+    if not ok then return nil, root end
+
+    for i=1, fcnt do
+        f = msg.Fields[i]
+        if f.representation == "json" and f.name ~= k then
+            local ok, record = pcall(cjson.decode, f.value[1])
+            if not ok then return nil, record end
+            load_child(root, f.name, record)
+        end
+    end
+    return root, nil
+end
+
+
+local function load_json_select()
     local ok, root, record
     for i=1, json_objects_len do
         local k = json_objects[i]
@@ -293,31 +350,25 @@ local function load_json_objects()
         if not root then
             root = record
         else
-            if k:match("^Fields%[") then
-                k = k:sub(8, #k - 1)
-            end
-            local cur = root
-            for w, more in string.gmatch(k, "([^.]+)(%.?)") do
-                if more == "." then
-                    local t = cur[w]
-                    if not t then
-                        t = {}
-                        cur[w] = t
-                    end
-                    cur = t
-                else
-                    cur[w] = record
-                end
-            end
+            load_child(root, extract_name(k) or k, record)
         end
     end
     return root, nil
 end
 
+
+local load_json = load_json_select
+if json_objects then
+    if type(json_objects[1]) == "string" and json_objects[2] == "*" then
+        load_json = load_json_all
+    end
+end
+
+
 function process_message()
     local ok, err, record
     if json_objects then
-        record, err = load_json_objects()
+        record, err = load_json()
         if err then return -1, err end
         if load_metadata then load_metadata(record) end
     end
