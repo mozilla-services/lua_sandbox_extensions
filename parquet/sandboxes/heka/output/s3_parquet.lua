@@ -275,6 +275,7 @@ local function get_s3_path(json)
         if d.dateformat then
             v = date(d.dateformat, v*(d.scaling_factor or 1e-9))
         end
+        -- https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
         dims[i] = string.format("%s=%s", d.name, string.gsub(v, "[^%w!%-_.*'()]", "-"))
     end
     return table.concat(dims, "+") -- the plus will be converted to a path separator '/' when uploaded to S3
@@ -374,6 +375,9 @@ function process_message()
     end
 
     local path = get_s3_path(record)
+    if #path + 40 > 255 then -- leave 40 for the suffix e.g. "+1548192798_0_ip-111-111-111-111.done"
+        return -1, "filename too long: " .. path
+    end
     local writer = get_writer(path)
     local w = writer[1]
 
