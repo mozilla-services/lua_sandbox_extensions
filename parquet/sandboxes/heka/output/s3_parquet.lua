@@ -132,6 +132,7 @@ local time_t        = 0
 
 local hindsight_admin   = read_config("hindsight_admin")
 local hostname          = read_config("Hostname")
+local hostname_len      = #hostname
 local metadata_group    = read_config("metadata_group")
 local metadata_prefix   = read_config("metadata_prefix")
 local json_objects      = read_config("json_objects")
@@ -375,7 +376,8 @@ function process_message()
     end
 
     local path = get_s3_path(record)
-    if #path + 40 > 255 then -- leave 40 for the suffix e.g. "+1548192798_0_ip-111-111-111-111.done"
+    -- leave room for the suffix e.g. "+1548192798_000_<hostname>.done"
+    if #path + hostname_len + 21 > 255 then
         return -1, "filename too long: " .. path
     end
     local writer = get_writer(path)

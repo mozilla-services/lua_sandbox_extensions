@@ -69,6 +69,7 @@ local time_t        = 0
 local buffer_cnt    = 0
 
 local hostname          = read_config("Hostname")
+local hostname_len      = #hostname
 local batch_dir         = read_config("batch_dir") or error("batch_dir must be specified")
 local experiment_batch_dir
 local max_file_handles  = read_config("max_file_handles") or 1000
@@ -178,7 +179,8 @@ if experiment_batch_dir then mkdir(experiment_batch_dir) end
 
 local function output_dimension(dir, dims, data)
     local path = table.concat(dims, "+") -- the plus will be converted to a path separator '/' on copy
-    if #path + 40 > 255 then -- leave 40 for the suffix e.g. "+1548192798_0_ip-111-111-111-111.done"
+    -- leave room for the suffix e.g. "+1548192798_000_<hostname>.done"
+    if #path + hostname_len + 21 > 255 then
         return "filename too long", path
     end
 
