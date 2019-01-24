@@ -10,6 +10,7 @@ require "io"
 require "string"
 
 local inputs = {
+    {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = string.rep("x", 256)}}, -- ignore filename that would be too large
     {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main"}},
     {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main", ["environment.experiments"] = '{"foo":{"branch":"123"}}'}},
     {Timestamp = 0, Type = "moz_telemetry_s3", Fields = { docType = "main", ["environment.experiments"] = '{"foo":{"branch":"123"}, "bar":{"branch":"456"}}'}},

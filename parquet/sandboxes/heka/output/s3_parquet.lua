@@ -132,6 +132,7 @@ local time_t        = 0
 
 local hindsight_admin   = read_config("hindsight_admin")
 local hostname          = read_config("Hostname")
+local hostname_len      = #hostname
 local metadata_group    = read_config("metadata_group")
 local metadata_prefix   = read_config("metadata_prefix")
 local json_objects      = read_config("json_objects")
@@ -275,6 +276,7 @@ local function get_s3_path(json)
         if d.dateformat then
             v = date(d.dateformat, v*(d.scaling_factor or 1e-9))
         end
+        -- https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
         dims[i] = string.format("%s=%s", d.name, string.gsub(v, "[^%w!%-_.*'()]", "-"))
     end
     return table.concat(dims, "+") -- the plus will be converted to a path separator '/' when uploaded to S3
@@ -374,6 +376,10 @@ function process_message()
     end
 
     local path = get_s3_path(record)
+    -- leave room for the suffix e.g. "+1548192798_000_<hostname>.done"
+    if #path + hostname_len + 21 > 255 then
+        return -1, "filename too long: " .. path
+    end
     local writer = get_writer(path)
     local w = writer[1]
 

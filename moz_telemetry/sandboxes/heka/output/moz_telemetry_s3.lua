@@ -69,6 +69,7 @@ local time_t        = 0
 local buffer_cnt    = 0
 
 local hostname          = read_config("Hostname")
+local hostname_len      = #hostname
 local batch_dir         = read_config("batch_dir") or error("batch_dir must be specified")
 local experiment_batch_dir
 local max_file_handles  = read_config("max_file_handles") or 1000
@@ -178,6 +179,11 @@ if experiment_batch_dir then mkdir(experiment_batch_dir) end
 
 local function output_dimension(dir, dims, data)
     local path = table.concat(dims, "+") -- the plus will be converted to a path separator '/' on copy
+    -- leave room for the suffix e.g. "+1548192798_000_<hostname>.done"
+    if #path + hostname_len + 21 > 255 then
+        return "filename too long", path
+    end
+
     local entry = get_entry(dir, path)
     local fh = entry[2]
 
@@ -194,7 +200,7 @@ local function process_standard_dimensions(data)
     for i,d in ipairs(dimensions) do
         dims[i] = mts3.read_dimension(d)
     end
-    output_dimension(batch_dir, dims, data)
+    return output_dimension(batch_dir, dims, data)
 end
 
 
@@ -217,7 +223,10 @@ local function process_experiment_dimensions(data, experiments)
             for i,d in ipairs(experiment_dimensions) do
                 dims[i] = mts3.read_dimension(d, vars)
             end
-            output_dimension(experiment_batch_dir, dims, data)
+            -- silently ignore errors since we don't have a concept of a partial
+            -- error and the standard dimension output was successful
+            local err, path = output_dimension(experiment_batch_dir, dims, data)
+            if err then print(err, path) end
         end
     end
 end
@@ -228,7 +237,9 @@ function process_message()
     if not ok then return -1, data end
     if not data then return -2 end
 
-    process_standard_dimensions(data)
+    local err, path = process_standard_dimensions(data)
+    if err then return -1, err .. ": " .. path end
+
     if experiment_dimensions then
         local experiments = read_message("Fields[environment.experiments]")
         if experiments then
