@@ -9,6 +9,7 @@
 ```lua
 filename            = "gcp_pubsub.lua"
 ticker_interval     = 1
+instruction_limit   = 0
 
 channel             = "pubsub.googleapis.com"
 project             = "mozilla-data-poc-198117"
