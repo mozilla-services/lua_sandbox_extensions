@@ -323,9 +323,9 @@ local html_fmt = [[
 <html>
 <head>
 <meta charset="UTF-8">
-<link href='css/metricsgraphics.css' rel='stylesheet' type='text/css' id='light'>
+<link href='/external/metricsgraphics.css' rel='stylesheet' type='text/css' id='light'>
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src='graphs/js/metricsgraphics.min.js'></script>
+<script src='/external/metricsgraphics.min.js'></script>
 <body>
 %s
 </body>

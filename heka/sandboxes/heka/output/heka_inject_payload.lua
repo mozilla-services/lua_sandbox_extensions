@@ -33,25 +33,11 @@ local output_dir    = read_config("output_dir") or "/var/tmp/hindsight/payload"
 local graphs_dir    = output_dir .. "/graphs"
 local install_path  = read_config("sandbox_install_path")
 
-local cmd = string.format("mkdir -p %s/js", graphs_dir)
+local cmd = string.format("mkdir -p %s", graphs_dir)
 local ret = os.execute(cmd)
 if ret ~= 0 then
     error(string.format("mkdir ret: %d, cmd: %s", ret, cmd))
 end
-
-local function copy_files()
-    local files = {"cbuf.js", "dygraph-combined.js"}
-    for i, v in ipairs(files) do
-        local cmd = string.format('cp "%s" "%s"',
-                                  string.format("%s/output/%s", install_path, v),
-                                  string.format("%s/js/%s", graphs_dir, v));
-        local ret = os.execute(cmd)
-        if ret ~= 0 then
-            error(string.format("copy ret: %d, cmd: %s", ret, cmd))
-        end
-    end
-end
-copy_files()
 
 local payload       = read_message("Payload", nil, nil, true)
 local graphs        = {}
@@ -59,8 +45,8 @@ local html_template = [[
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="js/dygraph-combined.js"  type="text/javascript"></script>
-    <script src="js/cbuf.js"  type="text/javascript"></script>
+    <script src="/external/dygraph-combined.js"  type="text/javascript"></script>
+    <script src="/external/cbuf.js"  type="text/javascript"></script>
 </head>
 <body onload="heka_load_cbuf('../%s', heka_load_cbuf_complete);">
 <p id="title" style="text-align: center">%s</p>
