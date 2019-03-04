@@ -65,9 +65,9 @@ data  = {
 buildids = {}
 
 local grammar = l.Ct(
-    l.Cg(l.digit^-4, "year")
-    * l.Cg(l.digit^-2, "month")
-    * l.Cg(l.digit^-2, "day")
+    l.Cg(l.digit * l.digit * l.digit * l.digit , "year")
+    * l.Cg(l.digit * l.digit , "month")
+    * l.Cg(l.digit * l.digit , "day")
     * l.Cg(l.digit^-2, "hour")
     * l.Cg(l.digit^-2, "min")
     * l.Cg(l.digit^-2, "sec")
