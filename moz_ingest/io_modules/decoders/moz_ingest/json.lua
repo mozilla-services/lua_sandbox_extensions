@@ -59,18 +59,20 @@ local module_name   = ...
 local string        = require "string"
 local module_cfg    = string.gsub(module_name, "%.", "_")
 
-local rjson  = require "rjson"
-local miu    = require "moz_ingest.util"
-local lfs    = require "lfs"
 local clf    = require "lpeg.common_log_format"
+local lfs    = require "lfs"
+local miu    = require "moz_ingest.util"
+local os     = require "os"
+local rjson  = require "rjson"
 
-local read_config          = read_config
 local assert               = assert
-local error                = error
 local create_stream_reader = create_stream_reader
+local error                = error
 local inject_message       = inject_message
-local type                 = type
 local pcall                = pcall
+local print                = print
+local read_config          = read_config
+local type                 = type
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -97,6 +99,10 @@ local function load_namespaces(path)
 end
 local namespaces = load_namespaces(cfg.namespace_path)
 
+local timer_t       = 0
+local modified_t    = 0
+local reload_fn     = "/tmp/mozilla-pipeline-schemas.reload"
+os.remove(reload_fn)
 
 local doc = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
 local submissionField = {value = doc, representation = "json"}
@@ -129,6 +135,17 @@ end
 function transform_message(hsr, msg)
     if not msg then
         msg = miu.new_message(hsr)
+    end
+
+    local time_t = os.time()
+    if time_t - timer_t >= 60 then
+        local m = lfs.attributes(reload_fn, "modification")
+        if m and m ~= modified_t then
+            namespaces = load_namespaces(cfg.namespace_path)
+            print("namespace schemas reloaded")
+            modified_t = m
+        end
+        timer_t = time_t
     end
 
     process_json(hsr, msg)
