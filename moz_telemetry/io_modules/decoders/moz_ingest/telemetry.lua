@@ -50,24 +50,26 @@ local module_name   = ...
 local string        = require "string"
 local module_cfg    = string.gsub(module_name, "%.", "_")
 
-local rjson  = require "rjson"
 local crc32  = require "zlib".crc32
+local dt     = require "lpeg.date_time"
+local lfs    = require "lfs"
 local miu    = require "moz_ingest.util"
 local mtn    = require "moz_telemetry.normalize"
-local dt     = require "lpeg.date_time"
 local os     = require "os"
+local rjson  = require "rjson"
 local table  = require "table"
 
-local read_config          = read_config
 local assert               = assert
-local error                = error
-local ipairs               = ipairs
 local create_stream_reader = create_stream_reader
+local error                = error
 local inject_message       = inject_message
-local type                 = type
+local ipairs               = ipairs
+local pcall                = pcall
+local print                = print
+local read_config          = read_config
 local tonumber             = tonumber
 local tostring             = tostring
-local pcall                = pcall
+local type                 = type
 
 local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
@@ -77,7 +79,11 @@ assert(type(cfg) == "table", module_cfg .. " must be a table")
 assert(type(cfg.schema_path) == "string", "schema_path must be set")
 if not cfg.inject_raw then cfg.inject_raw = false end
 assert(type(cfg.inject_raw) == "boolean", "inject_raw must be a boolean")
-local schemas = miu.load_json_schemas(cfg.schema_path)
+local schemas       = miu.load_json_schemas(cfg.schema_path)
+local timer_t       = 0
+local modified_t    = 0
+local reload_fn     = "/tmp/mozilla-pipeline-schemas.reload"
+os.remove(reload_fn)
 local default_schema = rjson.parse_schema([[
 {
   "$schema" : "http://json-schema.org/draft-04/schema#",
@@ -292,6 +298,17 @@ function transform_message(hsr, msg)
     msg.Fields.sourceName           = "telemetry"
     msg.Fields.normalizedChannel    = mtn.channel(msg.Fields.appUpdateChannel)
     --
+
+    local time_t = os.time()
+    if time_t - timer_t >= 60 then
+        local m = lfs.attributes(reload_fn, "modification")
+        if m and m ~= modified_t then
+            schemas = miu.load_json_schemas(cfg.schema_path)
+            print("schemas reloaded")
+            modified_t = m
+        end
+        timer_t = time_t
+    end
 
     process_json(hsr, msg)
 
