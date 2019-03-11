@@ -22,6 +22,7 @@ decoders_moz_ingest_common = {
     -- String used to specify GeoIP city database location on disk.
     city_db_file = "/usr/share/geoip/GeoIP2-City.mmdb", -- optional, if not specified no city/country geoip lookup is performed
     geo_report_subdivisions = true, -- optional, if not specified then subdivision1 and subdivision2 aren't reported
+    -- geo_ip_keep = false, -- optional, when specified the IP address is saved in the `geoIP` field
 
     -- String used to specify geoname cities > (1000|5000|15000) csv location on disk.
     -- Cities not in this list will be considered too specific and won't report geoCity.
@@ -343,6 +344,7 @@ function transform_message(hsr, msg)
         if not ip_addr then
             ip_addr = hsr:read_message("Fields[remote_addr]")
         end
+        if cfg.geo_ip_keep then msg.Fields.geoIP = ip_addr end
         msg.Fields.geoCity, msg.Fields.geoSubdivision1, msg.Fields.geoSubdivision2, msg.Fields.geoCountry = get_geo_city(ip_addr)
         if cfg.isp_docTypes and cfg.isp_docTypes[msg.Fields.docType] then
             msg.Fields.geoISP = get_geo_isp(ip_addr)

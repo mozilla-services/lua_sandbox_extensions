@@ -22,6 +22,7 @@ local messages = {
         creationTimestamp = 1.446686743312e+18,
         docType = "pioneer-study",
         appBuildId = "20151103030248",
+        geoIP = "216.160.83.56",
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
@@ -40,6 +41,7 @@ local messages = {
         creationTimestamp = 1.446686743312e+18,
         docType = "pioneer-study",
         appBuildId = "20151103030248",
+        geoIP = "216.160.83.56",
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
@@ -50,6 +52,7 @@ local messages = {
     {Logger = "telemetry", Type = "telemetry.duplicate", Fields = {
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A01",
         docType = "pioneer-study",
+        geoIP = "216.160.83.56",
         geoCity = "Milton",
         geoCountry = "US",
         duplicateDelta = {value = 0, value_type = 2, representation = "1m"}
@@ -100,6 +103,7 @@ local messages = {
         creationTimestamp = 1.446686743312e+18,
         docType = "pioneer-study",
         appBuildId = "20151103030248",
+        geoIP = "216.160.83.56",
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A02",
@@ -109,22 +113,26 @@ local messages = {
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "json",
-        DecodeError = "study validation: SchemaURI: #/properties/eventId Keyword: type DocumentURI: #/eventId"
+        DecodeError = "study validation: SchemaURI: #/properties/eventId Keyword: type DocumentURI: #/eventId",
+        geoIP = "216.160.83.56"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "jose",
-        DecodeError = "no encryptionKeyId: pioneer-20200901"
+        DecodeError = "no encryptionKeyId: pioneer-20200901",
+        geoIP = "216.160.83.56"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "schema",
-        DecodeError = "no schema: bogus.1 study: test-study"
+        DecodeError = "no schema: bogus.1 study: test-study",
+        geoIP = "216.160.83.56"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "schema",
-        DecodeError = "no schema: event.2 study: test-study"
+        DecodeError = "no schema: event.2 study: test-study",
+        geoIP = "216.160.83.56"
         }
     },
     {Logger = "telemetry", Type = "telemetry", Fields = {
@@ -139,6 +147,7 @@ local messages = {
         creationTimestamp = 1.446686743312e+18,
         docType = "pioneer-study",
         appBuildId = "20151103030248",
+        geoIP = "216.160.83.56",
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A07",
@@ -157,6 +166,7 @@ local messages = {
         creationTimestamp = 1.446686743312e+18,
         docType = "pioneer-study",
         appBuildId = "20151103030248",
+        geoIP = "216.160.83.56",
         geoCountry = "US",
         appVendor = "Mozilla",
         documentId = "0055FAC4-8A1A-4FCA-B380-EBFDC8571A07",
@@ -166,22 +176,26 @@ local messages = {
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "json",
-        DecodeError = "invalid envelope: failed to parse offset:0 Invalid value."
+        DecodeError = "invalid envelope: failed to parse offset:0 Invalid value.",
+        geoIP = "216.160.83.56"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "json",
-        DecodeError = "envelope validation: SchemaURI: # Keyword: required DocumentURI: #"
+        DecodeError = "envelope validation: SchemaURI: # Keyword: required DocumentURI: #",
+        geoIP = "216.160.83.56"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "jose",
-        DecodeError = "import: file: jwe.c line: 1205 function: cjose_jwe_import message: invalid argument"
+        DecodeError = "import: file: jwe.c line: 1205 function: cjose_jwe_import message: invalid argument",
+        geoIP = "216.160.83.56"
         }
     },
     {Logger = "telemetry", Type = "telemetry.error", Fields = {
         DecodeErrorType = "jose",
-        DecodeError = "decrypt: file: jwe.c line: 894 function: _cjose_jwe_decrypt_dat_a256gcm message: crypto error"
+        DecodeError = "decrypt: file: jwe.c line: 894 function: _cjose_jwe_decrypt_dat_a256gcm message: crypto error",
+        geoIP = "216.160.83.56"
         }
     },
 }
