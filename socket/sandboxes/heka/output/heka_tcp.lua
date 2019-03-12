@@ -9,6 +9,7 @@
 ```lua
 filename        = "heka_tcp.lua"
 message_matcher = "TRUE"
+drop_message_on_error = false, -- default will retry indefinitely
 
 address = "127.0.0.1"
 port    = 5565
@@ -26,12 +27,15 @@ ssl_params = {
 ```
 --]]
 
+local time   = require "os".time
 local socket = require "socket"
 
 local address = read_config("address") or "127.0.0.1"
 local port = read_config("port") or 5565
 local timeout = read_config("timeout") or 10
 local ssl_params = read_config("ssl_params")
+local err_return = -3 -- retry indefinitely
+if read_config("drop_message_on_error") then err_return = -2 end -- silently drop/skip the message
 
 local ssl_ctx = nil
 local ssl = nil
@@ -59,17 +63,22 @@ end
 
 local client, err = create_client()
 
+local time_t = 0
 function process_message()
     if not client then
-        client, err = create_client()
+        local t = time()
+        if t - time_t > 0 then
+            client, err = create_client()
+            time_t = t
+        end
     end
-    if not client then return -3, err end -- retry indefinitely
+    if not client then return err_return, err end
 
     local len, err = client:send(read_message("framed"))
     if not len then
         client:close()
         client = nil
-        return -3, err
+        return err_return, err
     end
     return 0
 end
