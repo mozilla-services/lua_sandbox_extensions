@@ -66,7 +66,7 @@ function decode(data, msg)
     fields.geoSubdivision1  = fields.geo_subdivision1   ;fields.geo_subdivision1   = nil
     fields.geoSubdivision2  = fields.geo_subdivision2   ;fields.geo_subdivision2   = nil
     fields.Host             = fields.host               ;fields.host               = nil
-    if Type == "validate" then
+    if Type == "validated" then
         fields.submission = inflate(31)(data)
     else
         if fields.error_type == "Duplicate" then
