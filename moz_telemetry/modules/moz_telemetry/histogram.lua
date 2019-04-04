@@ -262,7 +262,7 @@ function process(ns, json, histograms, row)
                     bucket = h.buckets[bucket] or 0
                 elseif h.histogram_type == 1 then
                     if bucket > 0 then
-                        bucket = math.floor(bucket / h.bucket_size + 0.5) + 1
+                        bucket = math.floor(bucket / h.bucket_size) + 1
                     end
                 end
                 if bucket < 0 then
