@@ -34,7 +34,7 @@ alert = {
 }
 ```
 --]]
-_PRESERVATION_VERSION = (read_config("preservation_version") or 0) + 1
+_PRESERVATION_VERSION = (read_config("preservation_version") or 0) + 2
 ebuckets   = {} -- cache for the exponential histogram bucket hash
 histograms = nil
 interval = 0
