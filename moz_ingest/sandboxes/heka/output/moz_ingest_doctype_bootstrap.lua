@@ -16,7 +16,7 @@ preserve_data   = true
 minimum_submissions = 10 -- minimum submissions in a day before starting a new plugin
 ```
 --]]
-_PRESERVATION_VERSION = read_config("preservation_version") or 0
+_PRESERVATION_VERSION = (read_config("preservation_version") or 0) + 1
 doctypes = {}
 
 require "io"
@@ -44,7 +44,7 @@ setmetatable(telemetry_thresholds, {__index = function(t, k) return telemetry_th
 local telemetry_tmpl = [[
 filename        = "moz_ingest_doctype_monitor.lua"
 docType         = "%s"
-message_matcher = "Fields[docType] == '" .. docType .. "' && Logger == '%s' && Fields[appName] == 'Firefox'"
+message_matcher = "Fields[docType] == '" .. docType .. "' && Logger == '%s'"
 ticker_interval = 60
 preserve_data   = true
 output_limit    = 1024 * 1024 * 8
