@@ -63,6 +63,7 @@ local escape_json   = require "lpeg.escape_sequences".escape_json
 local SEC_IN_MINUTE     = 60
 local TS_ROWS           = 61
 local thresholds        = alert.thresholds
+local mms               = read_config("max_message_size")
 local title
 
 local hierarchy = read_config("hierarchy") or {}
@@ -201,6 +202,7 @@ local function capture(d, success)
         s = read_message("Fields[DecodeErrorDetail]") or ""
     end
     if not s:match("^{") then s = string.format('"%s"', escape_json(s)) end
+    if #s > mms / d.tcfg.capture_samples  * 0.99 then return end -- bug 1538795 limit capture size
     t.items[t.idx] = s
     t.flag = false
     t.idx = t.idx + 1
