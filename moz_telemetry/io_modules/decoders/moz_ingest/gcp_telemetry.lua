@@ -106,6 +106,7 @@ function decode(data, msg)
     fields.geoSubdivision1      = fields.geo_subdivision1   ;fields.geo_subdivision1   = nil
     fields.geoSubdivision2      = fields.geo_subdivision2   ;fields.geo_subdivision2   = nil
     fields.Host                 = fields.host               ;fields.host               = nil
+    fields.sampleId             = fields.sample_id          ;fields.sample_id          = nil
     fields.appName              = fields.app_name           ;fields.app_name           = nil
     fields.appBuildId           = fields.app_build_id       ;fields.app_build_id       = nil
     fields.appUpdateChannel     = fields.app_update_channel ;fields.app_update_channel = nil
