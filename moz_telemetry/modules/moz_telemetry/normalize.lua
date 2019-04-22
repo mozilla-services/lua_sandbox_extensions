@@ -216,10 +216,18 @@ end
 
 
 local normalize_mobile_app_name_grammar =
-l.C"Fennec" + l.C"Focus" + l.C"Klar" +
-l.C"FirefoxForFireTV" + l.C"Focus-TV" +
-l.C"Zerda" + l.C"Zerda_cn" + l.C"Scryer" +
-l.C"WebXR" + l.C"FirefoxReality_oculusvr" + l.C"FirefoxReality_googlevr" + l.C"FirefoxReality_wavevr" +
+l.C"Fennec" +
+l.C"Focus-TV" +
+l.C"Focus" +
+l.C"Klar" +
+l.C"FirefoxForFireTV" +
+l.C"Zerda_cn" +
+l.C"Zerda" +
+l.C"Scryer" +
+l.C"WebXR" +
+l.C"FirefoxReality_oculusvr" +
+l.C"FirefoxReality_googlevr" +
+l.C"FirefoxReality_wavevr" +
 l.C"Lockbox" +
 l.C"FirefoxConnect" +
 l.Cc"Other"
