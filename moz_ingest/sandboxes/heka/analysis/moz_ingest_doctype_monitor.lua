@@ -37,7 +37,9 @@ alert = {
 
   thresholds = { -- map of hierarchy specified above
     ["*"] = {
-      ingestion_error = 1.0, -- percent error (0.0 - 100.0, nil disables)
+      ingestion_error       = 1.0, -- percent error (0.0 - 100.0, nil disables)
+      ingestion_error_topn  = 3 -- tracks the last top N errors for alert suppression
+
       duplicates      = 1.0, -- percent error (0.0 - 100.0, nil disables)
       inactivity      = 0, -- inactivity timeout in minutes (0 - 60, 0 == auto scale, nil disables)
       capture_samples = 2, -- number of samples to capture (1-10, nil disables)
@@ -100,7 +102,7 @@ local function validate_thresholds(t, path)
             elseif k == "duplicates" then
                 assert(type(arg) == "number" and arg >= 0 and arg <= 100,
                        string.format("%s: %s alert must contain a numeric percent (0-100)", table.concat(path, "->"), k))
-            elseif k == "capture_samples" then
+            elseif k == "capture_samples" or k == "ingestion_error_topn" then
                 assert(type(arg) == "number" and arg > 0 and arg <= 10,
                        string.format("%s: %s alert must contain a numeric value (1-10)", table.concat(path, "->"), k))
             else
@@ -382,9 +384,21 @@ local function alert_check_ingestion_error(name, d, vsum, esum)
     local pe  = esum / (vsum + esum) * 100
     if pe > mpe then
         local data = diagnostic_dump(d.diagnostics)
-        local top_ie = string.match(data, "^%d+\t([^\n]+)")
-        if d.last_top_ie ~= top_ie then
-            d.last_top_ie = top_ie
+        local top_ie = nil
+        local topn = {}
+        local i = 0
+        local limit = d.tcfg.ingestion_error_topn or 3
+        for cnt, ie in string.gmatch(data, "(%d+)\t([^\n]+)\n?") do
+            topn[ie] = cnt
+            i = i + 1
+            if i == 1 then
+                top_ie = ie
+            elseif i == limit then
+                break
+            end
+        end
+        if type(d.last_top_ie) ~= "table" or not d.last_top_ie[top_ie] then
+            d.last_top_ie = topn
             local msg = string.format(ingestion_error_template, vsum, esum, pe, mpe, data)
             return alert.send(name, "ingestion error", msg)
         end
