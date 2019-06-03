@@ -1,0 +1,152 @@
+[
+  {
+    "description": "Group Symbol is the symbol that job symbols will be grouped under.",
+    "mode": "NULLABLE",
+    "name": "group_symbol",
+    "type": "STRING"
+  },
+  {
+    "description": "Job kind (other|build|test)",
+    "mode": "REQUIRED",
+    "name": "job_kind",
+    "type": "STRING"
+  },
+  {
+    "description": "Job symbol",
+    "mode": "REQUIRED",
+    "name": "job_symbol",
+    "type": "STRING"
+  },
+  {
+    "description": "Labels are a dimension of a platform. The values here can vary wildly, so most strings are valid for this",
+    "mode": "REPEATED",
+    "name": "labels",
+    "type": "STRING"
+  },
+  {
+    "description": "Build machine name",
+    "mode": "REQUIRED",
+    "name": "machine_name",
+    "type": "STRING"
+  },
+  {
+    "description": "Build machine platform",
+    "mode": "REQUIRED",
+    "name": "machine_platform",
+    "type": "STRING"
+  },
+  {
+    "description": "Origin kind",
+    "mode": "REQUIRED",
+    "name": "origin_kind",
+    "type": "STRING"
+  },
+  {
+    "description": "Origin project",
+    "mode": "REQUIRED",
+    "name": "origin_project",
+    "type": "STRING"
+  },
+  {
+    "description": "Origin push log id",
+    "mode": "NULLABLE",
+    "name": "origin_pushlog_id",
+    "type": "INTEGER"
+  },
+  {
+    "description": "Origin revision",
+    "mode": "REQUIRED",
+    "name": "origin_revision",
+    "type": "STRING"
+  },
+  {
+    "description": "Job owner email",
+    "mode": "REQUIRED",
+    "name": "owner",
+    "type": "STRING"
+  },
+  {
+    "description": "Result",
+    "mode": "REQUIRED",
+    "name": "result",
+    "type": "STRING"
+  },
+  {
+    "description": "Retry Id",
+    "mode": "REQUIRED",
+    "name": "retry_id",
+    "type": "INTEGER"
+  },
+  {
+    "description": "TaskCluster Task ID",
+    "mode": "REQUIRED",
+    "name": "task",
+    "type": "STRING"
+  },
+  {
+    "description": "Tier",
+    "mode": "REQUIRED",
+    "name": "tier",
+    "type": "INTEGER"
+  },
+  {
+    "description": "Time completed",
+    "mode": "REQUIRED",
+    "name": "time_completed",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "Time scheduled",
+    "mode": "REQUIRED",
+    "name": "time_scheduled",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "Time started",
+    "mode": "REQUIRED",
+    "name": "time_started",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "Component",
+    "mode": "REQUIRED",
+    "name": "component",
+    "type": "STRING"
+  },
+  {
+    "description": "Sub component",
+    "mode": "REQUIRED",
+    "name": "sub_component",
+    "type": "STRING"
+  },
+  {
+    "description": "File name (artifact, test, source code etc...)",
+    "mode": "NULLABLE",
+    "name": "file",
+    "type": "STRING"
+  },
+  {
+    "description": "Log start",
+    "mode": "REQUIRED",
+    "name": "log_start",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "Log end",
+    "mode": "REQUIRED",
+    "name": "log_end",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "Duration in seconds (log_end - log_start)",
+    "mode": "REQUIRED",
+    "name": "duration",
+    "type": "FLOAT"
+  },
+  {
+    "description": "Data nesting level, use to avoid double counting",
+    "mode": "REQUIRED",
+    "name": "level",
+    "type": "INTEGER"
+  }
+]

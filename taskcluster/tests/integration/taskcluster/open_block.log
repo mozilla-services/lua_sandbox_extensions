@@ -1,0 +1,9 @@
+[taskcluster 2019-05-28 18:15:30.003Z] === Task Starting ===
+[task 2019-05-28T18:16:14.250Z] 18:16:14     INFO - [mozharness: 2019-05-28 18:16:14.250893Z] Running kitchen sink.
+[task 2019-05-28T18:16:18.480Z] 18:16:18     INFO -   0:03.78 Downloading binutils.tar.xz
+[task 2019-05-28T18:16:18.480Z] 18:16:18     INFO -   0:03.78 attempt 1/5
+[task 2019-05-28T18:16:18.480Z] 18:16:18     INFO -   0:03.78 Downloading to temporary location /builds/worker/.mozbuild/toolchains/7393b32b9c6ac9a9-binutils.tar.xz
+[task 2019-05-28T18:16:19.184Z] 18:16:19     INFO -   0:04.48 Downloading... 100.0 %
+[task 2019-05-28T18:16:19.186Z] 18:16:19     INFO -   0:04.49 Downloaded artifact to /builds/worker/.mozbuild/toolchains/7393b32b9c6ac9a9-binutils.tar.xz
+[task 2019-05-28T18:16:19.340Z] 18:16:19     INFO -   0:04.64 hashed u'/builds/worker/.mozbuild/toolchains/7393b32b9c6ac9a9-binutils.tar.xz' with sha256 to be a462fa0889a86b510d0a9300d13a37a86c4668215e7727e5bf6da0ecab2e6e71
+[taskcluster 2019-05-28 18:18:54.168Z] === Task Finished ===

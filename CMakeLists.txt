@@ -20,6 +20,7 @@ if(LUA51) # build against installed lua 5.1
     set(INSTALL_MODULE_PATH ${CMAKE_INSTALL_LIBDIR}/lua)
     set(INSTALL_IOMODULE_PATH ${CMAKE_INSTALL_LIBDIR}/lua)
     set(INSTALL_SANDBOX_PATH ${CMAKE_INSTALL_DATAROOTDIR}/lua)
+    set(INSTALL_SCHEMA_PATH ${CMAKE_INSTALL_DATAROOTDIR}/lua)
     set(PACKAGE_PREFIX lua51)
     if(WIN32)
         string(REPLACE "\\" "\\\\" TEST_MODULE_PATH "${CMAKE_BINARY_DIR}\\install\\${CMAKE_INSTALL_LIBDIR}\\${PACKAGE_PREFIX}\\?.lua")
@@ -36,6 +37,7 @@ else() # lua_sandbox build
     set(INSTALL_MODULE_PATH ${CMAKE_INSTALL_LIBDIR}/luasandbox/modules)
     set(INSTALL_IOMODULE_PATH ${CMAKE_INSTALL_LIBDIR}/luasandbox/io_modules)
     set(INSTALL_SANDBOX_PATH ${CMAKE_INSTALL_DATAROOTDIR}/luasandbox/sandboxes)
+    set(INSTALL_SCHEMA_PATH ${CMAKE_INSTALL_DATAROOTDIR}/luasandbox/schemas)
     add_definitions(-DLUA_SANDBOX)
     if(WIN32)
         string(REPLACE "\\" "\\\\" TEST_MODULE_PATH "${CMAKE_BINARY_DIR}\\install\\${CMAKE_INSTALL_LIBDIR}\\${PACKAGE_PREFIX}\\modules\\?.lua")
@@ -105,6 +107,7 @@ ssl
 struct
 syslog
 systemd
+taskcluster
 xxhash
 zlib
 )
