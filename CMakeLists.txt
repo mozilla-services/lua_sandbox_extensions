@@ -66,6 +66,7 @@ set(EP_CMAKE_ARGS
 --no-warn-unused-cli)
 
 set(extensions
+amqp
 aws
 bit
 bloom_filter
