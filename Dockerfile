@@ -36,14 +36,19 @@ RUN yum makecache && \
     if [[ `sha256sum grpc_stow.tgz | awk '{print $1}'` != \
         "65dba4a11ccc09ced4dad64ef196cab6299736a5f5e0df83fef6f1046213797b" ]]; then exit 1; fi && \
     tar -C / -zxf grpc_stow.tgz && \
-    stow -d /usr/local/stow protobuf-3 grpc googleapis
+    stow -d /usr/local/stow protobuf-3 grpc googleapis && \
+    curl -OL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-250.0.0-linux-x86_64.tar.gz && \
+    if [[ `sha256sum google-cloud-sdk-250.0.0-linux-x86_64.tar.gz | awk '{print $1}'` != \
+        "fe59b988c6a8a40ae98a3b9d0ea98b98e55e5061e8cec14d71e93b7d198c133e" ]]; then exit 1; fi && \
+    tar -zxf google-cloud-sdk-250.0.0-linux-x86_64.tar.gz && \
+    ./google-cloud-sdk/install.sh -q
 
 # Use devtoolset-6
 ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-6/root/usr/lib/perl5:/opt/rh/devtoolset-6/root//usr/share/perl5/vendor_perl' \
     X_SCLS=devtoolset-6 \
     PCP_DIR=/opt/rh/devtoolset-6/root \
     LD_LIBRARY_PATH=/opt/rh/devtoolset-6/root/usr/lib64:/opt/rh/devtoolset-6/root/usr/lib \
-    PATH=/opt/rh/devtoolset-6/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    PATH=/opt/rh/devtoolset-6/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin::/root/google-cloud-sdk/bin \
     PYTHONPATH=/opt/rh/devtoolset-6/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-6/root/usr/lib/python2.7/site-packages \
     PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
