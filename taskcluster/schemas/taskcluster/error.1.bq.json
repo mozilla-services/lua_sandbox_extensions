@@ -1,0 +1,27 @@
+[
+  {
+    "mode": "REQUIRED",
+    "name": "time",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "type",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "error_message",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "error_detail",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "data",
+    "type": "STRING"
+  }
+]

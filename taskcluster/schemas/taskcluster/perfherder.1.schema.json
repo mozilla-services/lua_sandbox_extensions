@@ -1,0 +1,136 @@
+{
+  "$id": "http://example.com/product.schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": false,
+  "description": "perfherder performance measurements",
+  "properties": {
+    "framework": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string"
+    },
+    "project": {
+      "type": "string"
+    },
+    "pushLogID": {
+      "type": "integer"
+    },
+    "revision": {
+      "type": "string"
+    },
+    "suites": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "alertChangeType": {
+            "type": "string"
+          },
+          "alertThreshold": {
+            "type": "number"
+          },
+          "extraOptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "lowerIsBetter": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "serverUrl": {
+            "type": "string"
+          },
+          "shouldAlert": {
+            "type": "boolean"
+          },
+          "subtests": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "alertChangeType": {
+                  "type": "string"
+                },
+                "alertThreshold": {
+                  "type": "number"
+                },
+                "base_replicates": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "lowerIsBetter": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "ref_replicates": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "replicates": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "shouldAlert": {
+                  "type": "boolean"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "task": {
+      "type": "string"
+    },
+    "time": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "time",
+    "task",
+    "project",
+    "framework",
+    "revision",
+    "suites"
+  ],
+  "title": "perfherder",
+  "type": "object"
+}

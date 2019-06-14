@@ -1,0 +1,155 @@
+[
+  {
+    "description": "Timestamp",
+    "mode": "REQUIRED",
+    "name": "time",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "TaskCluster Task ID",
+    "mode": "REQUIRED",
+    "name": "task",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "project",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "platform",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "framework",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "revision",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "pushLogID",
+    "type": "INTEGER"
+  },
+  {
+    "description": "Array of suite structs",
+    "fields": [
+      {
+        "mode": "REQUIRED",
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "extraOptions",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "lowerIsBetter",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "value",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "shouldAlert",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "alertChangeType",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "alertThreshold",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "unit",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "serverUrl",
+        "type": "STRING"
+      },
+      {
+        "description": "Array of subtest structs",
+        "fields": [
+          {
+            "mode": "REQUIRED",
+            "name": "name",
+            "type": "STRING"
+          },
+          {
+            "mode": "REQUIRED",
+            "name": "value",
+            "type": "FLOAT"
+          },
+          {
+            "mode": "REPEATED",
+            "name": "replicates",
+            "type": "FLOAT"
+          },
+          {
+            "mode": "REPEATED",
+            "name": "base_replicates",
+            "type": "FLOAT"
+          },
+          {
+            "mode": "REPEATED",
+            "name": "ref_replicates",
+            "type": "FLOAT"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "lowerIsBetter",
+            "type": "BOOLEAN"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "shouldAlert",
+            "type": "BOOLEAN"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "alertChangeType",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "alertThreshold",
+            "type": "FLOAT"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "unit",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "subtests",
+        "type": "RECORD"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "suites",
+    "type": "RECORD"
+  }
+]
