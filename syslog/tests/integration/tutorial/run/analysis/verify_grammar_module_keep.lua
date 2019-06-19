@@ -12,8 +12,8 @@ local messages = {
         Logger = "input.grammar_module_keep",
         Hostname = "ubuntu",
         Pid = 3453,
-        Payload = 'Feb 14 19:20:21 ubuntu someapp[3453]: foo=bar a=14 baz="hello kitty" cool%story=bro f %^asdf ip=216.160.83.56',
         Fields = {
+            ["@message"] = 'Feb 14 19:20:21 ubuntu someapp[3453]: foo=bar a=14 baz="hello kitty" cool%story=bro f %^asdf ip=216.160.83.56',
             a = "14",
             foo = "bar",
             ["cool%story"] = "bro",
