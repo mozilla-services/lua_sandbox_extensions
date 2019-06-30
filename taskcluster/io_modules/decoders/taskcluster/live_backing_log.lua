@@ -823,12 +823,14 @@ function decode(data, dh, mutable)
         local m = th.machine or {}
         base_msg.Fields["platform"] = m.platform or pj.status.workerType
 
-        if type(th.collection) == "table" and #th.collection > 0 then
+        if type(th.collection) == "table" then
             local collection = {}
             for k,v in pairs(th.collection) do
                 collection[#collection + 1] = k
             end
-            base_msg.Fields["collection"] = collection
+            if #collection > 0 then
+                base_msg.Fields["collection"] = collection
+            end
         end
 
         local np = normalize_platform(tostring(base_msg.Fields["platform"]))
