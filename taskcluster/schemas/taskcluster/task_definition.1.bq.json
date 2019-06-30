@@ -1,0 +1,148 @@
+[
+  {
+    "description": "Creation time of task",
+    "mode": "REQUIRED",
+    "name": "created",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "Deadline of the task, pending and running runs are resolved as exception if not resolved by other means before the deadline. Note, deadline cannot be more than 5 days into the future",
+    "mode": "REQUIRED",
+    "name": "deadline",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "List of dependent tasks. These must either be completed or resolved before this task is scheduled. See requires for semantics",
+    "mode": "REPEATED",
+    "name": "dependencies",
+    "type": "STRING"
+  },
+  {
+    "description": "Task expiration, time at which task definition and status is deleted. Notice that all artifacts for the task must have an expiration that is no later than this. If this property isn't it will be set to deadline plus one year (this default may change)",
+    "mode": "REQUIRED",
+    "name": "expires",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "JSON string containing an object with properties that can hold any kind of extra data that should be associated with the task. This can be data for the task which doesn't fit into payload, or it can supplementary data for use in services listening for events from this task. For example this could be details to display on treeherder, or information for indexing the task. Please, try to put all related information under one property, so extra data keys for treeherder reporting and task indexing don't conflict, hence, we have reusable services. Warning, do not stuff large data-sets in here -- task definitions should not take-up multiple MiBs",
+    "mode": "REQUIRED",
+    "name": "extra",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "description": "Human readable description of the task, explaining what the task does",
+        "mode": "REQUIRED",
+        "name": "description",
+        "type": "STRING"
+      },
+      {
+        "description": "Human readable name of task, used to very briefly given an idea about what the task does",
+        "mode": "REQUIRED",
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "description": "E-mail of person who caused this task, e.g. the person who did hg push. The person we should contact to ask why this task is here",
+        "mode": "REQUIRED",
+        "name": "owner",
+        "type": "STRING"
+      },
+      {
+        "description": "Link to source of this task, should specify a file, revision and repository. This should be place someone can go an do a git/hg blame to who came up with recipe for this task",
+        "mode": "REQUIRED",
+        "name": "source",
+        "type": "STRING"
+      }
+    ],
+    "description": "Required task metadata",
+    "mode": "NULLABLE",
+    "name": "metadata",
+    "type": "RECORD"
+  },
+  {
+    "description": "JSON string - Task-specific payload following worker-specific format. Refer to the documentation for the worker implementing <provisionerId>/<workerType> for details",
+    "mode": "REQUIRED",
+    "name": "payload",
+    "type": "STRING"
+  },
+  {
+    "description": "Priority of task. This defaults to lowest and the scope queue:create-task:<priority>/<provisionerId>/<workerType> is required to define a task with <priority>. The normal priority is treated as lowest",
+    "mode": "REQUIRED",
+    "name": "priority",
+    "type": "STRING"
+  },
+  {
+    "description": "Unique identifier for a provisioner, that can supply specified workerType",
+    "mode": "REQUIRED",
+    "name": "provisionerId",
+    "type": "STRING"
+  },
+  {
+    "description": "The tasks relation to its dependencies. This property specifies the semantics of the task.dependencies property. If all-completed is given the task will be scheduled when all dependencies are resolved completed (successful resolution). If all-resolved is given the task will be scheduled when all dependencies have been resolved, regardless of what their resolution is",
+    "mode": "REQUIRED",
+    "name": "requires",
+    "type": "STRING"
+  },
+  {
+    "description": "Number of times to retry the task in case of infrastructure issues. An infrastructure issue is a worker node that crashes or is shutdown, these events are to be expected",
+    "mode": "REQUIRED",
+    "name": "retries",
+    "type": "INTEGER"
+  },
+  {
+    "description": "List of task-specific routes. Pulse messages about the task will be CC'ed to route.<value> for each <value> in this array",
+    "mode": "REPEATED",
+    "name": "routes",
+    "type": "STRING"
+  },
+  {
+    "description": "All tasks in a task group must have the same schedulerId. This is used for several purposes: * it can represent the entity that created the task; * it can limit addition of new tasks to a task group: the caller of createTask must have a scope related to the schedulerId of the task group; * it controls who can manipulate tasks, again by requiring schedulerId-related scopes; and * it appears in the routing key for Pulse messages about the task",
+    "mode": "REQUIRED",
+    "name": "schedulerId",
+    "type": "STRING"
+  },
+  {
+    "description": "List of scopes that the task is authorized to use during its execution",
+    "mode": "REPEATED",
+    "name": "scopes",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "mode": "REQUIRED",
+        "name": "key",
+        "type": "STRING"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "value",
+        "type": "STRING"
+      }
+    ],
+    "description": "Arbitrary key-value tags (only strings limited to 4k). These can be used to attach informal metadata to a task. Use this for informal tags that tasks can be classified by. You can also think of strings here as candidates for formal metadata. Something like purpose: 'build' || 'test' is a good example",
+    "mode": "REPEATED",
+    "name": "tags",
+    "type": "RECORD"
+  },
+  {
+    "description": "Unique task identifier, this is UUID encoded as URL-safe base64 and stripped of = padding",
+    "mode": "REQUIRED",
+    "name": "taskId",
+    "type": "STRING"
+  },
+  {
+    "description": "Identifier for a group of tasks scheduled together with this task. Generally, all tasks related to a single event such as a version-control push or a nightly build have the same taskGroupId. This property defaults to taskId if it isn't specified. Tasks with taskId equal to the taskGroupId are, by convention, decision tasks",
+    "mode": "REQUIRED",
+    "name": "taskGroupId",
+    "type": "STRING"
+  },
+  {
+    "description": "Unique identifier for a worker-type within a specific provisioner",
+    "mode": "REQUIRED",
+    "name": "workerType",
+    "type": "STRING"
+  }
+]

@@ -1,10 +1,18 @@
 {
-  "$id": "http://example.com/product.schema.json",
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "description": "perfherder performance measurements",
   "properties": {
+    "collection": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
     "framework": {
+      "type": "string"
+    },
+    "groupSymbol": {
       "type": "string"
     },
     "platform": {
@@ -13,15 +21,18 @@
     "project": {
       "type": "string"
     },
-    "pushLogID": {
+    "pushId": {
       "type": "integer"
+    },
+    "recordingDate": {
+      "type": "string"
     },
     "revision": {
       "type": "string"
     },
     "suites": {
       "items": {
-        "additionalProperties": false,
+        "additionalProperties": true,
         "properties": {
           "alertChangeType": {
             "type": "string"
@@ -49,7 +60,7 @@
           },
           "subtests": {
             "items": {
-              "additionalProperties": false,
+              "additionalProperties": true,
               "properties": {
                 "alertChangeType": {
                   "type": "string"
@@ -116,8 +127,17 @@
       },
       "type": "array"
     },
-    "task": {
+    "symbol": {
       "type": "string"
+    },
+    "taskGroupId": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "integer"
     },
     "time": {
       "type": "string"
@@ -125,7 +145,8 @@
   },
   "required": [
     "time",
-    "task",
+    "taskId",
+    "taskGroupId",
     "project",
     "framework",
     "revision",

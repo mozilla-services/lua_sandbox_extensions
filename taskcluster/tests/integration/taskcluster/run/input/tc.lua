@@ -7,7 +7,6 @@ require "string"
 local sdu       = require "lpeg.sub_decoder_util"
 local decode    = sdu.load_sub_decoder("decoders.taskcluster.live_backing_log")
 
-local input_filename        = "jobs.txt"
 local send_decode_failures  = true
 
 local err_msg = {
@@ -18,15 +17,14 @@ local err_msg = {
     }
 }
 
-local dh = {integration_test = ""}
 function process_message()
     local cnt = 0
-    local fh = assert(io.open(input_filename, "rb"))
+    local fh = assert(io.open("tests.txt", "rb"))
     for jfn in fh:lines() do
         local jfh = assert(io.open(jfn, "rb"))
         local data = jfh:read("*a")
         jfh:close()
-        dh.integration_test = string.format("%s.log", jfn:match("(.*)%.json"))
+        dh = jfn:sub(1, -6)
         local ok, err = pcall(decode, data, dh)
         if (not ok or err) and send_decode_failures then
             err_msg.Payload = err
