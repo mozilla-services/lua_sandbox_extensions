@@ -9,7 +9,7 @@ Reads in the plugins.tsv file to enable plugin monitors to be written.
 
 ## Sample Configuration
 ```lua
-filename = "plugin_tsv.lua"
+filename = "plugins_tsv.lua"
 ticker_interval = 60
 preserve_data = false
 ```
