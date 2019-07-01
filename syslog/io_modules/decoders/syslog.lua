@@ -102,15 +102,11 @@ function decode(data, dh, mutable)
     msg.Hostname = fields.hostname or fields.source
     fields.hostname = nil
     fields.source = nil
+    if cfg.keep_data then fields[cfg.keep_data] = data end
 
     local payload = fields.msg
     fields.msg = nil
     sdu.add_fields(msg, fields)
-
-    if cfg.keep_data ~= nil then
-        sdu.add_fields(msg, { [cfg.keep_data] = data })
-    end
-
 
     local df = sub_decoders[programname]
     if df then
