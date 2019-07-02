@@ -13,6 +13,7 @@ decoders_syslog = {
   -- see https://github.com/rsyslog/rsyslog/blob/de0a9dd10703c4e6efcc69164781220d31a9e115/runtime/rsconf.c#L85
   -- Default:
   -- template = "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%", -- RSYSLOG_TraditionalForwardFormat
+  -- keep_data = nil, -- Flag indicating if the complete input in the returned data, and how to name that field.
 
   -- printf_messages = nil, -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/modules/lpeg/
   -- sub_decoders = nil, -- see: https://mozilla-services.github.io/lua_sandbox_extensions/lpeg/io_modules/lpeg/sub_decoder_util.html
@@ -53,6 +54,9 @@ local sdu           = require "lpeg.sub_decoder_util"
 
 local cfg = read_config(module_cfg) or {}
 assert(type(cfg) == "table", module_cfg .. " must be a table")
+if cfg.keep_data then
+    assert(type(cfg.keep_data) == "string", "keep_data must be nil, or a string")
+end
 local template      = cfg.template or "<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag:1:32%%msg:::sp-if-no-1st-sp%%msg%"
 local grammar       = syslog.build_rsyslog_grammar(template)
 local sub_decoders  = sdu.load_sub_decoders(cfg.sub_decoders, cfg.printf_messages)
@@ -98,6 +102,7 @@ function decode(data, dh, mutable)
     msg.Hostname = fields.hostname or fields.source
     fields.hostname = nil
     fields.source = nil
+    if cfg.keep_data then fields[cfg.keep_data] = data end
 
     local payload = fields.msg
     fields.msg = nil
