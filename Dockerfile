@@ -20,14 +20,17 @@ RUN yum makecache && \
     if [[ `sha256sum cmake-3.10.2-Linux-x86_64.tar.gz | awk '{print $1}'` != \
         "7a82b46c35f4e68a0807e8dc04e779dee3f36cd42c6387fd13b5c29fe62a69ea" ]]; then exit 1; fi && \
     (cd /usr && tar --strip-components=1 -zxf /root/cmake-3.10.2-Linux-x86_64.tar.gz) && \
+    rm -f cmake-3.10.2-Linux-x86_64.tar.gz && \
     curl -OL https://s3-us-west-2.amazonaws.com/net-mozaws-data-us-west-2-ops-ci-artifacts/mozilla-services/lua_sandbox_extensions/external/centos7/awssdk-1.3.7-1.x86_64.rpm && \
     if [[ `sha256sum awssdk-1.3.7-1.x86_64.rpm | awk '{print $1}'` != \
         "d78b164b774848d9b6adf99b59d2651832d3cfe52bae5727fb5afeb33eb13191" ]]; then exit 1; fi && \
     rpm -i awssdk-1.3.7-1.x86_64.rpm && \
+    rm -f awssdk-1.3.7-1.x86_64.rpm && \
     curl -OL https://s3-us-west-2.amazonaws.com/net-mozaws-data-us-west-2-ops-ci-artifacts/mozilla-services/lua_sandbox_extensions/external/centos7/parquet-cpp-1.3.1-1.x86_64.rpm && \
     if [[ `sha256sum parquet-cpp-1.3.1-1.x86_64.rpm | awk '{print $1}'` != \
         "7170c4d9d4bc114053ad8e59a2eb4b18ab54580d104179f1d53602f792513374" ]]; then exit 1; fi && \
     rpm -i parquet-cpp-1.3.1-1.x86_64.rpm && \
+    rm -f parquet-cpp-1.3.1-1.x86_64.rpm && \
     cat /etc/yum.conf | grep -v override_install_langs > /etc/yum.conf.lang && \
     cp /etc/yum.conf.lang /etc/yum.conf && \
     yum reinstall -y glibc-common && \
@@ -36,19 +39,20 @@ RUN yum makecache && \
     if [[ `sha256sum grpc_stow.tgz | awk '{print $1}'` != \
         "65dba4a11ccc09ced4dad64ef196cab6299736a5f5e0df83fef6f1046213797b" ]]; then exit 1; fi && \
     tar -C / -zxf grpc_stow.tgz && \
+    rm -f grpc_stow.tgz && \
     stow -d /usr/local/stow protobuf-3 grpc googleapis && \
     curl -OL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-250.0.0-linux-x86_64.tar.gz && \
     if [[ `sha256sum google-cloud-sdk-250.0.0-linux-x86_64.tar.gz | awk '{print $1}'` != \
         "fe59b988c6a8a40ae98a3b9d0ea98b98e55e5061e8cec14d71e93b7d198c133e" ]]; then exit 1; fi && \
     tar -zxf google-cloud-sdk-250.0.0-linux-x86_64.tar.gz && \
-    ./google-cloud-sdk/install.sh -q
+    rm -f google-cloud-sdk-250.0.0-linux-x86_64.tar.gz
 
 # Use devtoolset-6
-ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-6/root/usr/lib/perl5:/opt/rh/devtoolset-6/root//usr/share/perl5/vendor_perl' \
+ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root/usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-6/root/usr/lib/perl5:/opt/rh/devtoolset-6/root//usr/share/perl5/vendor_perl' \
     X_SCLS=devtoolset-6 \
     PCP_DIR=/opt/rh/devtoolset-6/root \
     LD_LIBRARY_PATH=/opt/rh/devtoolset-6/root/usr/lib64:/opt/rh/devtoolset-6/root/usr/lib \
-    PATH=/opt/rh/devtoolset-6/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin::/root/google-cloud-sdk/bin \
+    PATH=/opt/rh/devtoolset-6/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/google-cloud-sdk/bin \
     PYTHONPATH=/opt/rh/devtoolset-6/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-6/root/usr/lib/python2.7/site-packages \
     PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 

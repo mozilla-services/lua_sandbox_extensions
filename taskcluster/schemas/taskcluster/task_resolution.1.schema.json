@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": true,
+  "definitions": {
+    "alnum_name": {
+      "maxLength": 38,
+      "minLength": 1,
+      "pattern": "^[-a-zA-Z0-9_]+$",
+      "type": "string"
+    }
+  },
+  "description": "Taskcluster resolved tasks: completed, failed, exception",
+  "properties": {
+    "runId": {
+      "maximum": 1000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "status": {
+      "additionalProperties": true,
+      "properties": {
+        "deadline": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "provisionerId": {
+          "$ref": "#/definitions/alnum_name"
+        },
+        "retriesLeft": {
+          "maximum": 999,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "runs": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "reasonCreated": {
+                "type": "string"
+              },
+              "reasonResolved": {
+                "type": "string"
+              },
+              "resolved": {
+                "type": "string"
+              },
+              "runId": {
+                "maximum": 1000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "scheduled": {
+                "type": "string"
+              },
+              "started": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "takenUntil": {
+                "type": "string"
+              },
+              "workerGroup": {
+                "$ref": "#/definitions/alnum_name"
+              },
+              "workerId": {
+                "$ref": "#/definitions/alnum_name"
+              }
+            },
+            "required": [
+              "reasonCreated",
+              "runId",
+              "scheduled",
+              "state"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "schedulerId": {
+          "$ref": "#/definitions/alnum_name"
+        },
+        "state": {
+          "type": "string"
+        },
+        "taskGroupId": {
+          "type": "string"
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "workerType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "deadline",
+        "expires",
+        "provisionerId",
+        "retriesLeft",
+        "runs",
+        "schedulerId",
+        "state",
+        "taskId",
+        "taskGroupId",
+        "workerType"
+      ],
+      "type": "object"
+    },
+    "version": {
+      "type": "integer"
+    },
+    "workerGroup": {
+      "type": "string"
+    },
+    "workerId": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "runId",
+    "version"
+  ],
+  "title": "task-resolved",
+  "type": "object"
+}

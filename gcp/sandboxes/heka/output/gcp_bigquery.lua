@@ -58,7 +58,7 @@ end
 
 if tsv_fields and type(tsv_fields) == "table" then
     filename = filename .. ".tsv"
-    bq_cmd = string.format('bq load --source_format CSV -F "\t" --quote "" %s.%s %s', bq_dataset, bq_table, filename)
+    bq_cmd = string.format('bq load --source_format CSV -F "\t" --quote "" --ignore_unknown_values %s.%s %s', bq_dataset, bq_table, filename)
     load_data = function()
         local t = {}
         for i,f in ipairs(tsv_fields) do
@@ -74,7 +74,7 @@ if tsv_fields and type(tsv_fields) == "table" then
     end
 else
     filename = filename .. ".json"
-    bq_cmd = string.format("bq load --source_format NEWLINE_DELIMITED_JSON %s.%s %s", bq_dataset, bq_table, filename)
+    bq_cmd = string.format("bq load --source_format NEWLINE_DELIMITED_JSON --ignore_unknown_values %s.%s %s", bq_dataset, bq_table, filename)
 end
 
 

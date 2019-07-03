@@ -1,6 +1,8 @@
 other_kitchen-sink_test.json
 open_block.json
-job_decode_error.json
+pulse_decode_error.json
 perfherder_parse.json
 perfherder_validation.json
-missing.json
+missing_task.json
+missing_log.json
+other_no_schema.json

@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": true,
+  "definitions": {
+    "alnum_name": {
+      "maxLength": 38,
+      "minLength": 1,
+      "pattern": "^[-a-zA-Z0-9_]+$",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[-a-zA-Z0-9_]+$",
+      "type": "string"
+    }
+  },
+  "description": "Task Definition",
+  "properties": {
+    "created": {
+      "type": "string"
+    },
+    "deadline": {
+      "type": "string"
+    },
+    "dependencies": {
+      "items": {
+        "$ref": "#/definitions/task_id"
+      },
+      "maxItems": 100,
+      "type": "array"
+    },
+    "expires": {
+      "type": "string"
+    },
+    "extra": {
+      "type": "string"
+    },
+    "metadata": {
+      "properties": {
+        "description": {
+          "maxLength": 32768,
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "type": "string"
+        },
+        "owner": {
+          "maxLength": 255,
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 4096,
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "name",
+        "owner",
+        "source"
+      ],
+      "type": "object"
+    },
+    "payload": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "string"
+    },
+    "provisionerId": {
+      "$ref": "#/definitions/alnum_name"
+    },
+    "requires": {
+      "type": "string"
+    },
+    "retries": {
+      "maximum": 49,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "routes": {
+      "items": {
+        "maxLength": 249,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "type": "array"
+    },
+    "schedulerId": {
+      "$ref": "#/definitions/alnum_name"
+    },
+    "scopes": {
+      "items": {
+        "pattern": "^[ -~]*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "tags": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 4096,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "taskGroupId": {
+      "$ref": "#/definitions/task_id"
+    },
+    "taskId": {
+      "$ref": "#/definitions/task_id"
+    },
+    "workerType": {
+      "$ref": "#/definitions/alnum_name"
+    }
+  },
+  "required": [
+    "created",
+    "deadline",
+    "dependencies",
+    "extra",
+    "metadata",
+    "payload",
+    "provisionerId",
+    "requires",
+    "retries",
+    "routes",
+    "schedulerId",
+    "scopes",
+    "tags",
+    "taskGroupId",
+    "taskId",
+    "workerType"
+  ],
+  "title": "task_definition",
+  "type": "object"
+}

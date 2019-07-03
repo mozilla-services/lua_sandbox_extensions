@@ -1,152 +1,182 @@
 [
-  {
-    "description": "Group Symbol is the symbol that job symbols will be grouped under.",
-    "mode": "NULLABLE",
-    "name": "group_symbol",
-    "type": "STRING"
-  },
-  {
-    "description": "Job kind (other|build|test)",
-    "mode": "REQUIRED",
-    "name": "job_kind",
-    "type": "STRING"
-  },
-  {
-    "description": "Job symbol",
-    "mode": "REQUIRED",
-    "name": "job_symbol",
-    "type": "STRING"
-  },
-  {
-    "description": "Labels are a dimension of a platform. The values here can vary wildly, so most strings are valid for this",
-    "mode": "REPEATED",
-    "name": "labels",
-    "type": "STRING"
-  },
-  {
-    "description": "Build machine name",
-    "mode": "REQUIRED",
-    "name": "machine_name",
-    "type": "STRING"
-  },
-  {
-    "description": "Build machine platform",
-    "mode": "REQUIRED",
-    "name": "machine_platform",
-    "type": "STRING"
-  },
-  {
-    "description": "Origin kind",
-    "mode": "REQUIRED",
-    "name": "origin_kind",
-    "type": "STRING"
-  },
-  {
-    "description": "Origin project",
-    "mode": "REQUIRED",
-    "name": "origin_project",
-    "type": "STRING"
-  },
-  {
-    "description": "Origin push log id",
-    "mode": "NULLABLE",
-    "name": "origin_pushlog_id",
-    "type": "INTEGER"
-  },
-  {
-    "description": "Origin revision",
-    "mode": "REQUIRED",
-    "name": "origin_revision",
-    "type": "STRING"
-  },
-  {
-    "description": "Job owner email",
-    "mode": "REQUIRED",
-    "name": "owner",
-    "type": "STRING"
-  },
-  {
-    "description": "Result",
-    "mode": "REQUIRED",
-    "name": "result",
-    "type": "STRING"
-  },
-  {
-    "description": "Retry Id",
-    "mode": "REQUIRED",
-    "name": "retry_id",
-    "type": "INTEGER"
-  },
-  {
-    "description": "TaskCluster Task ID",
-    "mode": "REQUIRED",
-    "name": "task",
-    "type": "STRING"
-  },
-  {
-    "description": "Tier",
-    "mode": "REQUIRED",
-    "name": "tier",
-    "type": "INTEGER"
-  },
-  {
-    "description": "Time completed",
-    "mode": "REQUIRED",
-    "name": "time_completed",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Time scheduled",
-    "mode": "REQUIRED",
-    "name": "time_scheduled",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Time started",
-    "mode": "REQUIRED",
-    "name": "time_started",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Component",
-    "mode": "REQUIRED",
-    "name": "component",
-    "type": "STRING"
-  },
-  {
-    "description": "Sub component",
-    "mode": "REQUIRED",
-    "name": "sub_component",
-    "type": "STRING"
-  },
-  {
-    "description": "File name (artifact, test, source code etc...)",
-    "mode": "NULLABLE",
-    "name": "file",
-    "type": "STRING"
-  },
-  {
-    "description": "Log start",
-    "mode": "REQUIRED",
-    "name": "log_start",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Log end",
-    "mode": "REQUIRED",
-    "name": "log_end",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Duration in seconds (log_end - log_start)",
-    "mode": "REQUIRED",
-    "name": "duration",
-    "type": "FLOAT"
-  },
-  {
-    "description": "Data nesting level, use to avoid double counting",
-    "mode": "REQUIRED",
-    "name": "level",
-    "type": "INTEGER"
-  }
+    {
+      "description": "Id of the run that completed the task",
+      "mode": "REQUIRED",
+      "name": "runId",
+      "type": "INTEGER"
+    },
+    {
+      "description": "State of the overall task.",
+      "mode": "REQUIRED",
+      "name": "state",
+      "type": "STRING"
+    },
+    {
+      "description": "Result of the sub component execution.",
+      "mode": "REQUIRED",
+      "name": "result",
+      "type": "STRING"
+    },
+    {
+      "description": "Identifier for a group of tasks scheduled together with this task. Generally, all tasks related to a single event such as a version-control push or a nightly build have the same taskGroupId. This property defaults to taskId if it isn't specified. Tasks with taskId equal to the taskGroupId are, by convention, decision tasks.",
+      "mode": "REQUIRED",
+      "name": "taskGroupId",
+      "type": "STRING"
+    },
+    {
+      "description": "Unique task identifier, this is UUID encoded as URL-safe base64 and stripped of = padding.",
+      "mode": "REQUIRED",
+      "name": "taskId",
+      "type": "STRING"
+    },
+    {
+      "description": "Unique identifier for a worker-type within a specific provisioner.",
+      "mode": "REQUIRED",
+      "name": "workerType",
+      "type": "STRING"
+    },
+    {
+      "description": "Task creation time.",
+      "mode": "REQUIRED",
+      "name": "created",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Date-time at which this run was scheduled, ie. when the run was created in state pending.",
+      "mode": "REQUIRED",
+      "name": "scheduled",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Date-time at which this run was claimed, ie. when the run changed state from pending to running. This property is only present after the run has been claimed.",
+      "mode": "REQUIRED",
+      "name": "started",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Date-time at which this run was resolved, ie. when the run changed state from running to either completed, failed or exception. This property is only present after the run as been resolved.",
+      "mode": "REQUIRED",
+      "name": "resolved",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "E-mail of person who caused this task, e.g. the person who did hg push. The person we should contact to ask why this task is here",
+      "mode": "REQUIRED",
+      "name": "owner",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder origin repository",
+      "mode": "NULLABLE",
+      "name": "origin",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder project name",
+      "mode": "NULLABLE",
+      "name": "project",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder project owner",
+      "mode": "NULLABLE",
+      "name": "projectOwner",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder revision route",
+      "mode": "NULLABLE",
+      "name": "revision",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder pushId",
+      "mode": "NULLABLE",
+      "name": "pushId",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Treeherder kind tag",
+      "mode": "NULLABLE",
+      "name": "kind",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder os tag",
+      "mode": "NULLABLE",
+      "name": "os",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder machine platform",
+      "mode": "NULLABLE",
+      "name": "platform",
+      "type": "STRING"
+    },
+    {
+      "description": "Tier",
+      "mode": "NULLABLE",
+      "name": "tier",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Treeherder groupSymbol.",
+      "mode": "NULLABLE",
+      "name": "groupSymbol",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder (job) symbol",
+      "mode": "NULLABLE",
+      "name": "symbol",
+      "type": "STRING"
+    },
+    {
+      "description": "Treeherder live log file name (artifact, test, source code etc...)",
+      "mode": "NULLABLE",
+      "name": "file",
+      "type": "STRING"
+    },
+    {
+      "description": "Component being timed.",
+      "mode": "REQUIRED",
+      "name": "component",
+      "type": "STRING"
+    },
+    {
+      "description": "Subcomponent being timed.",
+      "mode": "REQUIRED",
+      "name": "subComponent",
+      "type": "STRING"
+    },
+    {
+      "description": "Log start",
+      "mode": "REQUIRED",
+      "name": "logStart",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Log end",
+      "mode": "REQUIRED",
+      "name": "logEnd",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Duration in seconds (log_end - log_start)",
+      "mode": "REQUIRED",
+      "name": "duration",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Data nesting level, use to avoid double counting",
+      "mode": "REQUIRED",
+      "name": "level",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Taskherder options collection",
+      "mode": "REPEATED",
+      "name": "collection",
+      "type": "STRING"
+    }
 ]

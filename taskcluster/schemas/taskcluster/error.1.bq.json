@@ -1,25 +1,36 @@
 [
   {
+    "description": "Time the error was produced",
     "mode": "REQUIRED",
     "name": "time",
     "type": "TIMESTAMP"
   },
   {
+    "description": "Type of error e.g., *.parse, *.validation",
     "mode": "REQUIRED",
     "name": "type",
     "type": "STRING"
   },
   {
+    "description": "Unique task identifier, this is UUID encoded as URL-safe base64 and stripped of = padding",
     "mode": "NULLABLE",
-    "name": "error_message",
+    "name": "taskId",
     "type": "STRING"
   },
   {
+    "description": "Summary error message",
     "mode": "NULLABLE",
-    "name": "error_detail",
+    "name": "message",
     "type": "STRING"
   },
   {
+    "description": "Detailed error message",
+    "mode": "NULLABLE",
+    "name": "detail",
+    "type": "STRING"
+  },
+  {
+    "description": "Data that produced the error",
     "mode": "NULLABLE",
     "name": "data",
     "type": "STRING"
