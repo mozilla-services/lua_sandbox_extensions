@@ -6,9 +6,9 @@ local grammar = require "lpeg.sendmail".grammar
 local log
 local fields
 
-log = 'x63EUUUUUUU111: to=<someone@xs4all.nl>, delay=12:34:45, xdelay=00:00:00, mailer=lmtp, pri=128179, relay=imap.xs4all.nl [194.109.6.110], dsn=2.0.0, stat=Sent'
+log = 'x68DJAVD023504: to=<someone@xs4all.nl>, delay=12:34:45, xdelay=00:00:00, mailer=lmtp, pri=128179, relay=imap.xs4all.nl [194.109.6.110], dsn=2.0.0, stat=Sent'
 fields = grammar:match(log)
-assert(fields.sendmailid == 'x63EUUUUUUU111', fields.sendmailid)
+assert(fields.sendmailid == 'x68DJAVD023504', fields.sendmailid)
 assert(fields.to == '<someone@xs4all.nl>', fields.to)
 assert(fields.delay == '12:34:45', fields.delay)
 assert(fields.xdelay == '00:00:00', fields.xdelay)
@@ -18,9 +18,9 @@ assert(fields.relay == 'imap.xs4all.nl [194.109.6.110]', fields.relay)
 assert(fields.dsn == '2.0.0', fields.dsn)
 assert(fields.stat == 'Sent', fields.stat)
 
-log = 'x63EUUUUUUU111: from=<postmaster@example.com>, size=1234, class=0, nrcpts=1, msgid=<20190101120033.1234@example.com>, proto=ESMTP, daemon=MTA, relay=remote.example.com [192.168.1.1]'
+log = 'x68DJAVD023504: from=<postmaster@example.com>, size=1234, class=0, nrcpts=1, msgid=<20190101120033.1234@example.com>, proto=ESMTP, daemon=MTA, relay=remote.example.com [192.168.1.1]'
 fields = grammar:match(log)
-assert(fields.sendmailid == 'x63EUUUUUUU111', fields.sendmailid)
+assert(fields.sendmailid == 'x68DJAVD023504', fields.sendmailid)
 assert(fields.from == '<postmaster@example.com>', fields.from)
 assert(fields.size == '1234', fields.size)
 assert(fields.class == '0', fields.size)
@@ -29,3 +29,7 @@ assert(fields.msgid == '<20190101120033.1234@example.com>', fields.msgid)
 assert(fields.proto == 'ESMTP', fields.proto)
 assert(fields.daemon == 'MTA', fields.daemon)
 assert(fields.relay == 'remote.example.com [192.168.1.1]', fields.relay)
+
+log = 'NOQUEUE: SYSERR(nobody): can not write to queue directory /var/spool/clientmqueue/'
+fields = grammar:match(log)
+assert(fields == nil, 'no match for other errors')
