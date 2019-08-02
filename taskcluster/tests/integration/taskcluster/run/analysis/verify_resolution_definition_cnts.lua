@@ -5,7 +5,7 @@
 require "string"
 require "table"
 
-local ecnts = {task_definition = 6, task_resolution = 7}
+local ecnts = {task_definition = 7, task_resolution = 8}
 local acnts = {}
 
 function process_message()

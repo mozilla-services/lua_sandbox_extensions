@@ -6,3 +6,4 @@ perfherder_validation.json
 missing_task.json
 missing_log.json
 other_no_schema.json
+other_no_treeherder.json
