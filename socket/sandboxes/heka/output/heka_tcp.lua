@@ -61,8 +61,7 @@ local function create_client()
     return c, err
 end
 
-local client, err = create_client()
-
+local client, err
 local time_t = 0
 function process_message()
     if not client then
