@@ -46,23 +46,26 @@ if ssl_params then
 end
 
 local function create_client()
-    local c, err = socket.connect(address, port)
+    local success
+    local c, err = socket.tcp()
     if c then
-        c:setoption("tcp-nodelay", true)
-        c:setoption("keepalive", true)
         c:settimeout(timeout)
-        if ssl_ctx then
-            c, err = ssl.wrap(c, ssl_ctx)
-            if c then
-                c:dohandshake()
+        success, err = c:connect(address, port)
+        if success then
+            c:setoption("tcp-nodelay", true)
+            c:setoption("keepalive", true)
+            if ssl_ctx then
+                c, err = ssl.wrap(c, ssl_ctx)
+                if c then
+                    c:dohandshake()
+                end
             end
         end
     end
     return c, err
 end
 
-local client, err = create_client()
-
+local client, err
 local time_t = 0
 function process_message()
     if not client then
