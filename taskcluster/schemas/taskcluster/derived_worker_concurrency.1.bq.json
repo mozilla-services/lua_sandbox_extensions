@@ -1,0 +1,50 @@
+[
+  {
+    "description": "Date the task excution started (partition)",
+    "mode": "REQUIRED",
+    "name": "date",
+    "type": "DATE"
+  },
+  {
+    "description": "Unique identifier for a worker-type within a specific provisioner. (cluster)",
+    "mode": "REQUIRED",
+    "name": "workerType",
+    "type": "string"
+  },
+  {
+    "description": "Number of tasks run on this worker type",
+    "mode": "REQUIRED",
+    "name": "tasks",
+    "type": "INTEGER"
+  },
+  {
+    "description": "Approximation of the maximum number of tasks running on this worker type for this time range",
+    "mode": "REQUIRED",
+    "name": "approx_peak_concurrent_tasks",
+    "type": "INTEGER"
+  },
+  {
+    "description": "Total sequential run time of all tasks in seconds",
+    "mode": "REQUIRED",
+    "name": "total_sequential",
+    "type": "FLOAT"
+  },
+  {
+    "description": "The amount of task overlap in seconds",
+    "mode": "REQUIRED",
+    "name": "x_task_overlap",
+    "type": "FLOAT"
+  },
+  {
+    "description": "The maximum amount of task overlap possible in seconds",
+    "mode": "REQUIRED",
+    "name": "max_x_task_overlap",
+    "type": "FLOAT"
+  },
+  {
+    "description": "The percentage of overlap in seconds (overlap / max)",
+    "mode": "REQUIRED",
+    "name": "x_task_overlap_pct",
+    "type": "FLOAT"
+  }
+]

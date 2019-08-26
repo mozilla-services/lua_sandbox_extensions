@@ -178,5 +178,11 @@
       "mode": "REPEATED",
       "name": "collection",
       "type": "STRING"
-    }
+    },
+    {
+      "description": "extra.suite",
+      "mode": "NULLABLE",
+      "name": "suite",
+      "type": "STRING"
+    },
 ]

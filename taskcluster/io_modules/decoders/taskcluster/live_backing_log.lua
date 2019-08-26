@@ -813,6 +813,7 @@ function decode(data, dh, mutable)
 
     base_msg.Fields["kind"]         = tj.tags.kind
     base_msg.Fields["os"]           = tj.tags.os
+    base_msg.Fields["suite"]        = tj.extra.suite
 
     local g = nil
     local th = tj.extra.treeherder

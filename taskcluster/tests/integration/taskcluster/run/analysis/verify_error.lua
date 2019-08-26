@@ -12,7 +12,7 @@ local results = {
     {type = 'error.perfherder.parse', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:185: Expected comma or object end but found T_COLON at character 21'},
     {type = 'error.perfherder.validation', message = 'SchemaURI: #/properties/suites Keyword: type DocumentURI: #/suites'},
     {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:790: missing_task.task.json: No such file or directory'},
-    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:920: missing_log.log: No such file or directory'}
+    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:921: missing_log.log: No such file or directory'}
 }
 
 local cnt = 0
