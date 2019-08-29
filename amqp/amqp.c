@@ -310,7 +310,7 @@ static int rmq_consumer(lua_State *lua)
                                    cfg.password), "login");
   amqp_channel_open(c->conn, 1);
   check_amqp_error(lua, amqp_get_rpc_reply(c->conn), "Opening channel");
-  amqp_basic_qos(c->conn, 1, cfg.prefetch_size, cfg.prefetch_count, 1);
+  amqp_basic_qos(c->conn, 1, cfg.prefetch_size, cfg.prefetch_count, 0);
 
   amqp_queue_declare_ok_t *r = NULL;
   amqp_bytes_t queue_name;
@@ -374,10 +374,45 @@ static int rmq_consumer_receive(lua_State *lua)
   amqp_maybe_release_buffers(c->conn);
   res = amqp_consume_message(c->conn, &envelope, tv, 0);
 
-  if (AMQP_RESPONSE_NORMAL != res.reply_type) {
-    lua_pushnil(lua);
-    return 1;
+  switch (res.reply_type) {
+  case AMQP_RESPONSE_NORMAL:
+    break;
+  case AMQP_RESPONSE_LIBRARY_EXCEPTION:
+    switch (res.library_error) {
+    case AMQP_STATUS_TIMEOUT:
+      return 0;
+    case AMQP_STATUS_UNEXPECTED_STATE:
+      {
+        amqp_frame_t frame;
+        int rv = amqp_simple_wait_frame(c->conn, &frame);
+        if (AMQP_STATUS_OK != rv) {
+          return luaL_error(lua, "amqp_simple_wait_frame rv: %d", rv);
+        }
+
+        if (AMQP_FRAME_METHOD == frame.frame_type) {
+          switch (frame.payload.method.id) {
+          case AMQP_BASIC_RETURN_METHOD:
+            {
+              amqp_message_t message;
+              res = amqp_read_message(c->conn, frame.channel, &message, 0);
+              check_amqp_error(lua, res, "amqp_read_message");
+              amqp_destroy_message(&message);
+            }
+            return 0;
+          case AMQP_BASIC_ACK_METHOD:
+            return 0;
+          default:
+            break;
+          }
+        }
+      }
+    }
+    /* FALLTHRU */
+  default:
+    check_amqp_error(lua, res, "amqp_consume_message");
+    return 0;
   }
+
   c->channel = envelope.channel;
   c->delivery_tag = envelope.delivery_tag;
   lua_pushlstring(lua, envelope.message.body.bytes, envelope.message.body.len);
