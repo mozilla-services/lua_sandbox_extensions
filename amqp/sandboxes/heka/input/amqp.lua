@@ -59,6 +59,7 @@ local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoder
 
 local amqp_cfg = read_config("amqp")
 if type(amqp_cfg) ~= "table" then error("invalid amqp configuration") end
+if not amqp_cfg.prefetch_count then amqp_cfg.prefetch_count = 1 end
 
 local default_headers = read_config("default_headers") or {}
 assert(type(default_headers) == "table", "invalid default_headers cfg")
