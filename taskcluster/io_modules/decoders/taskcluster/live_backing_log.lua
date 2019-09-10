@@ -161,8 +161,13 @@ local function inject_timing_msg(g, level, fields)
     msg.Fields.logStart = date.format(msg.Fields.logStart, "%Y-%m-%dT%H:%M:%SZ")
     msg.Fields.logEnd = date.format(msg.Fields.logEnd, "%Y-%m-%dT%H:%M:%SZ")
     msg.Fields.result = string.lower(msg.Fields.result)
+    -- remove pulse metadata before encoding
+    msg.Fields.content_type = nil
+    msg.Fields.exchange = nil
+    msg.Fields.queue_name = nil
+    msg.Fields.routing_key = nil
     msg.Payload = cjson.encode(msg.Fields)
-    -- remove the fields not needed by the tests or anomaly detection
+    -- remove the fields not needed by the tests or anomaly detection after encoding
     msg.Fields.created = nil
     msg.Fields.kind = nil
     msg.Fields.collection = nil
@@ -763,7 +768,16 @@ local log_file = "/var/tmp/" .. read_config("Logger") .. "_log.txt"
 local perfherder_file = "/var/tmp/" .. read_config("Logger") .. "_perfherder.json"
 function decode(data, dh, mutable)
     local pj = cjson.decode(data)
-    inject_task_msg(pj, "task_resolution", task_resolution_schema, task_resolution_schema_file)
+    if pj.state == "completed" or pj.state == "failed" or pj.state == "exception" then
+        inject_task_msg(pj, "task_resolution", task_resolution_schema, task_resolution_schema_file)
+    else
+        local msg   = sdu.copy_message(dh, mutable)
+        msg.Type    = "task_inprogress"
+        msg.Payload = data
+        inject_message(msg)  -- used for updates before task completion (e.g. real time worker concurrency, lag, etc)
+        return
+    end
+
 
     local run = pj.status.runs[pj.runId  + 1]
     if not run or not run.scheduled or not run.resolved then
