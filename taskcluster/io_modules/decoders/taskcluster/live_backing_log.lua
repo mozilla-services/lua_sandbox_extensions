@@ -768,7 +768,7 @@ local log_file = "/var/tmp/" .. read_config("Logger") .. "_log.txt"
 local perfherder_file = "/var/tmp/" .. read_config("Logger") .. "_perfherder.json"
 function decode(data, dh, mutable)
     local pj = cjson.decode(data)
-    if pj.state == "completed" or pj.state == "failed" or pj.state == "exception" then
+    if pj.status.state == "completed" or pj.status.state == "failed" or pj.status.state == "exception" then
         inject_task_msg(pj, "task_resolution", task_resolution_schema, task_resolution_schema_file)
     else
         local msg   = sdu.copy_message(dh, mutable)
