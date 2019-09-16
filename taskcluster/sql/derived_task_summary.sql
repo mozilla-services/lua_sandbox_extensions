@@ -35,7 +35,8 @@ END
   logStart,
   logEnd,
   TIMESTAMP_DIFF(started, scheduled, millisecond) / 1000 AS lag,
-  TIMESTAMP_DIFF(resolved, started, millisecond) / 1000 AS execution
+  TIMESTAMP_DIFF(resolved, started, millisecond) / 1000 AS execution,
+  suite
 FROM
   taskclusteretl.timing
 WHERE
