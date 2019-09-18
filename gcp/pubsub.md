@@ -69,6 +69,20 @@ local msgs, cnt = subscriber:pull(batch_size)
     `msgs = { {data, attribute_table}, ...}`
 * cnt (string/nil) Number of messsages returned
 
+#### ack
+
+Send the ack for the last set of messages received (always invoked by pull*).
+
+```lua
+subscriber:ack()
+```
+
+*Arguments*
+* none
+
+*Returns*
+* none
+
 ### publisher Methods
 
 #### publish/publish_sync

@@ -14,7 +14,7 @@ RUN yum makecache && \
     autoconf automake centos-release-scl epel-release zlib-devel openssl-devel \
     postgresql-devel libcurl-devel lua-devel librabbitmq-devel && \
     yum install -y https://packages.red-data-tools.org/centos/red-data-tools-release-1.0.0-1.noarch.rpm && \
-    yum install -y libmaxminddb-devel jq libmaxminddb librdkafka-devel jansson-devel devtoolset-6 && \
+    yum install -y libmaxminddb-devel jq libmaxminddb librdkafka-devel jansson-devel devtoolset-7 && \
     yum install -y --enablerepo=epel arrow-devel-0.9.0 && \
     curl -OL https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz && \
     if [[ `sha256sum cmake-3.10.2-Linux-x86_64.tar.gz | awk '{print $1}'` != \
@@ -47,13 +47,13 @@ RUN yum makecache && \
     tar -zxf google-cloud-sdk-250.0.0-linux-x86_64.tar.gz && \
     rm -f google-cloud-sdk-250.0.0-linux-x86_64.tar.gz
 
-# Use devtoolset-6
-ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-6/root/usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-6/root/usr/lib/perl5:/opt/rh/devtoolset-6/root//usr/share/perl5/vendor_perl' \
-    X_SCLS=devtoolset-6 \
-    PCP_DIR=/opt/rh/devtoolset-6/root \
-    LD_LIBRARY_PATH=/opt/rh/devtoolset-6/root/usr/lib64:/opt/rh/devtoolset-6/root/usr/lib \
-    PATH=/opt/rh/devtoolset-6/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/google-cloud-sdk/bin \
-    PYTHONPATH=/opt/rh/devtoolset-6/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-6/root/usr/lib/python2.7/site-packages \
+# Use devtoolset-7
+ENV PERL5LIB='PERL5LIB=/opt/rh/devtoolset-7/root/usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-7/root/usr/lib/perl5:/opt/rh/devtoolset-7/root//usr/share/perl5/vendor_perl' \
+    X_SCLS=devtoolset-7 \
+    PCP_DIR=/opt/rh/devtoolset-7/root \
+    LD_LIBRARY_PATH=/opt/rh/devtoolset-7/root/usr/lib64:/opt/rh/devtoolset-7/root/usr/lib \
+    PATH=/opt/rh/devtoolset-7/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/google-cloud-sdk/bin \
+    PYTHONPATH=/opt/rh/devtoolset-7/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-7/root/usr/lib/python2.7/site-packages \
     PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 # Compile and install lua_sandbox and hindsight using master branch
