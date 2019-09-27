@@ -3,13 +3,13 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 --[[
-# BigQuery Load Failure and Termination Monitor
+# Taskcluster process_message and plugin termination monitor
 
 
 ## Sample Configuration
 ```lua
 filename = 'bq_output_monitor.lua'
-message_matcher = "Type =~ '^hindsight%.plugin%.' && Fields[name] =~ '^output%.bq'"
+message_matcher = "Type =~ '^hindsight%.plugin%.'"
 preserve_data = false
 process_message_inject_limit = 10
 
@@ -25,6 +25,7 @@ alert = {
 ```
 --]]
 require "string"
+local alert = require "heka.alert"
 
 function process_message()
     local mt = read_message("Type")
@@ -32,10 +33,12 @@ function process_message()
 
     if mt == "hindsight.plugin.stats" then
         local failures = read_message("Fields[deltas]", 0, 3) -- process message failures
-        if failures > 0 then
-            alert.send(plugin, "BigQuery load failure",
-                       "The failed load file has been temporarily saved off for manual inspection/correction")
+        if plugin:match("^output") and failures > 0 then
+            alert.send(plugin, "process_message failure", "The failed load file has been temporarily saved off for manual inspection/correction")
+        elseif plugin:match("^input") and failures > 30 then
+            alert.send(plugin, "process_message failure", "Cannot read data")
         end
+        -- input and analysis process message failure are in actionable at this point
     elseif mt == "hindsight.plugin.terminated" then
         alert.send(plugin, "terminated", read_message("Payload"), 0) -- no throttling
     end
@@ -45,4 +48,3 @@ end
 
 function timer_event()
 end
-
