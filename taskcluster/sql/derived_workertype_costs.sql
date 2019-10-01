@@ -8,6 +8,7 @@ WITH
     collection,
     suite,
     tier,
+    kind,
     owner,
     COUNT(*) AS tasks,
     ROUND(SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000, 2) AS hours,
@@ -36,7 +37,6 @@ WITH
     taskclusteretl.derived_task_summary AS dts
   WHERE
     date = DATE_SUB(@run_date, INTERVAL 1 day)
-    AND kind = "test"
   GROUP BY
     date,
     project,
@@ -45,6 +45,7 @@ WITH
     collection,
     suite,
     tier,
+    kind,
     owner)
 SELECT
   a.*,

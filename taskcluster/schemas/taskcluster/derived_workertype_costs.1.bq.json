@@ -1,0 +1,68 @@
+[
+  {
+    "description": "Execution Date (partition)",
+    "mode": "REQUIRED",
+    "name": "date",
+    "type": "DATE"
+  },
+  {
+    "description": "Project/branch (cluster)",
+    "mode": "NULLABLE",
+    "name": "project",
+    "type": "STRING"
+  },
+  {
+    "description": "Machine platform (cluster)",
+    "mode": "REQUIRED",
+    "name": "platform",
+    "type": "STRING"
+  },
+  {
+    "description": "Unique identifier for a worker-type within a specific provisioner. (cluster)",
+    "mode": "REQUIRED",
+    "name": "workerType",
+    "type": "STRING"
+  },
+  {
+    "description": "Configuration options",
+    "mode": "NULLABLE",
+    "name": "collection",
+    "type": "STRING"
+  },
+  {
+    "description": "Test suite name (cluster)",
+    "mode": "REQUIRED",
+    "name": "suite",
+    "type": "STRING"
+  },
+  {
+    "description": "Tier",
+    "mode": "NULLABLE",
+    "name": "tier",
+    "type": "INTEGER"
+  },
+  {
+    "description": "Kind",
+    "mode": "NULLABLE",
+    "name": "kind",
+    "type": "STRING"
+  },
+  {
+    "description": "Task Count",
+    "mode": "REQUIRED",
+    "name": "tasks",
+    "type": "INTEGER"
+  },
+  {
+    "description": "CPU Hours",
+    "mode": "REQUIRED",
+    "name": "hours",
+    "type": "FLOAT"
+  },
+  {
+    "description": "Billing Cost",
+    "mode": "NULLABLE",
+    "name": "cost",
+    "type": "FLOAT"
+  }
+]

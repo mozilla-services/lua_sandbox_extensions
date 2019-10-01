@@ -166,5 +166,11 @@
     "mode": "REQUIRED",
     "name": "execution",
     "type": "FLOAT"
+  },
+  {
+    "description": "extra.suite",
+    "mode": "NULLABLE",
+    "name": "suite",
+    "type": "STRING"
   }
 ]

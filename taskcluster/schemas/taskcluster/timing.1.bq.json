@@ -184,5 +184,5 @@
       "mode": "NULLABLE",
       "name": "suite",
       "type": "STRING"
-    },
+    }
 ]
