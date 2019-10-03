@@ -22,12 +22,13 @@ cuckoo_filter_interval_size = 1      -- default
 preservation_version        = 0
 ```
 --]]
+_PRESERVATION_VERSION = read_config("preservation_version") or 0
+
 require "cjson"
 require "cuckoo_filter_expire"
 require "os"
 require "string"
 require "table"
-
 
 cf   = cuckoo_filter_expire.new(read_config("cuckoo_filter_items") or 100000,
                                 read_config("cuckoo_filter_interval_size") or 1)
@@ -45,30 +46,31 @@ workerType = {
 --]]
 
 local function find_row(wt, time_m)
-    if os.time() - time_m <= -60  -- protect against times in the future
-    or data_time_m - time_m >= 3600 then -- ignore data before the analysis window
+    if os.time() - time_m <= -60  then -- protect against times in the future
         return
     end
     if time_m > data_time_m then data_time_m = time_m end
 
     local w = data[wt]
-    local row
     if not w then
-        row = {true,0,0,0,0,0,0,0}
-        w = {time_m = time_m, rows = {[time_m] = row}}
+        if data_time_m - time_m >= 3600 then return end
+        local rows = {}
+        for i=time_m - 3540, time_m, 60 do
+            rows[i] = {false,0,0,0,0,0,0,0}
+        end
+        w = {time_m = time_m, rows = rows}
         data[wt] = w
-        return w, row
     end
 
-    if time_m > w.time_m then -- fill in any missing buckets
+    if time_m > w.time_m then
         local c = w.rows[w.time_m][8]
         for i=w.time_m + 60, time_m, 60 do
             row = {true,0,0,0,0,0,0,c}
             w.rows[i] = row
         end
         w.time_m = time_m
-        return w, row
     end
+
     return w, w.rows[time_m]
 end
 
@@ -115,9 +117,21 @@ local function get_time_m(ts)
 end
 
 
-local function update_stats(ns, runid, state, j)
-    local wt = normalize_workertype(j.status.workerType or "_")
-    if not runid then
+local function update_exception(wt, time_m, started)
+    local w, row = find_row(wt, time_m)
+    if row then
+        row[1] = true
+        row[7] = row[7] + 1
+        if started then
+            adjust_concurrency(w, time_m, -1)
+        end
+    end
+    return w, row
+end
+
+
+local function update_stats(ns, state, run, wt)
+    if not run then
         local time_m = ns / 1e9
         time_m = time_m - (time_m % 60)
         local w, row = find_row(wt, time_m)
@@ -126,14 +140,14 @@ local function update_stats(ns, runid, state, j)
             row[2] = row[2] + 1
         end
     elseif state == "pending" then
-        local time_m = get_time_m(j.status.runs[runid + 1].scheduled)
+        local time_m = get_time_m(run.scheduled)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
             row[3] = row[3] + 1
         end
     elseif state == "running" then
-        local time_m = get_time_m(j.status.runs[runid + 1].started)
+        local time_m = get_time_m(run.started)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
@@ -141,7 +155,7 @@ local function update_stats(ns, runid, state, j)
             adjust_concurrency(w, time_m, 1)
         end
     elseif state == "completed" then
-        local time_m = get_time_m(j.status.runs[runid + 1].resolved)
+        local time_m = get_time_m(run.resolved)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
@@ -149,7 +163,7 @@ local function update_stats(ns, runid, state, j)
             adjust_concurrency(w, time_m, -1)
         end
     elseif state == "failed" then
-        local time_m = get_time_m(j.status.runs[runid + 1].resolved)
+        local time_m = get_time_m(run.resolved)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
@@ -157,31 +171,48 @@ local function update_stats(ns, runid, state, j)
             adjust_concurrency(w, time_m, -1)
         end
     elseif state == "exception" then
-        local time_m = get_time_m(j.status.runs[runid + 1].resolved)
-        local w, row = find_row(wt, time_m)
-        if row then
-            row[1] = true
-            row[7] = row[7] + 1
-            if j.status.runs[runid + 1].started then
-                adjust_concurrency(w, time_m, -1)
+        local time_m = get_time_m(run.resolved)
+        update_exception(wt, time_m, run.started)
+    end
+end
+
+
+local function update_exception_stats(ns, state, run, wt)
+    if state == "exception" then
+        local time_m = get_time_m(run.resolved)
+        local w, row = update_exception(wt, time_m)
+        if w and not row then -- out of the window but we still need to adjust the concurrency
+            time_m = w.time_m - 3540 -- retroactively update the window from the beginning
+            w, row = update_exception(wt, time_m, run.started)
+            if not row then
+                update_exception(wt, w.time_m, run.started)
             end
         end
     end
 end
+
 
 local last_flush = nil
 function process_message()
     local ok, j = pcall(cjson.decode, read_message("Payload"))
     if not ok then return -1, j end
 
-    local runid = j.runId
+    local runid = j.runId or -1
     local state = j.status.state
     local ns    = read_message("Timestamp")
     if is_dupe(ns, j.status.taskId, runid, state) then return 0 end
 
-    update_stats(ns, runid, state, j)
+    local wt = normalize_workertype(j.status.workerType or "_")
+    update_stats(ns, state, j.status.runs[runid + 1], wt)
 
-    -- during a backfill limit the output size to the expected max
+    -- handle any exception runs reported in the history
+    -- https://bugzilla.mozilla.org/show_bug.cgi?id=1585673
+     for i = 0, runid - 1 do
+         local run = j.status.runs[i + 1]
+         update_exception_stats(ns, run.state, run, wt)
+     end
+
+    -- during a backfill limit the output size
     if not last_flush then
         last_flush = data_time_m
     elseif data_time_m - last_flush >= 3600 then

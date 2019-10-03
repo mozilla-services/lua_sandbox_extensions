@@ -8,6 +8,7 @@ require "math"
 
 local captures = {""}
 local results = {
+    {component = 'task', subComponent = 'total', level = 0, duration = 240},
     {component = 'vcs', subComponent = 'clone', level = 2, duration = 1.37639},
     {component = 'vcs', subComponent = 'pull', level = 2, duration = 9.56564},
     {component = 'vcs', subComponent = 'update', level = 2, duration = 22.8238},

@@ -809,16 +809,10 @@ function decode(data, dh, mutable)
     -- build up the base timing table message
     base_msg = sdu.copy_message(dh, mutable)
     if not base_msg.Fields then base_msg.Fields = {} end
-    base_msg.Fields["runId"]        = pj.runId
-    base_msg.Fields["state"]        = pj.status.state
     base_msg.Fields["taskGroupId"]  = pj.status.taskGroupId
     base_msg.Fields["taskId"]       = pj.status.taskId
     base_msg.Fields["workerType"]   = pj.status.workerType
-
     base_msg.Fields["created"]      = tj.created
-    base_msg.Fields["scheduled"]    = run.scheduled
-    base_msg.Fields["started"]      = run.started
-    base_msg.Fields["resolved"]     = run.resolved
 
     local md = tj.metadata
     if type(md) == "table" then
@@ -882,6 +876,30 @@ function decode(data, dh, mutable)
         end
     end
 
+    -- handle any exception runs reported in the history as they don't have their own resolution messages
+    -- https://bugzilla.mozilla.org/show_bug.cgi?id=1585673
+    for i=0, pj.runId - 1 do
+        local prun = pj.status.runs[i + 1]
+        if prun.state == "exception" and prun.resolved then
+            local f = {
+                logStart = dt.time_to_ns(time:match(prun.started)),
+                logEnd = dt.time_to_ns(time:match(prun.resolved))
+                }
+            base_msg.Fields["runId"]        = prun.runId
+            base_msg.Fields["state"]        = prun.state
+            base_msg.Fields["scheduled"]    = prun.scheduled
+            base_msg.Fields["started"]      = prun.started
+            base_msg.Fields["resolved"]     = prun.resolved
+            inject_timing_msg(no_schema, 0, f)
+        end
+    end
+
+    base_msg.Fields["runId"]        = pj.runId
+    base_msg.Fields["state"]        = pj.status.state
+    base_msg.Fields["scheduled"]    = run.scheduled
+    base_msg.Fields["started"]      = run.started
+    base_msg.Fields["resolved"]     = run.resolved
+
     -- fix up the task definition json for BigQuery
     local tags = {nil}
     local tag_cnt = 0
@@ -895,7 +913,7 @@ function decode(data, dh, mutable)
     tj.extra    = cjson.encode(tj.extra)
     inject_task_msg(tj, "task_definition", task_definition_schema, task_definition_schema_file)
 
-    if not g then
+    if not g or pj.status.state == "exception" then
         -- don't bother fetching and parsing logs with no schema/grammar, however they are still accounted for in the timing table
         local f = {
             logStart = dt.time_to_ns(time:match(run.started)),
