@@ -158,5 +158,6 @@ function process_message()
             break -- poll every ticker_interval
         end
     end
+    subscriber:ack() -- allow the last ack to be sent when shutting down cleanly
     return 0
 end

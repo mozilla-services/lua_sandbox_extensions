@@ -54,12 +54,19 @@ using google::pubsub::v1::Topic;
 using grpc::ClientContext;
 
 struct async_pub_request {
+  async_pub_request() : sequence_id(nullptr), request(nullptr), ctx(new ClientContext) { }
+  ~async_pub_request()
+  {
+    delete request;
+    delete ctx;
+  }
   void            *sequence_id;
   PublishRequest  *request;
-  ClientContext   ctx;
+  ClientContext   *ctx;
   PublishResponse response;
   grpc::Status    status;
   std::unique_ptr<grpc::ClientAsyncResponseReader<PublishResponse> > rpc;
+  int             retry_cnt;
 };
 
 struct async_sub_request {
@@ -71,14 +78,26 @@ struct async_sub_request {
 };
 
 struct async_ack_request {
-  ClientContext           ctx;
+  async_ack_request() : ctx(new ClientContext) { }
+  ~async_ack_request()
+  {
+    delete ctx;
+  }
+
+  ClientContext           *ctx;
   AcknowledgeRequest      request;
   google::protobuf::Empty response;
   grpc::Status            status;
+  int                     retry_cnt;
   std::unique_ptr<grpc::ClientAsyncResponseReader<google::protobuf::Empty> > rpc;
 };
 
 struct publisher {
+  publisher() : request(nullptr) { }
+  ~publisher()
+  {
+    delete request;
+  }
 #ifdef LUA_SANDBOX
   const lsb_logger *logger;
 #endif
@@ -106,6 +125,10 @@ struct subscriber {
   grpc::CompletionQueue             acq;
   int                               max_async_requests;
   int                               outstanding_requests;
+  union {
+    AcknowledgeRequest              *sar;
+    async_ack_request               *aar;
+  };
 };
 
 typedef struct subscriber_wrapper
@@ -198,6 +221,7 @@ static int subscriber_new(lua_State *lua)
   sw->s->subscription_name = name;
   sw->s->max_async_requests = max_async;
   sw->s->outstanding_requests = 0;
+  sw->s->sar = nullptr;
 #ifdef LUA_SANDBOX
   lua_getfield(lua, LUA_REGISTRYINDEX, LSB_THIS_PTR);
   lsb_lua_sandbox *lsb = reinterpret_cast<lsb_lua_sandbox *>(lua_touserdata(lua, -1));
@@ -274,20 +298,32 @@ publisher_poll_internal(lua_State *lua, int timeout)
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now() + std::chrono::milliseconds(timeout);
     while (grpc::CompletionQueue::NextStatus::GOT_EVENT == (status = pw->p->cq.AsyncNext(&tag, &ok, now))) {
       if (ok) {
+        bool cleanup = true;
         auto apr = static_cast<struct async_pub_request *>(tag);
         if (apr->status.ok()) {
           sequence_id = apr->sequence_id;
         } else {
-          ++failures;
+          if (apr->retry_cnt < 3 && apr->status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            apr->retry_cnt++;
+            cleanup = false;
+            delete apr->ctx;
+            apr->ctx = new ClientContext;
+            apr->response.Clear();
+            apr->rpc = pw->p->stub->AsyncPublish(apr->ctx, *apr->request, &pw->p->cq);
+            apr->rpc->Finish(&apr->response, &apr->status, (void *)apr);
+          } else {
+            ++failures;
 #ifdef LUA_SANDBOX
-          pw->p->logger->cb(pw->p->logger->context, pw->p->topic_name.c_str(), 3,
-                            "publish error\t%d\t%s", (int)apr->status.error_code(),
-                            apr->status.error_message().c_str());
+            pw->p->logger->cb(pw->p->logger->context, pw->p->topic_name.c_str(), 3,
+                              "publish error\t%d\t%s", (int)apr->status.error_code(),
+                              apr->status.error_message().c_str());
 #endif
+          }
         }
-        delete apr->request;
-        delete apr;
-        --pw->p->outstanding_requests;
+        if (cleanup) {
+          delete apr;
+          --pw->p->outstanding_requests;
+        }
       }
     }
   } catch (std::exception &e) {
@@ -347,7 +383,6 @@ static int publisher_gc(lua_State *lua)
     pw->p->cq.Shutdown();
     while (publisher_poll_internal(lua, 1000) != grpc::CompletionQueue::NextStatus::SHUTDOWN);
   }
-  delete pw->p->request;
   delete pw->p;
   pw->p = nullptr;
   return 0;
@@ -384,15 +419,28 @@ ack_poll(subscriber_wrapper *sw, int timeout)
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now() + std::chrono::milliseconds(timeout);
     while (grpc::CompletionQueue::NextStatus::GOT_EVENT == (status = sw->s->acq.AsyncNext(&tag, &ok, now))) {
       if (ok) {
+        bool cleanup = true;
         auto aar = static_cast<struct async_ack_request *>(tag);
         if (!aar->status.ok()) {
+          if (aar->retry_cnt < 3 && aar->status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            aar->retry_cnt++;
+            cleanup = false;
+            delete aar->ctx;
+            aar->ctx = new ClientContext;
+            aar->response.Clear();
+            aar->rpc = sw->s->stub->AsyncAcknowledge(aar->ctx, aar->request, &sw->s->acq);
+            aar->rpc->Finish(&aar->response, &aar->status, (void *)aar);
+          } else {
 #ifdef LUA_SANDBOX
-          sw->s->logger->cb(sw->s->logger->context, sw->s->subscription_name.c_str(), 3,
-                            "ack error\t%d\t%s", (int)aar->status.error_code(),
-                            aar->status.error_message().c_str());
+            sw->s->logger->cb(sw->s->logger->context, sw->s->subscription_name.c_str(), 3,
+                              "ack error\t%d\t%s", (int)aar->status.error_code(),
+                              aar->status.error_message().c_str());
 #endif
+          }
         }
-        delete aar;
+        if (cleanup) {
+          delete aar;
+        }
       }
     }
   } catch (...) {}
@@ -407,39 +455,51 @@ static int subscriber_gc(lua_State *lua)
   sw->s->acq.Shutdown();
   while (subscriber_discard(sw) != grpc::CompletionQueue::NextStatus::SHUTDOWN);
   while (ack_poll(sw, 1000) != grpc::CompletionQueue::NextStatus::SHUTDOWN);
+  if (sw->s->max_async_requests == 0) {
+    delete sw->s->sar;
+  } else {
+    delete sw->s->aar;
+  }
   delete sw->s;
   sw->s = nullptr;
   return 0;
 }
 
 
-void publish_async(publisher_wrapper *pw, void *sequence_id)
+static void publish_async(publisher_wrapper *pw, void *sequence_id)
 {
   auto apr = new struct async_pub_request;
   apr->request = pw->p->request;
   pw->p->request = new PublishRequest;
   pw->p->request->set_topic(pw->p->topic_name);
   apr->sequence_id = sequence_id;
-  apr->rpc = pw->p->stub->AsyncPublish(&apr->ctx, *apr->request, &pw->p->cq);
+  apr->retry_cnt = 0;
+  apr->rpc = pw->p->stub->AsyncPublish(apr->ctx, *apr->request, &pw->p->cq);
   apr->rpc->Finish(&apr->response, &apr->status, (void *)apr);
   ++pw->p->outstanding_requests;
 }
 
 
-bool publish_sync(lua_State *lua, publisher_wrapper *pw)
+static int publish_sync(lua_State *lua, publisher_wrapper *pw)
 {
-  bool err = false;
+  int rv = 0;
   ClientContext ctx;
   PublishResponse response;
   google::protobuf::Empty empty;
   auto status = pw->p->stub->Publish(&ctx, *pw->p->request, &response);
-  if (!status.ok()) {
+  if (status.ok()) {
+    lua_pushinteger(lua, rv);
+    lua_pushnil(lua);
+  } else {
+    rv = status.error_code() == grpc::StatusCode::UNAVAILABLE ? -3 : -1;
+    lua_pushinteger(lua, rv);
     lua_pushstring(lua, status.error_message().c_str());
-    err = true;
   }
-  pw->p->request->Clear();
-  pw->p->request->set_topic(pw->p->topic_name);
-  return err;
+  if (rv != -3) {
+    pw->p->request->Clear();
+    pw->p->request->set_topic(pw->p->topic_name);
+  }
+  return rv;
 }
 
 
@@ -476,7 +536,7 @@ static int publish(lua_State *lua, bool async_api)
 
   bool free_data = false;
   size_t len = 0;
-  const char *data = NULL;
+  const char *data = nullptr;
   switch (lua_type(lua, msg_idx)) {
   case LUA_TSTRING:
     data = lua_tolstring(lua, msg_idx, &len);
@@ -513,7 +573,8 @@ static int publish(lua_State *lua, bool async_api)
       }
 
       if (segments == 0 || total_len == 0) {
-        return 0;
+        lua_pushinteger(lua, 0);
+        return 1;
       }
 
       if (segments > 1) {
@@ -606,16 +667,14 @@ static int publish(lua_State *lua, bool async_api)
       if (async_api) {
         publish_async(pw, sequence_id);
       } else {
-        err = publish_sync(lua, pw);
-      }
-      if (!err) {
-        lua_pushinteger(lua, 0);
+        publish_sync(lua, pw);
       }
     } else {
       if (async_api) {
         lua_pushinteger(lua, -5);
       } else {
         lua_pushinteger(lua, -4);
+        lua_pushnil(lua);
       }
     }
   } catch (std::exception &e) {
@@ -629,7 +688,7 @@ static int publish(lua_State *lua, bool async_api)
     free((void *)data);
   }
   if (err) return lua_error(lua);
-  return 1;
+  return async_api ? 1 : 2;
 }
 
 
@@ -638,7 +697,7 @@ static int publisher_flush(lua_State *lua)
   publisher_wrapper *pw = static_cast<publisher_wrapper *>(luaL_checkudata(lua, 1, mt_publisher));
   if (pw->p->request->messages_size() > 0) {
     if (pw->p->max_async_requests == 0) {
-      if (publish_sync(lua, pw)) {
+      if (publish_sync(lua, pw) != 0) {
         return lua_error(lua);
       }
     } else {
@@ -661,11 +720,36 @@ static int publisher_publish_async(lua_State *lua)
 }
 
 
+static void send_sync_ack(subscriber_wrapper *sw)
+{
+  if (!sw->s->sar) {return; }
+
+  ClientContext ctx;
+  google::protobuf::Empty empty;
+  sw->s->stub->Acknowledge(&ctx, *sw->s->sar, &empty);
+  delete sw->s->sar;
+  sw->s->sar = nullptr;
+  return;
+}
+
+
+static void send_async_ack(subscriber_wrapper *sw)
+{
+  if (!sw->s->aar) {return; }
+
+  sw->s->aar->rpc = sw->s->stub->AsyncAcknowledge(sw->s->aar->ctx, sw->s->aar->request, &sw->s->acq);
+  sw->s->aar->rpc->Finish(&sw->s->aar->response, &sw->s->aar->status, (void *)sw->s->aar);
+  sw->s->aar = nullptr; // memory is managed by the async callback, this only signals if it needs to be sent
+  return;
+}
+
+
 static int subscriber_poll(lua_State *lua, subscriber_wrapper *sw)
 {
   int cnt = 0;
   bool err = false;
   try {
+    send_async_ack(sw);
     void *tag;
     bool ok;
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now() + std::chrono::milliseconds(1000);
@@ -675,8 +759,8 @@ static int subscriber_poll(lua_State *lua, subscriber_wrapper *sw)
         if (asr->status.ok()) {
           if (asr->response.received_messages_size() > 0) {
             lua_newtable(lua);
-            auto aar = new struct async_ack_request;
-            aar->request.set_subscription(sw->s->subscription_name);
+            sw->s->aar = new struct async_ack_request;
+            sw->s->aar->request.set_subscription(sw->s->subscription_name);
             const auto msgs = asr->response.received_messages();
             for (auto it = msgs.pointer_begin(); it != msgs.pointer_end(); ++it) {
               auto msg = (*it);
@@ -696,11 +780,9 @@ static int subscriber_poll(lua_State *lua, subscriber_wrapper *sw)
                 }
                 lua_rawseti(lua, -2, 2);
                 lua_rawseti(lua, -2, ++cnt);
-                aar->request.add_ack_ids(msg->ack_id());
+                sw->s->aar->request.add_ack_ids(msg->ack_id());
               }
             }
-            aar->rpc = sw->s->stub->AsyncAcknowledge(&aar->ctx, aar->request, &sw->s->acq);
-            aar->rpc->Finish(&aar->response, &aar->status, (void *)aar);
           }
         } else {
 #ifdef LUA_SANDBOX
@@ -749,7 +831,6 @@ static int subscriber_pull_async(lua_State *lua)
       auto asr = new struct async_sub_request;
       asr->request.set_max_messages(batch_size);
       asr->request.set_subscription(sw->s->subscription_name);
-      //asr->request.set_return_immediately(true);
       asr->rpc = sw->s->stub->AsyncPull(&asr->ctx, asr->request, &sw->s->cq);
       asr->rpc->Finish(&asr->response, &asr->status, (void *)asr);
       ++sw->s->outstanding_requests;
@@ -765,6 +846,18 @@ static int subscriber_pull_async(lua_State *lua)
 }
 
 
+static int subscriber_ack(lua_State *lua)
+{
+  subscriber_wrapper *sw = static_cast<subscriber_wrapper *>(luaL_checkudata(lua, 1, mt_subscriber));
+  if (sw->s->max_async_requests == 0) {
+    send_sync_ack(sw);
+  } else {
+    send_async_ack(sw);
+  }
+  return 0;
+}
+
+
 static int subscriber_pull_sync(lua_State *lua)
 {
   subscriber_wrapper *sw = static_cast<subscriber_wrapper *>(luaL_checkudata(lua, 1, mt_subscriber));
@@ -773,6 +866,7 @@ static int subscriber_pull_sync(lua_State *lua)
   bool err = false;
   int cnt = 0;
   try {
+    send_sync_ack(sw);
     ClientContext ctx;
     PullRequest request;
     PullResponse response;
@@ -788,8 +882,8 @@ static int subscriber_pull_sync(lua_State *lua)
         return 2;
       }
       lua_newtable(lua);
-      AcknowledgeRequest ack;
-      ack.set_subscription(sw->s->subscription_name);
+      sw->s->sar = new AcknowledgeRequest;
+      sw->s->sar->set_subscription(sw->s->subscription_name);
       const auto msgs = response.received_messages();
       for (auto it = msgs.pointer_begin(); it != msgs.pointer_end(); ++it) {
         auto msg = (*it);
@@ -809,12 +903,9 @@ static int subscriber_pull_sync(lua_State *lua)
           }
           lua_rawseti(lua, -2, 2);
           lua_rawseti(lua, -2, ++cnt);
-          ack.add_ack_ids(msg->ack_id());
+          sw->s->sar->add_ack_ids(msg->ack_id());
         }
       }
-      ClientContext actx;
-      google::protobuf::Empty empty;
-      sw->s->stub->Acknowledge(&actx, ack, &empty);
     } else {
       lua_pushstring(lua, status.error_message().c_str());
       err = true;
@@ -848,6 +939,7 @@ static const struct luaL_reg publisher_lib_m[] = {
 };
 
 static const struct luaL_reg subscriber_lib_m[] = {
+  { "ack", subscriber_ack },
   { "pull", subscriber_pull_async },
   { "pull_sync", subscriber_pull_sync },
   { "__gc", subscriber_gc },
