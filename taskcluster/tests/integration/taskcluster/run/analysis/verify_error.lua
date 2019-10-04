@@ -8,11 +8,11 @@ require "table"
 local captures = {""}
 local results = {
     {type = 'error.log.schema', message = 'unclosed block'},
-    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:770: Expected value but found T_OBJ_END at character 1'},
-    {type = 'error.perfherder.parse', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:190: Expected comma or object end but found T_COLON at character 21'},
+    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:771: Expected value but found T_OBJ_END at character 1'},
+    {type = 'error.perfherder.parse', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:191: Expected comma or object end but found T_COLON at character 21'},
     {type = 'error.perfherder.validation', message = 'SchemaURI: #/properties/suites Keyword: type DocumentURI: #/suites'},
-    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:804: missing_task.task.json: No such file or directory'},
-    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:953: missing_log.log: No such file or directory'}
+    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:805: missing_task.task.json: No such file or directory'},
+    {type = 'error.decode', message = '...io_modules/decoders/taskcluster/live_backing_log.lua:959: missing_log.log: No such file or directory'}
 }
 
 local cnt = 0
