@@ -54,12 +54,19 @@ using google::pubsub::v1::Topic;
 using grpc::ClientContext;
 
 struct async_pub_request {
+  async_pub_request() : sequence_id(nullptr), request(nullptr), ctx(new ClientContext) { }
+  ~async_pub_request()
+  {
+    delete request;
+    delete ctx;
+  }
   void            *sequence_id;
   PublishRequest  *request;
-  ClientContext   ctx;
+  ClientContext   *ctx;
   PublishResponse response;
   grpc::Status    status;
   std::unique_ptr<grpc::ClientAsyncResponseReader<PublishResponse> > rpc;
+  int             retry_cnt;
 };
 
 struct async_sub_request {
@@ -71,14 +78,26 @@ struct async_sub_request {
 };
 
 struct async_ack_request {
-  ClientContext           ctx;
+  async_ack_request() : ctx(new ClientContext) { }
+  ~async_ack_request()
+  {
+    delete ctx;
+  }
+
+  ClientContext           *ctx;
   AcknowledgeRequest      request;
   google::protobuf::Empty response;
   grpc::Status            status;
+  int                     retry_cnt;
   std::unique_ptr<grpc::ClientAsyncResponseReader<google::protobuf::Empty> > rpc;
 };
 
 struct publisher {
+  publisher() : request(nullptr) { }
+  ~publisher()
+  {
+    delete request;
+  }
 #ifdef LUA_SANDBOX
   const lsb_logger *logger;
 #endif
@@ -279,20 +298,32 @@ publisher_poll_internal(lua_State *lua, int timeout)
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now() + std::chrono::milliseconds(timeout);
     while (grpc::CompletionQueue::NextStatus::GOT_EVENT == (status = pw->p->cq.AsyncNext(&tag, &ok, now))) {
       if (ok) {
+        bool cleanup = true;
         auto apr = static_cast<struct async_pub_request *>(tag);
         if (apr->status.ok()) {
           sequence_id = apr->sequence_id;
         } else {
-          ++failures;
+          if (apr->retry_cnt < 3 && apr->status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            apr->retry_cnt++;
+            cleanup = false;
+            delete apr->ctx;
+            apr->ctx = new ClientContext;
+            apr->response.Clear();
+            apr->rpc = pw->p->stub->AsyncPublish(apr->ctx, *apr->request, &pw->p->cq);
+            apr->rpc->Finish(&apr->response, &apr->status, (void *)apr);
+          } else {
+            ++failures;
 #ifdef LUA_SANDBOX
-          pw->p->logger->cb(pw->p->logger->context, pw->p->topic_name.c_str(), 3,
-                            "publish error\t%d\t%s", (int)apr->status.error_code(),
-                            apr->status.error_message().c_str());
+            pw->p->logger->cb(pw->p->logger->context, pw->p->topic_name.c_str(), 3,
+                              "publish error\t%d\t%s", (int)apr->status.error_code(),
+                              apr->status.error_message().c_str());
 #endif
+          }
         }
-        delete apr->request;
-        delete apr;
-        --pw->p->outstanding_requests;
+        if (cleanup) {
+          delete apr;
+          --pw->p->outstanding_requests;
+        }
       }
     }
   } catch (std::exception &e) {
@@ -352,7 +383,6 @@ static int publisher_gc(lua_State *lua)
     pw->p->cq.Shutdown();
     while (publisher_poll_internal(lua, 1000) != grpc::CompletionQueue::NextStatus::SHUTDOWN);
   }
-  delete pw->p->request;
   delete pw->p;
   pw->p = nullptr;
   return 0;
@@ -389,15 +419,28 @@ ack_poll(subscriber_wrapper *sw, int timeout)
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now() + std::chrono::milliseconds(timeout);
     while (grpc::CompletionQueue::NextStatus::GOT_EVENT == (status = sw->s->acq.AsyncNext(&tag, &ok, now))) {
       if (ok) {
+        bool cleanup = true;
         auto aar = static_cast<struct async_ack_request *>(tag);
         if (!aar->status.ok()) {
+          if (aar->retry_cnt < 3 && aar->status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            aar->retry_cnt++;
+            cleanup = false;
+            delete aar->ctx;
+            aar->ctx = new ClientContext;
+            aar->response.Clear();
+            aar->rpc = sw->s->stub->AsyncAcknowledge(aar->ctx, aar->request, &sw->s->acq);
+            aar->rpc->Finish(&aar->response, &aar->status, (void *)aar);
+          } else {
 #ifdef LUA_SANDBOX
-          sw->s->logger->cb(sw->s->logger->context, sw->s->subscription_name.c_str(), 3,
-                            "ack error\t%d\t%s", (int)aar->status.error_code(),
-                            aar->status.error_message().c_str());
+            sw->s->logger->cb(sw->s->logger->context, sw->s->subscription_name.c_str(), 3,
+                              "ack error\t%d\t%s", (int)aar->status.error_code(),
+                              aar->status.error_message().c_str());
 #endif
+          }
         }
-        delete aar;
+        if (cleanup) {
+          delete aar;
+        }
       }
     }
   } catch (...) {}
@@ -423,33 +466,40 @@ static int subscriber_gc(lua_State *lua)
 }
 
 
-void publish_async(publisher_wrapper *pw, void *sequence_id)
+static void publish_async(publisher_wrapper *pw, void *sequence_id)
 {
   auto apr = new struct async_pub_request;
   apr->request = pw->p->request;
   pw->p->request = new PublishRequest;
   pw->p->request->set_topic(pw->p->topic_name);
   apr->sequence_id = sequence_id;
-  apr->rpc = pw->p->stub->AsyncPublish(&apr->ctx, *apr->request, &pw->p->cq);
+  apr->retry_cnt = 0;
+  apr->rpc = pw->p->stub->AsyncPublish(apr->ctx, *apr->request, &pw->p->cq);
   apr->rpc->Finish(&apr->response, &apr->status, (void *)apr);
   ++pw->p->outstanding_requests;
 }
 
 
-bool publish_sync(lua_State *lua, publisher_wrapper *pw)
+static int publish_sync(lua_State *lua, publisher_wrapper *pw)
 {
-  bool err = false;
+  int rv = 0;
   ClientContext ctx;
   PublishResponse response;
   google::protobuf::Empty empty;
   auto status = pw->p->stub->Publish(&ctx, *pw->p->request, &response);
-  if (!status.ok()) {
+  if (status.ok()) {
+    lua_pushinteger(lua, rv);
+    lua_pushnil(lua);
+  } else {
+    rv = status.error_code() == grpc::StatusCode::UNAVAILABLE ? -3 : -1;
+    lua_pushinteger(lua, rv);
     lua_pushstring(lua, status.error_message().c_str());
-    err = true;
   }
-  pw->p->request->Clear();
-  pw->p->request->set_topic(pw->p->topic_name);
-  return err;
+  if (rv != -3) {
+    pw->p->request->Clear();
+    pw->p->request->set_topic(pw->p->topic_name);
+  }
+  return rv;
 }
 
 
@@ -523,7 +573,8 @@ static int publish(lua_State *lua, bool async_api)
       }
 
       if (segments == 0 || total_len == 0) {
-        return 0;
+        lua_pushinteger(lua, 0);
+        return 1;
       }
 
       if (segments > 1) {
@@ -616,16 +667,14 @@ static int publish(lua_State *lua, bool async_api)
       if (async_api) {
         publish_async(pw, sequence_id);
       } else {
-        err = publish_sync(lua, pw);
-      }
-      if (!err) {
-        lua_pushinteger(lua, 0);
+        publish_sync(lua, pw);
       }
     } else {
       if (async_api) {
         lua_pushinteger(lua, -5);
       } else {
         lua_pushinteger(lua, -4);
+        lua_pushnil(lua);
       }
     }
   } catch (std::exception &e) {
@@ -639,7 +688,7 @@ static int publish(lua_State *lua, bool async_api)
     free((void *)data);
   }
   if (err) return lua_error(lua);
-  return 1;
+  return async_api ? 1 : 2;
 }
 
 
@@ -648,7 +697,7 @@ static int publisher_flush(lua_State *lua)
   publisher_wrapper *pw = static_cast<publisher_wrapper *>(luaL_checkudata(lua, 1, mt_publisher));
   if (pw->p->request->messages_size() > 0) {
     if (pw->p->max_async_requests == 0) {
-      if (publish_sync(lua, pw)) {
+      if (publish_sync(lua, pw) != 0) {
         return lua_error(lua);
       }
     } else {
@@ -673,7 +722,7 @@ static int publisher_publish_async(lua_State *lua)
 
 static void send_sync_ack(subscriber_wrapper *sw)
 {
-  if (!sw->s->sar) { return; }
+  if (!sw->s->sar) {return; }
 
   ClientContext ctx;
   google::protobuf::Empty empty;
@@ -686,9 +735,9 @@ static void send_sync_ack(subscriber_wrapper *sw)
 
 static void send_async_ack(subscriber_wrapper *sw)
 {
-  if (!sw->s->aar) { return; }
+  if (!sw->s->aar) {return; }
 
-  sw->s->aar->rpc = sw->s->stub->AsyncAcknowledge(&sw->s->aar->ctx, sw->s->aar->request, &sw->s->acq);
+  sw->s->aar->rpc = sw->s->stub->AsyncAcknowledge(sw->s->aar->ctx, sw->s->aar->request, &sw->s->acq);
   sw->s->aar->rpc->Finish(&sw->s->aar->response, &sw->s->aar->status, (void *)sw->s->aar);
   sw->s->aar = nullptr; // memory is managed by the async callback, this only signals if it needs to be sent
   return;
@@ -807,6 +856,7 @@ static int subscriber_ack(lua_State *lua)
   }
   return 0;
 }
+
 
 static int subscriber_pull_sync(lua_State *lua)
 {

@@ -141,6 +141,6 @@ producer:poll()
 * Lua 5.1
     * sequence_id (number/nil) - Sequence number of the last message
       processed
-    * failures (number) - number of messages that failed
+    * failures (number) - number of batches that failed
 * lua_sandbox
     * none - the checkpoint and error counts are automatically updated
