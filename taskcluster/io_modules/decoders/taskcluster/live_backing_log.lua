@@ -104,20 +104,21 @@ local function parse_project(s)
     return s, "hg.mozilla.org", nil
 end
 
-local not_dot       = l.P"." ^-1 * l.C((l.P(1) - ".")^1)
-local tc_project    = not_dot / parse_project
-local tc_route      = l.P"tc-treeherder.v2." * tc_project * not_dot * (not_dot / tonumber)^-1
+local not_dot           = l.P"." ^-1 * l.C((l.P(1) - ".")^1)
+local tc_project        = not_dot / parse_project
+local tc_route          = l.P"tc-treeherder.v2." * tc_project * not_dot * (not_dot / tonumber)^-1
 
-local md_protocol   = l.P"http" * l.P"s"^-1 * "://"
-local md_revision   = l.C(l.xdigit^1)
-local md_any        = l.C((l.P(1) - "/")^1) * l.P("/")^-1
-local md_hg_file    = l.P"/" * (l.P"file" + "raw-file") * l.P"/"
-local md_hg         = l.C("hg.mozilla.org") * "/" * l.Cc(nil) * (l.C((l.P(1) - md_hg_file)^1) * md_hg_file * md_revision)^-1
-local md_gh_eop     = l.P"/" + (".git" * l.P"/"^-1)
-local md_gh_project = l.C((l.P(1) - md_gh_eop)^1)
-local md_gh_api     = l.C("api.github.com") * "/repos/" * md_any * md_gh_project
-local md_gh         = l.C("github.com") * "/" * md_any * md_gh_project * md_gh_eop * (l.P"raw" * "/" * md_revision)^-1
-local md_source     = md_protocol * (md_hg + md_gh + md_gh_api + md_any^-4)
+local md_protocol       = l.P"http" * l.P"s"^-1 * "://"
+local md_revision       = l.C(l.xdigit^1)
+local md_any            = l.C((l.P(1) - "/")^1) * l.P("/")^-1
+local md_hg_file        = l.P"/" * (l.P"file" + "raw-file") * l.P"/"
+local md_hg             = l.C("hg.mozilla.org") * "/" * l.Cc(nil) * (l.C((l.P(1) - md_hg_file)^1) * md_hg_file * md_revision)^-1
+local md_gh_eop         = l.P"/" + (".git" * l.P"/"^-1)
+local md_gh_project     = l.C((l.P(1) - md_gh_eop)^1)
+local md_gh_api         = l.C("api.github.com") * "/repos/" * md_any * md_gh_project
+local md_gh             = l.C("github.com") * "/" * md_any * md_gh_project * md_gh_eop * (l.P"raw" * "/" * md_revision)^-1
+local md_hgpush_hook    = l.C("tools.taskcluster.net/hooks/hg-push") * "/" * l.Cc(nil) * md_any
+local md_source         = md_protocol * (md_hg + md_gh + md_gh_api + md_hgpush_hook + l.C(l.P(1)^1))
 
 
 local function add_fields(msg, fields)
@@ -805,6 +806,7 @@ function decode(data, dh, mutable)
     local tj = fh:read("*a")
     fh:close()
     tj = cjson.decode(tj)
+    local tj_payload_enc  = cjson.encode(tj.payload)
 
     -- build up the base timing table message
     base_msg = sdu.copy_message(dh, mutable)
@@ -873,6 +875,10 @@ function decode(data, dh, mutable)
             base_msg.Fields["projectOwner"] = owner
             base_msg.Fields["project"]      = project
             base_msg.Fields["revision"]     = revision
+
+            if origin:match("^tools%.taskcluster%.net/hooks/#project%-releng") then
+                base_msg.Fields["project"] = tj_payload_enc:match("%-%-project=([^%s]+)")
+            end
         end
     end
 
@@ -909,7 +915,7 @@ function decode(data, dh, mutable)
     end
     tj.taskId   = pj.status.taskId
     tj.tags     = tags
-    tj.payload  = cjson.encode(tj.payload)
+    tj.payload  = tj_payload_enc
     tj.extra    = cjson.encode(tj.extra)
     inject_task_msg(tj, "task_definition", task_definition_schema, task_definition_schema_file)
 
