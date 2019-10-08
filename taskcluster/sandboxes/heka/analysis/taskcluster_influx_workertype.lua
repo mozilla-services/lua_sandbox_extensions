@@ -65,8 +65,7 @@ local function find_row(wt, time_m)
     if time_m > w.time_m then
         local c = w.rows[w.time_m][8]
         for i=w.time_m + 60, time_m, 60 do
-            row = {true,0,0,0,0,0,0,c}
-            w.rows[i] = row
+            w.rows[i] = {true,0,0,0,0,0,0,c}
         end
         w.time_m = time_m
     end
@@ -108,7 +107,7 @@ local function get_time_m(ts)
     if not ts then return nil end
     local time_m
     local t = {}
-    t.year, t.month, t.day, t.hour, t.min, t.sec = ts:match("^(%d%d%d%d)-(%d%d)-(%d%d)T(%d%d):(%d%d):(%d%d)")
+    t.year, t.month, t.day, t.hour, t.min, t.sec = ts:match("^(%d%d%d%d)-(%d%d)-(%d%d)[T ](%d%d):(%d%d):(%d%d)") -- allow space for BQ exported JSON to work
     if t.year then
         time_m = os.time(t)
         time_m = time_m - (time_m % 60)
@@ -180,7 +179,7 @@ end
 local function update_exception_stats(ns, state, run, wt)
     if state == "exception" then
         local time_m = get_time_m(run.resolved)
-        local w, row = update_exception(wt, time_m)
+        local w, row = update_exception(wt, time_m, run.started)
         if w and not row then -- out of the window but we still need to adjust the concurrency
             time_m = w.time_m - 3540 -- retroactively update the window from the beginning
             w, row = update_exception(wt, time_m, run.started)
