@@ -1,5 +1,4 @@
 SELECT
-  DISTINCT -- in some use cases there are exact duplicate submissions e.g. exception, canceled
   COUNT(started) as tasks_considered,
   ROUND(AVG(TIMESTAMP_DIFF(resolved, started, millisecond)) / 1000, 2) AS mean_duration_seconds,
   name
