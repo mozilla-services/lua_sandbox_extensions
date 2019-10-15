@@ -1,0 +1,56 @@
+[
+  {
+    "description": "Metric creation time (partition)",
+    "mode": "REQUIRED",
+    "name": "timestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "workerType name (cluster)",
+    "mode": "REQUIRED",
+    "name": "worker",
+    "type": "STRING"
+  },
+  {
+    "description": "Provisioned hardware type (cluster)",
+    "mode": "REQUIRED",
+    "name": "instanceType",
+    "type": "STRING"
+  },
+  {
+    "description": "Worker event/state notification type",
+    "mode": "REQUIRED",
+    "name": "eventType",
+    "type": "STRING"
+  },
+  {
+    "description": "Physical location of the worker",
+    "mode": "REQUIRED",
+    "name": "region",
+    "type": "STRING"
+  },
+  {
+    "description": "Instance identifier",
+    "mode": "REQUIRED",
+    "name": "workerId",
+    "type": "STRING"
+  },
+  {
+    "description": "workerPoolId",
+    "mode": "REQUIRED",
+    "name": "workerPoolId",
+    "type": "STRING"
+  },
+  {
+    "description": "Unique task identifier, this is UUID encoded as URL-safe base64 and stripped of = padding",
+    "mode": "NULLABLE",
+    "name": "taskId",
+    "type": "STRING"
+  },
+  {
+    "description": "Id of the run that completed the task",
+    "mode": "NULLABLE",
+    "name": "runId",
+    "type": "INTEGER"
+  }
+]
