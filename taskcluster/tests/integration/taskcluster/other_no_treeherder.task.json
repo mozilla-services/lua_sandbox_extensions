@@ -8,7 +8,6 @@
   ],
   "requires": "all-completed",
   "routes": [
-    "tc-treeherder.v2.mozilla-inbound.6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f.113552",
     "coalesce.v1.mozilla-inbound.42571f2c2573be97b715"
   ],
   "priority": "low",

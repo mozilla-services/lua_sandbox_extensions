@@ -108,11 +108,12 @@ local not_dot           = l.P"." ^-1 * l.C((l.P(1) - ".")^1)
 local tc_project        = not_dot / parse_project
 local tc_route          = l.P"tc-treeherder.v2." * tc_project * not_dot * (not_dot / tonumber)^-1
 
+local md_remove_path    = function(s) return s:match("[^/]+$") end
 local md_protocol       = l.P"http" * l.P"s"^-1 * "://"
 local md_revision       = l.C(l.xdigit^1)
 local md_any            = l.C((l.P(1) - "/")^1) * l.P("/")^-1
 local md_hg_file        = l.P"/" * (l.P"file" + "raw-file") * l.P"/"
-local md_hg             = l.C("hg.mozilla.org") * "/" * l.Cc(nil) * (l.C((l.P(1) - md_hg_file)^1) * md_hg_file * md_revision)^-1
+local md_hg             = l.C("hg.mozilla.org") * "/" * l.Cc(nil) * ((l.P(1) - md_hg_file)^1 / md_remove_path * md_hg_file * md_revision)^-1
 local md_gh_eop         = l.P"/" + (".git" * l.P"/"^-1)
 local md_gh_project     = l.C((l.P(1) - md_gh_eop)^1)
 local md_gh_api         = l.C("api.github.com") * "/repos/" * md_any * md_gh_project
