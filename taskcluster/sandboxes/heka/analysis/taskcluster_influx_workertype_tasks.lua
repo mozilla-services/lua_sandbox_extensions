@@ -29,6 +29,7 @@ require "cuckoo_filter_expire"
 require "os"
 require "string"
 require "table"
+local util = require "taskcluster.util"
 
 cf   = cuckoo_filter_expire.new(read_config("cuckoo_filter_items") or 100000,
                                 read_config("cuckoo_filter_interval_size") or 1)
@@ -91,31 +92,6 @@ local function is_dupe(ns, taskid, runid, state)
 end
 
 
-local function normalize_workertype(wt)
-    if wt:match("^test%-.+%-a$") then
-        wt = "test-generic"
-    elseif wt:match("^dummy%-worker%-") then
-        wt = "dummy-worker"
-    elseif wt:match("^dummy%-type%-") then
-        wt = "dummy-type"
-    end
-    return wt
-end
-
-
-local function get_time_m(ts)
-    if not ts then return nil end
-    local time_m
-    local t = {}
-    t.year, t.month, t.day, t.hour, t.min, t.sec = ts:match("^(%d%d%d%d)-(%d%d)-(%d%d)[T ](%d%d):(%d%d):(%d%d)") -- allow space for BQ exported JSON to work
-    if t.year then
-        time_m = os.time(t)
-        time_m = time_m - (time_m % 60)
-    end
-    return time_m
-end
-
-
 local function update_exception(wt, time_m, started)
     local w, row = find_row(wt, time_m)
     if row then
@@ -139,14 +115,14 @@ local function update_stats(ns, state, run, wt)
             row[2] = row[2] + 1
         end
     elseif state == "pending" then
-        local time_m = get_time_m(run.scheduled)
+        local time_m = util.get_time_m(run.scheduled)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
             row[3] = row[3] + 1
         end
     elseif state == "running" then
-        local time_m = get_time_m(run.started)
+        local time_m = util.get_time_m(run.started)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
@@ -154,7 +130,7 @@ local function update_stats(ns, state, run, wt)
             adjust_concurrency(w, time_m, 1)
         end
     elseif state == "completed" then
-        local time_m = get_time_m(run.resolved)
+        local time_m = util.get_time_m(run.resolved)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
@@ -162,7 +138,7 @@ local function update_stats(ns, state, run, wt)
             adjust_concurrency(w, time_m, -1)
         end
     elseif state == "failed" then
-        local time_m = get_time_m(run.resolved)
+        local time_m = util.get_time_m(run.resolved)
         local w, row = find_row(wt, time_m)
         if row then
             row[1] = true
@@ -170,7 +146,7 @@ local function update_stats(ns, state, run, wt)
             adjust_concurrency(w, time_m, -1)
         end
     elseif state == "exception" then
-        local time_m = get_time_m(run.resolved)
+        local time_m = util.get_time_m(run.resolved)
         update_exception(wt, time_m, run.started)
     end
 end
@@ -178,7 +154,7 @@ end
 
 local function update_exception_stats(ns, state, run, wt)
     if state == "exception" then
-        local time_m = get_time_m(run.resolved)
+        local time_m = util.get_time_m(run.resolved)
         local w, row = update_exception(wt, time_m, run.started)
         if w and not row then -- out of the window but we still need to adjust the concurrency
             time_m = w.time_m - 3540 -- retroactively update the window from the beginning
@@ -201,7 +177,7 @@ function process_message()
     local ns    = read_message("Timestamp")
     if is_dupe(ns, j.status.taskId, runid, state) then return 0 end
 
-    local wt = normalize_workertype(j.status.workerType or "_")
+    local wt = util.normalize_workertype(j.status.workerType)
     update_stats(ns, state, j.status.runs[runid + 1], wt)
 
     -- handle any exception runs reported in the history

@@ -9,11 +9,12 @@
 #### Sample Configuration
 
 ```lua
-filename               	= "influx_output.lua"
-message_matcher        	= "Logger =~ '^analysis%.influx_'"
-read_queue             	= "analysis"
-ticker_interval		    = 0
-shutdown_on_terminate  	= true
+filename                = "influx_output.lua"
+message_matcher         = "Logger =~ '^analysis%.influx_'"
+read_queue              = "analysis"
+ticker_interval         = 60
+shutdown_on_terminate   = true
+preserve_data           = true
 
 url         = "
 user        = ""
@@ -22,7 +23,10 @@ timeout     = 10 -- default
 
 ```
 --]]
+data = {}
+
 require("string")
+require("table")
 local http      = require("socket.http")
 local https     = require("ssl.https")
 local ltn12     = require("ltn12")
@@ -41,26 +45,35 @@ local req_headers = {
     ["authorization"]   = "Basic " .. mime.b64(user .. ":" .. _password)
 }
 
+local err = nil
 function process_message()
-    local s = read_message("Payload")
-    req_headers["content-length"] = #s
+    if err then
+        timer_event()
+        return -3, err
+    end
+    data[#data + 1] = read_message("Payload")
+    return 0
+end
+
+
+function timer_event(ns, shutdown)
+    local content = table.concat(data, "\n")
+    req_headers["content-length"] = #content
 
     local request = {
         url         = url,
         method      = "POST",
-        source      = ltn12.source.string(s),
+        source      = ltn12.source.string(content),
         headers     = req_headers,
         sink        = nil, -- discard response
     }
     local r, c = https.request(request)
 
     if not r or c ~= 204 then
-        return -3, tostring(c)
+        err = tostring(c)
+        if c == 400 then error("malformed request, this is a plugin bug") end
+    else
+        err     = nil
+        data    = {}
     end
-    return 0
-end
-
-
-function timer_event(ns, shutdown)
-    -- no op
 end
