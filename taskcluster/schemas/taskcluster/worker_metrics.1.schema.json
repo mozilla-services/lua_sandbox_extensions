@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": true,
+  "description": "worker metrics",
+  "properties": {
+    "eventType": {
+      "type": "string"
+    },
+    "instanceType": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "integer"
+    },
+    "worker": {
+      "type": "string"
+    },
+    "workerId": {
+      "type": "string"
+    },
+    "workerPoolId": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "runId": {
+      "maximum": 1000,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "timestamp",
+    "eventType",
+    "instanceType",
+    "region",
+    "worker",
+    "workerId",
+    "workerPoolId"
+  ],
+  "title": "worker metrics",
+  "type": "object"
+}

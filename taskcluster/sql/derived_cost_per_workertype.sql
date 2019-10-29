@@ -1,7 +1,7 @@
 SELECT
   date,
   workerType,
-  AVG(cost/duration_ms) AS cost_per_ms
+  SUM(cost)/SUM(duration_ms) AS cost_per_ms
 FROM
   taskclusteretl.raw_cost
 WHERE
