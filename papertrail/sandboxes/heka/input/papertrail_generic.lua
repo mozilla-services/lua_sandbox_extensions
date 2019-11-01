@@ -22,6 +22,7 @@ _key = "APIkey" -- required, papertrail API key
 -- query        = nil -- optional, search query; return events matching this query (default: return all events)
 -- system_id    = nil -- optional, limit results to a specific system (accepts ID or name)
 -- group_id     = nil -- optional, limit results to a specific group (accepts ID only)
+-- timeout      = 10  -- optional
 
 -- decoder_module = "decoders.payload" -- default
 ```
@@ -30,10 +31,11 @@ require "table"
 require "string"
 
 local lsys   = require("lpeg.syslog")
+local http   = require("socket.http")
 local https  = require("ssl.https")
 local snk    = require("ltn12").sink.table
 local jdec   = require("cjson").decode
-local urlesc = require("socket").url.escape
+local urlesc = require("socket.url").escape
 
 local sdu    = require "lpeg.sub_decoder_util"
 local decode = sdu.load_sub_decoder(read_config("decoder_module") or
@@ -49,6 +51,7 @@ local system_id         = read_config("system_id")
 if system_id then system_id = "&system_id=" .. system_id else system_id = "" end
 local group_id          = read_config("group_id")
 if group_id then group_id = "&group_id=" .. group_id else group_id = "" end
+http.TIMEOUT            = read_config("timeout") or 10
 
 assert(interval >= 60, "ticker_interval must be >= 60")
 
