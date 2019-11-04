@@ -6,7 +6,7 @@
     "type": "TIMESTAMP"
   },
   {
-    "description": "workerType name (cluster)",
+    "description": "worker name (cluster)",
     "mode": "REQUIRED",
     "name": "worker",
     "type": "STRING"
