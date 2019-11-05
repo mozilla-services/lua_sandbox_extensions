@@ -60,7 +60,7 @@
   },
   "metadata": {
     "owner": "emilio@crisal.io",
-    "source": "https://hg.mozilla.org/integration/mozilla-inbound/file/6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f/taskcluster/ci/test",
+    "source": "https://hg.mozilla.org/integration/mozilla-source/file/6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f/taskcluster/ci/test",
     "description": "Mochitest webgl1-core run ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-inbound&revision=6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f))",
     "name": "test-windows7-32-shippable/opt-mochitest-webgl1-core-e10s"
   },

@@ -826,6 +826,33 @@ function decode(data, dh, mutable)
     base_msg.Fields["os"]           = tj.tags.os
     base_msg.Fields["suite"]        = tj.extra.suite
 
+
+    for i,v in ipairs(tj.routes) do
+        local project, origin, owner, revision, pushId = tc_route:match(v)
+        if project then
+            base_msg.Fields["project"]      = project
+            base_msg.Fields["origin"]       = origin
+            base_msg.Fields["projectOwner"] = owner
+            base_msg.Fields["revision"]     = revision
+            base_msg.Fields["pushId"]       = pushId
+            break
+        end
+    end
+
+    if not base_msg.Fields["project"] and type(md) == "table" and md.source then
+        local origin, owner, project, revision = md_source:match(md.source)
+        if origin then
+            base_msg.Fields["origin"]       = origin
+            base_msg.Fields["projectOwner"] = owner
+            base_msg.Fields["project"]      = project
+            base_msg.Fields["revision"]     = revision
+
+            if origin:match("^tools%.taskcluster%.net/hooks/#project%-releng") then
+                base_msg.Fields["project"] = tj_payload_enc:match("%-%-project=([^%s]+)")
+            end
+        end
+    end
+
     local g = nil
     local th = tj.extra.treeherder
     if type(th) == "table" then
@@ -833,17 +860,6 @@ function decode(data, dh, mutable)
         base_msg.Fields["groupSymbol"]  = tostring(th.groupSymbol)
         base_msg.Fields["symbol"]       = tostring(th.symbol)
         base_msg.Fields["tier"]         = th.tier or 1
-        for i,v in ipairs(tj.routes) do
-            local project, origin, owner, revision, pushId = tc_route:match(v)
-            if project then
-                base_msg.Fields["project"]      = project
-                base_msg.Fields["origin"]       = origin
-                base_msg.Fields["projectOwner"] = owner
-                base_msg.Fields["revision"]     = revision
-                base_msg.Fields["pushId"]       = pushId
-                break
-            end
-        end
         local m = th.machine or {}
         base_msg.Fields["platform"] = m.platform or pj.status.workerType
 
@@ -869,18 +885,6 @@ function decode(data, dh, mutable)
             end
         end
         g = schemas_map[key]
-    elseif type(md) == "table" and md.source then
-        local origin, owner, project, revision = md_source:match(md.source)
-        if origin then
-            base_msg.Fields["origin"]       = origin
-            base_msg.Fields["projectOwner"] = owner
-            base_msg.Fields["project"]      = project
-            base_msg.Fields["revision"]     = revision
-
-            if origin:match("^tools%.taskcluster%.net/hooks/#project%-releng") then
-                base_msg.Fields["project"] = tj_payload_enc:match("%-%-project=([^%s]+)")
-            end
-        end
     end
 
     -- handle any exception runs reported in the history as they don't have their own resolution messages
