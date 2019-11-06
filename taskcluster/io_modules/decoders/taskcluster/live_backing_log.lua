@@ -10,6 +10,7 @@ Parses the Taskcluster live_backing.log
 decoders_taskcluster_live_backing_log = {
     -- taskcluster_schema_path = "/usr/share/luasandbox/schemas/taskcluster" -- default
     -- base_taskcluster_url = "https://queue.taskcluster.net/v1" -- default
+    -- migration_taskcluster_url = "https://firefox-ci-tc.services.mozilla.com/api/queue/v1" -- todo remove after migration
 }
 
 ## Functions
@@ -68,6 +69,7 @@ setfenv(1, M) -- Remove external access to contain everything in the module
 local schemas_map   = {}
 local doc           = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
 local base_tc_url   = cfg.base_taskcluster_url or "https://queue.taskcluster.net/v1"
+local mig_tc_url    = cfg.migration_taskcluster_url
 
 local perfherder_schema_file = cfg.taskcluster_schema_path .. "/perfherder.1.schema.json"
 local fh = assert(io.open(perfherder_schema_file, "r"))
@@ -763,9 +765,34 @@ local function inject_task_msg(j, name, schema, file)
 end
 
 
+local task_file = "/var/tmp/" .. read_config("Logger") .. "_task.json"
+local function get_task_info(url, pj)
+    local tj, task_url, err
+
+    task_url = string.format("%s/task/%s", url, pj.status.taskId)
+    local rv = os.execute(string.format("curl %s -o %s -L -s --compressed", task_url, task_file))
+    if rv ~= 0 then return nil, nil, string.format("curl rv: %d, %s", rv, task_url) end
+
+    local fh = assert(io.open(task_file, "rb"))
+    tj = fh:read("*a")
+    fh:close()
+    tj = cjson.decode(tj)
+    if tj.code or tj.error then
+        if tj.code == "ResourceNotFound" and mig_tc_url and url ~= mig_tc_url then -- todo remove after the migration
+            tj, task_url, err = get_task_info(mig_tc_url, pj)
+            if tj then base_tc_url = mig_tc_url end
+        else
+            err = string.format("%s: %s", tj.code or tj.error, task_url)
+            task_url = nil
+            tj = nil
+        end
+    end
+    return tj, task_url, err
+end
+
+
 local integration_key = "other_kitchen-sink_test"
 local no_schema = new_log()
-local task_file = "/var/tmp/" .. read_config("Logger") .. "_task.json"
 local log_file = "/var/tmp/" .. read_config("Logger") .. "_log.txt"
 local perfherder_file = "/var/tmp/" .. read_config("Logger") .. "_perfherder.json"
 function decode(data, dh, mutable)
@@ -780,33 +807,28 @@ function decode(data, dh, mutable)
         return
     end
 
-
     local run = pj.status.runs[pj.runId  + 1]
     if not run or not run.scheduled or not run.resolved then
         return
     end
     if not run.started then run.started = run.resolved end -- deadline-exceeded, make the timing zero
 
-    local task_url = string.format("%s/task/%s", base_tc_url, pj.status.taskId)
-    local log_url  = string.format("%s/runs/%d/artifacts/public/logs/live_backing.log", task_url, pj.runId)
-
     local integration_test = nil
+    local tj, task_url, err
     if dh and type(dh) == "string" then
         integration_test = dh
-        task_file = integration_test .. ".task.json"
         dh = nil
         if not schemas_map[integration_key] then
             schemas_map[integration_key] = new_log({new_task({new_mozharness({upload,download,raptor_recording_date,perfherder,test,test_ref,test_gtest,gecko,hazard_build,hazard_gen,package_tests}),perfherder}),task_exit})
         end
+        local fh = assert(io.open(integration_test .. ".task.json", "rb"))
+        tj = cjson.decode(fh:read("*a"))
+        fh:close()
     else
-        local rv = os.execute(string.format("curl %s -o %s -L -s --compressed", task_url, task_file))
-        if rv ~= 0 then return string.format("curl rv: %d, %s", rv, task_url) end
+        tj, task_url, err = get_task_info(base_tc_url, pj)
+        if not tj then return err end
     end
 
-    local fh = assert(io.open(task_file, "rb"))
-    local tj = fh:read("*a")
-    fh:close()
-    tj = cjson.decode(tj)
     local tj_payload_enc  = cjson.encode(tj.payload)
 
     -- build up the base timing table message
@@ -938,6 +960,7 @@ function decode(data, dh, mutable)
     if integration_test then
         log_file = integration_test .. ".log"
     else
+        local log_url = string.format("%s/runs/%d/artifacts/public/logs/live_backing.log", task_url, pj.runId)
         local rv = os.execute(string.format("curl %s -o %s -L -s --compressed", log_url, log_file))
         if rv ~= 0 then return string.format("curl rv: %d, %s", rv, log_url) end
     end
