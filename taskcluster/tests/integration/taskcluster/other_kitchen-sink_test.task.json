@@ -8,7 +8,7 @@
   ],
   "requires": "all-completed",
   "routes": [
-    "tc-treeherder.v2.mozilla-inbound.6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f.113552",
+    "tc-treeherder.v2.mozilla-route.6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f.113552",
     "coalesce.v1.mozilla-inbound.42571f2c2573be97b715"
   ],
   "priority": "low",
@@ -61,7 +61,7 @@
   },
   "metadata": {
     "owner": "emilio@crisal.io",
-    "source": "https://hg.mozilla.org/integration/mozilla-inbound/file/6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f/taskcluster/ci/test",
+    "source": "https://hg.mozilla.org/mozilla-source/file/6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f/taskcluster/ci/test",
     "description": "Mochitest webgl1-core run ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-inbound&revision=6c6b0bbf5885493a0b85cedf1985d6eb3bdbfe6f))",
     "name": "test-windows7-32-shippable/opt-mochitest-webgl1-core-e10s"
   },
