@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.5)
-project(amqp VERSION 0.0.2 LANGUAGES C)
+project(amqp VERSION 0.0.3 LANGUAGES C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AMQP RabbitMQ Lua module")
 
 find_package(PkgConfig REQUIRED)

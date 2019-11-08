@@ -55,6 +55,7 @@ local consumer = amqp.consumer(cfg)
 * cfg (table)
 ``` lua
 host                = "amqp.example.com",
+vhost               = "/", -- default
 port                = 5672, -- default
 user                = "guest",
 _password           = "guest",

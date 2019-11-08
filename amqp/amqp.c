@@ -9,6 +9,7 @@
 #include <amqp.h>
 #include <amqp_ssl_socket.h>
 #include <amqp_tcp_socket.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,6 +41,7 @@ typedef struct consumer {
 
 struct rmq_config {
   const char *host;
+  const char *vhost;
   const char *user;
   const char *password;
   const char *exchange;
@@ -84,7 +86,8 @@ static consumer* check_consumer(lua_State *lua, int args)
 }
 
 
-static const char* read_string(lua_State *lua, int idx, const char *key)
+static const char*
+read_string(lua_State *lua, int idx, const char *key, bool required)
 {
   lua_getfield(lua, idx, key);
   int t = lua_type(lua, -1);
@@ -99,6 +102,9 @@ static const char* read_string(lua_State *lua, int idx, const char *key)
     break;
   }
   lua_pop(lua, 1);
+  if (required) {
+    luaL_error(lua, "configuration error key: %s, missing", key);
+  }
   return NULL;
 }
 
@@ -225,12 +231,15 @@ static int rmq_consumer(lua_State *lua)
   if (!lua_checkstack(lua, 12)) {
     luaL_error(lua, "checkstack failed");
   }
-  cfg.host                = read_string(lua, 1, "host");
-  cfg.user                = read_string(lua, 1, "user");
-  cfg.password            = read_string(lua, 1, "_password");
-  cfg.exchange            = read_string(lua, 1, "exchange");
-  cfg.binding             = read_string(lua, 1, "binding");
-  cfg.queue_name          = read_string(lua, 1, "queue_name");
+  cfg.host                = read_string(lua, 1, "host", true);
+  cfg.vhost               = read_string(lua, 1, "vhost", false);
+  if (!cfg.vhost) { cfg.vhost = "/";}
+  cfg.user                = read_string(lua, 1, "user", true);
+  cfg.password            = read_string(lua, 1, "_password", true);
+  cfg.exchange            = read_string(lua, 1, "exchange", true);
+  cfg.binding             = read_string(lua, 1, "binding", false);
+  if (!cfg.binding) { cfg.binding = "#";}
+  cfg.queue_name          = read_string(lua, 1, "queue_name", true);
   cfg.port                = read_int(lua, 1, "port", 5672);
   cfg.connection_timeout  = read_int(lua, 1, "connection_timeout", 10);
   cfg.prefetch_size       = read_int(lua, 1, "prefetch_size", 0);
@@ -242,9 +251,9 @@ static int rmq_consumer(lua_State *lua)
   cfg.auto_delete         = read_boolean(lua, 1, "auto_delete");
   int ssl_enabled         = is_table(lua, 1, "ssl");
   if (ssl_enabled) {
-    cfg.key             = read_string(lua, -1, "_key");
-    cfg.cert            = read_string(lua, -1, "cert");
-    cfg.cacert          = read_string(lua, -1, "cacert");
+    cfg.key             = read_string(lua, -1, "_key", false);
+    cfg.cert            = read_string(lua, -1, "cert", false);
+    cfg.cacert          = read_string(lua, -1, "cacert", false);
     cfg.verifypeer      = read_boolean(lua, -1, "verifypeer");
     cfg.verifyhostname  = read_boolean(lua, -1, "verifyhostname");
   } else {
@@ -285,7 +294,7 @@ static int rmq_consumer(lua_State *lua)
       }
     }
 
-    if (cfg.key) {
+    if (cfg.key && cfg.cert) {
       status = amqp_ssl_socket_set_key(socket, cfg.key, cfg.cert);
       if (status != AMQP_STATUS_OK) {
         return luaL_error(lua, "setting client key");
@@ -305,7 +314,8 @@ static int rmq_consumer(lua_State *lua)
     luaL_error(lua, "opening connection");
   }
 
-  check_amqp_error(lua, amqp_login(c->conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0,
+  check_amqp_error(lua, amqp_login(c->conn, cfg.vhost, 0,
+                                   AMQP_DEFAULT_FRAME_SIZE, 0,
                                    AMQP_SASL_METHOD_PLAIN, cfg.user,
                                    cfg.password), "login");
   amqp_channel_open(c->conn, 1);

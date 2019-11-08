@@ -18,7 +18,7 @@ amqp = {
     _password           = "guest",
     connect_timeout     = 10, -- default seconds
     exchange            = "exchange/foo/bar",
-    binding             = "#",
+    binding             = "#", -- default
     queue_name          = nil, -- creates an exclusive/temporary queue
     manual_ack          = false,
     passive             = false,
@@ -54,6 +54,7 @@ amqp = {
 --]]
 
 require "amqp"
+require "string"
 local sdu       = require "lpeg.sub_decoder_util"
 local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.heka.protobuf", read_config("printf_messages"))
 
@@ -80,7 +81,12 @@ local err_msg = {
 
 function process_message()
     local ok, consumer = pcall(amqp.consumer, amqp_cfg)
-    if not ok then return -1, consumer end
+    if not ok then
+        if consumer:match("^configuration error") then
+            error(consumer)
+        end
+        return -1, consumer
+    end
 
     local cnt = 0
     while is_running() do
