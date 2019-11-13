@@ -10,7 +10,6 @@ Parses the Taskcluster live_backing.log
 decoders_taskcluster_live_backing_log = {
     -- taskcluster_schema_path = "/usr/share/luasandbox/schemas/taskcluster" -- default
     -- base_taskcluster_url = "https://queue.taskcluster.net/v1" -- default
-    -- migration_taskcluster_url = "https://firefox-ci-tc.services.mozilla.com/api/queue/v1" -- todo remove after migration
 }
 
 ## Functions
@@ -68,8 +67,7 @@ setfenv(1, M) -- Remove external access to contain everything in the module
 
 local schemas_map   = {}
 local doc           = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
-local base_tc_url   = cfg.base_taskcluster_url or "https://queue.taskcluster.net/v1"
-local mig_tc_url    = cfg.migration_taskcluster_url
+local base_tc_url   = cfg.base_taskcluster_url or "https://firefox-ci-tc.services.mozilla.com/api/queue/v1"
 
 local perfherder_schema_file = cfg.taskcluster_schema_path .. "/perfherder.1.schema.json"
 local fh = assert(io.open(perfherder_schema_file, "r"))
@@ -778,14 +776,9 @@ local function get_task_info(url, pj)
     fh:close()
     tj = cjson.decode(tj)
     if tj.code or tj.error then
-        if tj.code == "ResourceNotFound" and mig_tc_url and url ~= mig_tc_url then -- todo remove after the migration
-            tj, task_url, err = get_task_info(mig_tc_url, pj)
-            if tj then base_tc_url = mig_tc_url end
-        else
-            err = string.format("%s: %s", tj.code or tj.error, task_url)
-            task_url = nil
-            tj = nil
-        end
+        err = string.format("%s: %s", tj.code or tj.error, task_url)
+        task_url = nil
+        tj = nil
     end
     return tj, task_url, err
 end
