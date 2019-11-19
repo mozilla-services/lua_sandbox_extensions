@@ -21,7 +21,7 @@ setfenv(1, M) -- Remove external access to contain everything in the module
 local sep = l.P", "
 local key = l.C(l.alpha^1)
 local value = l.C((l.P(1) - sep)^1)
-local statpair = l.Cg(l.C(l.P'stat') * l.P'=' * l.C(l.P(1)^0))
+local statpair = l.Cg(l.C(l.P"stat") * "=" * l.C(l.P(1)^0))
 local normalpair = l.Cg(key * "=" * value) * sep^-1
 local pair = statpair + normalpair
 
