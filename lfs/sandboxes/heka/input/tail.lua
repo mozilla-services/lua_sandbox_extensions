@@ -143,8 +143,9 @@ local function open_file(checkpoint)
     if not fh then return nil, 0 end
 
     if checkpoint ~= 0 then
-        if not fh:seek("set", checkpoint) then
-            print("invalid checkpoint, starting from the beginning")
+        local seek = fh:seek("end")
+        if checkpoint > seek or not fh:seek("set", checkpoint) then
+            print(string.format("invalid checkpoint: %d end: %d, starting from the beginning", checkpoint, seek))
             checkpoint = 0
             inject_message(nil, checkpoint)
         end
