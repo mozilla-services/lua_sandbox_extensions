@@ -33,3 +33,15 @@ assert(fields.relay == 'remote.example.com [192.168.1.1]', fields.relay)
 log = 'NOQUEUE: SYSERR(nobody): can not write to queue directory /var/spool/clientmqueue/'
 fields = grammar:match(log)
 assert(fields == nil, 'no match for other errors')
+
+log = 'x6OAO3PO023456: to=<kai@office.example.com>, delay=00:00:00, xdelay=00:00:00, mailer=smtp, pri=235332, relay=webmail.office.example.com. [192.168.1.168], dsn=2.0.0, stat=Sent (<4cb171fbd6e92fed42e1344934c6f130@smtp.example.com> [InternalId=1234567890, Hostname=Exchange.office.example.com] Queued mail for delivery)'
+fields = grammar:match(log)
+assert(fields.sendmailid == 'x6OAO3PO023456', fields.sendmailid)
+assert(fields.to == '<kai@office.example.com>', fields.to)
+assert(fields.delay == '00:00:00', fields.delay)
+assert(fields.xdelay == '00:00:00', fields.xdelay)
+assert(fields.mailer == 'smtp', fields.mailer)
+assert(fields.pri == '235332', fields.pri)
+assert(fields.relay == 'webmail.office.example.com. [192.168.1.168]', fields.relay)
+assert(fields.dsn == '2.0.0', fields.dsn)
+assert(fields.stat == 'Sent (<4cb171fbd6e92fed42e1344934c6f130@smtp.example.com> [InternalId=1234567890, Hostname=Exchange.office.example.com] Queued mail for delivery)', fields.stat)
