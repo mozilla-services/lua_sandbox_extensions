@@ -4,6 +4,7 @@ WITH
     date,
     project,
     platform,
+    provisionerId,
     workerType,
     collection,
     suite,
@@ -12,35 +13,24 @@ WITH
     owner,
     COUNT(*) AS tasks,
     ROUND(SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000, 2) AS hours,
-    ROUND(SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) * ifnull((
-        SELECT
-          cost_per_ms
-        FROM
-          taskclusteretl.derived_cost_per_workertype AS tmp
-        WHERE
-          tmp.workerType = dts.workerType
-          AND tmp.date = DATE(EXTRACT(year
-            FROM
-              dts.date), EXTRACT(month
-            FROM
-              dts.date), 1)),
-        (
-        SELECT
-          cost_per_ms
-        FROM
-          taskclusteretl.derived_cost_per_workertype AS tmp
-        WHERE
-          tmp.workerType = dts.workerType
-          AND tmp.date = "1970-01-01")), 2) AS cost
-    -- 1970-01-01 stores the most recent cost we have for each workerType (since the manual data load is 4-6 weeks behind)
+    ROUND(SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) * (
+      SELECT
+        cost_per_ms
+      FROM
+        taskclusteretl.derived_daily_cost_per_workertype AS tmp
+      WHERE
+        (tmp.provisionerId is NULL or tmp.provisionerId = dts.provisionerId)
+        AND tmp.workerType = dts.workerType
+        AND tmp.date = dts.date), 2) AS cost
   FROM
     taskclusteretl.derived_task_summary AS dts
   WHERE
-    date = DATE_SUB(@run_date, INTERVAL 1 day)
+    date = DATE_SUB(@run_date, INTERVAL 2 day)
   GROUP BY
     date,
     project,
     platform,
+    provisionerId,
     workerType,
     collection,
     suite,
@@ -53,7 +43,7 @@ SELECT
   manager AS manager_name
 FROM
   a
-JOIN (
+LEFT JOIN (
   SELECT
     email,
     name,

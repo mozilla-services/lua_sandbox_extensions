@@ -1,5 +1,5 @@
 /*
-if this is used as a daily rollup utilizing the partition index it can miss event blocks that span days
+when this is used as a daily rollup utilizing the partition index it can miss event blocks that span days
 e.g. 2019-10-10T23:20:00 taskStart -> 2019-10-11T01:11:00 taskFinished
 
 if desired we could count 40 minutes to Oct 10 and 71 minutes to Oct 11.  However, this assumes
@@ -72,6 +72,9 @@ WITH
     taskclusteretl.worker_metrics
   WHERE
     eventType != "taskQueued"
+--    AND workerPoolId = "aws-provisioner-v1/gecko-t-win10-64"
+--    AND timestamp >= "2019-10-21"
+--    AND timestamp < "2019-10-22"
   GROUP BY
     workerId),
   worker_summary AS (
@@ -91,9 +94,13 @@ SELECT
   SUM(times.task) / 1000 AS task_s,
   SUM(times.reboot) / 1000 AS reboot_s,
   SUM(times.total) / 1000 AS total_s,
-  ROUND((SUM(times.task) / SUM(times.total) * 100), 2) AS utilization_pct
+  --(SUM(times.boot) + SUM(times.idle) + SUM(times.task) + SUM(times.reboot)) / 1000 AS sum_total,
+  count(workerID) as instances,
+  countif(times.task = 0) as instances_unused
 FROM
   worker_summary
 GROUP BY
   date,
   workerPoolId
+  --  order by date, workerPoolId
+

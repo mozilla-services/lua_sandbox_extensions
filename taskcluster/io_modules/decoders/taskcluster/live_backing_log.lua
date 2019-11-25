@@ -827,10 +827,11 @@ function decode(data, dh, mutable)
     -- build up the base timing table message
     base_msg = sdu.copy_message(dh, mutable)
     if not base_msg.Fields then base_msg.Fields = {} end
-    base_msg.Fields["taskGroupId"]  = pj.status.taskGroupId
-    base_msg.Fields["taskId"]       = pj.status.taskId
-    base_msg.Fields["workerType"]   = pj.status.workerType
-    base_msg.Fields["created"]      = tj.created
+    base_msg.Fields["taskGroupId"]      = pj.status.taskGroupId
+    base_msg.Fields["taskId"]           = pj.status.taskId
+    base_msg.Fields["provisionerId"]    = pj.status.provisionerId
+    base_msg.Fields["workerType"]       = pj.status.workerType
+    base_msg.Fields["created"]          = tj.created
 
     local md = tj.metadata
     if type(md) == "table" then
