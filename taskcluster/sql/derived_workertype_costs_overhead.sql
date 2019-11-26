@@ -23,12 +23,14 @@ WITH
   FROM
     taskclusteretl.derived_daily_cost_per_workertype
   WHERE
-    date = DATE_SUB(@run_date, INTERVAL 1 day))
+    date = DATE_SUB(@run_date, INTERVAL 2 day))
 SELECT
   b.date,
-  "taskcluster" AS project,
-  "infrastructure" AS platform,
-  "overhead" AS kind,
+  "-overhead-" AS project,
+  "-overhead-" AS platform,
+  "-overhead-" AS kind,
+  "-overhead-" AS owner,
+  0 AS tier,
   b.provisionerId,
   b.workerType,
   b.hours - ifnull(used_hours,

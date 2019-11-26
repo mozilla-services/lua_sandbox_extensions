@@ -10,7 +10,7 @@ WITH
   FROM
     taskclusteretl.derived_kind_costs
   WHERE
-    date = DATE_SUB(@run_date, INTERVAL 1  day) 
+    date = DATE_SUB(@run_date, INTERVAL 2 day)
   GROUP BY
     taskGroupId,
     project),

@@ -45,7 +45,7 @@ WITH
     resourcetags_user_name),
   releng AS (
   SELECT
-    DATE_SUB(@run_date, INTERVAL 1 day) AS date,
+    DATE_SUB(@run_date, INTERVAL 2 day) AS date,
     provisionerId,
     workerType,
     (24 * instances) AS hours,

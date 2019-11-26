@@ -18,13 +18,13 @@ WITH
       FROM
         taskclusteretl.derived_daily_cost_per_workertype AS tmp
       WHERE
-        tmp.workerType = dts.workerType
-        AND tmp.provisionerId = dts.provisionerId
+        (tmp.provisionerId is NULL or tmp.provisionerId = dts.provisionerId)
+        AND tmp.workerType = dts.workerType
         AND tmp.date = dts.date), 2) AS cost
   FROM
     taskclusteretl.derived_task_summary AS dts
   WHERE
-    date = DATE_SUB(@run_date, INTERVAL 1 day)
+    date = DATE_SUB(@run_date, INTERVAL 2 day)
   GROUP BY
     date,
     project,

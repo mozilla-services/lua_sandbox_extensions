@@ -2,6 +2,7 @@ WITH
   a AS (
   SELECT
     t1.date,
+    t1.provisionerId,
     t1.workerType,
     COUNT(DISTINCT(CONCAT(t1.taskId, "_", CAST(t1.runId AS string)))) AS tasks,
     APPROX_TOP_COUNT(CONCAT(t1.taskId, "_", CAST(t1.runId AS string)), 10000)[
@@ -32,6 +33,7 @@ WITH
   WHERE
     t1.started >= t2.started
     AND t1.started < t2.resolved
+    AND (t1.provisionerId is NULL or t1.provisionerId = t2.provisionerId)
     AND t1.workerType = t2.workerType
     AND ( t2.started >= CAST(DATE_SUB(@run_date, INTERVAL 1 day) AS timestamp)
       AND t2.started < CAST(DATE(@run_time) AS timestamp)
@@ -43,9 +45,11 @@ WITH
       OR t2.date = DATE_SUB(@run_date, INTERVAL 1 day)) -- limit the outer tasks to a two day window (to reduce the table scan)
   GROUP BY
     date,
+    provisionerId,
     workerType
   ORDER BY
     date,
+    provisionerId,
     workerType)
 SELECT
   *,
