@@ -22,7 +22,7 @@ samples_quantile            = 0.90 -- 0.01 - 0.99
 
 ```
 --]]
-_PRESERVATION_VERSION = read_config("preservation_version") or 0
+_PRESERVATION_VERSION = (read_config("preservation_version") or 0) + 1
 
 require "cjson"
 require "math"
@@ -70,7 +70,9 @@ function process_message()
     local lag               = started - scheduled
     if time_m > data_time_m then data_time_m = time_m end
 
-    local w   = find_wt(util.normalize_workertype(j.status.workerType))
+    local pid = j.status.provisionerId or "null"
+    local wt = pid .. "/" .. util.normalize_workertype(j.status.workerType)
+    local w   = find_wt(wt)
     w.updated = data_time_m
     local idx = w.samples_idx
     w.samples[idx] = lag

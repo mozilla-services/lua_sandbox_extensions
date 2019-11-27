@@ -22,7 +22,7 @@ cuckoo_filter_interval_size = 1      -- default
 preservation_version        = 0
 ```
 --]]
-_PRESERVATION_VERSION = read_config("preservation_version") or 0
+_PRESERVATION_VERSION = (read_config("preservation_version") or 0) + 1
 
 require "cjson"
 require "cuckoo_filter_expire"
@@ -177,7 +177,8 @@ function process_message()
     local ns    = read_message("Timestamp")
     if is_dupe(ns, j.status.taskId, runid, state) then return 0 end
 
-    local wt = util.normalize_workertype(j.status.workerType)
+    local pid = j.status.provisionerId or "null"
+    local wt = pid .. "/" .. util.normalize_workertype(j.status.workerType)
     update_stats(ns, state, j.status.runs[runid + 1], wt)
 
     -- handle any exception runs reported in the history
