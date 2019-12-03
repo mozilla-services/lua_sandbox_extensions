@@ -1,3 +1,11 @@
+DELETE
+FROM
+  taskclusteretl.derived_taskgroup_costs
+WHERE
+  date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+  AND date < CURRENT_DATE();
+INSERT INTO
+  taskclusteretl.derived_taskgroup_costs
 WITH
   a AS (
   SELECT
@@ -10,7 +18,8 @@ WITH
   FROM
     taskclusteretl.derived_kind_costs
   WHERE
-    date = DATE_SUB(@run_date, INTERVAL 2 day)
+    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+    AND date < CURRENT_DATE()
   GROUP BY
     taskGroupId,
     project),

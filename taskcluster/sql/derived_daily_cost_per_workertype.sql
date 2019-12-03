@@ -1,4 +1,19 @@
+DELETE
+FROM
+  taskclusteretl.derived_daily_cost_per_workertype
+WHERE
+  date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+  AND date < CURRENT_DATE();
+INSERT INTO
+  taskclusteretl.derived_daily_cost_per_workertype
 WITH
+  ids AS (
+  SELECT
+    account_id
+  FROM
+    `jthomas-billing.billing.aws_programs`
+  WHERE
+    program = 'taskcluster'),
   data AS (
   SELECT
     *
@@ -12,7 +27,7 @@ WITH
   SELECT
     usage_start_date,
     lineitem_resourceid,
-    resourcetags_user_name AS resourcetags_user_name,
+    resourcetags_user_name,
     SUM(lineitem_unblendedcost) AS cost,
     SUM(
     IF
@@ -26,8 +41,13 @@ WITH
     data
   WHERE
     resourcetags_user_name IS NOT NULL
-    AND resourcetags_user_owner = "release+tc-workers@mozilla.com"
-    AND usage_start_date = DATE_SUB(@run_date, INTERVAL 2 day)
+    AND lineitem_usageaccountid IN (
+    SELECT
+      *
+    FROM
+      ids)
+    AND usage_start_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+    AND usage_start_date < CURRENT_DATE()
   GROUP BY
     usage_start_date,
     lineitem_resourceid,
@@ -45,14 +65,17 @@ WITH
     resourcetags_user_name),
   releng AS (
   SELECT
-    DATE_SUB(@run_date, INTERVAL 2 day) AS date,
+    date,
     provisionerId,
     workerType,
-    (24 * instances) AS hours,
     (24 * instances * 3600 * 1000 * cost_per_ms) AS cost,
-    cost_per_ms
+    (24 * instances) AS hours,
+    cost_per_ms,
+    "releng" AS cost_origin
   FROM
-    taskclusteretl.releng_hardware),
+    taskclusteretl.releng_hardware
+  CROSS JOIN
+    UNNEST(GENERATE_DATE_ARRAY(DATE_SUB(CURRENT_DATE(), INTERVAL 5 day), DATE_SUB(CURRENT_DATE(), INTERVAL 1 day))) AS date),
   billing AS (
   SELECT
     usage_start_date AS date,
@@ -62,13 +85,15 @@ WITH
     SUM(cost) AS cost,
     SUM(hours) AS hours,
     safe_divide(SUM(cost),
-      SUM(hours) * 3600 * 1000) AS cost_per_ms
+      SUM(hours) * 3600 * 1000) AS cost_per_ms,
+    "aws" AS cost_origin
   FROM
     rate
   GROUP BY
     date,
     provisionerId,
-    workerType
+    workerType,
+    cost_origin
   HAVING
     hours > 0)
 SELECT

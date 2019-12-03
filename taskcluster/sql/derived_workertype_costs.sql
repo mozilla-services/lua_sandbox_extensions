@@ -1,54 +1,142 @@
+DELETE
+FROM
+  taskclusteretl.derived_workertype_costs
+WHERE
+  date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+  AND date < CURRENT_DATE();
+INSERT INTO
+  taskclusteretl.derived_workertype_costs
 WITH
-  a AS (
+  time AS (
   SELECT
     date,
-    project,
-    platform,
     provisionerId,
     workerType,
+    project,
+    platform,
+    taskGroupId,
     collection,
     suite,
     tier,
     kind,
     owner,
     COUNT(*) AS tasks,
-    ROUND(SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000, 2) AS hours,
-    ROUND(SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) * (
-      SELECT
-        cost_per_ms
-      FROM
-        taskclusteretl.derived_daily_cost_per_workertype AS tmp
-      WHERE
-        (tmp.provisionerId is NULL or tmp.provisionerId = dts.provisionerId)
-        AND tmp.workerType = dts.workerType
-        AND tmp.date = dts.date), 2) AS cost
+    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS hours
   FROM
-    taskclusteretl.derived_task_summary AS dts
+    taskclusteretl.derived_task_summary
   WHERE
-    date = DATE_SUB(@run_date, INTERVAL 2 day)
+    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+    AND date < CURRENT_DATE()
   GROUP BY
     date,
-    project,
-    platform,
     provisionerId,
     workerType,
+    project,
+    platform,
+    taskGroupId,
     collection,
     suite,
     tier,
     kind,
-    owner)
-SELECT
-  a.*,
-  name AS owner_name,
-  manager AS manager_name
-FROM
-  a
-LEFT JOIN (
+    owner),
+  cost AS (
   SELECT
-    email,
-    name,
-    manager
+    time.*,
+    ROUND(time.hours * 3600 * 1000 * cost_per_ms, 2) AS cost,
+    cost_origin
   FROM
-    taskclusteretl.mozilla_com)
-ON
-  email = a.owner
+    time
+  LEFT JOIN (
+    SELECT
+      *
+    FROM
+      taskclusteretl.derived_daily_cost_per_workertype) AS ddcpw
+  ON
+    (ddcpw.provisionerId IS NULL
+      OR ddcpw.provisionerId = time.provisionerId)
+    AND ddcpw.workerType = time.workerType
+    AND ddcpw.date = time.date),
+  owner AS (
+  SELECT
+    cost.*,
+    name AS owner_name,
+    manager AS manager_name
+  FROM
+    cost
+  LEFT JOIN (
+    SELECT
+      email,
+      name,
+      manager
+    FROM
+      taskclusteretl.mozilla_com)
+  ON
+    email = cost.owner),
+  used AS (
+  SELECT
+    date,
+    provisionerId,
+    workerType,
+    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS used_hours
+  FROM
+    taskclusteretl.derived_task_summary
+  WHERE
+    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+    AND date < CURRENT_DATE()
+  GROUP BY
+    date,
+    provisionerId,
+    workerType),
+  unused AS (
+  SELECT
+    date,
+    provisionerId,
+    workerType,
+    hours,
+    cost_per_ms,
+    cost_origin
+  FROM
+    taskclusteretl.derived_daily_cost_per_workertype
+  WHERE
+    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+    AND date < CURRENT_DATE() ),
+  overhead AS (
+  SELECT
+    unused.date,
+    unused.provisionerId,
+    unused.workerType,
+    "-overhead-" AS project,
+    "-overhead-" AS platform,
+    CAST(NULL AS string) AS taskGroupId,
+    CAST(NULL AS string) AS collection,
+    CAST(NULL AS string) AS suite,
+    0 AS tier,
+    "-overhead-" AS kind,
+    "-overhead-" AS owner,
+    0 AS tasks,
+    unused.hours - ifnull(used_hours,
+      0) AS hours,
+    ((unused.hours - ifnull(used_hours,
+          0)) * 3600 * 1000) * cost_per_ms AS cost,
+    cost_origin,
+    CAST(NULL AS string) AS owner_name,
+    CAST(NULL AS ARRAY<string>) AS manager_name
+  FROM
+    used
+  RIGHT JOIN
+    unused
+  ON
+    used.date = unused.date
+    AND (used.provisionerId IS NULL
+      AND unused.provisionerId IS NULL
+      OR used.provisionerId = unused.provisionerId)
+    AND used.workerType = unused.workerType)
+SELECT
+  *
+FROM
+  owner
+UNION ALL
+SELECT
+  *
+FROM
+  overhead

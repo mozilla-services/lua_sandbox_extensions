@@ -1,3 +1,11 @@
+DELETE
+FROM
+  taskclusteretl.derived_kind_costs
+WHERE
+  date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+  AND date < CURRENT_DATE();
+INSERT INTO
+  taskclusteretl.derived_kind_costs
 WITH
   a AS (
   SELECT
@@ -18,13 +26,16 @@ WITH
       FROM
         taskclusteretl.derived_daily_cost_per_workertype AS tmp
       WHERE
-        (tmp.provisionerId is NULL or tmp.provisionerId = dts.provisionerId)
+        (tmp.provisionerId IS NULL
+          AND dts.provisionerId IS NULL
+          OR tmp.provisionerId = dts.provisionerId)
         AND tmp.workerType = dts.workerType
         AND tmp.date = dts.date), 2) AS cost
   FROM
     taskclusteretl.derived_task_summary AS dts
   WHERE
-    date = DATE_SUB(@run_date, INTERVAL 2 day)
+    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+    AND date < CURRENT_DATE()
   GROUP BY
     date,
     project,
