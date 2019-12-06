@@ -48,7 +48,8 @@ WITH
     owner)
 SELECT
   a.*,
-  name AS owner_name,
+  ifnull(name,
+    a.owner) AS owner_name,
   manager AS manager_name
 FROM
   a

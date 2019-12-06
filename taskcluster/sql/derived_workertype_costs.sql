@@ -54,12 +54,15 @@ WITH
   ON
     (ddcpw.provisionerId IS NULL
       OR ddcpw.provisionerId = time.provisionerId)
-    AND ddcpw.workerType = time.workerType
+    AND (ddcpw.workerType IS NULL
+      AND time.workerType IS NULL
+      OR ddcpw.workerType = time.workerType)
     AND ddcpw.date = time.date),
   owner AS (
   SELECT
     cost.*,
-    name AS owner_name,
+    ifnull(name,
+      cost.owner) AS owner_name,
     manager AS manager_name
   FROM
     cost
@@ -89,12 +92,7 @@ WITH
     workerType),
   unused AS (
   SELECT
-    date,
-    provisionerId,
-    workerType,
-    hours,
-    cost_per_ms,
-    cost_origin
+    *
   FROM
     taskclusteretl.derived_daily_cost_per_workertype
   WHERE
@@ -116,8 +114,11 @@ WITH
     0 AS tasks,
     unused.hours - ifnull(used_hours,
       0) AS hours,
-    ((unused.hours - ifnull(used_hours,
-          0)) * 3600 * 1000) * cost_per_ms AS cost,
+  IF
+    (unused.hours IS NULL,
+      unused.cost,
+      (unused.hours - ifnull(used_hours,
+          0)) * 3600 * 1000 * cost_per_ms) AS cost,
     cost_origin,
     CAST(NULL AS string) AS owner_name,
     CAST(NULL AS ARRAY<string>) AS manager_name
@@ -130,7 +131,9 @@ WITH
     AND (used.provisionerId IS NULL
       AND unused.provisionerId IS NULL
       OR used.provisionerId = unused.provisionerId)
-    AND used.workerType = unused.workerType)
+    AND (used.workerType IS NULL
+      AND unused.workerType IS NULL
+      OR used.workerType = unused.workerType))
 SELECT
   *
 FROM

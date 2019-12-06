@@ -23,10 +23,9 @@ WITH
     `jthomas-billing.billing.aws_billing_latest_reports_v1`
   USING
     (billing_assembly_id) ),
-  rates AS (
+  rate AS (
   SELECT
     usage_start_date,
-    lineitem_resourceid,
     resourcetags_user_name,
     SUM(lineitem_unblendedcost) AS cost,
     SUM(
@@ -36,30 +35,17 @@ WITH
         OR (pricing_unit IS NULL
           AND lineitem_lineitemdescription LIKE "%Spot Instance-hour%"),
         lineitem_usageamount,
-        0)) AS hours
+        NULL)) AS hours
   FROM
     data
   WHERE
-    resourcetags_user_name IS NOT NULL
-    AND lineitem_usageaccountid IN (
+    lineitem_usageaccountid IN (
     SELECT
       *
     FROM
       ids)
     AND usage_start_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
     AND usage_start_date < CURRENT_DATE()
-  GROUP BY
-    usage_start_date,
-    lineitem_resourceid,
-    resourcetags_user_name),
-  rate AS (
-  SELECT
-    usage_start_date,
-    resourcetags_user_name,
-    SUM(cost) AS cost,
-    SUM(hours) AS hours
-  FROM
-    rates
   GROUP BY
     usage_start_date,
     resourcetags_user_name),
@@ -93,9 +79,7 @@ WITH
     date,
     provisionerId,
     workerType,
-    cost_origin
-  HAVING
-    hours > 0)
+    cost_origin)
 SELECT
   *
 FROM
