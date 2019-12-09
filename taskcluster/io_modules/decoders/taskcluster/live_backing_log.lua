@@ -980,6 +980,7 @@ function decode(data, dh, mutable)
     local cnt = 0
     fh = assert(io.open(log_file, "rb"))
     for line in fh:lines() do
+        if #line > 1024 * 20 then line = "" end
         local data = log_line:match(line)
         if data then
             if not data.date_time then
