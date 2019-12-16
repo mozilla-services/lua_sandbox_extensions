@@ -9,7 +9,7 @@ Parses the Taskcluster live_backing.log
 ## Decoder Configuration Table
 decoders_taskcluster_live_backing_log = {
     -- taskcluster_schema_path = "/usr/share/luasandbox/schemas/taskcluster" -- default
-    -- base_taskcluster_url = "https://queue.taskcluster.net/v1" -- default
+    -- base_taskcluster_url = "https://firefox-ci-tc.services.mozilla.com/api/queue/v1" -- default
 }
 
 ## Functions
@@ -917,6 +917,7 @@ function decode(data, dh, mutable)
             base_msg.Fields["scheduled"]    = prun.scheduled
             base_msg.Fields["started"]      = prun.started
             base_msg.Fields["resolved"]     = prun.resolved
+            base_msg.Fields["result"]       = prun.reasonResolved,
             inject_timing_msg(no_schema, 0, f)
         end
     end
@@ -943,8 +944,9 @@ function decode(data, dh, mutable)
     if not g or pj.status.state == "exception" then
         -- don't bother fetching and parsing logs with no schema/grammar, however they are still accounted for in the timing table
         local f = {
+            result   = run.reasonResolved,
             logStart = dt.time_to_ns(time:match(run.started)),
-            logEnd = dt.time_to_ns(time:match(run.resolved))
+            logEnd   = dt.time_to_ns(time:match(run.resolved))
             }
         inject_timing_msg(no_schema, 0, f)
         return
