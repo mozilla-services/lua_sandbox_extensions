@@ -909,15 +909,15 @@ function decode(data, dh, mutable)
         local prun = pj.status.runs[i + 1]
         if prun.state == "exception" and prun.resolved then
             local f = {
+                result   = prun.reasonResolved or "unknown",
                 logStart = dt.time_to_ns(time:match(prun.started)),
-                logEnd = dt.time_to_ns(time:match(prun.resolved))
+                logEnd   = dt.time_to_ns(time:match(prun.resolved))
                 }
             base_msg.Fields["runId"]        = prun.runId
             base_msg.Fields["state"]        = prun.state
             base_msg.Fields["scheduled"]    = prun.scheduled
             base_msg.Fields["started"]      = prun.started
             base_msg.Fields["resolved"]     = prun.resolved
-            base_msg.Fields["result"]       = prun.reasonResolved,
             inject_timing_msg(no_schema, 0, f)
         end
     end
@@ -944,7 +944,7 @@ function decode(data, dh, mutable)
     if not g or pj.status.state == "exception" then
         -- don't bother fetching and parsing logs with no schema/grammar, however they are still accounted for in the timing table
         local f = {
-            result   = run.reasonResolved,
+            result   = run.reasonResolved or "unknown",
             logStart = dt.time_to_ns(time:match(run.started)),
             logEnd   = dt.time_to_ns(time:match(run.resolved))
             }
