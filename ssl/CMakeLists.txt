@@ -8,7 +8,7 @@ project(ssl LANGUAGES NONE)
 externalproject_add(
     ep_ssl
     GIT_REPOSITORY https://github.com/brunoos/luasec.git
-    GIT_TAG 98f8872743f3d38bd44cb9eedb2c82e38571fe04
+    GIT_TAG c6704919bdc85f3324340bdb35c2795a02f7d625
     CMAKE_ARGS ${EP_CMAKE_ARGS}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
 )

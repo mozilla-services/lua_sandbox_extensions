@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
-project(ssl VERSION 0.7.0 LANGUAGES C)
+project(ssl VERSION 0.9.0 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua SSL Module")
@@ -18,7 +18,7 @@ set(CPACK_DEBIAN_FILE_NAME      "DEB-DEFAULT")
 set(CPACK_RPM_FILE_NAME         "RPM-DEFAULT")
 
 set(CPACK_DEBIAN_PACKAGE_RELEASE 2)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl1.0.0 (>= 1.0.1)|libssl1.0.2 (>= 1.0.2)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl1.0.0 (>= 1.0.1)|libssl1.0.2 (>= 1.0.2)|libssl1.1 (>= 1.1.0)")
 set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
 
 if(MSVC)
@@ -58,10 +58,13 @@ src/luasocket/usocket.c
 add_library(luasocket STATIC ${LUASOCKET_SRC})
 target_compile_definitions(luasocket PRIVATE LUASOCKET_DEBUG)
 
-file(WRITE luasec.def "EXPORTS\nluaopen_ssl_core\nlua_open_ssl_x509\nluaopen_ssl_context\n")
+file(WRITE luasec.def "EXPORTS\nluaopen_ssl_core\nlua_open_ssl_x509\nluaopen_ssl_context\nluaopen_ssl_config\nlsec_get_ssl_options\n")
 
 set(LUASEC_SRC
+src/config.c
 src/context.c
+src/ec.c
+src/options.c
 src/ssl.c
 src/x509.c
 luasec.def
