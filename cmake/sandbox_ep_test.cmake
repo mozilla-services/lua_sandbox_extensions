@@ -11,10 +11,11 @@ else()
 endif()
 include(CTest)
 
-add_custom_target(${PROJECT_NAME}_copy_tests ALL
-COMMAND ${CMAKE_COMMAND} -E copy_directory
-${CMAKE_CURRENT_SOURCE_DIR}/tests
-${CMAKE_CURRENT_BINARY_DIR})
+if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    add_custom_target(${PROJECT_NAME}_copy_tests ALL COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests
+            ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 if(COPY_TEST_MAXMINDDB)
     add_custom_target(${MODULE_NAME}_copy_test_maxminddb_city ALL COMMAND ${CMAKE_COMMAND} -E copy

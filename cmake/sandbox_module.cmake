@@ -52,9 +52,11 @@ if(IS_DIRECTORY ${SCHEMA_DIR})
     install(DIRECTORY ${SCHEMA_DIR}/ DESTINATION ${INSTALL_SCHEMA_PATH} ${DPERMISSION})
 endif()
 
-add_custom_target(${MODULE_NAME}_copy_tests ALL COMMAND ${CMAKE_COMMAND} -E copy_directory
-${CMAKE_CURRENT_SOURCE_DIR}/tests
-${CMAKE_CURRENT_BINARY_DIR})
+if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    add_custom_target(${MODULE_NAME}_copy_tests ALL COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+        ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 if(COPY_TEST_MAXMINDDB)
     add_custom_target(${MODULE_NAME}_copy_test_maxminddb ALL COMMAND ${CMAKE_COMMAND} -E copy
