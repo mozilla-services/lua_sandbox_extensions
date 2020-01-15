@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/** @brief rjson luasandox tests @file */
+/** @brief rjson luasandbox tests @file */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,6 +66,8 @@ static char* test_rjson_sandbox()
                               "max_message_size = 8196\n"
                               TEST_MODULE_PATH,
                               &logger, iim);
+  lsb_heka_stats stats = lsb_heka_get_stats(hsb);
+  mu_assert(0 < stats.ext_mem_max, "received %llu", stats.ext_mem_max);
   mu_assert(hsb, "lsb_heka_create_input failed");
   e = lsb_heka_destroy_sandbox(hsb);
   return NULL;
