@@ -50,7 +50,10 @@ WITH
     SELECT
       *
     FROM
-      taskclusteretl.derived_daily_cost_per_workertype) AS ddcpw
+      taskclusteretl.derived_daily_cost_per_workertype
+    WHERE
+      cluster IS NULL
+      OR cluster = "firefox") AS ddcpw
   ON
     (ddcpw.provisionerId IS NULL
       OR ddcpw.provisionerId = time.provisionerId)
@@ -96,7 +99,9 @@ WITH
   FROM
     taskclusteretl.derived_daily_cost_per_workertype
   WHERE
-    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
+    (cluster IS NULL
+      OR cluster = "firefox")
+    AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
     AND date < CURRENT_DATE() ),
   overhead AS (
   SELECT

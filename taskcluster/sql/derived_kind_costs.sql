@@ -26,7 +26,9 @@ WITH
       FROM
         taskclusteretl.derived_daily_cost_per_workertype AS tmp
       WHERE
-        (tmp.provisionerId IS NULL
+        (cluster IS NULL
+          OR cluster = "firefox")
+        AND (tmp.provisionerId IS NULL
           AND dts.provisionerId IS NULL
           OR tmp.provisionerId = dts.provisionerId)
         AND tmp.workerType = dts.workerType
