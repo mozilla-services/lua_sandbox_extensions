@@ -32,6 +32,10 @@ bq_dataset          = "test"
 bq_table            = "demo"
 --json_field        = "Payload" -- default should contain a single line of JSON with no new lines
 --tsv_fields        = {"Timestamp", "Type", "Payload", "Fields[error_detail]", "Fields[data]"}
+
+-- Specify a module that will encode/convert the Heka message into its output representation.
+encoder_module = nil -- uses the standard behavior documented above
+
 ```
 --]]
 
@@ -47,9 +51,18 @@ local load_fail_cache   = read_config("load_fail_cache") or 50
 local bq_dataset        = read_config("bq_dataset") or error"must specify bq_dataset"
 local bq_table          = read_config("bq_table") or error"must specify bq_table"
 local tsv_fields        = read_config("tsv_fields")
+local encoder_module    = read_config("encoder_module")
+local encode
+if encoder_module then
+    encode = require(encoder_module).encode
+    if not encode then
+        error(encoder_module .. " does not provide an encode function")
+    end
+end
 
 local filename          = string.format("%s/%s", batch_dir, read_config("Logger"))
 local bq_cmd
+
 
 local function load_data()
     return read_message(read_config("json_field") or "Payload")
@@ -85,18 +98,24 @@ local last_write = os.time()
 local failed_cnt = 0
 
 
-local function bq_load()
+local function bq_load(is_timer_event)
     local status = true
     fh:close()
     if bytes_written > 0 then
         local rv = os.execute(bq_cmd)
         if rv ~= 0 then
+            status = false
+            if is_timer_event then -- issue #496 - since timer_event cannot log the error and alert rety it on the next batch interval
+                fh = io.open(filename, "a")
+                fh:setvbuf("line")
+                last_write = os.time() -- reset the batch timeout, if we were to retry every ticker_interval we could use up a lot of our BQ load quota on an invalid batch
+                return status
+            end
             failed_cnt = failed_cnt + 1
             os.rename(filename, filename .. "." .. tostring(failed_cnt))
             if failed_cnt == load_fail_cache then
                 failed_cnt = 0
             end
-            status = false
         end
     end
     fh = io.open(filename, "w")
@@ -108,7 +127,14 @@ end
 
 
 function process_message()
-    local data = load_data()
+    local ok, data
+    if encode then
+        ok, data = pcall(encode)
+        if not ok then return -1, data end
+        if not data then return -2 end
+    else
+        data = load_data()
+    end
     fh:write(data, "\n")
     bytes_written = bytes_written + #data + 1
     if bytes_written >= max_file_size then
@@ -122,6 +148,8 @@ end
 
 function timer_event(ns, shutdown)
     if shutdown or ns/1e9 - last_write >= max_file_age then
-        bq_load()
+        if not bq_load(true) then
+            print "timer_event bq load failed"
+        end
     end
 end
