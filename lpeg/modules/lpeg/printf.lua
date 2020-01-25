@@ -213,7 +213,7 @@ end
 
 local function get_literal_grammar(t, v, i)
     local lit = l.P(v)
-    if t[i + 1] == nil then lit = lit * l.P(-1) end
+    if t[i + 1] == nil then lit = lit * l.space^0 * l.P(-1) end
     return lit
 end
 

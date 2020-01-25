@@ -73,6 +73,7 @@ local tests = {
     {pre_post_lpeg, "Prefix foo/bar postfix", {method = "foo", submethod = "bar"}},
     {pre_post_re, "Prefix foo/bar postfix", {method = "foo"}},
     {pre_post_lpeg, "Prefix foo/bar postfix", {method = "foo"}},
+    {{"Running %s.", "s1"} , "Running foobar. ", {s1 = "foobar"}},
 }
 
 
