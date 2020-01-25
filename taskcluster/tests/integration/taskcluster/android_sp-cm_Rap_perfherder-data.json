@@ -1,0 +1,2265 @@
+{
+  "application": {
+    "name": "geckoview"
+  }, 
+  "framework": {
+    "name": "raptor"
+  }, 
+  "suites": [
+    {
+      "alertThreshold": 2.0, 
+      "extraOptions": [], 
+      "lowerIsBetter": false, 
+      "name": "raptor-speedometer-geckoview", 
+      "subtests": [
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC", 
+          "replicates": [
+            360.14, 
+            379.4, 
+            408.34, 
+            364.18, 
+            399.4
+          ], 
+          "unit": "ms", 
+          "value": 379.4
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/Adding100Items", 
+          "replicates": [
+            222.4, 
+            238.62, 
+            252.14, 
+            226.7, 
+            248.2
+          ], 
+          "unit": "ms", 
+          "value": 238.62
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            30.68, 
+            31.86, 
+            43.1, 
+            29.3, 
+            44.22
+          ], 
+          "unit": "ms", 
+          "value": 31.86
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            191.72, 
+            206.76, 
+            209.04, 
+            197.4, 
+            203.98
+          ], 
+          "unit": "ms", 
+          "value": 203.98
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            56.9, 
+            56.74, 
+            49.56, 
+            54.4, 
+            48.1
+          ], 
+          "unit": "ms", 
+          "value": 54.4
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            14.66, 
+            14.82, 
+            8.56, 
+            14.48, 
+            8.5
+          ], 
+          "unit": "ms", 
+          "value": 14.48
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            42.24, 
+            41.92, 
+            41.0, 
+            39.92, 
+            39.6
+          ], 
+          "unit": "ms", 
+          "value": 41.0
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/DeletingItems", 
+          "replicates": [
+            80.84, 
+            84.04, 
+            106.64, 
+            83.08, 
+            103.1
+          ], 
+          "unit": "ms", 
+          "value": 84.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            15.8, 
+            16.5, 
+            38.66, 
+            17.64, 
+            37.18
+          ], 
+          "unit": "ms", 
+          "value": 17.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Angular2-TypeScript-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            65.04, 
+            67.54, 
+            67.98, 
+            65.44, 
+            65.92
+          ], 
+          "unit": "ms", 
+          "value": 65.92
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC", 
+          "replicates": [
+            1497.26, 
+            1445.48, 
+            1561.64, 
+            1583.92, 
+            1477.46
+          ], 
+          "unit": "ms", 
+          "value": 1497.26
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/Adding100Items", 
+          "replicates": [
+            705.26, 
+            666.66, 
+            719.9, 
+            728.62, 
+            687.42
+          ], 
+          "unit": "ms", 
+          "value": 705.26
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            66.46, 
+            28.48, 
+            43.3, 
+            69.3, 
+            29.3
+          ], 
+          "unit": "ms", 
+          "value": 43.3
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            638.8, 
+            638.18, 
+            676.6, 
+            659.32, 
+            658.12
+          ], 
+          "unit": "ms", 
+          "value": 658.12
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            230.3, 
+            218.58, 
+            243.5, 
+            271.08, 
+            224.34
+          ], 
+          "unit": "ms", 
+          "value": 230.3
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            27.12, 
+            15.0, 
+            30.36, 
+            61.7, 
+            17.4
+          ], 
+          "unit": "ms", 
+          "value": 27.12
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            203.18, 
+            203.58, 
+            213.14, 
+            209.38, 
+            206.94
+          ], 
+          "unit": "ms", 
+          "value": 206.94
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/DeletingAllItems", 
+          "replicates": [
+            561.7, 
+            560.24, 
+            598.24, 
+            584.22, 
+            565.7
+          ], 
+          "unit": "ms", 
+          "value": 565.7
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/DeletingAllItems/Async", 
+          "replicates": [
+            23.9, 
+            17.94, 
+            41.66, 
+            29.62, 
+            20.3
+          ], 
+          "unit": "ms", 
+          "value": 23.9
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "AngularJS-TodoMVC/DeletingAllItems/Sync", 
+          "replicates": [
+            537.8, 
+            542.3, 
+            556.58, 
+            554.6, 
+            545.4
+          ], 
+          "unit": "ms", 
+          "value": 545.4
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC", 
+          "replicates": [
+            451.6, 
+            465.36, 
+            467.08, 
+            467.62, 
+            512.66
+          ], 
+          "unit": "ms", 
+          "value": 467.08
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/Adding100Items", 
+          "replicates": [
+            265.3, 
+            265.64, 
+            258.4, 
+            272.18, 
+            269.4
+          ], 
+          "unit": "ms", 
+          "value": 265.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            37.16, 
+            35.6, 
+            26.68, 
+            41.12, 
+            38.3
+          ], 
+          "unit": "ms", 
+          "value": 37.16
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            228.14, 
+            230.04, 
+            231.72, 
+            231.06, 
+            231.1
+          ], 
+          "unit": "ms", 
+          "value": 231.06
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            109.98, 
+            114.04, 
+            124.06, 
+            111.52, 
+            114.06
+          ], 
+          "unit": "ms", 
+          "value": 114.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            20.02, 
+            19.66, 
+            29.52, 
+            19.82, 
+            20.42
+          ], 
+          "unit": "ms", 
+          "value": 20.02
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            89.96, 
+            94.38, 
+            94.54, 
+            91.7, 
+            93.64
+          ], 
+          "unit": "ms", 
+          "value": 93.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/DeletingAllItems", 
+          "replicates": [
+            76.32, 
+            85.68, 
+            84.62, 
+            83.92, 
+            129.2
+          ], 
+          "unit": "ms", 
+          "value": 84.62
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/DeletingAllItems/Async", 
+          "replicates": [
+            7.82, 
+            8.02, 
+            8.06, 
+            10.02, 
+            34.22
+          ], 
+          "unit": "ms", 
+          "value": 8.06
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "BackboneJS-TodoMVC/DeletingAllItems/Sync", 
+          "replicates": [
+            68.5, 
+            77.66, 
+            76.56, 
+            73.9, 
+            94.98
+          ], 
+          "unit": "ms", 
+          "value": 76.56
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC", 
+          "replicates": [
+            1578.1, 
+            1928.68, 
+            1761.3, 
+            1948.1, 
+            1815.14
+          ], 
+          "unit": "ms", 
+          "value": 1815.14
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/Adding100Items", 
+          "replicates": [
+            522.0, 
+            561.1, 
+            540.5, 
+            799.74, 
+            545.68
+          ], 
+          "unit": "ms", 
+          "value": 545.68
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            24.76, 
+            35.22, 
+            30.56, 
+            312.06, 
+            38.46
+          ], 
+          "unit": "ms", 
+          "value": 35.22
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            497.24, 
+            525.88, 
+            509.94, 
+            487.68, 
+            507.22
+          ], 
+          "unit": "ms", 
+          "value": 507.22
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            650.34, 
+            855.78, 
+            740.12, 
+            697.64, 
+            696.18
+          ], 
+          "unit": "ms", 
+          "value": 697.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            19.52, 
+            17.08, 
+            36.38, 
+            71.1, 
+            35.74
+          ], 
+          "unit": "ms", 
+          "value": 35.74
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            630.82, 
+            838.7, 
+            703.74, 
+            626.54, 
+            660.44
+          ], 
+          "unit": "ms", 
+          "value": 660.44
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/DeletingItems", 
+          "replicates": [
+            405.76, 
+            511.8, 
+            480.68, 
+            450.72, 
+            573.28
+          ], 
+          "unit": "ms", 
+          "value": 480.68
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            8.36, 
+            12.84, 
+            8.2, 
+            8.3, 
+            10.82
+          ], 
+          "unit": "ms", 
+          "value": 8.36
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Elm-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            397.4, 
+            498.96, 
+            472.48, 
+            442.42, 
+            562.46
+          ], 
+          "unit": "ms", 
+          "value": 472.48
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC", 
+          "replicates": [
+            4359.14, 
+            4833.04, 
+            4811.88, 
+            4537.6, 
+            4514.36
+          ], 
+          "unit": "ms", 
+          "value": 4537.6
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/Adding100Items", 
+          "replicates": [
+            1990.16, 
+            2196.58, 
+            2180.18, 
+            2067.48, 
+            2065.2
+          ], 
+          "unit": "ms", 
+          "value": 2067.48
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            21.52, 
+            89.64, 
+            72.1, 
+            24.94, 
+            25.16
+          ], 
+          "unit": "ms", 
+          "value": 25.16
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            1968.64, 
+            2106.94, 
+            2108.08, 
+            2042.54, 
+            2040.04
+          ], 
+          "unit": "ms", 
+          "value": 2042.54
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            1121.02, 
+            1273.72, 
+            1260.62, 
+            1173.24, 
+            1163.98
+          ], 
+          "unit": "ms", 
+          "value": 1173.24
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            16.1, 
+            20.38, 
+            18.6, 
+            17.92, 
+            14.38
+          ], 
+          "unit": "ms", 
+          "value": 17.92
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            1104.92, 
+            1253.34, 
+            1242.02, 
+            1155.32, 
+            1149.6
+          ], 
+          "unit": "ms", 
+          "value": 1155.32
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/DeletingItems", 
+          "replicates": [
+            1247.96, 
+            1362.74, 
+            1371.08, 
+            1296.88, 
+            1285.18
+          ], 
+          "unit": "ms", 
+          "value": 1296.88
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            7.98, 
+            7.92, 
+            7.8, 
+            7.62, 
+            7.66
+          ], 
+          "unit": "ms", 
+          "value": 7.8
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-Debug-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            1239.98, 
+            1354.82, 
+            1363.28, 
+            1289.26, 
+            1277.52
+          ], 
+          "unit": "ms", 
+          "value": 1289.26
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC", 
+          "replicates": [
+            1656.46, 
+            1841.24, 
+            1744.62, 
+            1717.56, 
+            1688.9
+          ], 
+          "unit": "ms", 
+          "value": 1717.56
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/Adding100Items", 
+          "replicates": [
+            927.74, 
+            1011.14, 
+            967.16, 
+            988.08, 
+            965.62
+          ], 
+          "unit": "ms", 
+          "value": 967.16
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            22.76, 
+            79.5, 
+            27.4, 
+            42.94, 
+            36.24
+          ], 
+          "unit": "ms", 
+          "value": 36.24
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            904.98, 
+            931.64, 
+            939.76, 
+            945.14, 
+            929.38
+          ], 
+          "unit": "ms", 
+          "value": 931.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            426.82, 
+            527.54, 
+            460.6, 
+            427.74, 
+            425.48
+          ], 
+          "unit": "ms", 
+          "value": 427.74
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            17.94, 
+            106.1, 
+            35.64, 
+            17.04, 
+            16.82
+          ], 
+          "unit": "ms", 
+          "value": 17.94
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            408.88, 
+            421.44, 
+            424.96, 
+            410.7, 
+            408.66
+          ], 
+          "unit": "ms", 
+          "value": 410.7
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/DeletingItems", 
+          "replicates": [
+            301.9, 
+            302.56, 
+            316.86, 
+            301.74, 
+            297.8
+          ], 
+          "unit": "ms", 
+          "value": 301.9
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            12.62, 
+            7.22, 
+            21.66, 
+            9.34, 
+            8.98
+          ], 
+          "unit": "ms", 
+          "value": 9.34
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "EmberJS-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            289.28, 
+            295.34, 
+            295.2, 
+            292.4, 
+            288.82
+          ], 
+          "unit": "ms", 
+          "value": 292.4
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC", 
+          "replicates": [
+            617.4, 
+            623.52, 
+            616.28, 
+            606.06, 
+            722.1
+          ], 
+          "unit": "ms", 
+          "value": 617.4
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/Adding100Items", 
+          "replicates": [
+            239.68, 
+            233.1, 
+            233.52, 
+            231.7, 
+            255.6
+          ], 
+          "unit": "ms", 
+          "value": 233.52
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            24.94, 
+            24.5, 
+            23.64, 
+            22.92, 
+            45.4
+          ], 
+          "unit": "ms", 
+          "value": 24.5
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            214.74, 
+            208.6, 
+            209.88, 
+            208.78, 
+            210.2
+          ], 
+          "unit": "ms", 
+          "value": 209.88
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            217.98, 
+            227.26, 
+            217.7, 
+            216.28, 
+            262.36
+          ], 
+          "unit": "ms", 
+          "value": 217.98
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            19.62, 
+            25.88, 
+            17.98, 
+            18.52, 
+            64.62
+          ], 
+          "unit": "ms", 
+          "value": 19.62
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            198.36, 
+            201.38, 
+            199.72, 
+            197.76, 
+            197.74
+          ], 
+          "unit": "ms", 
+          "value": 198.36
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/DeletingItems", 
+          "replicates": [
+            159.74, 
+            163.16, 
+            165.06, 
+            158.08, 
+            204.14
+          ], 
+          "unit": "ms", 
+          "value": 163.16
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            11.26, 
+            10.4, 
+            11.82, 
+            7.16, 
+            53.92
+          ], 
+          "unit": "ms", 
+          "value": 11.26
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Flight-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            148.48, 
+            152.76, 
+            153.24, 
+            150.92, 
+            150.22
+          ], 
+          "unit": "ms", 
+          "value": 150.92
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC", 
+          "replicates": [
+            970.06, 
+            990.78, 
+            1051.8, 
+            983.92, 
+            965.82
+          ], 
+          "unit": "ms", 
+          "value": 983.92
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/Adding100Items", 
+          "replicates": [
+            202.96, 
+            189.6, 
+            201.42, 
+            183.3, 
+            183.42
+          ], 
+          "unit": "ms", 
+          "value": 189.6
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            40.92, 
+            31.58, 
+            40.12, 
+            20.6, 
+            20.28
+          ], 
+          "unit": "ms", 
+          "value": 31.58
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            162.04, 
+            158.02, 
+            161.3, 
+            162.7, 
+            163.14
+          ], 
+          "unit": "ms", 
+          "value": 162.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            185.76, 
+            209.98, 
+            222.46, 
+            193.2, 
+            184.72
+          ], 
+          "unit": "ms", 
+          "value": 193.2
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            10.64, 
+            31.54, 
+            39.32, 
+            8.66, 
+            6.54
+          ], 
+          "unit": "ms", 
+          "value": 10.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            175.12, 
+            178.44, 
+            183.14, 
+            184.54, 
+            178.18
+          ], 
+          "unit": "ms", 
+          "value": 178.44
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/DeletingItems", 
+          "replicates": [
+            581.34, 
+            591.2, 
+            627.92, 
+            607.42, 
+            597.68
+          ], 
+          "unit": "ms", 
+          "value": 597.68
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            10.04, 
+            9.0, 
+            38.7, 
+            10.82, 
+            6.58
+          ], 
+          "unit": "ms", 
+          "value": 10.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Inferno-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            571.3, 
+            582.2, 
+            589.22, 
+            596.6, 
+            591.1
+          ], 
+          "unit": "ms", 
+          "value": 589.22
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC", 
+          "replicates": [
+            144.46, 
+            155.0, 
+            145.36, 
+            144.38, 
+            153.88
+          ], 
+          "unit": "ms", 
+          "value": 145.36
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/Adding100Items", 
+          "replicates": [
+            77.42, 
+            71.84, 
+            71.62, 
+            76.06, 
+            79.76
+          ], 
+          "unit": "ms", 
+          "value": 76.06
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            63.38, 
+            58.86, 
+            58.4, 
+            60.94, 
+            65.98
+          ], 
+          "unit": "ms", 
+          "value": 60.94
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            14.04, 
+            12.98, 
+            13.22, 
+            15.12, 
+            13.78
+          ], 
+          "unit": "ms", 
+          "value": 13.78
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            51.02, 
+            50.46, 
+            51.86, 
+            52.1, 
+            52.48
+          ], 
+          "unit": "ms", 
+          "value": 51.86
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            35.86, 
+            35.98, 
+            37.18, 
+            37.32, 
+            37.84
+          ], 
+          "unit": "ms", 
+          "value": 37.18
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            15.16, 
+            14.48, 
+            14.68, 
+            14.78, 
+            14.64
+          ], 
+          "unit": "ms", 
+          "value": 14.68
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/DeletingItems", 
+          "replicates": [
+            16.02, 
+            32.7, 
+            21.88, 
+            16.22, 
+            21.64
+          ], 
+          "unit": "ms", 
+          "value": 21.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            8.82, 
+            25.54, 
+            14.32, 
+            9.06, 
+            14.04
+          ], 
+          "unit": "ms", 
+          "value": 14.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Preact-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            7.2, 
+            7.16, 
+            7.56, 
+            7.16, 
+            7.6
+          ], 
+          "unit": "ms", 
+          "value": 7.2
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC", 
+          "replicates": [
+            2057.36, 
+            2129.42, 
+            2176.42, 
+            2121.64, 
+            2109.62
+          ], 
+          "unit": "ms", 
+          "value": 2121.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/Adding100Items", 
+          "replicates": [
+            709.76, 
+            729.66, 
+            751.14, 
+            740.74, 
+            729.12
+          ], 
+          "unit": "ms", 
+          "value": 729.66
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            26.38, 
+            24.76, 
+            22.92, 
+            44.14, 
+            38.2
+          ], 
+          "unit": "ms", 
+          "value": 26.38
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            683.38, 
+            704.9, 
+            728.22, 
+            696.6, 
+            690.92
+          ], 
+          "unit": "ms", 
+          "value": 696.6
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            878.42, 
+            905.18, 
+            923.42, 
+            890.98, 
+            894.0
+          ], 
+          "unit": "ms", 
+          "value": 894.0
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            20.02, 
+            19.82, 
+            18.92, 
+            22.6, 
+            20.24
+          ], 
+          "unit": "ms", 
+          "value": 20.02
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            858.4, 
+            885.36, 
+            904.5, 
+            868.38, 
+            873.76
+          ], 
+          "unit": "ms", 
+          "value": 873.76
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/DeletingItems", 
+          "replicates": [
+            469.18, 
+            494.58, 
+            501.86, 
+            489.92, 
+            486.5
+          ], 
+          "unit": "ms", 
+          "value": 489.92
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            11.16, 
+            8.64, 
+            11.58, 
+            13.86, 
+            12.38
+          ], 
+          "unit": "ms", 
+          "value": 11.58
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-Redux-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            458.02, 
+            485.94, 
+            490.28, 
+            476.06, 
+            474.12
+          ], 
+          "unit": "ms", 
+          "value": 476.06
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC", 
+          "replicates": [
+            986.9, 
+            1032.14, 
+            1141.96, 
+            1034.12, 
+            1027.66
+          ], 
+          "unit": "ms", 
+          "value": 1032.14
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/Adding100Items", 
+          "replicates": [
+            517.04, 
+            540.88, 
+            561.62, 
+            541.2, 
+            539.26
+          ], 
+          "unit": "ms", 
+          "value": 540.88
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            26.54, 
+            23.86, 
+            33.36, 
+            27.8, 
+            31.64
+          ], 
+          "unit": "ms", 
+          "value": 27.8
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            490.5, 
+            517.02, 
+            528.26, 
+            513.4, 
+            507.62
+          ], 
+          "unit": "ms", 
+          "value": 513.4
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            298.68, 
+            312.76, 
+            333.94, 
+            314.98, 
+            312.56
+          ], 
+          "unit": "ms", 
+          "value": 312.76
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            17.34, 
+            13.38, 
+            26.36, 
+            19.34, 
+            20.64
+          ], 
+          "unit": "ms", 
+          "value": 19.34
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            281.34, 
+            299.38, 
+            307.58, 
+            295.64, 
+            291.92
+          ], 
+          "unit": "ms", 
+          "value": 295.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/DeletingAllItems", 
+          "replicates": [
+            171.18, 
+            178.5, 
+            246.4, 
+            177.94, 
+            175.84
+          ], 
+          "unit": "ms", 
+          "value": 177.94
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/DeletingAllItems/Async", 
+          "replicates": [
+            6.38, 
+            6.02, 
+            19.02, 
+            6.4, 
+            6.48
+          ], 
+          "unit": "ms", 
+          "value": 6.4
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "React-TodoMVC/DeletingAllItems/Sync", 
+          "replicates": [
+            164.8, 
+            172.48, 
+            227.38, 
+            171.54, 
+            169.36
+          ], 
+          "unit": "ms", 
+          "value": 171.54
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC", 
+          "replicates": [
+            363.98, 
+            395.54, 
+            381.74, 
+            379.46, 
+            387.18
+          ], 
+          "unit": "ms", 
+          "value": 381.74
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/Adding100Items", 
+          "replicates": [
+            220.1, 
+            240.48, 
+            231.56, 
+            229.48, 
+            234.6
+          ], 
+          "unit": "ms", 
+          "value": 231.56
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            20.72, 
+            31.7, 
+            21.84, 
+            22.66, 
+            26.68
+          ], 
+          "unit": "ms", 
+          "value": 22.66
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            199.38, 
+            208.78, 
+            209.72, 
+            206.82, 
+            207.92
+          ], 
+          "unit": "ms", 
+          "value": 207.92
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            91.12, 
+            98.78, 
+            95.58, 
+            94.32, 
+            97.36
+          ], 
+          "unit": "ms", 
+          "value": 95.58
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            13.54, 
+            16.2, 
+            14.66, 
+            13.86, 
+            16.56
+          ], 
+          "unit": "ms", 
+          "value": 14.66
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            77.58, 
+            82.58, 
+            80.92, 
+            80.46, 
+            80.8
+          ], 
+          "unit": "ms", 
+          "value": 80.8
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/DeletingItems", 
+          "replicates": [
+            52.76, 
+            56.28, 
+            54.6, 
+            55.66, 
+            55.22
+          ], 
+          "unit": "ms", 
+          "value": 55.22
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            7.18, 
+            7.4, 
+            7.3, 
+            7.52, 
+            7.18
+          ], 
+          "unit": "ms", 
+          "value": 7.3
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-Babel-Webpack-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            45.58, 
+            48.88, 
+            47.3, 
+            48.14, 
+            48.04
+          ], 
+          "unit": "ms", 
+          "value": 48.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC", 
+          "replicates": [
+            405.74, 
+            601.34, 
+            484.14, 
+            409.32, 
+            442.68
+          ], 
+          "unit": "ms", 
+          "value": 442.68
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/Adding100Items", 
+          "replicates": [
+            246.72, 
+            368.84, 
+            283.06, 
+            242.58, 
+            249.2
+          ], 
+          "unit": "ms", 
+          "value": 249.2
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            45.66, 
+            153.02, 
+            75.62, 
+            30.38, 
+            38.96
+          ], 
+          "unit": "ms", 
+          "value": 45.66
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            201.06, 
+            215.82, 
+            207.44, 
+            212.2, 
+            210.24
+          ], 
+          "unit": "ms", 
+          "value": 210.24
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            106.96, 
+            179.34, 
+            145.74, 
+            112.0, 
+            114.02
+          ], 
+          "unit": "ms", 
+          "value": 114.02
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            32.62, 
+            101.64, 
+            66.82, 
+            16.9, 
+            35.82
+          ], 
+          "unit": "ms", 
+          "value": 35.82
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            74.34, 
+            77.7, 
+            78.92, 
+            95.1, 
+            78.2
+          ], 
+          "unit": "ms", 
+          "value": 78.2
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/DeletingItems", 
+          "replicates": [
+            52.06, 
+            53.16, 
+            55.34, 
+            54.74, 
+            79.46
+          ], 
+          "unit": "ms", 
+          "value": 54.74
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/DeletingItems/Async", 
+          "replicates": [
+            6.58, 
+            6.84, 
+            6.9, 
+            6.92, 
+            31.0
+          ], 
+          "unit": "ms", 
+          "value": 6.9
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "Vanilla-ES2015-TodoMVC/DeletingItems/Sync", 
+          "replicates": [
+            45.48, 
+            46.32, 
+            48.44, 
+            47.82, 
+            48.46
+          ], 
+          "unit": "ms", 
+          "value": 47.82
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC", 
+          "replicates": [
+            313.72, 
+            372.98, 
+            378.26, 
+            351.2, 
+            318.86
+          ], 
+          "unit": "ms", 
+          "value": 351.2
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/Adding100Items", 
+          "replicates": [
+            176.2, 
+            208.88, 
+            201.6, 
+            199.94, 
+            185.82
+          ], 
+          "unit": "ms", 
+          "value": 199.94
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            15.72, 
+            45.84, 
+            38.18, 
+            38.56, 
+            20.12
+          ], 
+          "unit": "ms", 
+          "value": 38.18
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            160.48, 
+            163.04, 
+            163.42, 
+            161.38, 
+            165.7
+          ], 
+          "unit": "ms", 
+          "value": 163.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            90.16, 
+            115.52, 
+            103.56, 
+            103.06, 
+            84.2
+          ], 
+          "unit": "ms", 
+          "value": 103.06
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            24.94, 
+            46.84, 
+            35.92, 
+            35.78, 
+            16.1
+          ], 
+          "unit": "ms", 
+          "value": 35.78
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            65.22, 
+            68.68, 
+            67.64, 
+            67.28, 
+            68.1
+          ], 
+          "unit": "ms", 
+          "value": 67.64
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/DeletingAllItems", 
+          "replicates": [
+            47.36, 
+            48.58, 
+            73.1, 
+            48.2, 
+            48.84
+          ], 
+          "unit": "ms", 
+          "value": 48.58
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/DeletingAllItems/Async", 
+          "replicates": [
+            8.3, 
+            7.14, 
+            31.4, 
+            7.32, 
+            7.34
+          ], 
+          "unit": "ms", 
+          "value": 7.34
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VanillaJS-TodoMVC/DeletingAllItems/Sync", 
+          "replicates": [
+            39.06, 
+            41.44, 
+            41.7, 
+            40.88, 
+            41.5
+          ], 
+          "unit": "ms", 
+          "value": 41.44
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC", 
+          "replicates": [
+            244.28, 
+            253.04, 
+            240.5, 
+            254.12, 
+            254.7
+          ], 
+          "unit": "ms", 
+          "value": 253.04
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/Adding100Items", 
+          "replicates": [
+            128.0, 
+            129.3, 
+            113.46, 
+            124.22, 
+            123.98
+          ], 
+          "unit": "ms", 
+          "value": 124.22
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            107.64, 
+            107.7, 
+            93.22, 
+            103.16, 
+            102.74
+          ], 
+          "unit": "ms", 
+          "value": 103.16
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            20.36, 
+            21.6, 
+            20.24, 
+            21.06, 
+            21.24
+          ], 
+          "unit": "ms", 
+          "value": 21.06
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            80.04, 
+            86.84, 
+            82.18, 
+            93.32, 
+            82.36
+          ], 
+          "unit": "ms", 
+          "value": 82.36
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            68.36, 
+            74.68, 
+            70.72, 
+            81.58, 
+            70.2
+          ], 
+          "unit": "ms", 
+          "value": 70.72
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            11.68, 
+            12.16, 
+            11.46, 
+            11.74, 
+            12.16
+          ], 
+          "unit": "ms", 
+          "value": 11.74
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/DeletingAllItems", 
+          "replicates": [
+            36.24, 
+            36.9, 
+            44.86, 
+            36.58, 
+            48.36
+          ], 
+          "unit": "ms", 
+          "value": 36.9
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/DeletingAllItems/Async", 
+          "replicates": [
+            25.18, 
+            25.16, 
+            25.44, 
+            25.0, 
+            36.86
+          ], 
+          "unit": "ms", 
+          "value": 25.18
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "VueJS-TodoMVC/DeletingAllItems/Sync", 
+          "replicates": [
+            11.06, 
+            11.74, 
+            19.42, 
+            11.58, 
+            11.5
+          ], 
+          "unit": "ms", 
+          "value": 11.58
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC", 
+          "replicates": [
+            1540.76, 
+            1573.84, 
+            1568.6, 
+            1554.52, 
+            1591.0
+          ], 
+          "unit": "ms", 
+          "value": 1568.6
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/Adding100Items", 
+          "replicates": [
+            425.0, 
+            441.5, 
+            434.84, 
+            431.52, 
+            441.7
+          ], 
+          "unit": "ms", 
+          "value": 434.84
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/Adding100Items/Async", 
+          "replicates": [
+            21.1, 
+            23.96, 
+            21.96, 
+            20.38, 
+            25.12
+          ], 
+          "unit": "ms", 
+          "value": 21.96
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/Adding100Items/Sync", 
+          "replicates": [
+            403.9, 
+            417.54, 
+            412.88, 
+            411.14, 
+            416.58
+          ], 
+          "unit": "ms", 
+          "value": 412.88
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/CompletingAllItems", 
+          "replicates": [
+            738.28, 
+            745.12, 
+            746.68, 
+            737.78, 
+            760.7
+          ], 
+          "unit": "ms", 
+          "value": 745.12
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/CompletingAllItems/Async", 
+          "replicates": [
+            19.74, 
+            21.94, 
+            22.86, 
+            17.74, 
+            22.02
+          ], 
+          "unit": "ms", 
+          "value": 21.94
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/CompletingAllItems/Sync", 
+          "replicates": [
+            718.54, 
+            723.18, 
+            723.82, 
+            720.04, 
+            738.68
+          ], 
+          "unit": "ms", 
+          "value": 723.18
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/DeletingAllItems", 
+          "replicates": [
+            377.48, 
+            387.22, 
+            387.08, 
+            385.22, 
+            388.6
+          ], 
+          "unit": "ms", 
+          "value": 387.08
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/DeletingAllItems/Async", 
+          "replicates": [
+            7.18, 
+            9.76, 
+            8.88, 
+            6.78, 
+            8.78
+          ], 
+          "unit": "ms", 
+          "value": 8.78
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": false, 
+          "name": "jQuery-TodoMVC/DeletingAllItems/Sync", 
+          "replicates": [
+            370.3, 
+            377.46, 
+            378.2, 
+            378.44, 
+            379.82
+          ], 
+          "unit": "ms", 
+          "value": 378.2
+        }
+      ], 
+      "tags": [
+        "benchmark", 
+        "warm"
+      ], 
+      "type": "benchmark", 
+      "unit": "score", 
+      "value": 25.77605599543743
+    }
+  ]
+}

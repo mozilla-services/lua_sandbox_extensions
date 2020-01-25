@@ -2,31 +2,41 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+require "cjson"
 require "string"
 require "table"
 
-local captures = {""}
+--local capture_only = true
+local captures = {}
 local results = {
-    {framework = 'vcs'},
-    {framework = 'job_resource_usage'},
-    {framework = 'build_metrics'},
-    {framework = 'js-bench'},
-    {framework = 'devtools'},
-    {framework = 'platform_microbench'},
-    {framework = 'awsy'},
-    {framework = 'raptor'},
-    {framework = 'talos'}
+{framework = 'talos', taskId = 'CZ9BVge4QdKrJ3ZWdVbsTQ'},
+{framework = 'job_resource_usage', taskId = 'IViCwC-nTMi_gXPE3ckjPg'},
+{framework = 'raptor', taskId = 'USQ8K5YcQJKQgybb28cyXg'},
+{framework = 'raptor', taskId = 'USQ8K5YcQJKQgybb28cyXg'},
+{framework = 'raptor', taskId = 'USQ8K5YcQJKQgybb28cyXg'},
+{framework = 'job_resource_usage', taskId = 'a46tmlKvRFuopDLt8E7IEQ'},
+{framework = 'job_resource_usage', taskId = 'CX96USXgR3CvJWA2ZsBYrA'},
+{framework = 'vcs', taskId = 'SSXGXyVIRQGQqVKGym90mQ'},
+{framework = 'build_metrics', taskId = 'SSXGXyVIRQGQqVKGym90mQ'},
+{framework = 'job_resource_usage', taskId = 'AuIAPvWhSiyp0eUh5vAdCw'}
 }
 
 local cnt = 0
 function process_message()
-    local f = read_message("Fields[framework]")
+    local f = cjson.decode(read_message("Payload"))
+    captures[#captures + 1] = string.format("{framework = '%s', taskId = '%s'}", f.framework, f.taskId)
     cnt = cnt + 1
 
-    local e = results[cnt].framework
-    if f ~= e then error(string.format("test: %d file expected: %s received: %s", cnt, tostring(e), tostring(f))) end
+    if capture_only then return 0 end
 
-    captures[#captures + 1] = string.format("{framework = '%s'}", f)
+    local r = f.taskId
+    local e = results[cnt].taskId
+    if r ~= e then error(string.format("test: %d taskId expected: %s received: %s", cnt, tostring(e), tostring(r))) end
+
+    r = f.framework
+    e = results[cnt].framework
+    if r ~= e then error(string.format("test: %d framework expected: %s received: %s", cnt, tostring(e), tostring(r))) end
+
     return 0
 end
 

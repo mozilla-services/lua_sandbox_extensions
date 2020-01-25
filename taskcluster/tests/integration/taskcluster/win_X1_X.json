@@ -1,0 +1,119 @@
+{
+  "provisionerId": "gecko-t",
+  "workerType": "t-win10-64",
+  "schedulerId": "gecko-level-1",
+  "taskGroupId": "bldEIJ3tQzCnNXTSkeUhkw",
+  "dependencies": [
+    "GceCTNKPQBqJhE2B0869sg",
+    "Snn0iwRHQz6vejPKVxbAhg",
+    "YX9WQqqCRDqx36cXOLXkxg"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.try.52eb0cec7ba8e7306b2ce7f04e389a483b011170.479622"
+  ],
+  "priority": "very-low",
+  "retries": 5,
+  "created": "2020-01-23T16:08:27.358Z",
+  "deadline": "2020-01-24T16:08:27.358Z",
+  "expires": "2020-02-06T16:08:27.358Z",
+  "scopes": [],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        1073807364,
+        3221225786,
+        4
+      ]
+    },
+    "maxRunTime": 2700,
+    "artifacts": [
+      {
+        "path": "logs",
+        "type": "directory",
+        "name": "public/logs"
+      },
+      {
+        "path": "build/blobber_upload_dir",
+        "type": "directory",
+        "name": "public/test_info"
+      }
+    ],
+    "command": [
+      "C:/mozilla-build/python3/python3.exe run-task -- c:\\mozilla-build\\python\\python.exe -u mozharness\\scripts\\desktop_unittest.py --cfg mozharness\\configs\\unittests\\win_unittest.py --xpcshell-suite=xpcshell --setpref=media.peerconnection.mtransport_process=false --setpref=network.process.enabled=false --download-symbols true"
+    ],
+    "env": {
+      "SCCACHE_DISABLE": "1",
+      "TRY_COMMIT_MSG": "try: -b do -p all -u all -t none",
+      "MOZHARNESS_TEST_PATHS": "{\"xpcshell\": [\"browser/components/about/test/unit/xpcshell.ini\", \"browser/components/attribution/test/xpcshell/xpcshell.ini\", \"browser/components/extensions/test/xpcshell/xpcshell.ini\", \"browser/components/migration/tests/unit/xpcshell.ini\", \"browser/components/payments/test/unit/xpcshell.ini\", \"browser/components/search/test/unit/xpcshell.ini\", \"browser/components/sessionstore/test/unit/xpcshell.ini\", \"browser/components/syncedtabs/test/xpcshell/xpcshell.ini\", \"browser/components/translation/test/unit/xpcshell.ini\", \"browser/extensions/formautofill/test/unit/xpcshell.ini\", \"browser/tools/mozscreenshots/tests/xpcshell/xpcshell.ini\", \"devtools/client/aboutdebugging/test/xpcshell/xpcshell.ini\", \"devtools/client/framework/test/xpcshell/xpcshell.ini\", \"devtools/client/inspector/compatibility/test/xpcshell/xpcshell.ini\", \"devtools/client/memory/test/xpcshell/xpcshell.ini\", \"devtools/client/performance-new/test/xpcshell/xpcshell.ini\", \"devtools/client/performance/test/xpcshell/xpcshell.ini\", \"devtools/client/shared/redux/middleware/xpcshell/xpcshell.ini\", \"devtools/client/shared/test/xpcshell/xpcshell.ini\", \"devtools/client/webconsole/test/xpcshell/xpcshell.ini\", \"devtools/server/tests/xpcshell/xpcshell.ini\", \"devtools/shared/adb/xpcshell/xpcshell.ini\", \"devtools/shared/heapsnapshot/tests/xpcshell/xpcshell.ini\", \"devtools/shared/performance/xpcshell/xpcshell.ini\", \"devtools/shared/qrcode/tests/xpcshell/xpcshell.ini\", \"devtools/shared/storage/vendor/stringvalidator/tests/xpcshell/xpcshell.ini\", \"devtools/shared/transport/tests/xpcshell/xpcshell.ini\", \"devtools/startup/tests/xpcshell/xpcshell.ini\", \"docshell/test/unit_ipc/xpcshell.ini\", \"dom/base/test/unit_ipc/xpcshell.ini\", \"dom/cache/test/xpcshell/xpcshell.ini\", \"dom/media/webvtt/tests/xpcshell.ini\", \"dom/messagechannel/tests/unit/xpcshell.ini\", \"dom/notification/test/unit/xpcshell.ini\", \"dom/presentation/tests/xpcshell/xpcshell.ini\", \"dom/promise/tests/unit/xpcshell.ini\", \"dom/quota/test/unit/xpcshell.ini\", \"extensions/permissions/test/unit/xpcshell.ini\", \"extensions/pref/autoconfig/test/unit/xpcshell.ini\", \"extensions/spellcheck/hunspell/tests/unit/xpcshell.ini\", \"image/test/unit/xpcshell.ini\", \"intl/l10n/test/xpcshell.ini\", \"intl/locale/tests/unit/xpcshell.ini\", \"intl/strres/tests/unit/xpcshell.ini\", \"intl/uconv/tests/unit/xpcshell.ini\", \"ipc/testshell/tests/xpcshell.ini\", \"js/ductwork/debugger/tests/xpcshell.ini\", \"js/xpconnect/tests/unit/xpcshell.ini\", \"memory/replace/dmd/test/xpcshell.ini\", \"modules/libjar/test/unit/xpcshell.ini\", \"modules/libjar/zipwriter/test/unit/xpcshell.ini\", \"modules/libmar/tests/unit/xpcshell.ini\", \"modules/libpref/test/unit/xpcshell.ini\", \"modules/libpref/test/unit_ipc/xpcshell.ini\", \"netwerk/dns/tests/unit/xpcshell.ini\", \"netwerk/test/unit_ipc/xpcshell.ini\", \"parser/xml/test/unit/xpcshell.ini\", \"remote/test/unit/xpcshell.ini\", \"security/manager/ssl/tests/unit/xpcshell.ini\", \"services/crypto/tests/unit/xpcshell.ini\", \"services/sync/tests/unit/xpcshell.ini\", \"storage/test/unit/xpcshell.ini\", \"testing/xpcshell/example/unit/xpcshell.ini\", \"toolkit/components/aboutmemory/tests/xpcshell/xpcshell.ini\", \"toolkit/components/antitracking/test/xpcshell/xpcshell.ini\", \"toolkit/components/autocomplete/tests/unit/xpcshell.ini\", \"toolkit/components/backgroundhangmonitor/tests/xpcshell.ini\", \"toolkit/components/cleardata/tests/unit/xpcshell.ini\", \"toolkit/components/cloudstorage/tests/unit/xpcshell.ini\", \"toolkit/components/commandlines/test/unit_win/xpcshell.ini\", \"toolkit/components/contentprefs/tests/unit_cps2/xpcshell.ini\", \"toolkit/components/contextualidentity/tests/unit/xpcshell.ini\", \"toolkit/components/corroborator/test/xpcshell/xpcshell.ini\", \"toolkit/components/ctypes/tests/unit/xpcshell.ini\", \"toolkit/components/extensions/test/xpcshell/xpcshell-e10s.ini\", \"toolkit/components/extensions/test/xpcshell/xpcshell-remote.ini\", \"toolkit/components/kvstore/test/xpcshell/xpcshell.ini\", \"toolkit/components/lz4/tests/xpcshell/xpcshell.ini\", \"toolkit/components/mediasniffer/test/unit/xpcshell.ini\", \"toolkit/components/mozintl/test/xpcshell.ini\", \"toolkit/components/normandy/test/unit/xpcshell.ini\", \"toolkit/components/osfile/tests/xpcshell/xpcshell.ini\", \"toolkit/components/passwordmgr/test/unit/xpcshell.ini\", \"toolkit/components/places/tests/history/xpcshell.ini\", \"toolkit/components/places/tests/maintenance/xpcshell.ini\", \"toolkit/components/places/tests/queries/xpcshell.ini\", \"toolkit/components/places/tests/sync/xpcshell.ini\", \"toolkit/components/places/tests/unit/xpcshell.ini\", \"toolkit/components/search/tests/xpcshell/searchconfigs/xpcshell-common.ini\", \"toolkit/components/search/tests/xpcshell/xpcshell-legacyconfig.ini\", \"toolkit/components/thumbnails/test/xpcshell.ini\", \"toolkit/components/url-classifier/tests/unit/xpcshell.ini\", \"toolkit/components/xulstore/tests/xpcshell/xpcshell.ini\", \"toolkit/crashreporter/test/unit_ipc/xpcshell-phc.ini\", \"toolkit/forgetaboutsite/test/unit/xpcshell.ini\", \"toolkit/modules/tests/xpcshell/xpcshell.ini\", \"toolkit/mozapps/extensions/test/xpcshell/xml-blocklist/xpcshell.ini\", \"toolkit/mozapps/extensions/test/xpcshell/xpcshell-unpack.ini\", \"toolkit/mozapps/update/tests/unit_service_updater/xpcshell.ini\", \"toolkit/profile/xpcshell/xpcshell.ini\", \"tools/profiler/tests/xpcshell/xpcshell.ini\", \"widget/headless/tests/xpcshell.ini\", \"xpcom/tests/unit/xpcshell.ini\"]}",
+      "GECKO_HEAD_REV": "52eb0cec7ba8e7306b2ce7f04e389a483b011170",
+      "MOZ_SCM_LEVEL": "1",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/try",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/YX9WQqqCRDqx36cXOLXkxg/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/GceCTNKPQBqJhE2B0869sg/artifacts/public/build/target.zip\"}",
+      "MOZ_FETCHES": "[{\"artifact\": \"public/build/node.tar.bz2\", \"extract\": true, \"task\": \"Snn0iwRHQz6vejPKVxbAhg\"}]",
+      "MOZ_FETCHES_DIR": "fetches",
+      "MOZ_AUTOMATION": "1"
+    },
+    "mounts": [
+      {
+        "directory": ".",
+        "content": {
+          "taskId": "YX9WQqqCRDqx36cXOLXkxg",
+          "artifact": "public/build/mozharness.zip"
+        },
+        "format": "zip"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/try/raw-file/52eb0cec7ba8e7306b2ce7f04e389a483b011170/taskcluster/scripts/run-task"
+        },
+        "file": "./run-task"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/try/raw-file/52eb0cec7ba8e7306b2ce7f04e389a483b011170/taskcluster/scripts/misc/fetch-content"
+        },
+        "file": "./fetch-content"
+      }
+    ]
+  },
+  "metadata": {
+    "owner": "jvarga@mozilla.com",
+    "source": "https://hg.mozilla.org/try/file/52eb0cec7ba8e7306b2ce7f04e389a483b011170/taskcluster/ci/test",
+    "description": "xpcshell test run ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=try&revision=52eb0cec7ba8e7306b2ce7f04e389a483b011170))",
+    "name": "test-windows10-64/debug-xpcshell-e10s-1"
+  },
+  "tags": {
+    "kind": "test",
+    "worker-implementation": "generic-worker",
+    "createdForUser": "jvarga@mozilla.com",
+    "retrigger": "true",
+    "label": "test-windows10-64/debug-xpcshell-e10s-1",
+    "os": "windows"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579795526
+    },
+    "parent": "bldEIJ3tQzCnNXTSkeUhkw",
+    "chunks": {
+      "current": 1,
+      "total": 2
+    },
+    "suite": "xpcshell",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "X",
+      "collection": {
+        "debug": true
+      },
+      "machine": {
+        "platform": "windows10-64"
+      },
+      "groupName": "Xpcshell tests",
+      "tier": 1,
+      "symbol": "X1"
+    },
+    "treeherder-platform": "windows10-64/debug"
+  }
+}

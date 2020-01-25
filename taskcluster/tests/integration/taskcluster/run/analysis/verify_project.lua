@@ -4,7 +4,7 @@
 
 require "string"
 
-local results = {"mozilla-route", "mozilla-route", "mozilla-route", "mozilla-route", "mozilla-route", "mozilla-route", "mozilla-source"}
+local results = {"autoland", "mozilla-release", "mozilla-central", "mozilla-esr68", "try", "autoland", "mozilla-central", "try"}
 
 local cnt = 0
 function process_message()
@@ -12,7 +12,7 @@ function process_message()
     cnt = cnt + 1
 
     local e = results[cnt]
-    if p ~= e then error(string.format("test: %d component received: %s expected: %s", cnt, tostring(p), tostring(e))) end
+    if p ~= e then error(string.format("test: %d project received: %s expected: %s", cnt, tostring(p), tostring(e))) end
 
     return 0
 end

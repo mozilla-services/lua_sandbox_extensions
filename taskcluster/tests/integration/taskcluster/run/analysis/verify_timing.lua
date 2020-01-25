@@ -2,82 +2,62 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+require "cjson"
 require "string"
 require "table"
 require "math"
 
-local captures = {""}
-local results = {
-    {component = 'task', subComponent = 'total', level = 0, duration = 240},
-    {component = 'vcs', subComponent = 'clone', level = 2, duration = 1.37639},
-    {component = 'vcs', subComponent = 'pull', level = 2, duration = 9.56564},
-    {component = 'vcs', subComponent = 'update', level = 2, duration = 22.8238},
-    {component = 'artifact', subComponent = 'download', level = 3, duration = 0.706, file = 'binutils.tar.xz'},
-    {component = 'artifact', subComponent = 'download', level = 3, duration = 2.052, file = 'clang.tar.xz'},
-    {component = 'gecko', subComponent = 'startup', level = 3, duration = 10.003},
-    {component = 'test', subComponent = 'ref', level = 3, duration = 0.363, file = '/tests/reftest/tests/layout/reftests/css-disabled/fieldset/fieldset-enabled.html'},
-    {component = 'test', subComponent = 'general', level = 3, duration = 2.311, file = '/tests/mochitest/orientation/test_bug507902.html'},
-    {component = 'test', subComponent = 'gtest', level = 3, duration = 0.00999987, file = 'Variants/JsepSessionTest.TestBalancedBundle/14'},
-    {component = 'hazard', subComponent = 'build', level = 3, duration = 72.802},
-    {component = 'artifact', subComponent = 'upload', level = 3, duration = 2.56e-07, file = 'target_info.txt'},
-    {component = 'artifact', subComponent = 'upload', level = 3, duration = 0.501425, file = 'target.reftest.tests.tar.gz'},
-    {component = 'artifact', subComponent = 'upload', level = 3, duration = 5.12e-06, file = 'sccache.log'},
-    {component = 'hazard', subComponent = 'heapwrites', level = 3, duration = 0.004},
-    {component = 'hazard', subComponent = 'allFunctions', level = 3, duration = 0.171},
-    {component = 'build_metrics', subComponent = 'configure', level = 3, duration = 1},
-    {component = 'build_metrics', subComponent = 'pre-export', level = 3, duration = 1.1},
-    {component = 'build_metrics', subComponent = 'export', level = 3, duration = 1.2},
-    {component = 'build_metrics', subComponent = 'compile', level = 3, duration = 1.3},
-    {component = 'build_metrics', subComponent = 'misc', level = 3, duration = 1.4},
-    {component = 'build_metrics', subComponent = 'libs', level = 3, duration = 1.5},
-    {component = 'build_metrics', subComponent = 'tools', level = 3, duration = 1.6},
-    {component = 'build_metrics', subComponent = 'package-generated-sources', level = 3, duration = 1.7},
-    {component = 'build_metrics', subComponent = 'buildsymbols', level = 3, duration = 1.8},
-    {component = 'build_metrics', subComponent = 'package-tests', level = 3, duration = 1.9},
-    {component = 'build_metrics', subComponent = 'package', level = 3, duration = 1.1},
-    {component = 'build_metrics', subComponent = 'upload', level = 3, duration = 1.11},
-    {component = 'build_metrics', subComponent = 'l10n-check', level = 3, duration = 1.12},
-    {component = 'package', subComponent = 'tests', level = 3, duration = 2.09, file = 'target.reftest.tests.tar.gz'},
-    {component = 'mozharness', subComponent = 'kitchen sink', level = 2, duration = 159.371},
-    {component = 'task', subComponent = 'total', level = 0, duration = 251.494},
-    {component = 'taskcluster', subComponent = 'setup', level = 1, duration = 14.449},
-    {component = 'taskcluster', subComponent = 'task', level = 1, duration = 204.165},
-    {component = 'taskcluster', subComponent = 'teardown', level = 1, duration = 32.88}
-}
+--local capture_only = true
+local captures = {}
+local results = [[
+{"a46tmlKvRFuopDLt8E7IEQ":[{"component":"mozharness","subComponent":"clobber step","duration":0.000467968,"level":2},{"component":"mozharness","subComponent":"download-and-extract step","duration":18.12125184,"level":2},{"component":"mozharness","subComponent":"create-virtualenv step","duration":48.156032768,"level":2},{"component":"mozharness","subComponent":"install step","duration":8.973766912,"level":2},{"component":"mozharness","subComponent":"stage-files step","duration":0.000347136,"level":2},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-001.xht","subComponent":"ref","duration":0.156,"level":3},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-002.xht","subComponent":"ref","duration":0.067000064,"level":3},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-003.xht","subComponent":"ref","duration":0.065999872,"level":3},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-004.xht","subComponent":"ref","duration":0.064,"level":3},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-005.xht","subComponent":"ref","duration":0.068999936,"level":3},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-006.xht","subComponent":"ref","duration":0.076999936,"level":3},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-007.xht","subComponent":"ref","duration":0.064999936,"level":3},{"component":"test","file":"\/tests\/reftest\/tests\/layout\/reftests\/w3c-css\/submitted\/conditional3\/css-supports-008.xht","subComponent":"ref","duration":0.063999744,"level":3},{"component":"mozharness","subComponent":"run-tests step","duration":1230.20267776,"level":2},{"component":"task","subComponent":"total","duration":1525.448,"level":0},{"component":"taskcluster","subComponent":"setup","duration":212.875999744,"level":1},{"component":"taskcluster","subComponent":"task","duration":1310.476000256,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":2.096,"level":1}],"USQ8K5YcQJKQgybb28cyXg":[{"component":"mozharness","subComponent":"clobber step","duration":0.000468992,"level":2},{"component":"mozharness","subComponent":"download-and-extract step","duration":18.581660928,"level":2},{"component":"mozharness","subComponent":"populate-webroot step","duration":0.000199168,"level":2},{"component":"mozharness","subComponent":"install-chromium-distribution step","duration":0.000175872,"level":2},{"component":"mozharness","subComponent":"create-virtualenv step","duration":36.338000896,"level":2},{"component":"mozharness","subComponent":"install step","duration":22.39804416,"level":2},{"component":"mozharness","subComponent":"run-tests step","duration":175.859705856,"level":2},{"component":"task","subComponent":"total","duration":269.679000064,"level":0},{"component":"taskcluster","subComponent":"setup","duration":0,"level":1},{"component":"taskcluster","subComponent":"task","duration":268.185999872,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":1.493000192,"level":1}],"KcwJfqv_Sqi6e_2KKFS1Ow":[{"component":"task","subComponent":"total","duration":201.156,"level":0},{"component":"taskcluster","subComponent":"setup","duration":13.423000064,"level":1},{"component":"taskcluster","subComponent":"task","duration":181.406999808,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":6.326000128,"level":1}],"SSXGXyVIRQGQqVKGym90mQ":[{"component":"vcs","subComponent":"clone","duration":0.322976768,"level":2},{"component":"vcs","subComponent":"update","duration":18.255863808,"level":2},{"component":"mozharness","subComponent":"get-secrets step","duration":0.157248256,"level":2},{"component":"package","file":"target.awsy.tests.tar.gz","subComponent":"tests","duration":0.029999872,"level":3},{"component":"package","file":"target.updater-dep.tests.tar.gz","subComponent":"tests","duration":0.28,"level":3},{"component":"package","file":"target.condprof.tests.tar.gz","subComponent":"tests","duration":0.330000128,"level":3},{"component":"package","file":"target.cppunittest.tests.tar.gz","subComponent":"tests","duration":1.3,"level":3},{"component":"package","file":"target.raptor.tests.tar.gz","subComponent":"tests","duration":1.610000128,"level":3},{"component":"package","file":"target.talos.tests.tar.gz","subComponent":"tests","duration":2.150000128,"level":3},{"component":"package","file":"target.xpcshell.tests.tar.gz","subComponent":"tests","duration":2.6,"level":3},{"component":"package","file":"target.gtest.tests.tar.gz","subComponent":"tests","duration":6.069999872,"level":3},{"component":"package","file":"target.reftest.tests.tar.gz","subComponent":"tests","duration":11.429999872,"level":3},{"component":"package","file":"target.mochitest.tests.tar.gz","subComponent":"tests","duration":12.12,"level":3},{"component":"package","file":"target.web-platform.tests.tar.gz","subComponent":"tests","duration":13.870000128,"level":3},{"component":"package","file":"target.common.tests.tar.gz","subComponent":"tests","duration":15.04,"level":3},{"component":"build_metrics","subComponent":"configure","duration":60.220595712,"level":3},{"component":"build_metrics","subComponent":"pre-export","duration":0.38491904,"level":3},{"component":"build_metrics","subComponent":"export","duration":32.136818944,"level":3},{"component":"build_metrics","subComponent":"compile","duration":2515.677004032,"level":3},{"component":"build_metrics","subComponent":"misc","duration":4.428281088,"level":3},{"component":"build_metrics","subComponent":"libs","duration":12.400452864,"level":3},{"component":"build_metrics","subComponent":"tools","duration":0.361504,"level":3},{"component":"build_metrics","subComponent":"package-generated-sources","duration":3.433752832,"level":3},{"component":"build_metrics","subComponent":"buildsymbols","duration":8.47291392,"level":3},{"component":"build_metrics","subComponent":"package","duration":38.604697856,"level":3},{"component":"build_metrics","subComponent":"package-tests","duration":53.15721088,"level":3},{"component":"build_metrics","subComponent":"upload","duration":3.530148864,"level":3},{"component":"build_metrics","subComponent":"check","duration":59.75913216,"level":3},{"component":"mozharness","subComponent":"build step","duration":2758.973307136,"level":2},{"component":"task","subComponent":"total","duration":2839.920999936,"level":0},{"component":"taskcluster","subComponent":"setup","duration":0.596,"level":1},{"component":"taskcluster","subComponent":"task","duration":2823.783000064,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":15.541999872,"level":1}],"AuIAPvWhSiyp0eUh5vAdCw":[{"component":"mozharness","subComponent":"clobber step","duration":0.000999936,"level":2},{"component":"mozharness","subComponent":"download-and-extract step","duration":35.516000256,"level":2},{"component":"mozharness","subComponent":"create-virtualenv step","duration":66.72499968,"level":2},{"component":"mozharness","subComponent":"start-pulseaudio step","duration":0,"level":2},{"component":"mozharness","subComponent":"install step","duration":2.573000192,"level":2},{"component":"mozharness","subComponent":"stage-files step","duration":0.032,"level":2},{"component":"test","file":"browser\/components\/about\/test\/unit\/test_getURIFlags.js","subComponent":"general","duration":3.637999872,"level":3},{"component":"test","file":"browser\/components\/attribution\/test\/xpcshell\/test_AttributionCode.js","subComponent":"general","duration":3.639000064,"level":3},{"component":"test","file":"\/tests\/unit\/test_Chrome_passwords.js","subComponent":"general","duration":5.56,"level":3},{"component":"test","file":"\/tests\/unit\/test_ChromeMigrationUtils.js","subComponent":"general","duration":3.808999936,"level":3},{"component":"test","file":"\/tests\/unit\/test_ChromeMigrationUtils_path.js","subComponent":"general","duration":4.376999936,"level":3},{"component":"test","file":"\/tests\/unit\/test_fx_telemetry.js","subComponent":"general","duration":3.874000128,"level":3},{"component":"test","file":"\/tests\/unit\/test_Edge_db_migration.js","subComponent":"general","duration":5.931000064,"level":3},{"component":"mozharness","subComponent":"run-tests step","duration":1294.246999808,"level":2},{"component":"task","subComponent":"total","duration":1414.931000064,"level":0},{"component":"taskcluster","subComponent":"setup","duration":0.000999936,"level":1},{"component":"taskcluster","subComponent":"task","duration":1413.060999936,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":1.869000192,"level":1}],"IViCwC-nTMi_gXPE3ckjPg":[{"component":"mozharness","subComponent":"clobber step","duration":0.000345856,"level":2},{"component":"mozharness","subComponent":"download-and-extract step","duration":38.526254848,"level":2},{"component":"mozharness","subComponent":"create-virtualenv step","duration":61.53673088,"level":2},{"component":"mozharness","subComponent":"start-pulseaudio step","duration":0.000532224,"level":2},{"component":"mozharness","subComponent":"install step","duration":21.07824,"level":2},{"component":"mozharness","subComponent":"stage-files step","duration":0.000530944,"level":2},{"component":"gecko","subComponent":"startup","duration":8.276999936,"level":3},{"component":"test","file":"browser\/components\/extensions\/test\/mochitest\/test_ext_all_apis.html","subComponent":"general","duration":2.023000064,"level":3},{"component":"gecko","subComponent":"startup","duration":7.683000064,"level":3},{"component":"test","file":"browser\/components\/originattributes\/test\/mochitest\/test_permissions_api.html","subComponent":"general","duration":1.659000064,"level":3},{"component":"gecko","subComponent":"startup","duration":7.68,"level":3},{"component":"test","file":"browser\/components\/protocolhandler\/test\/test_registerHandler.html","subComponent":"general","duration":1.337999872,"level":3},{"component":"test","file":"browser\/components\/protocolhandler\/test\/test_registerHandler_disabled.html","subComponent":"general","duration":0.151000064,"level":3},{"component":"mozharness","subComponent":"run-tests step","duration":1435.183783168,"level":2},{"component":"task","subComponent":"total","duration":1567.893999872,"level":0},{"component":"taskcluster","subComponent":"setup","duration":0,"level":1},{"component":"taskcluster","subComponent":"task","duration":1561.556,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":6.337999872,"level":1}],"CX96USXgR3CvJWA2ZsBYrA":[{"component":"mozharness","subComponent":"clobber step","duration":0.00094208,"level":2},{"component":"mozharness","subComponent":"download-and-extract step","duration":18.028678912,"level":2},{"component":"mozharness","subComponent":"create-virtualenv step","duration":56.534134016,"level":2},{"component":"mozharness","subComponent":"start-pulseaudio step","duration":0.02911232,"level":2},{"component":"mozharness","subComponent":"install step","duration":11.833118208,"level":2},{"component":"mozharness","subComponent":"stage-files step","duration":0.172749056,"level":2},{"component":"test","file":"cubeb.run_volume_test_short","subComponent":"gtest","duration":2.537999872,"level":3},{"component":"test","file":"cubeb.run_volume_test_float","subComponent":"gtest","duration":2.512,"level":3},{"component":"test","file":"cubeb.run_channel_rate_test","subComponent":"gtest","duration":8.187000064,"level":3},{"component":"mozharness","subComponent":"run-tests step","duration":830.794323712,"level":2},{"component":"task","subComponent":"total","duration":1111.292999936,"level":0},{"component":"taskcluster","subComponent":"setup","duration":181.798000128,"level":1},{"component":"taskcluster","subComponent":"task","duration":928.484999936,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":1.009999872,"level":1}],"CZ9BVge4QdKrJ3ZWdVbsTQ":[{"component":"mozharness","subComponent":"clobber step","duration":0.001000192,"level":2},{"component":"mozharness","subComponent":"download-and-extract step","duration":279.981999872,"level":2},{"component":"mozharness","subComponent":"populate-webroot step","duration":111.088999936,"level":2},{"component":"mozharness","subComponent":"create-virtualenv step","duration":64.891000064,"level":2},{"component":"mozharness","subComponent":"install step","duration":4.492,"level":2},{"component":"test","file":"tp5n","subComponent":"general","duration":316.171000064,"level":3},{"component":"mozharness","subComponent":"run-tests step","duration":318.749000192,"level":2},{"component":"task","subComponent":"total","duration":793.388999936,"level":0},{"component":"taskcluster","subComponent":"setup","duration":0,"level":1},{"component":"taskcluster","subComponent":"task","duration":790.533999872,"level":1},{"component":"taskcluster","subComponent":"teardown","duration":2.855000064,"level":1}]}
+]]
 
-local cnt = 0
+results = cjson.decode(results)
 function process_message()
+    local tid = read_message("Fields[taskId]")
     local c = read_message("Fields[component]")
     local s = read_message("Fields[subComponent]")
     local l = read_message("Fields[level]")
     local d = read_message("Fields[duration]")
     local f = read_message("Fields[file]")
-    cnt = cnt + 1
 
-    local e = results[cnt].component
-    if c ~= e then error(string.format("test: %d component expected: %s received: %s", cnt, tostring(e), tostring(c))) end
-
-    e = results[cnt].subComponent
-    if s ~= e then error(string.format("test: %d subComponent expected: %s received: %s", cnt, tostring(e), tostring(s))) end
-
-    e = results[cnt].level
-    if l ~= e then error(string.format("test: %d level expected: %d received: %d", cnt, e, l)) end
-
-    e = results[cnt].duration
-    if math.abs(d - e) >= 0.001 then error(string.format("test: %d duration expected: %g received: %g", cnt, e, d)) end
-
-    e = results[cnt].file
-    if f ~= e then error(string.format("test: %d file expected: %s received: %s", cnt, tostring(e), tostring(f))) end
-
-    if f then
-        captures[#captures + 1] = string.format("{component = '%s', subComponent = '%s', level = %d, duration = %g, file = '%s'}", c, s, l, d, f)
-    else
-        captures[#captures + 1] = string.format("{component = '%s', subComponent = '%s', level = %d, duration = %g}", c, s, l, d)
+    local t = captures[tid]
+    if not t then
+        t = {}
+        captures[tid] = t
     end
+    t[#t + 1] = {component = c, subComponent = s, level = l, duration = d, file = f}
+
+    if capture_only then return 0 end
+
+    local r = results[tid]
+    if not r then error(string.format("unknown taskId %s", tid)) end
+    local cnt = #t
+
+    local e = r[cnt].component
+    if c ~= e then error(string.format("taskId: %s test: %d component expected: %s received: %s", tid, cnt, tostring(e), tostring(c))) end
+
+    e = r[cnt].subComponent
+    if s ~= e then error(string.format("taskId: %s test: %d subComponent expected: %s received: %s", tid, cnt, tostring(e), tostring(s))) end
+
+    e = r[cnt].level
+    if l ~= e then error(string.format("taskId: %s test: %d level expected: %d received: %d", tid, cnt, e, l)) end
+
+    e = r[cnt].duration
+    if math.abs(d - e) >= 0.001 then error(string.format("taskId: %s test: %d duration expected: %g received: %g", tid, cnt, e, d)) end
+
+    e = r[cnt].file
+    if f ~= e then error(string.format("taskId: %s test: %d file expected: %s received: %s", tid, cnt, tostring(e), tostring(f))) end
+
     return 0
 end
 
 function timer_event(ns)
-    inject_payload("txt", "captures", table.concat(captures, ",\n"))
-    if cnt ~= #results then error(string.format("messages expected: %d received %d", #results, cnt)) end
+    inject_payload("json", "captures", cjson.encode(captures))
+    for k,v in pairs(results) do
+        local t = captures[k]
+        if not t then error(string.format("missing taskId %s", k)) end
+        if #t ~= #v then error(string.format("messages expected: %d received %d", #v, #t)) end
+    end
 end

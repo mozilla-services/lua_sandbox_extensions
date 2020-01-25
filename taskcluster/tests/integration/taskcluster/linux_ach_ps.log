@@ -1,0 +1,68 @@
+2020-01-23 23:47:39,478 - scriptworker.client - DEBUG - Task is validated against this schema: {'title': 'Taskcluster signing task minimal schema', 'type': 'object', 'properties': {'dependencies': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'type': 'string'}}, 'scopes': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'type': 'string'}}, 'payload': {'type': 'object', 'properties': {'upstreamArtifacts': {'type': 'array', 'items': {'type': 'object', 'properties': {'taskType': {'type': 'string'}, 'taskId': {'type': 'string'}, 'formats': {'type': 'array', 'uniqueItems': True, 'items': {'type': 'string'}}, 'paths': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'type': 'string'}}}, 'required': ['taskId', 'taskType', 'paths', 'formats']}, 'minItems': 1, 'uniqueItems': True}}, 'required': ['upstreamArtifacts']}}, 'required': ['scopes', 'payload']}
+2020-01-23 23:47:39,480 - asyncio - DEBUG - Using selector: EpollSelector
+2020-01-23 23:47:39,481 - signingscript.utils - INFO - Loading autograph config from /app/configs/passwords.json
+2020-01-23 23:47:39,481 - signingscript.utils - INFO - Autograph config loaded from /app/configs/passwords.json
+2020-01-23 23:47:39,482 - signingscript.utils - INFO - mkdir /app/workdir/public/build/ach
+2020-01-23 23:47:39,482 - signingscript.utils - INFO - Copying /app/workdir/cot/KcwJfqv_Sqi6e_2KKFS1Ow/public/build/ach/target.partial-3.mar to /app/workdir/public/build/ach/target.partial-3.mar
+2020-01-23 23:47:39,495 - signingscript.script - INFO - signing public/build/ach/target.partial-3.mar
+2020-01-23 23:47:39,497 - signingscript.task - INFO - sign(): Signing 8983581 bytes in /app/workdir/public/build/ach/target.partial-3.mar with autograph_hash_only_mar384...
+2020-01-23 23:47:39,637 - signingscript.sign - DEBUG - make_signing_req took 0.00s; RSS:183920 (+0)
+2020-01-23 23:47:39,638 - signingscript.sign - DEBUG - req_size: 78
+2020-01-23 23:47:39,732 - signingscript.sign - DEBUG - Autograph response: 201
+2020-01-23 23:47:39,732 - signingscript.sign - DEBUG - call_autograph took 0.10s; RSS:183920 (+0)
+2020-01-23 23:47:39,732 - signingscript.sign - DEBUG - sign_with_autograph took 0.10s; RSS:183920 (+0)
+2020-01-23 23:47:39,732 - signingscript.sign - DEBUG - sign_hash_with_autograph took 0.10s; RSS:183920 (+0)
+2020-01-23 23:47:39,852 - signingscript.sign - INFO - Running ['/app/bin/mar', '-k', '/app/lib/python3.7/site-packages/signingscript/data/nightly_aurora_level3_primary.pem', '-v', '/app/workdir/public/build/ach/target.partial-3.mar']
+Verification OK
+2020-01-23 23:47:40,292 - signingscript.sign - INFO - Verified signature.
+2020-01-23 23:47:40,293 - signingscript.sign - INFO - wrote mar with autograph signed hash /app/workdir/public/build/ach/target.partial-3.mar to /app/workdir/public/build/ach/target.partial-3.mar
+2020-01-23 23:47:40,294 - signingscript.sign - DEBUG - sign_mar384_with_autograph_hash took 0.80s; RSS:183920 (+0)
+2020-01-23 23:47:40,295 - signingscript.utils - INFO - mkdir /app/artifacts/public/build/ach
+2020-01-23 23:47:40,295 - signingscript.utils - INFO - Copying /app/workdir/public/build/ach/target.partial-3.mar to /app/artifacts/public/build/ach/target.partial-3.mar
+2020-01-23 23:47:40,306 - signingscript.utils - INFO - Copying /app/workdir/cot/KcwJfqv_Sqi6e_2KKFS1Ow/public/build/ach/target.partial-2.mar to /app/workdir/public/build/ach/target.partial-2.mar
+2020-01-23 23:47:40,316 - signingscript.script - INFO - signing public/build/ach/target.partial-2.mar
+2020-01-23 23:47:40,317 - signingscript.task - INFO - sign(): Signing 8498243 bytes in /app/workdir/public/build/ach/target.partial-2.mar with autograph_hash_only_mar384...
+2020-01-23 23:47:40,447 - signingscript.sign - DEBUG - make_signing_req took 0.00s; RSS:183920 (+0)
+2020-01-23 23:47:40,450 - signingscript.sign - DEBUG - req_size: 78
+2020-01-23 23:47:40,488 - signingscript.sign - DEBUG - Autograph response: 201
+2020-01-23 23:47:40,488 - signingscript.sign - DEBUG - call_autograph took 0.04s; RSS:183920 (+0)
+2020-01-23 23:47:40,488 - signingscript.sign - DEBUG - sign_with_autograph took 0.04s; RSS:183920 (+0)
+2020-01-23 23:47:40,488 - signingscript.sign - DEBUG - sign_hash_with_autograph took 0.04s; RSS:183920 (+0)
+2020-01-23 23:47:40,613 - signingscript.sign - INFO - Running ['/app/bin/mar', '-k', '/app/lib/python3.7/site-packages/signingscript/data/nightly_aurora_level3_primary.pem', '-v', '/app/workdir/public/build/ach/target.partial-2.mar']
+Verification OK
+2020-01-23 23:47:41,086 - signingscript.sign - INFO - Verified signature.
+2020-01-23 23:47:41,086 - signingscript.sign - INFO - wrote mar with autograph signed hash /app/workdir/public/build/ach/target.partial-2.mar to /app/workdir/public/build/ach/target.partial-2.mar
+2020-01-23 23:47:41,088 - signingscript.sign - DEBUG - sign_mar384_with_autograph_hash took 0.77s; RSS:183920 (+0)
+2020-01-23 23:47:41,088 - signingscript.utils - INFO - Copying /app/workdir/public/build/ach/target.partial-2.mar to /app/artifacts/public/build/ach/target.partial-2.mar
+2020-01-23 23:47:41,099 - signingscript.utils - INFO - Copying /app/workdir/cot/KcwJfqv_Sqi6e_2KKFS1Ow/public/build/ach/target.partial-4.mar to /app/workdir/public/build/ach/target.partial-4.mar
+2020-01-23 23:47:41,111 - signingscript.script - INFO - signing public/build/ach/target.partial-4.mar
+2020-01-23 23:47:41,111 - signingscript.task - INFO - sign(): Signing 9432577 bytes in /app/workdir/public/build/ach/target.partial-4.mar with autograph_hash_only_mar384...
+2020-01-23 23:47:41,218 - signingscript.sign - DEBUG - make_signing_req took 0.00s; RSS:183920 (+0)
+2020-01-23 23:47:41,219 - signingscript.sign - DEBUG - req_size: 78
+2020-01-23 23:47:41,269 - signingscript.sign - DEBUG - Autograph response: 201
+2020-01-23 23:47:41,270 - signingscript.sign - DEBUG - call_autograph took 0.05s; RSS:183920 (+0)
+2020-01-23 23:47:41,270 - signingscript.sign - DEBUG - sign_with_autograph took 0.05s; RSS:183920 (+0)
+2020-01-23 23:47:41,270 - signingscript.sign - DEBUG - sign_hash_with_autograph took 0.05s; RSS:183920 (+0)
+2020-01-23 23:47:41,408 - signingscript.sign - INFO - Running ['/app/bin/mar', '-k', '/app/lib/python3.7/site-packages/signingscript/data/nightly_aurora_level3_primary.pem', '-v', '/app/workdir/public/build/ach/target.partial-4.mar']
+Verification OK
+2020-01-23 23:47:41,863 - signingscript.sign - INFO - Verified signature.
+2020-01-23 23:47:41,863 - signingscript.sign - INFO - wrote mar with autograph signed hash /app/workdir/public/build/ach/target.partial-4.mar to /app/workdir/public/build/ach/target.partial-4.mar
+2020-01-23 23:47:41,865 - signingscript.sign - DEBUG - sign_mar384_with_autograph_hash took 0.75s; RSS:183920 (+0)
+2020-01-23 23:47:41,866 - signingscript.utils - INFO - Copying /app/workdir/public/build/ach/target.partial-4.mar to /app/artifacts/public/build/ach/target.partial-4.mar
+2020-01-23 23:47:41,877 - signingscript.utils - INFO - Copying /app/workdir/cot/KcwJfqv_Sqi6e_2KKFS1Ow/public/build/ach/target.partial-1.mar to /app/workdir/public/build/ach/target.partial-1.mar
+2020-01-23 23:47:41,890 - signingscript.script - INFO - signing public/build/ach/target.partial-1.mar
+2020-01-23 23:47:41,890 - signingscript.task - INFO - sign(): Signing 8049245 bytes in /app/workdir/public/build/ach/target.partial-1.mar with autograph_hash_only_mar384...
+2020-01-23 23:47:41,976 - signingscript.sign - DEBUG - make_signing_req took 0.00s; RSS:183920 (+0)
+2020-01-23 23:47:41,977 - signingscript.sign - DEBUG - req_size: 78
+2020-01-23 23:47:42,012 - signingscript.sign - DEBUG - Autograph response: 201
+2020-01-23 23:47:42,013 - signingscript.sign - DEBUG - call_autograph took 0.04s; RSS:183920 (+0)
+2020-01-23 23:47:42,013 - signingscript.sign - DEBUG - sign_with_autograph took 0.04s; RSS:183920 (+0)
+2020-01-23 23:47:42,013 - signingscript.sign - DEBUG - sign_hash_with_autograph took 0.04s; RSS:183920 (+0)
+2020-01-23 23:47:42,117 - signingscript.sign - INFO - Running ['/app/bin/mar', '-k', '/app/lib/python3.7/site-packages/signingscript/data/nightly_aurora_level3_primary.pem', '-v', '/app/workdir/public/build/ach/target.partial-1.mar']
+Verification OK
+2020-01-23 23:47:42,586 - signingscript.sign - INFO - Verified signature.
+2020-01-23 23:47:42,587 - signingscript.sign - INFO - wrote mar with autograph signed hash /app/workdir/public/build/ach/target.partial-1.mar to /app/workdir/public/build/ach/target.partial-1.mar
+2020-01-23 23:47:42,588 - signingscript.sign - DEBUG - sign_mar384_with_autograph_hash took 0.70s; RSS:183920 (+0)
+2020-01-23 23:47:42,589 - signingscript.utils - INFO - Copying /app/workdir/public/build/ach/target.partial-1.mar to /app/artifacts/public/build/ach/target.partial-1.mar
+2020-01-23 23:47:42,600 - signingscript.script - INFO - Done!
+exit code: 0

@@ -1,0 +1,143 @@
+{
+  "provisionerId": "gecko-3",
+  "workerType": "b-linux",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "HqfENdOERUay9RRBzBq6Uw",
+  "dependencies": [
+    "Gi9Xx0IpR9GvUyBXGqEJpQ",
+    "H9IK7RaZT0eYVToN-0Sjsg"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.mozilla-central.fb6b61e49217d835b2d6e435560424aab10d5475.37048"
+  ],
+  "priority": "medium",
+  "retries": 5,
+  "created": "2020-01-23T22:02:23.124Z",
+  "deadline": "2020-01-24T22:02:23.124Z",
+  "expires": "2021-01-22T22:02:23.124Z",
+  "scopes": [
+    "auth:aws-s3:read-write:tc-gp-private-1d-us-east-1/releng/mbsdiff-cache/"
+  ],
+  "payload": {
+    "onExitStatus": {},
+    "maxRunTime": 900,
+    "image": {
+      "path": "public/image.tar.zst",
+      "type": "task-image",
+      "taskId": "Gi9Xx0IpR9GvUyBXGqEJpQ"
+    },
+    "artifacts": {
+      "public/build/ach/target.partial-4.mar": {
+        "path": "/home/worker/artifacts/target.partial-4.mar",
+        "expires": "2021-01-22T22:02:23.124Z",
+        "type": "file"
+      },
+      "public/build/ach/manifest.json": {
+        "path": "/home/worker/artifacts/manifest.json",
+        "expires": "2021-01-22T22:02:23.124Z",
+        "type": "file"
+      },
+      "public/build/ach/target.partial-2.mar": {
+        "path": "/home/worker/artifacts/target.partial-2.mar",
+        "expires": "2021-01-22T22:02:23.124Z",
+        "type": "file"
+      },
+      "public/build/ach/target.partial-3.mar": {
+        "path": "/home/worker/artifacts/target.partial-3.mar",
+        "expires": "2021-01-22T22:02:23.124Z",
+        "type": "file"
+      },
+      "public/build/ach/target.partial-1.mar": {
+        "path": "/home/worker/artifacts/target.partial-1.mar",
+        "expires": "2021-01-22T22:02:23.124Z",
+        "type": "file"
+      }
+    },
+    "env": {
+      "SCCACHE_DISABLE": "1",
+      "MAR_CHANNEL_ID": "firefox-mozilla-central",
+      "SHA1_SIGNING_CERT": "nightly_sha1",
+      "EXTRA_PARAMS": "--arch=x86_64",
+      "SHA384_SIGNING_CERT": "nightly_sha384",
+      "MOZ_AUTOMATION": "1"
+    },
+    "features": {
+      "taskclusterProxy": true,
+      "chainOfTrust": true
+    }
+  },
+  "metadata": {
+    "owner": "cron@noreply.mozilla.org",
+    "source": "https://hg.mozilla.org/mozilla-central/file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/ci/partials",
+    "description": "Repackaging for locale 'ach' for build 'linux64-shippable/opt' ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-central&revision=fb6b61e49217d835b2d6e435560424aab10d5475)) Partials ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-central&revision=fb6b61e49217d835b2d6e435560424aab10d5475))",
+    "name": "partials-ach-linux64-shippable/opt"
+  },
+  "tags": {
+    "createdForUser": "cron@noreply.mozilla.org",
+    "retrigger": "false",
+    "kind": "partials",
+    "label": "partials-ach-linux64-shippable/opt"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579815744
+    },
+    "parent": "HqfENdOERUay9RRBzBq6Uw",
+    "funsize": {
+      "partials": [
+        {
+          "to_mar": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/H9IK7RaZT0eYVToN-0Sjsg/artifacts/public/build/ach/target.complete.mar",
+          "dest_mar": "target.partial-1.mar",
+          "locale": "ach",
+          "from_mar": "https://archive.mozilla.org/pub/firefox/nightly/2020/01/2020-01-23-09-54-33-mozilla-central-l10n/firefox-74.0a1.ach.linux-x86_64.complete.mar",
+          "update_number": 1,
+          "branch": "mozilla-central"
+        },
+        {
+          "to_mar": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/H9IK7RaZT0eYVToN-0Sjsg/artifacts/public/build/ach/target.complete.mar",
+          "dest_mar": "target.partial-2.mar",
+          "locale": "ach",
+          "from_mar": "https://archive.mozilla.org/pub/firefox/nightly/2020/01/2020-01-22-21-57-48-mozilla-central-l10n/firefox-74.0a1.ach.linux-x86_64.complete.mar",
+          "update_number": 2,
+          "branch": "mozilla-central"
+        },
+        {
+          "to_mar": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/H9IK7RaZT0eYVToN-0Sjsg/artifacts/public/build/ach/target.complete.mar",
+          "dest_mar": "target.partial-3.mar",
+          "locale": "ach",
+          "from_mar": "https://archive.mozilla.org/pub/firefox/nightly/2020/01/2020-01-22-09-48-59-mozilla-central-l10n/firefox-74.0a1.ach.linux-x86_64.complete.mar",
+          "update_number": 3,
+          "branch": "mozilla-central"
+        },
+        {
+          "to_mar": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/H9IK7RaZT0eYVToN-0Sjsg/artifacts/public/build/ach/target.complete.mar",
+          "dest_mar": "target.partial-4.mar",
+          "locale": "ach",
+          "from_mar": "https://archive.mozilla.org/pub/firefox/nightly/2020/01/2020-01-21-21-52-03-mozilla-central-l10n/firefox-74.0a1.ach.linux-x86_64.complete.mar",
+          "update_number": 4,
+          "branch": "mozilla-central"
+        }
+      ]
+    },
+    "chainOfTrust": {
+      "inputs": {
+        "docker-image": "Gi9Xx0IpR9GvUyBXGqEJpQ"
+      }
+    },
+    "treeherder": {
+      "jobKind": "build",
+      "groupSymbol": "p",
+      "collection": {
+        "opt": true
+      },
+      "machine": {
+        "platform": "linux64-shippable"
+      },
+      "groupName": "Partial generation",
+      "tier": 1,
+      "symbol": "ach"
+    },
+    "treeherder-platform": "linux64-shippable/opt"
+  }
+}

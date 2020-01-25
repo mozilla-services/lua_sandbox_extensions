@@ -1,0 +1,160 @@
+{
+  "provisionerId": "gecko-3",
+  "workerType": "b-linux",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "FKvNIN4OSHqJmZCo7Shi3Q",
+  "dependencies": [
+    "BOTJB7DLRwamMEY4E5ZYDg",
+    "CJar18vbQR-PNo6fIHwPKg",
+    "CqUyKhElQZGqLYMvCxuYMg",
+    "EiPjkTwOSN-RCwSPVhAILg",
+    "HZ3tHIaBQsacmIwRfizu6w",
+    "I160JTfpSQqqv_ZPj5uYjQ",
+    "NVWCz5tRROez9mxwC3WtrQ",
+    "SnPMeeCSTYSn4u0pH8rpdg",
+    "VuFo68PeQjCH7k15tSN2Dg",
+    "YNRofPkvTCSx7gnDiJDnDw",
+    "ZBK0H6MBQPSG9EhRT9CvOA"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "index.gecko.v2.autoland.shippable.latest.firefox.linux64-opt",
+    "index.gecko.v2.autoland.shippable.2020.01.23.revision.fb6b61e49217d835b2d6e435560424aab10d5475.firefox.linux64-opt",
+    "index.gecko.v2.autoland.shippable.2020.01.23.latest.firefox.linux64-opt",
+    "index.gecko.v2.autoland.shippable.revision.fb6b61e49217d835b2d6e435560424aab10d5475.firefox.linux64-opt",
+    "index.gecko.v2.autoland.shippable.latest.firefox-l10n.linux64-opt.en-US",
+    "index.gecko.v2.autoland.shippable.1579796302.revision.fb6b61e49217d835b2d6e435560424aab10d5475.firefox-l10n.linux64-opt.en-US",
+    "index.gecko.v2.autoland.shippable.1579796302.latest.firefox-l10n.linux64-opt.en-US",
+    "index.gecko.v2.autoland.shippable.revision.fb6b61e49217d835b2d6e435560424aab10d5475.firefox-l10n.linux64-opt.en-US",
+    "tc-treeherder.v2.autoland.fb6b61e49217d835b2d6e435560424aab10d5475.105840"
+  ],
+  "priority": "low",
+  "retries": 5,
+  "created": "2020-01-23T16:20:40.106Z",
+  "deadline": "2020-01-24T16:20:40.106Z",
+  "expires": "2021-01-22T16:20:40.106Z",
+  "scopes": [
+    "secrets:get:project/releng/gecko/build/level-3/*",
+    "secrets:get:project/taskcluster/gecko/hgfingerprint",
+    "secrets:get:project/taskcluster/gecko/hgmointernal",
+    "project:releng:services/tooltool/api/download/public",
+    "docker-worker:cache:gecko-level-3-autoland-build-linux64-shippable-opt-workspace-v3-75316e4022f196ea1700",
+    "docker-worker:cache:gecko-level-3-checkouts-v3-75316e4022f196ea1700",
+    "docker-worker:cache:gecko-level-3-tooltool-cache-v3-75316e4022f196ea1700"
+  ],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        4,
+        72
+      ],
+      "purgeCaches": [
+        72
+      ]
+    },
+    "maxRunTime": 9000,
+    "image": {
+      "path": "public/image.tar.zst",
+      "type": "task-image",
+      "taskId": "VuFo68PeQjCH7k15tSN2Dg"
+    },
+    "cache": {
+      "gecko-level-3-autoland-build-linux64-shippable-opt-workspace-v3-75316e4022f196ea1700": "/builds/worker/workspace",
+      "gecko-level-3-checkouts-v3-75316e4022f196ea1700": "/builds/worker/checkouts",
+      "gecko-level-3-tooltool-cache-v3-75316e4022f196ea1700": "/builds/worker/tooltool-cache"
+    },
+    "artifacts": {
+      "public/logs": {
+        "path": "/builds/worker/logs/",
+        "expires": "2021-01-22T16:20:40.106Z",
+        "type": "directory"
+      },
+      "public/build": {
+        "path": "/builds/worker/artifacts/",
+        "expires": "2021-01-22T16:20:40.106Z",
+        "type": "directory"
+      }
+    },
+    "command": [
+      "/builds/worker/bin/run-task",
+      "--gecko-checkout=/builds/worker/workspace/build/src",
+      "--fetch-hgfingerprint",
+      "--",
+      "/builds/worker/workspace/build/src/taskcluster/scripts/builder/build-linux.sh"
+    ],
+    "env": {
+      "MOZ_AUTOMATION": "1",
+      "MOZ_SOURCE_CHANGESET": "fb6b61e49217d835b2d6e435560424aab10d5475",
+      "ACCEPTED_MAR_CHANNEL_IDS": "firefox-mozilla-central",
+      "NEED_XVFB": "true",
+      "TOOLTOOL_CACHE": "/builds/worker/tooltool-cache",
+      "PYTHONUNBUFFERED": "1",
+      "MOZ_FETCHES_DIR": "fetches",
+      "MOZHARNESS_SCRIPT": "mozharness/scripts/fx_desktop_build.py",
+      "MOZ_BUILD_DATE": "20200123161822",
+      "MH_BUILD_POOL": "taskcluster",
+      "HG_STORE_PATH": "/builds/worker/checkouts/hg-store",
+      "MOZHARNESS_ACTIONS": "get-secrets build",
+      "GECKO_PATH": "/builds/worker/workspace/build/src",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/integration/autoland",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"mozconfig_variant\": \"nightly\"}",
+      "SCCACHE_DISABLE": "1",
+      "MOZ_SOURCE_REPO": "https://hg.mozilla.org/integration/autoland",
+      "GECKO_HEAD_REV": "fb6b61e49217d835b2d6e435560424aab10d5475",
+      "MH_BRANCH": "autoland",
+      "MOZ_SCM_LEVEL": "3",
+      "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
+      "TASKCLUSTER_PGO_PROFILE_USE": "1",
+      "MOZ_FETCHES": "[{\"artifact\": \"public/build/profdata.tar.xz\", \"extract\": true, \"task\": \"CqUyKhElQZGqLYMvCxuYMg\"}, {\"artifact\": \"public/build/binutils.tar.xz\", \"extract\": true, \"task\": \"YNRofPkvTCSx7gnDiJDnDw\"}, {\"artifact\": \"public/build/clang.tar.xz\", \"extract\": true, \"task\": \"ZBK0H6MBQPSG9EhRT9CvOA\"}, {\"artifact\": \"public/build/rustc.tar.xz\", \"extract\": true, \"task\": \"I160JTfpSQqqv_ZPj5uYjQ\"}, {\"artifact\": \"public/build/rust-size.tar.xz\", \"extract\": true, \"task\": \"CJar18vbQR-PNo6fIHwPKg\"}, {\"artifact\": \"public/build/cbindgen.tar.xz\", \"extract\": true, \"task\": \"SnPMeeCSTYSn4u0pH8rpdg\"}, {\"artifact\": \"public/build/nasm.tar.bz2\", \"extract\": true, \"task\": \"EiPjkTwOSN-RCwSPVhAILg\"}, {\"artifact\": \"public/build/node.tar.xz\", \"extract\": true, \"task\": \"NVWCz5tRROez9mxwC3WtrQ\"}, {\"artifact\": \"public/build/lucetc.tar.xz\", \"extract\": true, \"task\": \"HZ3tHIaBQsacmIwRfizu6w\"}, {\"artifact\": \"public/build/wasi-sysroot.tar.xz\", \"extract\": true, \"task\": \"BOTJB7DLRwamMEY4E5ZYDg\"}]",
+      "MOZ_DISABLE_FULL_SYMBOLS": "1",
+      "UPLOAD_DIR": "/builds/worker/artifacts/",
+      "TASKCLUSTER_CACHES": "/builds/worker/checkouts;/builds/worker/tooltool-cache;/builds/worker/workspace",
+      "MAR_CHANNEL_ID": "firefox-mozilla-central",
+      "TASKCLUSTER_VOLUMES": "/builds/worker/checkouts;/builds/worker/tooltool-cache;/builds/worker/workspace",
+      "MOZHARNESS_CONFIG": "builds/releng_base_firefox.py builds/releng_base_linux_64_builds.py taskcluster_nightly.py"
+    },
+    "features": {
+      "taskclusterProxy": true,
+      "chainOfTrust": true
+    }
+  },
+  "metadata": {
+    "owner": "ccoroiu@mozilla.com",
+    "source": "https://hg.mozilla.org/integration/autoland/file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/ci/build",
+    "description": "Linux64 Shippable ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=autoland&revision=fb6b61e49217d835b2d6e435560424aab10d5475))",
+    "name": "build-linux64-shippable/opt"
+  },
+  "tags": {
+    "kind": "build",
+    "worker-implementation": "docker-worker",
+    "createdForUser": "ccoroiu@mozilla.com",
+    "retrigger": "false",
+    "label": "build-linux64-shippable/opt",
+    "os": "linux"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579796302
+    },
+    "chainOfTrust": {
+      "inputs": {
+        "docker-image": "VuFo68PeQjCH7k15tSN2Dg"
+      }
+    },
+    "treeherder": {
+      "jobKind": "build",
+      "groupSymbol": "Bpgo",
+      "collection": {
+        "opt": true
+      },
+      "machine": {
+        "platform": "linux64-shippable"
+      },
+      "groupName": "Profile-guided optimization builds",
+      "tier": 1,
+      "symbol": "B"
+    },
+    "treeherder-platform": "linux64-shippable/opt",
+    "parent": "FKvNIN4OSHqJmZCo7Shi3Q"
+  }
+}

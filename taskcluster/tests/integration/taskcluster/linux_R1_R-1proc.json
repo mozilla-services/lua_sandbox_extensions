@@ -1,0 +1,144 @@
+{
+  "provisionerId": "gecko-t",
+  "workerType": "t-linux-large",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "fyLj3h7PSz2q6ZjfQ544zg",
+  "dependencies": [
+    "QWJKGHYwTVeNGbfpLCjPGQ",
+    "bb8ePPJ7RLevA5oQ4NQKKw"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.mozilla-esr68.910a7b4b5f2e92f00144e97e1ae7d1f29bf7d642.802",
+    "coalesce.v1.mozilla-esr68.8717d7343fcc0fa3ed48"
+  ],
+  "priority": "very-high",
+  "retries": 5,
+  "created": "2020-01-23T18:49:58.577Z",
+  "deadline": "2020-01-24T18:49:58.577Z",
+  "expires": "2021-01-22T18:49:58.577Z",
+  "scopes": [
+    "project:releng:services/tooltool/api/download/public",
+    "secrets:get:project/taskcluster/gecko/hgfingerprint",
+    "secrets:get:project/taskcluster/gecko/hgmointernal",
+    "docker-worker:feature:allowPtrace",
+    "docker-worker:cache:gecko-level-3-tooltool-cache-v3-8be03508dc6d71e4397d",
+    "docker-worker:cache:gecko-level-3-checkouts-v3-8be03508dc6d71e4397d"
+  ],
+  "payload": {
+    "supersederUrl": "https://coalesce.mozilla-releng.net/v1/list/3600/5/mozilla-esr68.8717d7343fcc0fa3ed48",
+    "onExitStatus": {
+      "retry": [
+        4,
+        72
+      ],
+      "purgeCaches": [
+        72
+      ]
+    },
+    "maxRunTime": 3600,
+    "image": {
+      "path": "public/image.tar.zst",
+      "type": "task-image",
+      "taskId": "bb8ePPJ7RLevA5oQ4NQKKw"
+    },
+    "cache": {
+      "gecko-level-3-checkouts-v3-8be03508dc6d71e4397d": "/builds/worker/checkouts",
+      "gecko-level-3-tooltool-cache-v3-8be03508dc6d71e4397d": "/builds/worker/tooltool-cache"
+    },
+    "artifacts": {
+      "public/logs/": {
+        "path": "/builds/worker/workspace/logs/",
+        "expires": "2021-01-22T18:49:58.577Z",
+        "type": "directory"
+      },
+      "public/test": {
+        "path": "/builds/worker/artifacts/",
+        "expires": "2021-01-22T18:49:58.577Z",
+        "type": "directory"
+      },
+      "public/test_info/": {
+        "path": "/builds/worker/workspace/build/blobber_upload_dir/",
+        "expires": "2021-01-22T18:49:58.577Z",
+        "type": "directory"
+      }
+    },
+    "command": [
+      "/builds/worker/bin/run-task",
+      "--",
+      "/builds/worker/bin/test-linux.sh",
+      "--reftest-suite=reftest",
+      "--disable-e10s",
+      "--allow-software-gl-layers",
+      "--total-chunk=8",
+      "--this-chunk=1",
+      "--download-symbols=true"
+    ],
+    "env": {
+      "NEED_PULSEAUDIO": "true",
+      "SCCACHE_DISABLE": "1",
+      "MOZ_NODE_PATH": "/usr/local/bin/node",
+      "TASKCLUSTER_CACHES": "/builds/worker/checkouts;/builds/worker/tooltool-cache",
+      "HG_STORE_PATH": "/builds/worker/checkouts/hg-store",
+      "MOZ_AUTOMATION": "1",
+      "GECKO_HEAD_REV": "910a7b4b5f2e92f00144e97e1ae7d1f29bf7d642",
+      "MOZHARNESS_URL": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/QWJKGHYwTVeNGbfpLCjPGQ/artifacts/public/build/mozharness.zip",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/QWJKGHYwTVeNGbfpLCjPGQ/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/QWJKGHYwTVeNGbfpLCjPGQ/artifacts/public/build/target.tar.bz2\"}",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/releases/mozilla-esr68",
+      "WORKING_DIR": "/builds/worker",
+      "GECKO_PATH": "/builds/worker/checkouts/gecko",
+      "TOOLTOOL_CACHE": "/builds/worker/tooltool-cache",
+      "ENABLE_E10S": "false",
+      "NEED_WINDOW_MANAGER": "true",
+      "TASKCLUSTER_VOLUMES": "/builds/worker/.cache;/builds/worker/checkouts;/builds/worker/tooltool-cache;/builds/worker/workspace",
+      "MOZHARNESS_CONFIG": "unittests/linux_unittest.py remove_executables.py",
+      "MOZHARNESS_SCRIPT": "desktop_unittest.py",
+      "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
+      "MOZILLA_BUILD_URL": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/QWJKGHYwTVeNGbfpLCjPGQ/artifacts/public/build/target.tar.bz2"
+    },
+    "features": {
+      "taskclusterProxy": true,
+      "allowPtrace": true
+    }
+  },
+  "metadata": {
+    "owner": "ryanvm@gmail.com",
+    "source": "https://hg.mozilla.org/releases/mozilla-esr68/file/910a7b4b5f2e92f00144e97e1ae7d1f29bf7d642/taskcluster/ci/test",
+    "description": "Reftest run ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-esr68&revision=910a7b4b5f2e92f00144e97e1ae7d1f29bf7d642))",
+    "name": "test-linux32/debug-reftest-1proc-1"
+  },
+  "tags": {
+    "kind": "test",
+    "os": "linux",
+    "createdForUser": "ryanvm@gmail.com",
+    "retrigger": "true",
+    "label": "test-linux32/debug-reftest-1proc-1",
+    "test-type": "reftest",
+    "worker-implementation": "docker-worker"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579805271
+    },
+    "parent": "fyLj3h7PSz2q6ZjfQ544zg",
+    "chunks": {
+      "current": 1,
+      "total": 8
+    },
+    "suite": "reftest",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "R-1proc",
+      "collection": {
+        "debug": true
+      },
+      "machine": {
+        "platform": "linux32"
+      },
+      "groupName": "Reftests without e10s",
+      "tier": 1,
+      "symbol": "R1"
+    },
+    "treeherder-platform": "linux32/debug"
+  }
+}

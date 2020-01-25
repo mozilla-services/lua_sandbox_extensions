@@ -1,0 +1,34 @@
+{
+  "application": {
+    "name": "geckoview"
+  }, 
+  "framework": {
+    "name": "raptor"
+  }, 
+  "suites": [
+    {
+      "alertThreshold": 2.0, 
+      "lowerIsBetter": true, 
+      "name": "raptor-speedometer-geckoview-memory", 
+      "subtests": [
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": true, 
+          "name": "memory-foreground", 
+          "unit": "KB", 
+          "value": 193274
+        }, 
+        {
+          "alertThreshold": 2.0, 
+          "lowerIsBetter": true, 
+          "name": "memory-background", 
+          "unit": "KB", 
+          "value": 146727
+        }
+      ], 
+      "type": "memory", 
+      "unit": "KB", 
+      "value": 340001
+    }
+  ]
+}

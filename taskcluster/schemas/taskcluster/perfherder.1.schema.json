@@ -30,6 +30,9 @@
     "revision": {
       "type": "string"
     },
+    "runId": {
+      "type": "integer"
+    },
     "suites": {
       "items": {
         "additionalProperties": true,
@@ -146,6 +149,7 @@
   "required": [
     "time",
     "taskId",
+    "runId",
     "taskGroupId",
     "project",
     "framework",

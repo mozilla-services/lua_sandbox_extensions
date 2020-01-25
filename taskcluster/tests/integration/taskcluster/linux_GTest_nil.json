@@ -1,0 +1,143 @@
+{
+  "provisionerId": "gecko-t",
+  "workerType": "t-linux-xlarge",
+  "schedulerId": "gecko-level-1",
+  "taskGroupId": "T4DsDmsWQGKg_-5YkiO-Vw",
+  "dependencies": [
+    "AYnCa6KzTWazMBN2kvoK5A",
+    "XPyFE6UlRfOf-W1wrzQXBg"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.try.90a97ed47afc84336b085916293dde7953c1503f.479624"
+  ],
+  "priority": "very-low",
+  "retries": 5,
+  "created": "2020-01-23T16:10:40.723Z",
+  "deadline": "2020-01-24T16:10:40.723Z",
+  "expires": "2020-02-06T16:10:40.723Z",
+  "scopes": [
+    "secrets:get:project/taskcluster/gecko/hgfingerprint",
+    "secrets:get:project/taskcluster/gecko/hgmointernal",
+    "project:releng:services/tooltool/api/download/public",
+    "docker-worker:feature:allowPtrace",
+    "docker-worker:cache:gecko-level-1-checkouts-v3-75316e4022f196ea1700",
+    "docker-worker:cache:gecko-level-1-tooltool-cache-v3-75316e4022f196ea1700"
+  ],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        4,
+        72
+      ],
+      "purgeCaches": [
+        72
+      ]
+    },
+    "maxRunTime": 3600,
+    "image": {
+      "path": "public/image.tar.zst",
+      "type": "task-image",
+      "taskId": "AYnCa6KzTWazMBN2kvoK5A"
+    },
+    "cache": {
+      "gecko-level-1-tooltool-cache-v3-75316e4022f196ea1700": "/builds/worker/tooltool-cache",
+      "gecko-level-1-checkouts-v3-75316e4022f196ea1700": "/builds/worker/checkouts"
+    },
+    "artifacts": {
+      "public/logs/": {
+        "path": "/builds/worker/workspace/logs/",
+        "expires": "2020-02-06T16:10:40.723Z",
+        "type": "directory"
+      },
+      "public/test": {
+        "path": "/builds/worker/artifacts/",
+        "expires": "2020-02-06T16:10:40.723Z",
+        "type": "directory"
+      },
+      "public/test_info/": {
+        "path": "/builds/worker/workspace/build/blobber_upload_dir/",
+        "expires": "2020-02-06T16:10:40.723Z",
+        "type": "directory"
+      }
+    },
+    "command": [
+      "/builds/worker/bin/run-task",
+      "--fetch-hgfingerprint",
+      "--",
+      "/builds/worker/bin/test-linux.sh",
+      "--gtest-suite=gtest",
+      "--disable-e10s",
+      "--allow-software-gl-layers",
+      "--enable-webrender",
+      "--download-symbols=ondemand"
+    ],
+    "env": {
+      "MOZ_AUTOMATION": "1",
+      "TOOLTOOL_CACHE": "/builds/worker/tooltool-cache",
+      "MOZHARNESS_SCRIPT": "desktop_unittest.py",
+      "MOZ_NODE_PATH": "/usr/local/bin/node",
+      "HG_STORE_PATH": "/builds/worker/checkouts/hg-store",
+      "MOZILLA_BUILD_URL": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/XPyFE6UlRfOf-W1wrzQXBg/artifacts/public/build/target.tar.bz2",
+      "GECKO_PATH": "/builds/worker/checkouts/gecko",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/try",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/XPyFE6UlRfOf-W1wrzQXBg/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/XPyFE6UlRfOf-W1wrzQXBg/artifacts/public/build/target.tar.bz2\"}",
+      "SCCACHE_DISABLE": "1",
+      "GECKO_HEAD_REV": "90a97ed47afc84336b085916293dde7953c1503f",
+      "NEED_COMPIZ": "false",
+      "MOZ_SCM_LEVEL": "1",
+      "NEED_WINDOW_MANAGER": "true",
+      "MOZHARNESS_URL": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/XPyFE6UlRfOf-W1wrzQXBg/artifacts/public/build/mozharness.zip",
+      "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
+      "TASKCLUSTER_CACHES": "/builds/worker/checkouts;/builds/worker/tooltool-cache",
+      "TRY_COMMIT_MSG": "try: -b do -p all -u all -t none",
+      "TASKCLUSTER_UNTRUSTED_CACHES": "1",
+      "WORKING_DIR": "/builds/worker",
+      "NEED_PULSEAUDIO": "true",
+      "ENABLE_E10S": "false",
+      "TASKCLUSTER_VOLUMES": "/builds/worker/.cache;/builds/worker/checkouts;/builds/worker/tooltool-cache;/builds/worker/workspace",
+      "MOZHARNESS_CONFIG": "unittests/linux_unittest.py remove_executables.py"
+    },
+    "features": {
+      "taskclusterProxy": true,
+      "allowPtrace": true
+    }
+  },
+  "metadata": {
+    "owner": "jvarga@mozilla.com",
+    "source": "https://hg.mozilla.org/try/file/90a97ed47afc84336b085916293dde7953c1503f/taskcluster/ci/test",
+    "description": "GTests run ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=try&revision=90a97ed47afc84336b085916293dde7953c1503f))",
+    "name": "test-linux64-shippable-qr/opt-gtest-1proc"
+  },
+  "tags": {
+    "kind": "test",
+    "worker-implementation": "docker-worker",
+    "createdForUser": "jvarga@mozilla.com",
+    "retrigger": "true",
+    "label": "test-linux64-shippable-qr/opt-gtest-1proc",
+    "os": "linux"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579795642
+    },
+    "parent": "T4DsDmsWQGKg_-5YkiO-Vw",
+    "chunks": {
+      "current": 1,
+      "total": 1
+    },
+    "suite": "gtest",
+    "treeherder": {
+      "machine": {
+        "platform": "linux64-shippable-qr"
+      },
+      "tier": 1,
+      "symbol": "GTest",
+      "jobKind": "test",
+      "collection": {
+        "opt": true
+      }
+    },
+    "treeherder-platform": "linux64-shippable-qr/opt"
+  }
+}

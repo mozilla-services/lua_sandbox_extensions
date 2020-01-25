@@ -17,6 +17,7 @@ local err_msg = {
     }
 }
 
+local dh = {Fields = {exchange = "integration_test", filename = ""}}
 function process_message()
     local cnt = 0
     local fh = assert(io.open("tests.txt", "rb"))
@@ -24,7 +25,7 @@ function process_message()
         local jfh = assert(io.open(jfn, "rb"))
         local data = jfh:read("*a")
         jfh:close()
-        dh = jfn:sub(1, -6)
+        dh.Fields.filename = jfn:match("(.+)_pulse.json$")
         local ok, err = pcall(decode, data, dh)
         if (not ok or err) and send_decode_failures then
             err_msg.Payload = err

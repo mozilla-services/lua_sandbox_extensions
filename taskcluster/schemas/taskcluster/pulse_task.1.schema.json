@@ -11,6 +11,30 @@
   },
   "description": "Taskcluster resolved tasks: completed, failed, exception",
   "properties": {
+    "artifact": {
+      "additionalProperties": true,
+      "properties": {
+        "contentType": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "storageType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contentType",
+        "expires",
+        "name",
+        "storageType"
+      ],
+      "type": "object"
+    },
     "runId": {
       "maximum": 1000,
       "minimum": 0,
@@ -110,6 +134,9 @@
       ],
       "type": "object"
     },
+    "time": {
+      "type": "string"
+    },
     "version": {
       "type": "integer"
     },
@@ -121,9 +148,9 @@
     }
   },
   "required": [
-    "runId",
+    "time",
     "version"
   ],
-  "title": "task-resolved",
+  "title": "pulse-task",
   "type": "object"
 }

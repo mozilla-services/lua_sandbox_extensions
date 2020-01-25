@@ -1,9 +1,8 @@
-other_kitchen-sink_test.json
-open_block.json
-pulse_decode_error.json
-perfherder_parse.json
-perfherder_validation.json
-missing_task.json
-missing_log.json
-other_no_schema.json
-other_no_treeherder.json
+win_x_T_pulse.json
+osx_1_M_pulse.json
+android_sp-cm_Rap_pulse.json
+linux_R1_R-1proc_pulse.json
+linux_GTest_nil_pulse.json
+linux_B_Bpgo_pulse.json
+linux_ach_p_pulse.json
+win_X1_X_pulse.json

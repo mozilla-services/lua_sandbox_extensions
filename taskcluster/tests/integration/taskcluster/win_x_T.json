@@ -1,0 +1,115 @@
+{
+  "provisionerId": "gecko-t",
+  "workerType": "t-win7-32",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "FPYC9v-JQNOk25Zr7XWFrQ",
+  "dependencies": [
+    "Ym8EN1KkQTiFmhzNz_IGIw",
+    "IfO8GnrzRpSuGgrgReu-WA",
+    "FPYC9v-JQNOk25Zr7XWFrQ"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.autoland.332ffb5bdfba7acccc2c8353d75930d648d5d9ed.105832"
+  ],
+  "priority": "low",
+  "retries": 5,
+  "created": "2020-01-23T15:42:33.279Z",
+  "deadline": "2020-01-24T15:42:33.279Z",
+  "expires": "2021-01-22T15:42:33.279Z",
+  "scopes": [
+    "generic-worker:os-group:gecko-t/t-win7-32/Administrators"
+  ],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        1073807364,
+        3221225786,
+        4
+      ]
+    },
+    "env": {
+      "SCCACHE_DISABLE": "1",
+      "GECKO_HEAD_REV": "332ffb5bdfba7acccc2c8353d75930d648d5d9ed",
+      "MOZ_SCM_LEVEL": "3",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/IfO8GnrzRpSuGgrgReu-WA/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/IfO8GnrzRpSuGgrgReu-WA/artifacts/public/build/target.zip\"}",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/integration/autoland",
+      "MOZ_AUTOMATION": "1"
+    },
+    "artifacts": [
+      {
+        "path": "logs",
+        "type": "directory",
+        "name": "public/logs"
+      },
+      {
+        "path": "build/blobber_upload_dir",
+        "type": "directory",
+        "name": "public/test_info"
+      }
+    ],
+    "maxRunTime": 3600,
+    "command": [
+      "C:/mozilla-build/python3/python3.exe run-task -- c:\\mozilla-build\\python\\python.exe -u mozharness\\scripts\\talos_script.py --cfg mozharness\\configs\\talos\\windows_vm_config.py --suite=xperf --use-talos-json --add-option --setpref,gfx.direct2d.disabled=true --setpref=media.peerconnection.mtransport_process=false --setpref=network.process.enabled=false --download-symbols ondemand"
+    ],
+    "osGroups": [
+      "Administrators"
+    ],
+    "mounts": [
+      {
+        "content": {
+          "artifact": "public/build/mozharness.zip",
+          "taskId": "IfO8GnrzRpSuGgrgReu-WA"
+        },
+        "directory": ".",
+        "format": "zip"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/integration/autoland/raw-file/332ffb5bdfba7acccc2c8353d75930d648d5d9ed/taskcluster/scripts/run-task"
+        },
+        "file": "./run-task"
+      }
+    ]
+  },
+  "metadata": {
+    "owner": "ccoroiu@mozilla.com",
+    "source": "https://hg.mozilla.org/integration/autoland/file/332ffb5bdfba7acccc2c8353d75930d648d5d9ed/taskcluster/ci/test",
+    "description": "Talos xperf ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=autoland&revision=332ffb5bdfba7acccc2c8353d75930d648d5d9ed))",
+    "name": "test-windows7-32-shippable/opt-talos-xperf-e10s"
+  },
+  "tags": {
+    "kind": "test",
+    "os": "windows",
+    "createdForUser": "ccoroiu@mozilla.com",
+    "retrigger": "true",
+    "label": "test-windows7-32-shippable/opt-talos-xperf-e10s",
+    "test-type": "talos",
+    "worker-implementation": "generic-worker"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579793097
+    },
+    "parent": "Ym8EN1KkQTiFmhzNz_IGIw",
+    "chunks": {
+      "current": 1,
+      "total": 1
+    },
+    "suite": "talos",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "T",
+      "collection": {
+        "opt": true
+      },
+      "machine": {
+        "platform": "windows7-32-shippable"
+      },
+      "groupName": "Talos performance tests",
+      "tier": 1,
+      "symbol": "x"
+    },
+    "treeherder-platform": "windows7-32-shippable/opt"
+  }
+}

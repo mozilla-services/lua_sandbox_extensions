@@ -1,0 +1,141 @@
+{
+  "provisionerId": "releng-hardware",
+  "workerType": "gecko-t-osx-1014",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "X6ZNelySTNuuZD5DrOt6Dw",
+  "dependencies": [
+    "YK_GITtvS4G3X__07F2gXQ"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.mozilla-release.ac4cb8731cb17938ddd8cdda78b8ed83eb14be53.2245",
+    "coalesce.v1.mozilla-release.9c7f6d1419b97c75ad96"
+  ],
+  "priority": "highest",
+  "retries": 5,
+  "created": "2020-01-23T16:56:37.899Z",
+  "deadline": "2020-01-24T16:56:37.899Z",
+  "expires": "2021-01-22T16:56:37.899Z",
+  "scopes": [],
+  "payload": {
+    "supersederUrl": "https://coalesce.mozilla-releng.net/v1/list/3600/5/mozilla-release.9c7f6d1419b97c75ad96",
+    "onExitStatus": {
+      "retry": [
+        4
+      ]
+    },
+    "maxRunTime": 5400,
+    "artifacts": [
+      {
+        "path": "logs",
+        "type": "directory",
+        "name": "public/logs"
+      },
+      {
+        "path": "build/blobber_upload_dir",
+        "type": "directory",
+        "name": "public/test_info"
+      }
+    ],
+    "command": [
+      [
+        "chmod",
+        "+x",
+        "run-task"
+      ],
+      [
+        "/usr/local/bin/python3",
+        "run-task",
+        "--",
+        "/usr/local/bin/python2",
+        "-u",
+        "mozharness/scripts/desktop_unittest.py",
+        "--cfg",
+        "mozharness/configs/unittests/mac_unittest.py",
+        "--mochitest-suite=mochitest-plain",
+        "--setpref=media.peerconnection.mtransport_process=false",
+        "--setpref=network.process.enabled=false",
+        "--download-symbols",
+        "true",
+        "--total-chunk=5",
+        "--this-chunk=1"
+      ]
+    ],
+    "env": {
+      "LANG": "en_US.UTF-8",
+      "XPCOM_DEBUG_BREAK": "warn",
+      "SHELL": "/bin/bash",
+      "MOZ_NO_REMOTE": "1",
+      "MOZ_HIDE_RESULTS_TABLE": "1",
+      "GECKO_HEAD_REV": "ac4cb8731cb17938ddd8cdda78b8ed83eb14be53",
+      "XPC_SERVICE_NAME": "0",
+      "SCCACHE_DISABLE": "1",
+      "XPC_FLAGS": "0x0",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/YK_GITtvS4G3X__07F2gXQ/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/YK_GITtvS4G3X__07F2gXQ/artifacts/public/build/target.dmg\"}",
+      "MOZ_SCM_LEVEL": "3",
+      "MOZ_AUTOMATION": "1",
+      "LC_ALL": "en_US.UTF-8",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/releases/mozilla-release",
+      "PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NO_FAIL_ON_TEST_ERRORS": "1",
+      "IDLEIZER_DISABLE_SHUTDOWN": "true",
+      "MOZ_NODE_PATH": "/usr/local/bin/node"
+    },
+    "mounts": [
+      {
+        "directory": ".",
+        "content": {
+          "taskId": "YK_GITtvS4G3X__07F2gXQ",
+          "artifact": "public/build/mozharness.zip"
+        },
+        "format": "zip"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/releases/mozilla-release/raw-file/ac4cb8731cb17938ddd8cdda78b8ed83eb14be53/taskcluster/scripts/run-task"
+        },
+        "file": "./run-task"
+      }
+    ]
+  },
+  "metadata": {
+    "owner": "ccoroiu@mozilla.com",
+    "source": "https://hg.mozilla.org/releases/mozilla-release/file/ac4cb8731cb17938ddd8cdda78b8ed83eb14be53/taskcluster/ci/test",
+    "description": "Mochitest plain run ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-release&revision=ac4cb8731cb17938ddd8cdda78b8ed83eb14be53))",
+    "name": "test-macosx1014-64/debug-mochitest-e10s-1"
+  },
+  "tags": {
+    "kind": "test",
+    "os": "macosx",
+    "createdForUser": "ccoroiu@mozilla.com",
+    "retrigger": "true",
+    "label": "test-macosx1014-64/debug-mochitest-e10s-1",
+    "test-type": "mochitest",
+    "worker-implementation": "generic-worker"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579798469
+    },
+    "parent": "X6ZNelySTNuuZD5DrOt6Dw",
+    "chunks": {
+      "current": 1,
+      "total": 5
+    },
+    "suite": "mochitest-plain",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "M",
+      "collection": {
+        "debug": true
+      },
+      "machine": {
+        "platform": "macosx1014-64"
+      },
+      "groupName": "Mochitests",
+      "tier": 1,
+      "symbol": "1"
+    },
+    "treeherder-platform": "macosx1014-64/debug"
+  }
+}
