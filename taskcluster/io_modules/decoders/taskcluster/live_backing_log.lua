@@ -1070,7 +1070,7 @@ function decode(data, dh, mutable)
     local pj = cjson.decode(data)
     inject_pulse_task(pj) -- forward all task related pulse messages to BigQuery
 
-    local ex = dh.Fields.exchange
+    local ex = dh.Fields.exchange.value[1]
     if ex == "exchange/taskcluster-queue/v1/task-completed"
     or ex == "exchange/taskcluster-queue/v1/task-failed"
     or ex == "exchange/taskcluster-queue/v1/task-exception" then

@@ -17,7 +17,7 @@ local err_msg = {
     }
 }
 
-local dh = {Fields = {exchange = "integration_test", filename = ""}}
+local dh = {Fields = {exchange = {value = {"integration_test"}}, filename = ""}}
 function process_message()
     local cnt = 0
     local fh = assert(io.open("tests.txt", "rb"))
