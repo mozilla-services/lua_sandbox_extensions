@@ -117,8 +117,7 @@ local md_gh_eop         = l.P"/" + (".git" * l.P"/"^-1) + l.P(-1)
 local md_gh_project     = l.C((l.P(1) - md_gh_eop)^1)
 local md_gh_api         = l.C("api.github.com") * "/repos/" * md_any * md_gh_project
 local md_gh             = l.C("github.com") * "/" * md_any * md_gh_project * md_gh_eop * (l.P"raw" * "/" * md_revision)^-1
-local md_hgpush_hook    = l.C("tools.taskcluster.net/hooks/hg-push") * "/" * l.Cc(nil) * md_any
-local md_source         = md_protocol * (md_hg + md_gh + md_gh_api + md_hgpush_hook + l.C(l.P(1)^1))
+local md_source         = md_protocol * (md_hg + md_gh + md_gh_api + l.C(l.P(1)^1))
 
 
 local function add_fields(msg, fields)
@@ -328,9 +327,9 @@ local function perfherder_decode(g, b, json)
     j.framework     = j.framework.name
     j.groupSymbol   = b.base_msg.Fields.groupSymbol
     j.platform      = b.base_msg.Fields.platform
-    j.project       = b.base_msg.Fields.project
+    j.project       = b.base_msg.Fields.project or "" -- non treeherder metrics
     j.pushId        = b.base_msg.Fields.pushId
-    j.revision      = b.base_msg.Fields.revision
+    j.revision      = b.base_msg.Fields.revision or "" -- non treeherder metrics
     j.symbol        = b.base_msg.Fields.symbol
     j.taskGroupId   = b.base_msg.Fields.taskGroupId
     j.taskId        = b.base_msg.Fields.taskId
@@ -774,15 +773,20 @@ local function get_base_msg(dh, mutable, pj, td)
                 f["projectOwner"] = owner
                 f["project"]      = project
                 f["revision"]     = revision
-
-                if origin:match("^tools%.taskcluster%.net/hooks/#project%-releng") then
-                    local td_payload_enc  = cjson.encode(td.payload)
-                    f["project"] = td_payload_enc:match("%-%-project=([^%s]+)")
-                end
             end
         end
     end
 
+    if not f.project then
+        local c = td.payload.command
+        if type(c) == "table" then
+            for i,v in ipairs(c) do
+                if type(v) == "string" then
+                    f.project = v:match('%-%-project=([^%s"]+)')
+                end
+            end
+        end
+    end
 
     local th = td.extra.treeherder
     if type(th) == "table" then
@@ -803,6 +807,7 @@ local function get_base_msg(dh, mutable, pj, td)
             end
         end
     end
+
     return msg
 end
 
@@ -1069,7 +1074,9 @@ function decode(data, dh, mutable)
     if ex == "exchange/taskcluster-queue/v1/task-completed"
     or ex == "exchange/taskcluster-queue/v1/task-failed"
     or ex == "exchange/taskcluster-queue/v1/task-exception" then
-        local fetch_log = ex ~= "exchange/taskcluster-queue/v1/task-exception" and pj.status.provisionerId ~= "scriptworker-k8s"
+        local fetch_log = ex ~= "exchange/taskcluster-queue/v1/task-exception"
+        and pj.status.provisionerId ~= "scriptworker-k8s"
+        and not (pj.task and pj.task.tags.kind == "pr")
         local td, lfh = get_artifacts(pj, fetch_log)
         if not td and lfh:match("^curl") then
             td, lfh = get_artifacts(pj, fetch_log)

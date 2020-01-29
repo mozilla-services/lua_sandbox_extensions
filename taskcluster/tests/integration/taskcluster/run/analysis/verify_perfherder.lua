@@ -18,7 +18,9 @@ local results = {
 {framework = 'job_resource_usage', taskId = 'CX96USXgR3CvJWA2ZsBYrA'},
 {framework = 'vcs', taskId = 'SSXGXyVIRQGQqVKGym90mQ'},
 {framework = 'build_metrics', taskId = 'SSXGXyVIRQGQqVKGym90mQ'},
-{framework = 'job_resource_usage', taskId = 'AuIAPvWhSiyp0eUh5vAdCw'}
+{framework = 'job_resource_usage', taskId = 'AuIAPvWhSiyp0eUh5vAdCw'},
+{framework = 'vcs', taskId = 'ZYFKUNR5RhmrBAq4Z4KB9g'}
+
 }
 
 local cnt = 0

@@ -1,0 +1,90 @@
+{
+  "provisionerId": "mobile-1",
+  "workerType": "b-linux-large",
+  "schedulerId": "mobile-level-1",
+  "taskGroupId": "UKJ5YAiQR16SSYRGAQwx_Q",
+  "dependencies": [
+    "G5cOdnhIQMCMRouXVp2NQg",
+    "Gr63FDGVRpWCvlaSX_xrDA",
+    "ItSxCcY9TjOUbyewhItvcA",
+    "LX9x-Ru2SR23yDsMggyIIA",
+    "MuxppimOR4SUGH-5tk81ig",
+    "OqPAIhUsT2CHU9yYPb8lgw",
+    "PVd06HsLRaCqQIWNLBk_gQ",
+    "U1N5sh-oSq-nHeqdw0Gatg",
+    "VvDl5GMgQI6GOD-kk-Mt-A",
+    "aP4nedQnTAWQl2fKawVGwg",
+    "cODXFhPNTTC_eEy2rG3DDQ"
+  ],
+  "requires": "all-resolved",
+  "routes": [
+    "checks"
+  ],
+  "priority": "highest",
+  "retries": 5,
+  "created": "2020-01-28T15:32:30.795Z",
+  "deadline": "2020-01-29T15:32:30.795Z",
+  "expires": "2020-02-25T15:32:30.795Z",
+  "scopes": [],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        72
+      ],
+      "purgeCaches": [
+        72
+      ]
+    },
+    "maxRunTime": 600,
+    "image": {
+      "path": "public/image.tar.zst",
+      "type": "task-image",
+      "taskId": "aP4nedQnTAWQl2fKawVGwg"
+    },
+    "command": [
+      "/usr/local/bin/run-task",
+      "--mobile-checkout=/builds/worker/checkouts/src/",
+      "--fetch-hgfingerprint",
+      "--",
+      "bash",
+      "-cx",
+      "/builds/worker/checkouts/src/taskcluster/scripts/are_dependencies_completed.py G5cOdnhIQMCMRouXVp2NQg MuxppimOR4SUGH-5tk81ig U1N5sh-oSq-nHeqdw0Gatg PVd06HsLRaCqQIWNLBk_gQ Gr63FDGVRpWCvlaSX_xrDA LX9x-Ru2SR23yDsMggyIIA ItSxCcY9TjOUbyewhItvcA VvDl5GMgQI6GOD-kk-Mt-A OqPAIhUsT2CHU9yYPb8lgw cODXFhPNTTC_eEy2rG3DDQ"
+    ],
+    "env": {
+      "VCS_PATH": "/builds/worker/checkouts/src",
+      "HG_STORE_PATH": "/builds/worker/checkouts/hg-store",
+      "MOBILE_HEAD_REF": "issue-5463",
+      "REPOSITORIES": "{\"mobile\": \"android-components\"}",
+      "SCCACHE_DISABLE": "1",
+      "MOZ_SCM_LEVEL": "1",
+      "MOBILE_BASE_REPOSITORY": "https://github.com/mozilla-mobile/android-components",
+      "MOBILE_REPOSITORY_TYPE": "git",
+      "TASKCLUSTER_VOLUMES": "/builds/worker/.cache;/builds/worker/checkouts",
+      "MOBILE_HEAD_REV": "52ae33d49757b27e8f48fcfb8261be3fba41a26c",
+      "MOBILE_HEAD_REPOSITORY": "https://github.com/csadilek/android-components",
+      "MOZ_AUTOMATION": "1"
+    },
+    "features": {
+      "taskclusterProxy": true
+    }
+  },
+  "metadata": {
+    "owner": "csadilek@users.noreply.github.com",
+    "source": "https://github.com/csadilek/android-components/blob/52ae33d49757b27e8f48fcfb8261be3fba41a26c/taskcluster/ci/complete",
+    "description": "PR Summary Task",
+    "name": "complete-pr-2"
+  },
+  "tags": {
+    "os": "linux",
+    "createdForUser": "csadilek@users.noreply.github.com",
+    "worker-implementation": "docker-worker",
+    "kind": "complete",
+    "label": "complete-pr-2"
+  },
+  "extra": {
+    "index": {
+      "rank": 0
+    },
+    "parent": "UKJ5YAiQR16SSYRGAQwx_Q"
+  }
+}

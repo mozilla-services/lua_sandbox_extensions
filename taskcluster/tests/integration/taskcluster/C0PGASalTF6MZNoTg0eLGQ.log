@@ -1,0 +1,41 @@
+[taskcluster 2020-01-28 15:58:24.367Z] Task ID: C0PGASalTF6MZNoTg0eLGQ
+[taskcluster 2020-01-28 15:58:24.367Z] Worker ID: i-05e506b504c6a1106
+[taskcluster 2020-01-28 15:58:24.367Z] Worker Group: aws
+[taskcluster 2020-01-28 15:58:24.367Z] Worker Node Type: c5d.4xlarge
+[taskcluster 2020-01-28 15:58:24.367Z] Worker Type: b-linux-large
+[taskcluster 2020-01-28 15:58:24.367Z] Public IP: 18.207.214.245
+[taskcluster 2020-01-28 15:58:24.367Z] Hostname: ip-10-145-62-184
+
+[taskcluster 2020-01-28 15:58:25.033Z] Image 'public/image.tar.zst' from task 'aP4nedQnTAWQl2fKawVGwg' loaded.  Using image ID sha256:a5b0e998bbc34f193df0854e76f11d5ff1b5cf7d531abbca651cc91c4be0e315.
+[taskcluster 2020-01-28 15:58:25.105Z] === Task Starting ===
+[setup 2020-01-28T15:58:25.533Z] run-task started in /builds/worker
+[volume 2020-01-28T15:58:25.534Z] changing ownership of volume /builds/worker/.cache to 1000:1000
+[volume 2020-01-28T15:58:25.534Z] changing ownership of volume /builds/worker/checkouts to 1000:1000
+[setup 2020-01-28T15:58:25.534Z] running as worker:worker
+[vcs 2020-01-28T15:58:25.535Z] executing ['git', 'clone', 'https://github.com/mozilla-mobile/android-components', '/builds/worker/checkouts/src']
+[vcs 2020-01-28T15:58:25.536Z] Cloning into '/builds/worker/checkouts/src'...
+[vcs 2020-01-28T15:58:28.265Z] executing ['git', 'fetch', 'https://github.com/csadilek/android-components', 'issue-5463']
+[vcs 2020-01-28T15:58:28.501Z] From https://github.com/csadilek/android-components
+[vcs 2020-01-28T15:58:28.501Z]  * branch                issue-5463 -> FETCH_HEAD
+[vcs 2020-01-28T15:58:28.512Z] executing ['git', 'checkout', '-f', '52ae33d49757b27e8f48fcfb8261be3fba41a26c']
+[vcs 2020-01-28T15:58:28.777Z] Note: checking out '52ae33d49757b27e8f48fcfb8261be3fba41a26c'.
+[vcs 2020-01-28T15:58:28.778Z] 
+[vcs 2020-01-28T15:58:28.778Z] You are in 'detached HEAD' state. You can look around, make experimental
+[vcs 2020-01-28T15:58:28.778Z] changes and commit them, and you can discard any commits you make in this
+[vcs 2020-01-28T15:58:28.778Z] state without impacting any branches by performing another checkout.
+[vcs 2020-01-28T15:58:28.778Z] 
+[vcs 2020-01-28T15:58:28.778Z] If you want to create a new branch to retain commits you create, you may
+[vcs 2020-01-28T15:58:28.778Z] do so (now or later) by using -b with the checkout command again. Example:
+[vcs 2020-01-28T15:58:28.778Z] 
+[vcs 2020-01-28T15:58:28.778Z]   git checkout -b <new-branch-name>
+[vcs 2020-01-28T15:58:28.778Z] 
+[vcs 2020-01-28T15:58:28.778Z] HEAD is now at 52ae33d49 Closes #5463: Notify GV web ext. controller when active session changes
+[vcs 2020-01-28T15:58:28.778Z] executing ['git', 'clean', '-xdff']
+[vcs 2020-01-28T15:58:28.822Z] TinderboxPrint:<a href='https://github.com/csadilek/android-components/commit/52ae33d49757b27e8f48fcfb8261be3fba41a26c' title='Built from android-components commit 52ae33d49757b27e8f48fcfb8261be3fba41a26c'>52ae33d49757b27e8f48fcfb8261be3fba41a26c</a>
+[task 2020-01-28T15:58:28.822Z] executing ['bash', '-cx', '/builds/worker/checkouts/src/taskcluster/scripts/are_dependencies_completed.py G5cOdnhIQMCMRouXVp2NQg MuxppimOR4SUGH-5tk81ig U1N5sh-oSq-nHeqdw0Gatg PVd06HsLRaCqQIWNLBk_gQ Gr63FDGVRpWCvlaSX_xrDA LX9x-Ru2SR23yDsMggyIIA ItSxCcY9TjOUbyewhItvcA VvDl5GMgQI6GOD-kk-Mt-A OqPAIhUsT2CHU9yYPb8lgw cODXFhPNTTC_eEy2rG3DDQ']
+[task 2020-01-28T15:58:28.824Z] + /builds/worker/checkouts/src/taskcluster/scripts/are_dependencies_completed.py G5cOdnhIQMCMRouXVp2NQg MuxppimOR4SUGH-5tk81ig U1N5sh-oSq-nHeqdw0Gatg PVd06HsLRaCqQIWNLBk_gQ Gr63FDGVRpWCvlaSX_xrDA LX9x-Ru2SR23yDsMggyIIA ItSxCcY9TjOUbyewhItvcA VvDl5GMgQI6GOD-kk-Mt-A OqPAIhUsT2CHU9yYPb8lgw cODXFhPNTTC_eEy2rG3DDQ
+[task 2020-01-28T15:58:30.432Z] Fetching status of 10 dependencies...
+[task 2020-01-28T15:58:30.432Z] Statuses fetched.
+[task 2020-01-28T15:58:30.432Z] All dependencies are completed. Reporting a green task!
+[taskcluster 2020-01-28 15:58:30.756Z] === Task Finished ===
+[taskcluster 2020-01-28 15:58:30.756Z] Successful task run with exit code: 0 completed in 6.389 seconds
