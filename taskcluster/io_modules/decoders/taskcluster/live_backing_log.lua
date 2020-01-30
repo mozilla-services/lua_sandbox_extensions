@@ -849,15 +849,14 @@ local default_schema = new_log({new_task({perfherder})})
 local schemas_map = {
     ["release-update-verify"]   = default_schema,
     ["source-test"]             = default_schema,
-    build                       = new_log({new_task({new_mozharness({perfherder,package_tests}),perfherder})}),
+    build                       = new_log({new_task({new_mozharness({package_tests,perfherder}),perfherder})}),
     gtest                       = new_log({new_task({new_mozharness({test_gtest,perfherder}),perfherder})}),
 --    sm                          = new_log({new_task({new_mozharness({test_sm}),perfherder})}),
-    mochitest                   = new_log({new_task({new_mozharness({test,gecko}),perfherder})}),
+    mochitest                   = new_log({new_task({new_mozharness({test,gecko,perfherder}),perfherder})}),
     partials                    = new_log({new_task()}),
-    raptor                      = new_log({new_task({new_mozharness({raptor_recording_date})})}), -- the perfherder data now comes 100% from the artifacts (less efficient but more consistent)
-    reftest                     = new_log({new_task({new_mozharness({test_ref}),perfherder})}),
-    talos                       = new_log({new_task({new_mozharness({test,perfherder})})}),
-    test                        = new_log({new_task({new_mozharness({test}),perfherder})}),
+    raptor                      = new_log({new_task({new_mozharness({raptor_recording_date,perfherder}),perfherder})}), -- the perfherder data now comes 100% from the artifacts (less efficient but more consistent)
+    reftest                     = new_log({new_task({new_mozharness({test_ref,perfherder}),perfherder})}),
+    test                        = new_log({new_task({new_mozharness({test,perfherder}),perfherder})}),
 }
 local function get_parser(f)
     local s

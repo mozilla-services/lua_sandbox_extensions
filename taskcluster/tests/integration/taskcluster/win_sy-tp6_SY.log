@@ -1,0 +1,1190 @@
+[taskcluster 2020-01-23T17:45:39.139Z] Worker Type (gecko-t/t-win10-64-gpu-s) settings:
+[taskcluster 2020-01-23T17:45:39.139Z]   {
+[taskcluster 2020-01-23T17:45:39.139Z]     "aws": {
+[taskcluster 2020-01-23T17:45:39.139Z]       "availability-zone": "us-east-1c",
+[taskcluster 2020-01-23T17:45:39.139Z]       "image": "ami-09fcb7d01a8cb362f",
+[taskcluster 2020-01-23T17:45:39.139Z]       "instance-id": "i-08df12eeb08a10759",
+[taskcluster 2020-01-23T17:45:39.139Z]       "instance-type": "g3s.xlarge",
+[taskcluster 2020-01-23T17:45:39.139Z]       "local-ipv4": "10.145.54.186",
+[taskcluster 2020-01-23T17:45:39.139Z]       "public-hostname": "ec2-3-94-184-39.compute-1.amazonaws.com",
+[taskcluster 2020-01-23T17:45:39.139Z]       "public-ipv4": "3.94.184.39",
+[taskcluster 2020-01-23T17:45:39.139Z]       "region": "us-east-1"
+[taskcluster 2020-01-23T17:45:39.139Z]     },
+[taskcluster 2020-01-23T17:45:39.139Z]     "config": {
+[taskcluster 2020-01-23T17:45:39.139Z]       "deploymentId": "f37dd7ee1cae"
+[taskcluster 2020-01-23T17:45:39.139Z]     },
+[taskcluster 2020-01-23T17:45:39.139Z]     "generic-worker": {
+[taskcluster 2020-01-23T17:45:39.139Z]       "engine": "multiuser",
+[taskcluster 2020-01-23T17:45:39.139Z]       "go-arch": "amd64",
+[taskcluster 2020-01-23T17:45:39.139Z]       "go-os": "windows",
+[taskcluster 2020-01-23T17:45:39.139Z]       "go-version": "go1.10.8",
+[taskcluster 2020-01-23T17:45:39.139Z]       "release": "https://github.com/taskcluster/generic-worker/releases/tag/v16.5.1",
+[taskcluster 2020-01-23T17:45:39.139Z]       "revision": "02bc4c9cd7247a7e01bc5a7e3395e2f5c24ff24d",
+[taskcluster 2020-01-23T17:45:39.139Z]       "source": "https://github.com/taskcluster/generic-worker/commits/02bc4c9cd7247a7e01bc5a7e3395e2f5c24ff24d",
+[taskcluster 2020-01-23T17:45:39.139Z]       "version": "16.5.1"
+[taskcluster 2020-01-23T17:45:39.139Z]     }
+[taskcluster 2020-01-23T17:45:39.139Z]   }
+[taskcluster 2020-01-23T17:45:39.141Z] Task ID: B02j0uS8SOGRfB4TrE2q4w
+[taskcluster 2020-01-23T17:45:39.141Z] === Task Starting ===
+[taskcluster 2020-01-23T17:45:40.248Z] Uploading redirect artifact public/logs/live.log to URL https://firefoxci-websocktunnel.services.mozilla.com/aws.i-08df12eeb08a10759.60099/log/cRQLFHKqQ_a-m6G-ppD9cw with mime type "text/plain; charset=utf-8" and expiry 2020-01-23T20:00:39.942Z
+[taskcluster 2020-01-23T17:45:40.321Z] [mounts] Downloading task VyxJsCV5SFKVX5TP-gamdA artifact public/build/mozharness.zip to Z:\downloads\RjfHv49gQHKiHi8R6fUc4A
+[taskcluster 2020-01-23T17:45:40.851Z] [mounts] Downloaded 2343314 bytes with SHA256 782476feb5a2fd06bc9ad4f07c7852977e8b62219827a0177c0527c8b0185ff2 from task VyxJsCV5SFKVX5TP-gamdA artifact public/build/mozharness.zip to Z:\downloads\RjfHv49gQHKiHi8R6fUc4A
+[taskcluster:warn 2020-01-23T17:45:40.853Z] [mounts] Download Z:\downloads\RjfHv49gQHKiHi8R6fUc4A of task VyxJsCV5SFKVX5TP-gamdA artifact public/build/mozharness.zip has SHA256 782476feb5a2fd06bc9ad4f07c7852977e8b62219827a0177c0527c8b0185ff2 but task payload does not declare a required value, so content authenticity cannot be verified
+[taskcluster 2020-01-23T17:45:40.853Z] [mounts] Creating directory Z:\task_1579801334 with permissions 0700
+[taskcluster 2020-01-23T17:45:40.853Z] [mounts] Extracting zip file Z:\downloads\RjfHv49gQHKiHi8R6fUc4A to 'Z:\task_1579801334'
+[taskcluster 2020-01-23T17:45:41.151Z] [mounts] Granting task_1579801334 full control of directory 'Z:\task_1579801334'
+[taskcluster 2020-01-23T17:45:41.200Z] [mounts] Downloading url https://hg.mozilla.org/integration/autoland/raw-file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/scripts/run-task to Z:\downloads\GeE21iceQceIWoTg7EUXeg
+[taskcluster 2020-01-23T17:45:42.130Z] [mounts] Downloaded 32371 bytes with SHA256 75316e4022f196ea17001c070e413af6d1fde47c56e36760d55ddd3c14fd589d from url https://hg.mozilla.org/integration/autoland/raw-file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/scripts/run-task to Z:\downloads\GeE21iceQceIWoTg7EUXeg
+[taskcluster:warn 2020-01-23T17:45:42.130Z] [mounts] Download Z:\downloads\GeE21iceQceIWoTg7EUXeg of url https://hg.mozilla.org/integration/autoland/raw-file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/scripts/run-task has SHA256 75316e4022f196ea17001c070e413af6d1fde47c56e36760d55ddd3c14fd589d but task payload does not declare a required value, so content authenticity cannot be verified
+[taskcluster 2020-01-23T17:45:42.130Z] [mounts] Creating directory Z:\task_1579801334 with permissions 0700
+[taskcluster 2020-01-23T17:45:42.130Z] [mounts] Copying Z:\downloads\GeE21iceQceIWoTg7EUXeg to Z:\task_1579801334\run-task
+[taskcluster 2020-01-23T17:45:42.142Z] [mounts] Granting task_1579801334 full control of file 'Z:\task_1579801334\run-task'
+[taskcluster 2020-01-23T17:45:42.157Z] Executing command 0: C:/mozilla-build/python3/python3.exe run-task -- c:\mozilla-build\python\python.exe -u mozharness\scripts\awsy_script.py --cfg mozharness\configs\awsy\taskcluster_windows_config.py --tp6 --setpref=media.peerconnection.mtransport_process=false --setpref=network.process.enabled=false --enable-webrender --setpref=layers.d3d11.enable-blacklist=false --download-symbols ondemand
+
+Z:\task_1579801334>C:/mozilla-build/python3/python3.exe run-task -- c:\mozilla-build\python\python.exe -u mozharness\scripts\awsy_script.py --cfg mozharness\configs\awsy\taskcluster_windows_config.py --tp6 --setpref=media.peerconnection.mtransport_process=false --setpref=network.process.enabled=false --enable-webrender --setpref=layers.d3d11.enable-blacklist=false --download-symbols ondemand 
+[setup 2020-01-23T17:45:42.587Z] run-task started in Z:\task_1579801334
+[task 2020-01-23T17:45:42.589Z] executing ['c:\\mozilla-build\\python\\python.exe', '-u', 'mozharness\\scripts\\awsy_script.py', '--cfg', 'mozharness\\configs\\awsy\\taskcluster_windows_config.py', '--tp6', '--setpref=media.peerconnection.mtransport_process=false', '--setpref=network.process.enabled=false', '--enable-webrender', '--setpref=layers.d3d11.enable-blacklist=false', '--download-symbols', 'ondemand']
+[task 2020-01-23T17:45:44.047Z] 17:45:44     INFO - ConsoleLogger online at 20200123 17:45:44Z in Z:\task_1579801334
+[task 2020-01-23T17:45:44.047Z] 17:45:44     INFO - Run as mozharness\scripts\awsy_script.py --cfg mozharness\configs\awsy\taskcluster_windows_config.py --tp6 --setpref=media.peerconnection.mtransport_process=false --setpref=network.process.enabled=false --enable-webrender --setpref=layers.d3d11.enable-blacklist=false --download-symbols ondemand
+[task 2020-01-23T17:45:44.047Z] 17:45:44     INFO - Dumping config to Z:\task_1579801334\logs\localconfig.json.
+[task 2020-01-23T17:45:44.050Z] 17:45:44     INFO - {'append_to_log': False,
+[task 2020-01-23T17:45:44.050Z] 17:45:44     INFO -  'base_work_dir': 'Z:\\task_1579801334',
+[task 2020-01-23T17:45:44.050Z] 17:45:44     INFO -  'code_coverage': False,
+[task 2020-01-23T17:45:44.050Z] 17:45:44     INFO -  'config_files': ('mozharness\\configs\\awsy\\taskcluster_windows_config.py',),
+[task 2020-01-23T17:45:44.050Z] 17:45:44     INFO -  'default_actions': ('clobber',
+[task 2020-01-23T17:45:44.050Z] 17:45:44     INFO -                      'download-and-extract',
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -                      'populate-webroot',
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -                      'create-virtualenv',
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -                      'install',
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -                      'run-tests'),
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -  'disable_ccov_upload': False,
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -  'dmd': False,
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -  'download_symbols': 'ondemand',
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -  'e10s': True,
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -  'enable_webrender': True,
+[task 2020-01-23T17:45:44.051Z] 17:45:44     INFO -  'exes': {'hg': 'C:\\Program Files\\Mercurial\\hg',
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -           'python': 'c:\\mozilla-build\\python\\python.exe'},
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -  'extra_prefs': ('media.peerconnection.mtransport_process=false',
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -                  'network.process.enabled=false',
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -                  'layers.d3d11.enable-blacklist=false'),
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -  'find_links': ('https://pypi.pub.build.mozilla.org/pub',),
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -  u'installer_url': u'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip',
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -  'java_code_coverage': False,
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -  'log_level': 'info',
+[task 2020-01-23T17:45:44.052Z] 17:45:44     INFO -  'log_to_console': True,
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'opt_config_files': (),
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'per_test_coverage': False,
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'pip_index': False,
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'test_about_blank': False,
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  u'test_packages_url': u'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json',
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'tp6': True,
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'verify': False,
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'virtualenv_path': 'venv',
+[task 2020-01-23T17:45:44.053Z] 17:45:44     INFO -  'volatile_config': {'actions': None, 'add_actions': None, 'no_actions': None},
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO -  'work_dir': 'build'}
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO - [mozharness: 2020-01-23 17:45:44.054000Z] Running clobber step.
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO - Running pre-action listener: _resource_record_pre_action
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO - Running main action method: clobber
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO - rmtree: Z:\task_1579801334\build
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO - retry: Calling _rmtree_windows with args: ('Z:\\task_1579801334\\build',), kwargs: {}, attempt #1
+[task 2020-01-23T17:45:44.054Z] 17:45:44     INFO - Running post-action listener: _resource_record_post_action
+[task 2020-01-23T17:45:44.055Z] 17:45:44     INFO - [mozharness: 2020-01-23 17:45:44.054000Z] Finished clobber step (success)
+[task 2020-01-23T17:45:44.055Z] 17:45:44     INFO - [mozharness: 2020-01-23 17:45:44.055000Z] Running download-and-extract step.
+[task 2020-01-23T17:45:44.055Z] 17:45:44     INFO - Running pre-action listener: _resource_record_pre_action
+[task 2020-01-23T17:45:44.055Z] 17:45:44     INFO - Running main action method: download_and_extract
+[task 2020-01-23T17:45:44.055Z] 17:45:44     INFO - mkdir: Z:\task_1579801334\build\tests
+[task 2020-01-23T17:45:44.057Z] 17:45:44     INFO - Downloading https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json to Z:\task_1579801334\build\target.test_packages.json
+[task 2020-01-23T17:45:44.057Z] 17:45:44     INFO - retry: Calling _download_file with args: (), kwargs: {'url': u'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json', 'file_name': u'Z:\\task_1579801334\\build\\target.test_packages.json'}, attempt #1
+[task 2020-01-23T17:45:44.849Z] 17:45:44     INFO - Downloaded 1412 bytes.
+[task 2020-01-23T17:45:44.849Z] 17:45:44     INFO - Reading from file Z:\task_1579801334\build\target.test_packages.json
+[task 2020-01-23T17:45:44.849Z] 17:45:44     INFO - Downloading packages: [u'target.common.tests.tar.gz', u'target.awsy.tests.tar.gz'] for test suite categories: ['common', 'awsy']
+[task 2020-01-23T17:45:44.849Z] 17:45:44     INFO - Downloading and extracting to Z:\task_1579801334\build\tests these dirs * from https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.common.tests.tar.gz
+[task 2020-01-23T17:45:44.850Z] 17:45:44     INFO - retry: Calling fetch_url_into_memory with args: (), kwargs: {'url': u'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.common.tests.tar.gz'}, attempt #1
+[task 2020-01-23T17:45:44.850Z] 17:45:44     INFO - Fetch https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.common.tests.tar.gz into memory
+[task 2020-01-23T17:45:45.500Z] 17:45:45     INFO - Content-Length response header: 24378481
+[task 2020-01-23T17:45:45.500Z] 17:45:45     INFO - Bytes received: 24378481
+[task 2020-01-23T17:46:25.431Z] 17:46:25     INFO - Downloading and extracting to Z:\task_1579801334\build\tests these dirs * from https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.awsy.tests.tar.gz
+[task 2020-01-23T17:46:25.431Z] 17:46:25     INFO - retry: Calling fetch_url_into_memory with args: (), kwargs: {'url': u'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.awsy.tests.tar.gz'}, attempt #1
+[task 2020-01-23T17:46:25.431Z] 17:46:25     INFO - Fetch https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.awsy.tests.tar.gz into memory
+[task 2020-01-23T17:46:26.187Z] 17:46:26     INFO - Content-Length response header: 21153
+[task 2020-01-23T17:46:26.187Z] 17:46:26     INFO - Bytes received: 21153
+[task 2020-01-23T17:46:26.203Z] 17:46:26     INFO - Downloading https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip to Z:\task_1579801334\build\target.zip
+[task 2020-01-23T17:46:26.203Z] 17:46:26     INFO - retry: Calling _download_file with args: (), kwargs: {'url': u'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip', 'file_name': u'Z:\\task_1579801334\\build\\target.zip'}, attempt #1
+[task 2020-01-23T17:46:27.310Z] 17:46:27     INFO - Downloaded 74105172 bytes.
+[task 2020-01-23T17:46:27.880Z] 17:46:27     INFO - Running post-action listener: _resource_record_post_action
+[task 2020-01-23T17:46:27.880Z] 17:46:27     INFO - Running post-action listener: find_tests_for_coverage
+[task 2020-01-23T17:46:27.880Z] 17:46:27     INFO - Running post-action listener: find_tests_for_verification
+[task 2020-01-23T17:46:27.880Z] 17:46:27     INFO - Running post-action listener: set_extra_try_arguments
+[task 2020-01-23T17:46:27.880Z] 17:46:27     INFO - Running post-action listener: setup_coverage_tools
+[task 2020-01-23T17:46:27.881Z] 17:46:27     INFO - [mozharness: 2020-01-23 17:46:27.880000Z] Finished download-and-extract step (success)
+[task 2020-01-23T17:46:27.881Z] 17:46:27     INFO - [mozharness: 2020-01-23 17:46:27.880000Z] Running populate-webroot step.
+[task 2020-01-23T17:46:27.881Z] 17:46:27     INFO - Running pre-action listener: _resource_record_pre_action
+[task 2020-01-23T17:46:27.881Z] 17:46:27     INFO - Running main action method: populate_webroot
+[task 2020-01-23T17:46:27.881Z] 17:46:27     INFO - Downloading pageset with tooltool...
+[task 2020-01-23T17:46:27.881Z] 17:46:27     INFO - mkdir: Z:\task_1579801334\build\tests\html\page_load_test
+[task 2020-01-23T17:46:27.882Z] 17:46:27     INFO - retry: Calling run_command with args: (['c:\\mozilla-build\\python\\python.exe', '-u', 'Z:\\task_1579801334\\mozharness\\external_tools\\tooltool.py', '--authentication-file', 'c:\\builds\\relengapi.tok', 'fetch', '-m', 'Z:\\task_1579801334\\build\\tests\\awsy\\tp5n-pageset.manifest', '-o', '-c', 'y:\\tooltool-cache'],), kwargs: {'output_timeout': 600, 'error_list': [{'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}, {'substr': 'ERROR - ', 'level': 'error'}], 'cwd': 'Z:\\task_1579801334\\build\\tests\\html\\page_load_test', 'privileged': False}, attempt #1
+[task 2020-01-23T17:46:27.882Z] 17:46:27     INFO - Running command: ['c:\\mozilla-build\\python\\python.exe', '-u', 'Z:\\task_1579801334\\mozharness\\external_tools\\tooltool.py', '--authentication-file', 'c:\\builds\\relengapi.tok', 'fetch', '-m', 'Z:\\task_1579801334\\build\\tests\\awsy\\tp5n-pageset.manifest', '-o', '-c', 'y:\\tooltool-cache'] in Z:\task_1579801334\build\tests\html\page_load_test
+[task 2020-01-23T17:46:27.882Z] 17:46:27     INFO - Copy/paste: c:\mozilla-build\python\python.exe -u Z:\task_1579801334\mozharness\external_tools\tooltool.py --authentication-file c:\builds\relengapi.tok fetch -m Z:\task_1579801334\build\tests\awsy\tp5n-pageset.manifest -o -c y:\tooltool-cache
+[task 2020-01-23T17:46:27.883Z] 17:46:27     INFO - Calling ['c:\\mozilla-build\\python\\python.exe', '-u', 'Z:\\task_1579801334\\mozharness\\external_tools\\tooltool.py', '--authentication-file', 'c:\\builds\\relengapi.tok', 'fetch', '-m', 'Z:\\task_1579801334\\build\\tests\\awsy\\tp5n-pageset.manifest', '-o', '-c', 'y:\\tooltool-cache'] with output_timeout 600
+[task 2020-01-23T17:46:28.017Z] 17:46:28     INFO -  INFO - File tp5n.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:46:28.018Z] 17:46:28     INFO -  INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:46:30.330Z] 17:46:30     INFO -  INFO - File tp5n.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\page_load_test\tmpub7ozs
+[task 2020-01-23T17:46:30.677Z] 17:46:30     INFO -  INFO - File integrity verified, renaming tmpub7ozs to tp5n.zip
+[task 2020-01-23T17:46:30.677Z] 17:46:30     INFO -  INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:46:30.799Z] 17:46:30     INFO -  INFO - Local cache y:\tooltool-cache updated with tp5n.zip
+[task 2020-01-23T17:46:30.865Z] 17:46:30     INFO - Return code: 0
+[task 2020-01-23T17:46:30.865Z] 17:46:30     INFO - Running command: ['unzip', '-q', '-o', 'Z:\\task_1579801334\\build\\tests\\html\\page_load_test\\tp5n.zip', '-d', 'Z:\\task_1579801334\\build\\tests\\html\\page_load_test']
+[task 2020-01-23T17:46:30.865Z] 17:46:30     INFO - Copy/paste: unzip -q -o Z:\task_1579801334\build\tests\html\page_load_test\tp5n.zip -d Z:\task_1579801334\build\tests\html\page_load_test
+[task 2020-01-23T17:46:33.569Z] 17:46:33     INFO -  checkdir warning:  path too long; truncating
+[task 2020-01-23T17:46:33.569Z] 17:46:33     INFO -                 tp5n/filestube.com/www.facebook.com/plugins/likebox.php@href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FFilesTube-Media-Search-Engine%2F135577699745&width=292&connections=0&stream=false&header=true&height=62.html
+[task 2020-01-23T17:46:33.569Z] 17:46:33     INFO -                  -> Z:/task_1579801334/build/tests/html/page_load_test/tp5n/filestube.com/www.facebook.com/plugins/likebox.php@href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FFilesTube-Media-Search-Engine%2F135577699745&width=292&connections=0&stream=false&header=true&height=62.htm
+[task 2020-01-23T17:46:40.388Z] 17:46:40     INFO -  checkdir warning:  path too long; truncating
+[task 2020-01-23T17:46:40.388Z] 17:46:40     INFO -                 tp5n/amazon.com/www.amazon.com/Kindle-Wireless-Reader-Wifi-Graphite/dp/B002Y27P3M/%5C%22http%3A/g-ecx.images-amazon.com/images/G/01/x-locale/personalization/yourstore/message-bullet._V192186523_.gif%5C%22.html
+[task 2020-01-23T17:46:40.388Z] 17:46:40     INFO -                  -> Z:/task_1579801334/build/tests/html/page_load_test/tp5n/amazon.com/www.amazon.com/Kindle-Wireless-Reader-Wifi-Graphite/dp/B002Y27P3M/%5C%22http%3A/g-ecx.images-amazon.com/images/G/01/x-locale/personalization/yourstore/message-bullet._V192186523_.gif%5C%22.htm
+[task 2020-01-23T17:46:48.916Z] 17:46:48     INFO - Return code: 0
+[task 2020-01-23T17:46:48.916Z] 17:46:48     INFO - Running command: ls Z:\task_1579801334\build\tests\html\page_load_test
+[task 2020-01-23T17:46:49.045Z] 17:46:49     INFO -  tp5n
+[task 2020-01-23T17:46:49.046Z] 17:46:49     INFO -  tp5n.zip
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - Return code: 0
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - Running post-action listener: _resource_record_post_action
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - [mozharness: 2020-01-23 17:46:49.050000Z] Finished populate-webroot step (success)
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - [mozharness: 2020-01-23 17:46:49.050000Z] Running create-virtualenv step.
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - Running pre-action listener: _pre_create_virtualenv
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - Running pre-action listener: _resource_record_pre_action
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - Running main action method: create_virtualenv
+[task 2020-01-23T17:46:49.050Z] 17:46:49     INFO - Creating virtualenv Z:\task_1579801334\build\venv
+[task 2020-01-23T17:46:49.051Z] 17:46:49     INFO - Running command: ['c:\\mozilla-build\\python\\python.exe', 'Z:\\task_1579801334\\mozharness\\external_tools\\virtualenv\\virtualenv.py', '--always-copy', 'Z:\\task_1579801334\\build\\venv'] in Z:\task_1579801334\build
+[task 2020-01-23T17:46:49.051Z] 17:46:49     INFO - Copy/paste: c:\mozilla-build\python\python.exe Z:\task_1579801334\mozharness\external_tools\virtualenv\virtualenv.py --always-copy Z:\task_1579801334\build\venv
+[task 2020-01-23T17:46:49.051Z] 17:46:49     INFO - Using partial env: {'VIRTUALENV_NO_DOWNLOAD': '1'}
+[task 2020-01-23T17:46:50.007Z] 17:46:50     INFO -  New python executable in Z:\task_1579801334\build\venv\Scripts\python.exe
+[task 2020-01-23T17:46:53.600Z] 17:46:53     INFO -  Installing setuptools, pip, wheel...done.
+[task 2020-01-23T17:46:53.616Z] 17:46:53     INFO - Return code: 0
+[task 2020-01-23T17:46:53.616Z] 17:46:53     INFO - Installing psutil>=5.6.3 into virtualenv Z:\task_1579801334\build\venv
+[task 2020-01-23T17:46:53.694Z] 17:46:53     INFO - retry: Calling run_command with args: [['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'psutil>=5.6.3']], kwargs: {'error_level': 'warning', 'error_list': [{'substr': 'not found or a compiler error:', 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BE5E30>, 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002FF7990>, 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E32EC0>, 'level': 'debug'}, {'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}], 'cwd': 'Z:\\task_1579801334\\build', 'env': {'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'USERNAME': 'task_1579801334', 'COMPUTERNAME': 'I-08DF12EEB08A1', 'USERDOMAIN': 'I-08DF12EEB08A1', 'MOZ_AUTOMATION': '1', 'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules', 'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files', 'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com', 'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel', 'PROGRAMFILES': 'C:\\Program Files', 'PROCESSOR_REVISION': '4f01', 'SYSTEMROOT': 'C:\\Windows', 'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps', 'USERPROFILE': 'C:\\Users\\task_1579801334', 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)', 'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData', 'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'RUN_ID': '0', 'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files', 'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge', 'PROCESSOR_ARCHITECTURE': 'AMD64', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}', 'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local', 'HOMEPATH': '\\Users\\task_1579801334', 'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1', 'PROGRAMW6432': 'C:\\Program Files', 'MOZILLABUILD': 'C:\\mozilla-build', 'SCCACHE_DISABLE': '1', 'LOGONSERVER': '\\\\I-08DF12EEB08A1', 'PROMPT': '$P$G', 'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'PROGRAMDATA': 'C:\\ProgramData', 'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475', 'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive', 'MOZ_SCM_LEVEL': '3', 'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland', 'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC', 'WINDIR': 'C:\\Windows', 'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming', 'HOMEDRIVE': 'C:', 'SYSTEMDRIVE': 'C:', 'NUMBER_OF_PROCESSORS': '4', 'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w', 'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache', 'PROCESSOR_LEVEL': '6', 'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files', 'OS': 'Windows_NT', 'PUBLIC': 'C:\\Users\\Public', 'TOOLTOOL_CACHE': 'y:\\tooltool-cache'}}, attempt #1
+[task 2020-01-23T17:46:53.694Z] 17:46:53     INFO - Running command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'psutil>=5.6.3'] in Z:\task_1579801334\build
+[task 2020-01-23T17:46:53.695Z] 17:46:53     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip install --timeout 120 --no-index --find-links https://pypi.pub.build.mozilla.org/pub psutil>=5.6.3
+[task 2020-01-23T17:46:53.699Z] 17:46:53     INFO - Using env: {'ALLUSERSPROFILE': 'C:\\ProgramData',
+[task 2020-01-23T17:46:53.699Z] 17:46:53     INFO -  'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming',
+[task 2020-01-23T17:46:53.699Z] 17:46:53     INFO -  'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files',
+[task 2020-01-23T17:46:53.700Z] 17:46:53     INFO -  'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files',
+[task 2020-01-23T17:46:53.700Z] 17:46:53     INFO -  'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files',
+[task 2020-01-23T17:46:53.700Z] 17:46:53     INFO -  'COMPUTERNAME': 'I-08DF12EEB08A1',
+[task 2020-01-23T17:46:53.700Z] 17:46:53     INFO -  'COMSPEC': 'C:\\Windows\\system32\\cmd.exe',
+[task 2020-01-23T17:46:53.700Z] 17:46:53     INFO -  'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData',
+[task 2020-01-23T17:46:53.700Z] 17:46:53     INFO -  'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}',
+[task 2020-01-23T17:46:53.701Z] 17:46:53     INFO -  'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland',
+[task 2020-01-23T17:46:53.701Z] 17:46:53     INFO -  'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475',
+[task 2020-01-23T17:46:53.701Z] 17:46:53     INFO -  'HOMEDRIVE': 'C:',
+[task 2020-01-23T17:46:53.701Z] 17:46:53     INFO -  'HOMEPATH': '\\Users\\task_1579801334',
+[task 2020-01-23T17:46:53.701Z] 17:46:53     INFO -  'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local',
+[task 2020-01-23T17:46:53.701Z] 17:46:53     INFO -  'LOGONSERVER': '\\\\I-08DF12EEB08A1',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'MOZILLABUILD': 'C:\\mozilla-build',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'MOZ_AUTOMATION': '1',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'MOZ_SCM_LEVEL': '3',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'NUMBER_OF_PROCESSORS': '4',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'OS': 'Windows_NT',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps',
+[task 2020-01-23T17:46:53.702Z] 17:46:53     INFO -  'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PROCESSOR_ARCHITECTURE': 'AMD64',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PROCESSOR_LEVEL': '6',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PROCESSOR_REVISION': '4f01',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PROGRAMDATA': 'C:\\ProgramData',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PROGRAMFILES': 'C:\\Program Files',
+[task 2020-01-23T17:46:53.703Z] 17:46:53     INFO -  'PROGRAMFILES(X86)': 'C:\\Program Files (x86)',
+[task 2020-01-23T17:46:53.704Z] 17:46:53     INFO -  'PROGRAMW6432': 'C:\\Program Files',
+[task 2020-01-23T17:46:53.704Z] 17:46:53     INFO -  'PROMPT': '$P$G',
+[task 2020-01-23T17:46:53.704Z] 17:46:53     INFO -  'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules',
+[task 2020-01-23T17:46:53.704Z] 17:46:53     INFO -  'PUBLIC': 'C:\\Users\\Public',
+[task 2020-01-23T17:46:53.704Z] 17:46:53     INFO -  'RUN_ID': '0',
+[task 2020-01-23T17:46:53.704Z] 17:46:53     INFO -  'SCCACHE_DISABLE': '1',
+[task 2020-01-23T17:46:53.705Z] 17:46:53     INFO -  'SYSTEMDRIVE': 'C:',
+[task 2020-01-23T17:46:53.705Z] 17:46:53     INFO -  'SYSTEMROOT': 'C:\\Windows',
+[task 2020-01-23T17:46:53.705Z] 17:46:53     INFO -  'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge',
+[task 2020-01-23T17:46:53.705Z] 17:46:53     INFO -  'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com',
+[task 2020-01-23T17:46:53.706Z] 17:46:53     INFO -  'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}',
+[task 2020-01-23T17:46:53.706Z] 17:46:53     INFO -  'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w',
+[task 2020-01-23T17:46:53.706Z] 17:46:53     INFO -  'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp',
+[task 2020-01-23T17:46:53.707Z] 17:46:53     INFO -  'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp',
+[task 2020-01-23T17:46:53.707Z] 17:46:53     INFO -  'TOOLTOOL_CACHE': 'y:\\tooltool-cache',
+[task 2020-01-23T17:46:53.707Z] 17:46:53     INFO -  'USERDOMAIN': 'I-08DF12EEB08A1',
+[task 2020-01-23T17:46:53.708Z] 17:46:53     INFO -  'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1',
+[task 2020-01-23T17:46:53.708Z] 17:46:53     INFO -  'USERNAME': 'task_1579801334',
+[task 2020-01-23T17:46:53.708Z] 17:46:53     INFO -  'USERPROFILE': 'C:\\Users\\task_1579801334',
+[task 2020-01-23T17:46:53.708Z] 17:46:53     INFO -  'WINDIR': 'C:\\Windows'}
+[task 2020-01-23T17:46:54.065Z] 17:46:54     INFO -  Ignoring indexes: https://pypi.python.org/simple
+[task 2020-01-23T17:46:54.075Z] 17:46:54     INFO -  Collecting psutil>=5.6.3
+[task 2020-01-23T17:46:55.887Z] 17:46:55     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/psutil-5.6.3-cp27-none-win_amd64.whl (230kB)
+[task 2020-01-23T17:46:56.065Z] 17:46:56     INFO -  Installing collected packages: psutil
+[task 2020-01-23T17:46:56.305Z] 17:46:56     INFO -  Successfully installed psutil-5.6.3
+[task 2020-01-23T17:46:56.365Z] 17:46:56     INFO - Return code: 0
+[task 2020-01-23T17:46:56.365Z] 17:46:56     INFO - Installing mozsystemmonitor==0.4 into virtualenv Z:\task_1579801334\build\venv
+[task 2020-01-23T17:46:56.366Z] 17:46:56     INFO - retry: Calling run_command with args: [['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'mozsystemmonitor==0.4']], kwargs: {'error_level': 'warning', 'error_list': [{'substr': 'not found or a compiler error:', 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BE5E30>, 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002FF7990>, 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E32EC0>, 'level': 'debug'}, {'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}], 'cwd': 'Z:\\task_1579801334\\build', 'env': {'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'USERNAME': 'task_1579801334', 'COMPUTERNAME': 'I-08DF12EEB08A1', 'USERDOMAIN': 'I-08DF12EEB08A1', 'MOZ_AUTOMATION': '1', 'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules', 'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files', 'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com', 'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel', 'PROGRAMFILES': 'C:\\Program Files', 'PROCESSOR_REVISION': '4f01', 'SYSTEMROOT': 'C:\\Windows', 'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps', 'USERPROFILE': 'C:\\Users\\task_1579801334', 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)', 'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData', 'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'RUN_ID': '0', 'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files', 'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge', 'PROCESSOR_ARCHITECTURE': 'AMD64', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}', 'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local', 'HOMEPATH': '\\Users\\task_1579801334', 'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1', 'PROGRAMW6432': 'C:\\Program Files', 'MOZILLABUILD': 'C:\\mozilla-build', 'SCCACHE_DISABLE': '1', 'LOGONSERVER': '\\\\I-08DF12EEB08A1', 'PROMPT': '$P$G', 'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'PROGRAMDATA': 'C:\\ProgramData', 'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475', 'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive', 'MOZ_SCM_LEVEL': '3', 'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland', 'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC', 'WINDIR': 'C:\\Windows', 'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming', 'HOMEDRIVE': 'C:', 'SYSTEMDRIVE': 'C:', 'NUMBER_OF_PROCESSORS': '4', 'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w', 'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache', 'PROCESSOR_LEVEL': '6', 'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files', 'OS': 'Windows_NT', 'PUBLIC': 'C:\\Users\\Public', 'TOOLTOOL_CACHE': 'y:\\tooltool-cache'}}, attempt #1
+[task 2020-01-23T17:46:56.366Z] 17:46:56     INFO - Running command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'mozsystemmonitor==0.4'] in Z:\task_1579801334\build
+[task 2020-01-23T17:46:56.366Z] 17:46:56     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip install --timeout 120 --no-index --find-links https://pypi.pub.build.mozilla.org/pub mozsystemmonitor==0.4
+[task 2020-01-23T17:46:56.366Z] 17:46:56     INFO - Using env: (same as previous command)
+[task 2020-01-23T17:46:56.721Z] 17:46:56     INFO -  Ignoring indexes: https://pypi.python.org/simple
+[task 2020-01-23T17:46:56.733Z] 17:46:56     INFO -  Collecting mozsystemmonitor==0.4
+[task 2020-01-23T17:46:58.586Z] 17:46:58     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/mozsystemmonitor-0.4.tar.gz
+[task 2020-01-23T17:46:58.955Z] 17:46:58     INFO -  Requirement already satisfied (use --upgrade to upgrade): psutil>=3.1.1 in z:\task_1579801334\build\venv\lib\site-packages (from mozsystemmonitor==0.4)
+[task 2020-01-23T17:46:58.958Z] 17:46:58     INFO -  Building wheels for collected packages: mozsystemmonitor
+[task 2020-01-23T17:46:58.959Z] 17:46:58     INFO -    Running setup.py bdist_wheel for mozsystemmonitor: started
+[task 2020-01-23T17:46:59.410Z] 17:46:59     INFO -    Running setup.py bdist_wheel for mozsystemmonitor: finished with status 'done'
+[task 2020-01-23T17:46:59.411Z] 17:46:59     INFO -    Stored in directory: C:\Users\task_1579801334\AppData\Local\pip\Cache\wheels\a7\b5\95\c2014953f1ea0ae24c5c02d34f44a34c38b9ced9ce5b9cabb2
+[task 2020-01-23T17:46:59.537Z] 17:46:59     INFO -  Successfully built mozsystemmonitor
+[task 2020-01-23T17:46:59.537Z] 17:46:59     INFO -  Installing collected packages: mozsystemmonitor
+[task 2020-01-23T17:46:59.601Z] 17:46:59     INFO -  Successfully installed mozsystemmonitor-0.4
+[task 2020-01-23T17:46:59.646Z] 17:46:59     INFO - Return code: 0
+[task 2020-01-23T17:46:59.646Z] 17:46:59     INFO - Installing jsonschema==2.5.1 into virtualenv Z:\task_1579801334\build\venv
+[task 2020-01-23T17:46:59.647Z] 17:46:59     INFO - retry: Calling run_command with args: [['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'jsonschema==2.5.1']], kwargs: {'error_level': 'warning', 'error_list': [{'substr': 'not found or a compiler error:', 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BE5E30>, 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002FF7990>, 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E32EC0>, 'level': 'debug'}, {'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}], 'cwd': 'Z:\\task_1579801334\\build', 'env': {'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'USERNAME': 'task_1579801334', 'COMPUTERNAME': 'I-08DF12EEB08A1', 'USERDOMAIN': 'I-08DF12EEB08A1', 'MOZ_AUTOMATION': '1', 'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules', 'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files', 'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com', 'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel', 'PROGRAMFILES': 'C:\\Program Files', 'PROCESSOR_REVISION': '4f01', 'SYSTEMROOT': 'C:\\Windows', 'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps', 'USERPROFILE': 'C:\\Users\\task_1579801334', 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)', 'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData', 'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'RUN_ID': '0', 'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files', 'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge', 'PROCESSOR_ARCHITECTURE': 'AMD64', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}', 'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local', 'HOMEPATH': '\\Users\\task_1579801334', 'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1', 'PROGRAMW6432': 'C:\\Program Files', 'MOZILLABUILD': 'C:\\mozilla-build', 'SCCACHE_DISABLE': '1', 'LOGONSERVER': '\\\\I-08DF12EEB08A1', 'PROMPT': '$P$G', 'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'PROGRAMDATA': 'C:\\ProgramData', 'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475', 'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive', 'MOZ_SCM_LEVEL': '3', 'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland', 'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC', 'WINDIR': 'C:\\Windows', 'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming', 'HOMEDRIVE': 'C:', 'SYSTEMDRIVE': 'C:', 'NUMBER_OF_PROCESSORS': '4', 'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w', 'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache', 'PROCESSOR_LEVEL': '6', 'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files', 'OS': 'Windows_NT', 'PUBLIC': 'C:\\Users\\Public', 'TOOLTOOL_CACHE': 'y:\\tooltool-cache'}}, attempt #1
+[task 2020-01-23T17:46:59.647Z] 17:46:59     INFO - Running command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'jsonschema==2.5.1'] in Z:\task_1579801334\build
+[task 2020-01-23T17:46:59.648Z] 17:46:59     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip install --timeout 120 --no-index --find-links https://pypi.pub.build.mozilla.org/pub jsonschema==2.5.1
+[task 2020-01-23T17:46:59.648Z] 17:46:59     INFO - Using env: (same as previous command)
+[task 2020-01-23T17:46:59.981Z] 17:46:59     INFO -  Ignoring indexes: https://pypi.python.org/simple
+[task 2020-01-23T17:46:59.992Z] 17:46:59     INFO -  Collecting jsonschema==2.5.1
+[task 2020-01-23T17:47:01.787Z] 17:47:01     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/jsonschema-2.5.1-py2.py3-none-any.whl
+[task 2020-01-23T17:47:01.835Z] 17:47:01     INFO -  Collecting functools32; python_version == "2.7" (from jsonschema==2.5.1)
+[task 2020-01-23T17:47:02.855Z] 17:47:02     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/functools32-3.2.3-2.tar.gz
+[task 2020-01-23T17:47:03.209Z] 17:47:03     INFO -  Building wheels for collected packages: functools32
+[task 2020-01-23T17:47:03.211Z] 17:47:03     INFO -    Running setup.py bdist_wheel for functools32: started
+[task 2020-01-23T17:47:03.580Z] 17:47:03     INFO -    Running setup.py bdist_wheel for functools32: finished with status 'done'
+[task 2020-01-23T17:47:03.582Z] 17:47:03     INFO -    Stored in directory: C:\Users\task_1579801334\AppData\Local\pip\Cache\wheels\58\14\4c\707c05ed77f528c717db124c374fa788560a0cb60491a6d1f8
+[task 2020-01-23T17:47:03.716Z] 17:47:03     INFO -  Successfully built functools32
+[task 2020-01-23T17:47:03.716Z] 17:47:03     INFO -  Installing collected packages: functools32, jsonschema
+[task 2020-01-23T17:47:03.887Z] 17:47:03     INFO -  Successfully installed functools32-3.2.3.post2 jsonschema-2.5.1
+[task 2020-01-23T17:47:03.954Z] 17:47:03     INFO - Return code: 0
+[task 2020-01-23T17:47:03.954Z] 17:47:03     INFO - Installing None into virtualenv Z:\task_1579801334\build\venv
+[task 2020-01-23T17:47:03.955Z] 17:47:03     INFO - retry: Calling run_command with args: [['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--no-deps', '--timeout', '120', '-r', 'Z:\\task_1579801334\\build\\tests\\config\\marionette_requirements.txt', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub']], kwargs: {'error_level': 'warning', 'error_list': [{'substr': 'not found or a compiler error:', 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BE5E30>, 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002FF7990>, 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E32EC0>, 'level': 'debug'}, {'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}], 'cwd': 'Z:\\task_1579801334\\build\\tests\\config', 'env': {'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'USERNAME': 'task_1579801334', 'COMPUTERNAME': 'I-08DF12EEB08A1', 'USERDOMAIN': 'I-08DF12EEB08A1', 'MOZ_AUTOMATION': '1', 'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules', 'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files', 'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com', 'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel', 'PROGRAMFILES': 'C:\\Program Files', 'PROCESSOR_REVISION': '4f01', 'SYSTEMROOT': 'C:\\Windows', 'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps', 'USERPROFILE': 'C:\\Users\\task_1579801334', 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)', 'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData', 'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'RUN_ID': '0', 'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files', 'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge', 'PROCESSOR_ARCHITECTURE': 'AMD64', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}', 'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local', 'HOMEPATH': '\\Users\\task_1579801334', 'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1', 'PROGRAMW6432': 'C:\\Program Files', 'MOZILLABUILD': 'C:\\mozilla-build', 'SCCACHE_DISABLE': '1', 'LOGONSERVER': '\\\\I-08DF12EEB08A1', 'PROMPT': '$P$G', 'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'PROGRAMDATA': 'C:\\ProgramData', 'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475', 'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive', 'MOZ_SCM_LEVEL': '3', 'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland', 'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC', 'WINDIR': 'C:\\Windows', 'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming', 'HOMEDRIVE': 'C:', 'SYSTEMDRIVE': 'C:', 'NUMBER_OF_PROCESSORS': '4', 'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w', 'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache', 'PROCESSOR_LEVEL': '6', 'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files', 'OS': 'Windows_NT', 'PUBLIC': 'C:\\Users\\Public', 'TOOLTOOL_CACHE': 'y:\\tooltool-cache'}}, attempt #1
+[task 2020-01-23T17:47:03.955Z] 17:47:03     INFO - Running command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--no-deps', '--timeout', '120', '-r', 'Z:\\task_1579801334\\build\\tests\\config\\marionette_requirements.txt', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub'] in Z:\task_1579801334\build\tests\config
+[task 2020-01-23T17:47:03.955Z] 17:47:03     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip install --no-deps --timeout 120 -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt --no-index --find-links https://pypi.pub.build.mozilla.org/pub
+[task 2020-01-23T17:47:03.955Z] 17:47:03     INFO - Using env: (same as previous command)
+[task 2020-01-23T17:47:04.290Z] 17:47:04     INFO -  Ignoring indexes: https://pypi.python.org/simple
+[task 2020-01-23T17:47:04.315Z] 17:47:04     INFO -  Processing z:\task_1579801334\build\tests\tools\mozterm
+[task 2020-01-23T17:47:04.650Z] 17:47:04     INFO -  Processing z:\task_1579801334\build\tests\mozbase\manifestparser
+[task 2020-01-23T17:47:04.978Z] 17:47:04     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozcrash
+[task 2020-01-23T17:47:05.267Z] 17:47:05     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozdebug
+[task 2020-01-23T17:47:05.528Z] 17:47:05     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozdevice
+[task 2020-01-23T17:47:05.786Z] 17:47:05     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozfile
+[task 2020-01-23T17:47:06.067Z] 17:47:06     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozhttpd
+[task 2020-01-23T17:47:06.325Z] 17:47:06     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozinfo
+[task 2020-01-23T17:47:06.587Z] 17:47:06     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozinstall
+[task 2020-01-23T17:47:06.851Z] 17:47:06     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozleak
+[task 2020-01-23T17:47:07.097Z] 17:47:07     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozlog
+[task 2020-01-23T17:47:07.412Z] 17:47:07     INFO -  Processing z:\task_1579801334\build\tests\mozbase\moznetwork
+[task 2020-01-23T17:47:07.669Z] 17:47:07     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozpower
+[task 2020-01-23T17:47:07.936Z] 17:47:07     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozprocess
+[task 2020-01-23T17:47:08.212Z] 17:47:08     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozprofile
+[task 2020-01-23T17:47:08.520Z] 17:47:08     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozproxy
+[task 2020-01-23T17:47:08.838Z] 17:47:08     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozrunner
+[task 2020-01-23T17:47:09.125Z] 17:47:09     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozscreenshot
+[task 2020-01-23T17:47:09.379Z] 17:47:09     INFO -  Processing z:\task_1579801334\build\tests\mozbase\moztest
+[task 2020-01-23T17:47:09.665Z] 17:47:09     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozversion
+[task 2020-01-23T17:47:09.918Z] 17:47:09     INFO -  Processing z:\task_1579801334\build\tests\tools\wptserve
+[task 2020-01-23T17:47:10.263Z] 17:47:10     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\certifi
+[task 2020-01-23T17:47:10.538Z] 17:47:10     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\enum
+[task 2020-01-23T17:47:10.809Z] 17:47:10     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\h2
+[task 2020-01-23T17:47:11.190Z] 17:47:11     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\hyperframe
+[task 2020-01-23T17:47:11.465Z] 17:47:11     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\hpack
+[task 2020-01-23T17:47:11.744Z] 17:47:11     INFO -  Processing z:\task_1579801334\build\tests\marionette\client
+[task 2020-01-23T17:47:12.020Z] 17:47:12     INFO -  Processing z:\task_1579801334\build\tests\marionette\harness
+[task 2020-01-23T17:47:12.367Z] 17:47:12     INFO -  Processing z:\task_1579801334\build\tests\marionette\puppeteer\firefox
+[task 2020-01-23T17:47:12.698Z] 17:47:12     INFO -  Installing collected packages: mozterm, manifestparser, mozcrash, mozdebug, mozdevice, mozfile, mozhttpd, mozinfo, mozInstall, mozleak, mozlog, moznetwork, mozpower, mozprocess, mozprofile, mozproxy, mozrunner, mozscreenshot, moztest, mozversion, wptserve, certifi, enum34, h2, hyperframe, hpack, marionette-driver, marionette-harness, firefox-puppeteer
+[task 2020-01-23T17:47:12.699Z] 17:47:12     INFO -    Running setup.py install for mozterm: started
+[task 2020-01-23T17:47:13.008Z] 17:47:13     INFO -      Running setup.py install for mozterm: finished with status 'done'
+[task 2020-01-23T17:47:13.018Z] 17:47:13     INFO -    Running setup.py install for manifestparser: started
+[task 2020-01-23T17:47:13.361Z] 17:47:13     INFO -      Running setup.py install for manifestparser: finished with status 'done'
+[task 2020-01-23T17:47:13.383Z] 17:47:13     INFO -    Running setup.py install for mozcrash: started
+[task 2020-01-23T17:47:13.700Z] 17:47:13     INFO -      Running setup.py install for mozcrash: finished with status 'done'
+[task 2020-01-23T17:47:13.711Z] 17:47:13     INFO -    Running setup.py install for mozdebug: started
+[task 2020-01-23T17:47:14.012Z] 17:47:14     INFO -      Running setup.py install for mozdebug: finished with status 'done'
+[task 2020-01-23T17:47:14.023Z] 17:47:14     INFO -    Running setup.py install for mozdevice: started
+[task 2020-01-23T17:47:14.348Z] 17:47:14     INFO -      Running setup.py install for mozdevice: finished with status 'done'
+[task 2020-01-23T17:47:14.359Z] 17:47:14     INFO -    Running setup.py install for mozfile: started
+[task 2020-01-23T17:47:14.653Z] 17:47:14     INFO -      Running setup.py install for mozfile: finished with status 'done'
+[task 2020-01-23T17:47:14.666Z] 17:47:14     INFO -    Running setup.py install for mozhttpd: started
+[task 2020-01-23T17:47:14.961Z] 17:47:14     INFO -      Running setup.py install for mozhttpd: finished with status 'done'
+[task 2020-01-23T17:47:14.971Z] 17:47:14     INFO -    Running setup.py install for mozinfo: started
+[task 2020-01-23T17:47:15.276Z] 17:47:15     INFO -      Running setup.py install for mozinfo: finished with status 'done'
+[task 2020-01-23T17:47:15.285Z] 17:47:15     INFO -    Running setup.py install for mozInstall: started
+[task 2020-01-23T17:47:15.607Z] 17:47:15     INFO -      Running setup.py install for mozInstall: finished with status 'done'
+[task 2020-01-23T17:47:15.618Z] 17:47:15     INFO -    Running setup.py install for mozleak: started
+[task 2020-01-23T17:47:15.915Z] 17:47:15     INFO -      Running setup.py install for mozleak: finished with status 'done'
+[task 2020-01-23T17:47:15.926Z] 17:47:15     INFO -    Running setup.py install for mozlog: started
+[task 2020-01-23T17:47:16.374Z] 17:47:16     INFO -      Running setup.py install for mozlog: finished with status 'done'
+[task 2020-01-23T17:47:16.406Z] 17:47:16     INFO -    Running setup.py install for moznetwork: started
+[task 2020-01-23T17:47:16.715Z] 17:47:16     INFO -      Running setup.py install for moznetwork: finished with status 'done'
+[task 2020-01-23T17:47:16.724Z] 17:47:16     INFO -    Running setup.py install for mozpower: started
+[task 2020-01-23T17:47:17.052Z] 17:47:17     INFO -      Running setup.py install for mozpower: finished with status 'done'
+[task 2020-01-23T17:47:17.067Z] 17:47:17     INFO -    Running setup.py install for mozprocess: started
+[task 2020-01-23T17:47:17.385Z] 17:47:17     INFO -      Running setup.py install for mozprocess: finished with status 'done'
+[task 2020-01-23T17:47:17.399Z] 17:47:17     INFO -    Running setup.py install for mozprofile: started
+[task 2020-01-23T17:47:17.737Z] 17:47:17     INFO -      Running setup.py install for mozprofile: finished with status 'done'
+[task 2020-01-23T17:47:17.764Z] 17:47:17     INFO -    Running setup.py install for mozproxy: started
+[task 2020-01-23T17:47:18.111Z] 17:47:18     INFO -      Running setup.py install for mozproxy: finished with status 'done'
+[task 2020-01-23T17:47:18.130Z] 17:47:18     INFO -    Running setup.py install for mozrunner: started
+[task 2020-01-23T17:47:18.521Z] 17:47:18     INFO -      Running setup.py install for mozrunner: finished with status 'done'
+[task 2020-01-23T17:47:18.543Z] 17:47:18     INFO -    Running setup.py install for mozscreenshot: started
+[task 2020-01-23T17:47:18.859Z] 17:47:18     INFO -      Running setup.py install for mozscreenshot: finished with status 'done'
+[task 2020-01-23T17:47:18.867Z] 17:47:18     INFO -    Running setup.py install for moztest: started
+[task 2020-01-23T17:47:19.205Z] 17:47:19     INFO -      Running setup.py install for moztest: finished with status 'done'
+[task 2020-01-23T17:47:19.224Z] 17:47:19     INFO -    Running setup.py install for mozversion: started
+[task 2020-01-23T17:47:19.547Z] 17:47:19     INFO -      Running setup.py install for mozversion: finished with status 'done'
+[task 2020-01-23T17:47:19.559Z] 17:47:19     INFO -    Running setup.py install for wptserve: started
+[task 2020-01-23T17:47:19.967Z] 17:47:19     INFO -      Running setup.py install for wptserve: finished with status 'done'
+[task 2020-01-23T17:47:19.997Z] 17:47:19     INFO -    Running setup.py install for certifi: started
+[task 2020-01-23T17:47:20.317Z] 17:47:20     INFO -      Running setup.py install for certifi: finished with status 'done'
+[task 2020-01-23T17:47:20.327Z] 17:47:20     INFO -    Running setup.py install for enum34: started
+[task 2020-01-23T17:47:20.671Z] 17:47:20     INFO -      Running setup.py install for enum34: finished with status 'done'
+[task 2020-01-23T17:47:20.681Z] 17:47:20     INFO -    Running setup.py install for h2: started
+[task 2020-01-23T17:47:21.076Z] 17:47:21     INFO -      Running setup.py install for h2: finished with status 'done'
+[task 2020-01-23T17:47:21.110Z] 17:47:21     INFO -    Running setup.py install for hyperframe: started
+[task 2020-01-23T17:47:21.439Z] 17:47:21     INFO -      Running setup.py install for hyperframe: finished with status 'done'
+[task 2020-01-23T17:47:21.450Z] 17:47:21     INFO -    Running setup.py install for hpack: started
+[task 2020-01-23T17:47:21.826Z] 17:47:21     INFO -      Running setup.py install for hpack: finished with status 'done'
+[task 2020-01-23T17:47:21.839Z] 17:47:21     INFO -    Running setup.py install for marionette-driver: started
+[task 2020-01-23T17:47:22.224Z] 17:47:22     INFO -      Running setup.py install for marionette-driver: finished with status 'done'
+[task 2020-01-23T17:47:22.242Z] 17:47:22     INFO -    Running setup.py install for marionette-harness: started
+[task 2020-01-23T17:47:22.745Z] 17:47:22     INFO -      Running setup.py install for marionette-harness: finished with status 'done'
+[task 2020-01-23T17:47:22.793Z] 17:47:22     INFO -    Running setup.py install for firefox-puppeteer: started
+[task 2020-01-23T17:47:23.211Z] 17:47:23     INFO -      Running setup.py install for firefox-puppeteer: finished with status 'done'
+[task 2020-01-23T17:47:24.282Z] 17:47:24     INFO -  Successfully installed certifi-2018.4.16 enum34-1.1.6 firefox-puppeteer-52.1.0 h2-3.0.1 hpack-3.0.0 hyperframe-5.1.0 manifestparser-2.0.0 marionette-driver-3.0.0 marionette-harness-5.0.0 mozInstall-2.0.0 mozcrash-1.1.0 mozdebug-0.2.0 mozdevice-3.0.7 mozfile-2.1.0 mozhttpd-0.7 mozinfo-1.2.1 mozleak-1.0.0 mozlog-5.0 moznetwork-1.0.0 mozpower-1.0.0 mozprocess-1.1.0 mozprofile-2.4.0 mozproxy-1.0 mozrunner-7.7.0 mozscreenshot-1.0.0 mozterm-1.0.0 moztest-1.0.0 mozversion-2.2.0 wptserve-2.0
+[task 2020-01-23T17:47:24.307Z] 17:47:24     INFO - Return code: 0
+[task 2020-01-23T17:47:24.307Z] 17:47:24     INFO - Installing None into virtualenv Z:\task_1579801334\build\venv
+[task 2020-01-23T17:47:24.308Z] 17:47:24     INFO - retry: Calling run_command with args: [['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '-r', 'Z:\\task_1579801334\\build\\tests\\config\\marionette_requirements.txt', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub']], kwargs: {'error_level': 'warning', 'error_list': [{'substr': 'not found or a compiler error:', 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BE5E30>, 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002FF7990>, 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E32EC0>, 'level': 'debug'}, {'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}], 'cwd': 'Z:\\task_1579801334\\build\\tests\\config', 'env': {'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'USERNAME': 'task_1579801334', 'COMPUTERNAME': 'I-08DF12EEB08A1', 'USERDOMAIN': 'I-08DF12EEB08A1', 'MOZ_AUTOMATION': '1', 'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules', 'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files', 'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com', 'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel', 'PROGRAMFILES': 'C:\\Program Files', 'PROCESSOR_REVISION': '4f01', 'SYSTEMROOT': 'C:\\Windows', 'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps', 'USERPROFILE': 'C:\\Users\\task_1579801334', 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)', 'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData', 'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'RUN_ID': '0', 'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files', 'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge', 'PROCESSOR_ARCHITECTURE': 'AMD64', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}', 'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local', 'HOMEPATH': '\\Users\\task_1579801334', 'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1', 'PROGRAMW6432': 'C:\\Program Files', 'MOZILLABUILD': 'C:\\mozilla-build', 'SCCACHE_DISABLE': '1', 'LOGONSERVER': '\\\\I-08DF12EEB08A1', 'PROMPT': '$P$G', 'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'PROGRAMDATA': 'C:\\ProgramData', 'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475', 'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive', 'MOZ_SCM_LEVEL': '3', 'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland', 'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC', 'WINDIR': 'C:\\Windows', 'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming', 'HOMEDRIVE': 'C:', 'SYSTEMDRIVE': 'C:', 'NUMBER_OF_PROCESSORS': '4', 'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w', 'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache', 'PROCESSOR_LEVEL': '6', 'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files', 'OS': 'Windows_NT', 'PUBLIC': 'C:\\Users\\Public', 'TOOLTOOL_CACHE': 'y:\\tooltool-cache'}}, attempt #1
+[task 2020-01-23T17:47:24.308Z] 17:47:24     INFO - Running command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '-r', 'Z:\\task_1579801334\\build\\tests\\config\\marionette_requirements.txt', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub'] in Z:\task_1579801334\build\tests\config
+[task 2020-01-23T17:47:24.308Z] 17:47:24     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip install --timeout 120 -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt --no-index --find-links https://pypi.pub.build.mozilla.org/pub
+[task 2020-01-23T17:47:24.308Z] 17:47:24     INFO - Using env: (same as previous command)
+[task 2020-01-23T17:47:24.655Z] 17:47:24     INFO -  Ignoring indexes: https://pypi.python.org/simple
+[task 2020-01-23T17:47:24.680Z] 17:47:24     INFO -  Processing z:\task_1579801334\build\tests\tools\mozterm
+[task 2020-01-23T17:47:25.199Z] 17:47:25     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozterm==1.0.0 from file:///Z:/task_1579801334/build/tests/tools/mozterm in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 1))
+[task 2020-01-23T17:47:25.203Z] 17:47:25     INFO -  Processing z:\task_1579801334\build\tests\mozbase\manifestparser
+[task 2020-01-23T17:47:25.531Z] 17:47:25     INFO -    Requirement already satisfied (use --upgrade to upgrade): manifestparser==2.0.0 from file:///Z:/task_1579801334/build/tests/mozbase/manifestparser in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 3))
+[task 2020-01-23T17:47:25.534Z] 17:47:25     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozcrash
+[task 2020-01-23T17:47:25.822Z] 17:47:25     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozcrash==1.1.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozcrash in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 4))
+[task 2020-01-23T17:47:25.826Z] 17:47:25     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozdebug
+[task 2020-01-23T17:47:26.115Z] 17:47:26     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozdebug==0.2.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozdebug in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 5))
+[task 2020-01-23T17:47:26.116Z] 17:47:26     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozdevice
+[task 2020-01-23T17:47:26.404Z] 17:47:26     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozdevice==3.0.7 from file:///Z:/task_1579801334/build/tests/mozbase/mozdevice in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 6))
+[task 2020-01-23T17:47:26.406Z] 17:47:26     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozfile
+[task 2020-01-23T17:47:26.738Z] 17:47:26     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozfile==2.1.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozfile in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 7))
+[task 2020-01-23T17:47:26.740Z] 17:47:26     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozhttpd
+[task 2020-01-23T17:47:27.021Z] 17:47:27     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozhttpd==0.7 from file:///Z:/task_1579801334/build/tests/mozbase/mozhttpd in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 8))
+[task 2020-01-23T17:47:27.024Z] 17:47:27     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozinfo
+[task 2020-01-23T17:47:27.299Z] 17:47:27     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozinfo==1.2.1 from file:///Z:/task_1579801334/build/tests/mozbase/mozinfo in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 9))
+[task 2020-01-23T17:47:27.301Z] 17:47:27     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozinstall
+[task 2020-01-23T17:47:27.588Z] 17:47:27     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozInstall==2.0.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozinstall in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 10))
+[task 2020-01-23T17:47:27.595Z] 17:47:27     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozleak
+[task 2020-01-23T17:47:27.872Z] 17:47:27     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozleak==1.0.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozleak in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 11))
+[task 2020-01-23T17:47:27.873Z] 17:47:27     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozlog
+[task 2020-01-23T17:47:28.205Z] 17:47:28     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozlog==5.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozlog in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 12))
+[task 2020-01-23T17:47:28.209Z] 17:47:28     INFO -  Processing z:\task_1579801334\build\tests\mozbase\moznetwork
+[task 2020-01-23T17:47:28.501Z] 17:47:28     INFO -    Requirement already satisfied (use --upgrade to upgrade): moznetwork==1.0.0 from file:///Z:/task_1579801334/build/tests/mozbase/moznetwork in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 13))
+[task 2020-01-23T17:47:28.504Z] 17:47:28     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozpower
+[task 2020-01-23T17:47:28.838Z] 17:47:28     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozpower==1.0.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozpower in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 14))
+[task 2020-01-23T17:47:28.841Z] 17:47:28     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozprocess
+[task 2020-01-23T17:47:29.165Z] 17:47:29     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozprocess==1.1.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozprocess in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 15))
+[task 2020-01-23T17:47:29.167Z] 17:47:29     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozprofile
+[task 2020-01-23T17:47:29.517Z] 17:47:29     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozprofile==2.4.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozprofile in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 16))
+[task 2020-01-23T17:47:29.522Z] 17:47:29     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozproxy
+[task 2020-01-23T17:47:29.825Z] 17:47:29     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozproxy==1.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozproxy in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 17))
+[task 2020-01-23T17:47:29.826Z] 17:47:29     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozrunner
+[task 2020-01-23T17:47:30.137Z] 17:47:30     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozrunner==7.7.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozrunner in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 18))
+[task 2020-01-23T17:47:30.146Z] 17:47:30     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozscreenshot
+[task 2020-01-23T17:47:30.417Z] 17:47:30     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozscreenshot==1.0.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozscreenshot in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 19))
+[task 2020-01-23T17:47:30.420Z] 17:47:30     INFO -  Processing z:\task_1579801334\build\tests\mozbase\moztest
+[task 2020-01-23T17:47:30.736Z] 17:47:30     INFO -    Requirement already satisfied (use --upgrade to upgrade): moztest==1.0.0 from file:///Z:/task_1579801334/build/tests/mozbase/moztest in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 20))
+[task 2020-01-23T17:47:30.737Z] 17:47:30     INFO -  Processing z:\task_1579801334\build\tests\mozbase\mozversion
+[task 2020-01-23T17:47:31.023Z] 17:47:31     INFO -    Requirement already satisfied (use --upgrade to upgrade): mozversion==2.2.0 from file:///Z:/task_1579801334/build/tests/mozbase/mozversion in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 21))
+[task 2020-01-23T17:47:31.026Z] 17:47:31     INFO -  Processing z:\task_1579801334\build\tests\tools\wptserve
+[task 2020-01-23T17:47:31.384Z] 17:47:31     INFO -    Requirement already satisfied (use --upgrade to upgrade): wptserve==2.0 from file:///Z:/task_1579801334/build/tests/tools/wptserve in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 3))
+[task 2020-01-23T17:47:31.387Z] 17:47:31     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\certifi
+[task 2020-01-23T17:47:31.674Z] 17:47:31     INFO -    Requirement already satisfied (use --upgrade to upgrade): certifi==2018.4.16 from file:///Z:/task_1579801334/build/tests/tools/wpt_third_party/certifi in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 4))
+[task 2020-01-23T17:47:31.674Z] 17:47:31     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\enum
+[task 2020-01-23T17:47:31.968Z] 17:47:31     INFO -    Requirement already satisfied (use --upgrade to upgrade): enum34==1.1.6 from file:///Z:/task_1579801334/build/tests/tools/wpt_third_party/enum in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 5))
+[task 2020-01-23T17:47:31.969Z] 17:47:31     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\h2
+[task 2020-01-23T17:47:32.463Z] 17:47:32     INFO -    Requirement already satisfied (use --upgrade to upgrade): h2==3.0.1 from file:///Z:/task_1579801334/build/tests/tools/wpt_third_party/h2 in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 6))
+[task 2020-01-23T17:47:32.468Z] 17:47:32     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\hyperframe
+[task 2020-01-23T17:47:32.765Z] 17:47:32     INFO -    Requirement already satisfied (use --upgrade to upgrade): hyperframe==5.1.0 from file:///Z:/task_1579801334/build/tests/tools/wpt_third_party/hyperframe in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 7))
+[task 2020-01-23T17:47:32.765Z] 17:47:32     INFO -  Processing z:\task_1579801334\build\tests\tools\wpt_third_party\hpack
+[task 2020-01-23T17:47:33.070Z] 17:47:33     INFO -    Requirement already satisfied (use --upgrade to upgrade): hpack==3.0.0 from file:///Z:/task_1579801334/build/tests/tools/wpt_third_party/hpack in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 8))
+[task 2020-01-23T17:47:33.070Z] 17:47:33     INFO -  Processing z:\task_1579801334\build\tests\marionette\client
+[task 2020-01-23T17:47:33.383Z] 17:47:33     INFO -    Requirement already satisfied (use --upgrade to upgrade): marionette-driver==3.0.0 from file:///Z:/task_1579801334/build/tests/marionette/client in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 10))
+[task 2020-01-23T17:47:33.389Z] 17:47:33     INFO -  Processing z:\task_1579801334\build\tests\marionette\harness
+[task 2020-01-23T17:47:33.796Z] 17:47:33     INFO -    Requirement already satisfied (use --upgrade to upgrade): marionette-harness==5.0.0 from file:///Z:/task_1579801334/build/tests/marionette/harness in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 11))
+[task 2020-01-23T17:47:33.810Z] 17:47:33     INFO -  Processing z:\task_1579801334\build\tests\marionette\puppeteer\firefox
+[task 2020-01-23T17:47:34.122Z] 17:47:34     INFO -    Requirement already satisfied (use --upgrade to upgrade): firefox-puppeteer==52.1.0 from file:///Z:/task_1579801334/build/tests/marionette/puppeteer/firefox in z:\task_1579801334\build\venv\lib\site-packages (from -r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 14))
+[task 2020-01-23T17:47:34.141Z] 17:47:34     INFO -  Collecting six>=1.10.0 (from mozterm==1.0.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 1))
+[task 2020-01-23T17:47:36.029Z] 17:47:36     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/six-1.13.0-py2.py3-none-any.whl
+[task 2020-01-23T17:47:36.053Z] 17:47:36     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozlog>=5.0 in z:\task_1579801334\build\venv\lib\site-packages (from manifestparser==2.0.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 3))
+[task 2020-01-23T17:47:36.057Z] 17:47:36     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozfile>=1.0 in z:\task_1579801334\build\venv\lib\site-packages (from mozcrash==1.1.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 4))
+[task 2020-01-23T17:47:36.059Z] 17:47:36     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozinfo in z:\task_1579801334\build\venv\lib\site-packages (from mozdebug==0.2.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 5))
+[task 2020-01-23T17:47:36.063Z] 17:47:36     INFO -  Requirement already satisfied (use --upgrade to upgrade): moznetwork>=0.24 in z:\task_1579801334\build\venv\lib\site-packages (from mozhttpd==0.7->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 8))
+[task 2020-01-23T17:47:36.081Z] 17:47:36     INFO -  Collecting distro==1.4.0 (from mozinfo==1.2.1->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 9))
+[task 2020-01-23T17:47:37.180Z] 17:47:37     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/distro-1.4.0.tar.gz (53kB)
+[task 2020-01-23T17:47:37.758Z] 17:47:37     INFO -  Collecting requests (from mozInstall==2.0.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 10))
+[task 2020-01-23T17:47:38.978Z] 17:47:38     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/requests-2.22.0.tar.gz (113kB)
+[task 2020-01-23T17:47:39.501Z] 17:47:39     INFO -  Collecting blessings>=1.3 (from mozlog==5.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 12))
+[task 2020-01-23T17:47:40.598Z] 17:47:40     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/blessings-1.7-py2-none-any.whl
+[task 2020-01-23T17:47:40.653Z] 17:47:40     INFO -  Collecting redo (from mozproxy==1.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 17))
+[task 2020-01-23T17:47:41.696Z] 17:47:41     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/redo-2.0.3.tar.gz
+[task 2020-01-23T17:47:42.016Z] 17:47:42     INFO -  Requirement already satisfied (use --upgrade to upgrade): h2==3.0.1 in z:\task_1579801334\build\venv\lib\site-packages (from wptserve==2.0->-r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 3))
+[task 2020-01-23T17:47:42.023Z] 17:47:42     INFO -  Requirement already satisfied (use --upgrade to upgrade): hyperframe<6,>=5.0 in z:\task_1579801334\build\venv\lib\site-packages (from h2==3.0.1->-r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 6))
+[task 2020-01-23T17:47:42.025Z] 17:47:42     INFO -  Requirement already satisfied (use --upgrade to upgrade): hpack<4,>=2.3 in z:\task_1579801334\build\venv\lib\site-packages (from h2==3.0.1->-r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 6))
+[task 2020-01-23T17:47:42.040Z] 17:47:42     INFO -  Collecting browsermob-proxy>=0.8.0 (from marionette-harness==5.0.0->-r Z:\task_1579801334\build\tests\config\marionette_requirements.txt (line 11))
+[task 2020-01-23T17:47:43.139Z] 17:47:43     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/browsermob_proxy-0.8.0-py2-none-any.whl
+[task 2020-01-23T17:47:43.183Z] 17:47:43     INFO -  Collecting chardet<3.1.0,>=3.0.2 (from requests->mozInstall==2.0.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 10))
+[task 2020-01-23T17:47:44.279Z] 17:47:44     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/chardet-3.0.4-py2.py3-none-any.whl (133kB)
+[task 2020-01-23T17:47:44.481Z] 17:47:44     INFO -  Collecting idna<2.9,>=2.5 (from requests->mozInstall==2.0.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 10))
+[task 2020-01-23T17:47:45.472Z] 17:47:45     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/idna-2.8.tar.gz (174kB)
+[task 2020-01-23T17:47:46.011Z] 17:47:46     INFO -  Collecting urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 (from requests->mozInstall==2.0.0->-r Z:\task_1579801334\build\tests\config\mozbase_requirements.txt (line 10))
+[task 2020-01-23T17:47:46.977Z] 17:47:46     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/urllib3-1.25.7-py2.py3-none-any.whl (125kB)
+[task 2020-01-23T17:47:47.107Z] 17:47:47     INFO -  Building wheels for collected packages: distro, requests, redo, idna
+[task 2020-01-23T17:47:47.108Z] 17:47:47     INFO -    Running setup.py bdist_wheel for distro: started
+[task 2020-01-23T17:47:47.524Z] 17:47:47     INFO -    Running setup.py bdist_wheel for distro: finished with status 'done'
+[task 2020-01-23T17:47:47.525Z] 17:47:47     INFO -    Stored in directory: C:\Users\task_1579801334\AppData\Local\pip\Cache\wheels\ec\f8\6b\6e1955b508176284a3ed69f7cc096419870d9db444f545d9b4
+[task 2020-01-23T17:47:47.716Z] 17:47:47     INFO -    Running setup.py bdist_wheel for requests: started
+[task 2020-01-23T17:47:48.183Z] 17:47:48     INFO -    Running setup.py bdist_wheel for requests: finished with status 'done'
+[task 2020-01-23T17:47:48.184Z] 17:47:48     INFO -    Stored in directory: C:\Users\task_1579801334\AppData\Local\pip\Cache\wheels\12\a1\63\ddb8884d719be5695923514a4445fa7b28be3220499cce0910
+[task 2020-01-23T17:47:48.227Z] 17:47:48     INFO -    Running setup.py bdist_wheel for redo: started
+[task 2020-01-23T17:47:48.655Z] 17:47:48     INFO -    Running setup.py bdist_wheel for redo: finished with status 'done'
+[task 2020-01-23T17:47:48.656Z] 17:47:48     INFO -    Stored in directory: C:\Users\task_1579801334\AppData\Local\pip\Cache\wheels\d9\0e\cc\f2cfe5ec8eac1188e61e98510a8047fb1cf97a0d0527aa98af
+[task 2020-01-23T17:47:48.676Z] 17:47:48     INFO -    Running setup.py bdist_wheel for idna: started
+[task 2020-01-23T17:47:49.071Z] 17:47:49     INFO -    Running setup.py bdist_wheel for idna: finished with status 'done'
+[task 2020-01-23T17:47:49.072Z] 17:47:49     INFO -    Stored in directory: C:\Users\task_1579801334\AppData\Local\pip\Cache\wheels\c2\75\0c\641d27d584aef4b02784f962777f146879d970f4cfdb8e7ec0
+[task 2020-01-23T17:47:49.095Z] 17:47:49     INFO -  Successfully built distro requests redo idna
+[task 2020-01-23T17:47:49.099Z] 17:47:49     INFO -  Installing collected packages: six, distro, chardet, idna, urllib3, requests, blessings, redo, browsermob-proxy
+[task 2020-01-23T17:47:50.208Z] 17:47:50     INFO -  Successfully installed blessings-1.7 browsermob-proxy-0.8.0 chardet-3.0.4 distro-1.4.0 idna-2.8 redo-2.0.3 requests-2.22.0 six-1.13.0 urllib3-1.25.7
+[task 2020-01-23T17:47:50.579Z] 17:47:50     INFO - Return code: 0
+[task 2020-01-23T17:47:50.579Z] 17:47:50     INFO - Installing awsy into virtualenv Z:\task_1579801334\build\venv
+[task 2020-01-23T17:47:50.580Z] 17:47:50     INFO - retry: Calling run_command with args: [['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'Z:\\task_1579801334\\build\\tests\\awsy']], kwargs: {'error_level': 'warning', 'error_list': [{'substr': 'not found or a compiler error:', 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BE5E30>, 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002FF7990>, 'level': 'warning'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E32EC0>, 'level': 'debug'}, {'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}], 'cwd': 'Z:\\task_1579801334\\build', 'env': {'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'USERNAME': 'task_1579801334', 'COMPUTERNAME': 'I-08DF12EEB08A1', 'USERDOMAIN': 'I-08DF12EEB08A1', 'MOZ_AUTOMATION': '1', 'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules', 'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files', 'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com', 'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel', 'PROGRAMFILES': 'C:\\Program Files', 'PROCESSOR_REVISION': '4f01', 'SYSTEMROOT': 'C:\\Windows', 'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps', 'USERPROFILE': 'C:\\Users\\task_1579801334', 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)', 'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData', 'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp', 'RUN_ID': '0', 'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files', 'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge', 'PROCESSOR_ARCHITECTURE': 'AMD64', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}', 'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local', 'HOMEPATH': '\\Users\\task_1579801334', 'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1', 'PROGRAMW6432': 'C:\\Program Files', 'MOZILLABUILD': 'C:\\mozilla-build', 'SCCACHE_DISABLE': '1', 'LOGONSERVER': '\\\\I-08DF12EEB08A1', 'PROMPT': '$P$G', 'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'PROGRAMDATA': 'C:\\ProgramData', 'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475', 'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive', 'MOZ_SCM_LEVEL': '3', 'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland', 'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC', 'WINDIR': 'C:\\Windows', 'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming', 'HOMEDRIVE': 'C:', 'SYSTEMDRIVE': 'C:', 'NUMBER_OF_PROCESSORS': '4', 'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w', 'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache', 'PROCESSOR_LEVEL': '6', 'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files', 'OS': 'Windows_NT', 'PUBLIC': 'C:\\Users\\Public', 'TOOLTOOL_CACHE': 'y:\\tooltool-cache'}}, attempt #1
+[task 2020-01-23T17:47:50.580Z] 17:47:50     INFO - Running command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'install', '--timeout', '120', '--no-index', '--find-links', 'https://pypi.pub.build.mozilla.org/pub', 'Z:\\task_1579801334\\build\\tests\\awsy'] in Z:\task_1579801334\build
+[task 2020-01-23T17:47:50.580Z] 17:47:50     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip install --timeout 120 --no-index --find-links https://pypi.pub.build.mozilla.org/pub Z:\task_1579801334\build\tests\awsy
+[task 2020-01-23T17:47:50.581Z] 17:47:50     INFO - Using env: (same as previous command)
+[task 2020-01-23T17:47:50.938Z] 17:47:50     INFO -  Ignoring indexes: https://pypi.python.org/simple
+[task 2020-01-23T17:47:50.942Z] 17:47:50     INFO -  Processing z:\task_1579801334\build\tests\awsy
+[task 2020-01-23T17:47:51.348Z] 17:47:51     INFO -  Requirement already satisfied (use --upgrade to upgrade): marionette_harness in z:\task_1579801334\build\venv\lib\site-packages (from awsy==0.0.1)
+[task 2020-01-23T17:47:51.378Z] 17:47:51     INFO -  Collecting PyYaml (from awsy==0.0.1)
+[task 2020-01-23T17:47:53.236Z] 17:47:53     INFO -    Downloading https://pypi.pub.build.mozilla.org/pub/PyYAML-5.1.2.tar.gz (265kB)
+[task 2020-01-23T17:47:54.331Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): browsermob-proxy>=0.8.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.335Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): manifestparser>=1.1 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.339Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): marionette-driver>=3.0.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.343Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozcrash>=1.1.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.347Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozdevice>=3.0.1 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.349Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozinfo>=1.0.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.353Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozlog>=5.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.357Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): moznetwork>=0.27 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.360Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozprocess>=1.0.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.362Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozprofile>=2.2.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.367Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozrunner>=7.4.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.378Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): moztest>=0.8 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.380Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozversion>=2.1.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.384Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): six in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.385Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): wptserve>=2.0.0 in z:\task_1579801334\build\venv\lib\site-packages (from marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.389Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): requests>=2.9.1 in z:\task_1579801334\build\venv\lib\site-packages (from browsermob-proxy>=0.8.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.403Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozfile>=1.0 in z:\task_1579801334\build\venv\lib\site-packages (from mozcrash>=1.1.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.406Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): distro==1.4.0 in z:\task_1579801334\build\venv\lib\site-packages (from mozinfo>=1.0.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.407Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): blessings>=1.3 in z:\task_1579801334\build\venv\lib\site-packages (from mozlog>=5.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.410Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): mozterm in z:\task_1579801334\build\venv\lib\site-packages (from mozlog>=5.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.413Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): h2==3.0.1 in z:\task_1579801334\build\venv\lib\site-packages (from wptserve>=2.0.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.419Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): certifi>=2017.4.17 in z:\task_1579801334\build\venv\lib\site-packages (from requests>=2.9.1->browsermob-proxy>=0.8.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.422Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 in z:\task_1579801334\build\venv\lib\site-packages (from requests>=2.9.1->browsermob-proxy>=0.8.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.434Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): idna<2.9,>=2.5 in z:\task_1579801334\build\venv\lib\site-packages (from requests>=2.9.1->browsermob-proxy>=0.8.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.436Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): chardet<3.1.0,>=3.0.2 in z:\task_1579801334\build\venv\lib\site-packages (from requests>=2.9.1->browsermob-proxy>=0.8.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.439Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): hyperframe<6,>=5.0 in z:\task_1579801334\build\venv\lib\site-packages (from h2==3.0.1->wptserve>=2.0.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.440Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): hpack<4,>=2.3 in z:\task_1579801334\build\venv\lib\site-packages (from h2==3.0.1->wptserve>=2.0.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.442Z] 17:47:54     INFO -  Requirement already satisfied (use --upgrade to upgrade): enum34<2,>=1.1.6 in z:\task_1579801334\build\venv\lib\site-packages (from h2==3.0.1->wptserve>=2.0.0->marionette_harness->awsy==0.0.1)
+[task 2020-01-23T17:47:54.442Z] 17:47:54     INFO -  Building wheels for collected packages: PyYaml
+[task 2020-01-23T17:47:54.444Z] 17:47:54     INFO -    Running setup.py bdist_wheel for PyYaml: started
+[task 2020-01-23T17:47:54.915Z] 17:47:54     INFO -    Running setup.py bdist_wheel for PyYaml: finished with status 'done'
+[task 2020-01-23T17:47:54.916Z] 17:47:54     INFO -    Stored in directory: C:\Users\task_1579801334\AppData\Local\pip\Cache\wheels\40\89\fa\416b44cd2bb194c47c3e9b2889d147f272acbf8855b542e161
+[task 2020-01-23T17:47:55.329Z] 17:47:55     INFO -  Successfully built PyYaml
+[task 2020-01-23T17:47:55.329Z] 17:47:55     INFO -  Installing collected packages: PyYaml, awsy
+[task 2020-01-23T17:47:55.465Z] 17:47:55     INFO -    Running setup.py install for awsy: started
+[task 2020-01-23T17:47:55.801Z] 17:47:55     INFO -      Running setup.py install for awsy: finished with status 'done'
+[task 2020-01-23T17:47:55.894Z] 17:47:55     INFO -  Successfully installed PyYaml-5.1.2 awsy-0.0.1
+[task 2020-01-23T17:47:55.941Z] 17:47:55     INFO - Return code: 0
+[task 2020-01-23T17:47:55.941Z] 17:47:55     INFO - Done creating virtualenv Z:\task_1579801334\build\venv.
+[task 2020-01-23T17:47:55.941Z] 17:47:55     INFO - Getting output from command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'freeze']
+[task 2020-01-23T17:47:55.941Z] 17:47:55     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip freeze
+[task 2020-01-23T17:47:56.348Z] 17:47:56     INFO - Reading from file tmpfile_stdout
+[task 2020-01-23T17:47:56.348Z] 17:47:56     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:56.348Z] 17:47:56     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stderr"
+[task 2020-01-23T17:47:56.357Z] 17:47:56     INFO - Return code: 0
+[task 2020-01-23T17:47:56.358Z] 17:47:56     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:56.358Z] 17:47:56     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stdout"
+[task 2020-01-23T17:47:56.366Z] 17:47:56     INFO - Return code: 0
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO - Current package versions:
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   PyYAML == 5.1.2
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   awsy == 0.0.1
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   blessings == 1.7
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   browsermob-proxy == 0.8.0
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   certifi == 2018.4.16
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   chardet == 3.0.4
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   distro == 1.4.0
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   enum34 == 1.1.6
+[task 2020-01-23T17:47:56.367Z] 17:47:56     INFO -   firefox-puppeteer == 52.1.0
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   functools32 == 3.2.3.post2
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   h2 == 3.0.1
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   hpack == 3.0.0
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   hyperframe == 5.1.0
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   idna == 2.8
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   jsonschema == 2.5.1
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   manifestparser == 2.0.0
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   marionette-driver == 3.0.0
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   marionette-harness == 5.0.0
+[task 2020-01-23T17:47:56.368Z] 17:47:56     INFO -   mozInstall == 2.0.0
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozcrash == 1.1.0
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozdebug == 0.2.0
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozdevice == 3.0.7
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozfile == 2.1.0
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozhttpd == 0.7
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozinfo == 1.2.1
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozleak == 1.0.0
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozlog == 5.0
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   moznetwork == 1.0.0
+[task 2020-01-23T17:47:56.369Z] 17:47:56     INFO -   mozpower == 1.0.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozprocess == 1.1.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozprofile == 2.4.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozproxy == 1.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozrunner == 7.7.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozscreenshot == 1.0.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozsystemmonitor == 0.4
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozterm == 1.0.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   moztest == 1.0.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   mozversion == 2.2.0
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   psutil == 5.6.3
+[task 2020-01-23T17:47:56.370Z] 17:47:56     INFO -   redo == 2.0.3
+[task 2020-01-23T17:47:56.371Z] 17:47:56     INFO -   requests == 2.22.0
+[task 2020-01-23T17:47:56.371Z] 17:47:56     INFO -   six == 1.13.0
+[task 2020-01-23T17:47:56.371Z] 17:47:56     INFO -   urllib3 == 1.25.7
+[task 2020-01-23T17:47:56.371Z] 17:47:56     INFO -   wptserve == 2.0
+[task 2020-01-23T17:47:56.371Z] 17:47:56     INFO - Running post-action listener: _resource_record_post_action
+[task 2020-01-23T17:47:56.371Z] 17:47:56     INFO - Running post-action listener: _start_resource_monitoring
+[task 2020-01-23T17:47:56.435Z] 17:47:56     INFO - Starting resource monitoring.
+[task 2020-01-23T17:47:56.451Z] 17:47:56     INFO - [mozharness: 2020-01-23 17:47:56.451000Z] Finished create-virtualenv step (success)
+[task 2020-01-23T17:47:56.451Z] 17:47:56     INFO - [mozharness: 2020-01-23 17:47:56.451000Z] Running install step.
+[task 2020-01-23T17:47:56.452Z] 17:47:56     INFO - Running pre-action listener: _resource_record_pre_action
+[task 2020-01-23T17:47:56.452Z] 17:47:56     INFO - Running main action method: install
+[task 2020-01-23T17:47:56.452Z] 17:47:56     INFO - Getting output from command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\pip', 'freeze']
+[task 2020-01-23T17:47:56.452Z] 17:47:56     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\pip freeze
+[task 2020-01-23T17:47:56.884Z] 17:47:56     INFO - Reading from file tmpfile_stdout
+[task 2020-01-23T17:47:56.885Z] 17:47:56     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:56.885Z] 17:47:56     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stderr"
+[task 2020-01-23T17:47:56.894Z] 17:47:56     INFO - Return code: 0
+[task 2020-01-23T17:47:56.894Z] 17:47:56     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:56.894Z] 17:47:56     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stdout"
+[task 2020-01-23T17:47:56.903Z] 17:47:56     INFO - Return code: 0
+[task 2020-01-23T17:47:56.903Z] 17:47:56     INFO - Detecting whether we're running mozinstall >=1.0...
+[task 2020-01-23T17:47:56.903Z] 17:47:56     INFO - Getting output from command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\mozinstall', '-h']
+[task 2020-01-23T17:47:56.903Z] 17:47:56     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\mozinstall -h
+[task 2020-01-23T17:47:57.249Z] 17:47:57     INFO - Reading from file tmpfile_stdout
+[task 2020-01-23T17:47:57.249Z] 17:47:57     INFO - Output received:
+[task 2020-01-23T17:47:57.249Z] 17:47:57     INFO -  Usage: mozinstall-script.py [options] installer
+[task 2020-01-23T17:47:57.249Z] 17:47:57     INFO -  Options:
+[task 2020-01-23T17:47:57.249Z] 17:47:57     INFO -    -h, --help            show this help message and exit
+[task 2020-01-23T17:47:57.250Z] 17:47:57     INFO -    -d DEST, --destination=DEST
+[task 2020-01-23T17:47:57.250Z] 17:47:57     INFO -                          Directory to install application into. [default:
+[task 2020-01-23T17:47:57.250Z] 17:47:57     INFO -                          "Z:\task_1579801334"]
+[task 2020-01-23T17:47:57.250Z] 17:47:57     INFO -    --app=APP             Application being installed. [default: firefox]
+[task 2020-01-23T17:47:57.250Z] 17:47:57     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:57.251Z] 17:47:57     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stderr"
+[task 2020-01-23T17:47:57.259Z] 17:47:57     INFO - Return code: 0
+[task 2020-01-23T17:47:57.260Z] 17:47:57     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:57.260Z] 17:47:57     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stdout"
+[task 2020-01-23T17:47:57.268Z] 17:47:57     INFO - Return code: 0
+[task 2020-01-23T17:47:57.268Z] 17:47:57     INFO - mkdir: Z:\task_1579801334\build\application
+[task 2020-01-23T17:47:57.268Z] 17:47:57     INFO - Getting output from command: ['Z:\\task_1579801334\\build\\venv\\Scripts\\mozinstall', u'Z:\\task_1579801334\\build\\target.zip', '--destination', 'Z:\\task_1579801334\\build\\application']
+[task 2020-01-23T17:47:57.269Z] 17:47:57     INFO - Copy/paste: Z:\task_1579801334\build\venv\Scripts\mozinstall Z:\task_1579801334\build\target.zip --destination Z:\task_1579801334\build\application
+[task 2020-01-23T17:47:59.289Z] 17:47:59     INFO - Reading from file tmpfile_stdout
+[task 2020-01-23T17:47:59.289Z] 17:47:59     INFO - Output received:
+[task 2020-01-23T17:47:59.290Z] 17:47:59     INFO -  Z:\task_1579801334\build\application\firefox\firefox.exe
+[task 2020-01-23T17:47:59.290Z] 17:47:59     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:59.290Z] 17:47:59     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stderr"
+[task 2020-01-23T17:47:59.298Z] 17:47:59     INFO - Return code: 0
+[task 2020-01-23T17:47:59.298Z] 17:47:59     INFO - Using _rmtree_windows ...
+[task 2020-01-23T17:47:59.299Z] 17:47:59     INFO - Running command: del /F /Q "Z:\task_1579801334\tmpfile_stdout"
+[task 2020-01-23T17:47:59.306Z] 17:47:59     INFO - Return code: 0
+[task 2020-01-23T17:47:59.307Z] 17:47:59     INFO - Running post-action listener: _resource_record_post_action
+[task 2020-01-23T17:47:59.307Z] 17:47:59     INFO - [mozharness: 2020-01-23 17:47:59.307000Z] Finished install step (success)
+[task 2020-01-23T17:47:59.307Z] 17:47:59     INFO - [mozharness: 2020-01-23 17:47:59.307000Z] Running run-tests step.
+[task 2020-01-23T17:47:59.307Z] 17:47:59     INFO - Running pre-action listener: _resource_record_pre_action
+[task 2020-01-23T17:47:59.307Z] 17:47:59     INFO - Running pre-action listener: _set_gcov_prefix
+[task 2020-01-23T17:47:59.307Z] 17:47:59     INFO - Running main action method: run_tests
+[task 2020-01-23T17:47:59.308Z] 17:47:59     INFO - mkdir: Z:\task_1579801334\build\blobber_upload_dir
+[task 2020-01-23T17:47:59.308Z] 17:47:59     INFO - Minidump filename unknown. Determining based upon platform and architecture.
+[task 2020-01-23T17:47:59.308Z] 17:47:59     INFO - Minidump tooltool manifest unknown. Determining based upon platform and architecture.
+[task 2020-01-23T17:47:59.308Z] 17:47:59     INFO - grabbing minidump binary from tooltool
+[task 2020-01-23T17:47:59.309Z] 17:47:59     INFO - retry: Calling run_command with args: (['c:\\mozilla-build\\python\\python.exe', '-u', 'Z:\\task_1579801334\\mozharness\\external_tools\\tooltool.py', '--authentication-file', 'c:\\builds\\relengapi.tok', 'fetch', '-m', 'Z:\\task_1579801334\\build\\tests\\config/tooltool-manifests/win32/releng.manifest', '-o', '-c', 'y:\\tooltool-cache'],), kwargs: {'output_timeout': 600, 'error_list': [{'substr': 'command not found', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002E64BB8>, 'level': 'warning'}, {'substr': 'Traceback (most recent call last)', 'level': 'error'}, {'substr': 'SyntaxError: ', 'level': 'error'}, {'substr': 'TypeError: ', 'level': 'error'}, {'substr': 'NameError: ', 'level': 'error'}, {'substr': 'ZeroDivisionError: ', 'level': 'error'}, {'regex': <_sre.SRE_Pattern object at 0x00000000030F02E0>, 'level': 'critical'}, {'regex': <_sre.SRE_Pattern object at 0x0000000002BD4648>, 'level': 'critical'}, {'substr': 'ERROR - ', 'level': 'error'}], 'cwd': 'Z:\\task_1579801334\\build', 'privileged': False}, attempt #1
+[task 2020-01-23T17:47:59.309Z] 17:47:59     INFO - Running command: ['c:\\mozilla-build\\python\\python.exe', '-u', 'Z:\\task_1579801334\\mozharness\\external_tools\\tooltool.py', '--authentication-file', 'c:\\builds\\relengapi.tok', 'fetch', '-m', 'Z:\\task_1579801334\\build\\tests\\config/tooltool-manifests/win32/releng.manifest', '-o', '-c', 'y:\\tooltool-cache'] in Z:\task_1579801334\build
+[task 2020-01-23T17:47:59.309Z] 17:47:59     INFO - Copy/paste: c:\mozilla-build\python\python.exe -u Z:\task_1579801334\mozharness\external_tools\tooltool.py --authentication-file c:\builds\relengapi.tok fetch -m Z:\task_1579801334\build\tests\config/tooltool-manifests/win32/releng.manifest -o -c y:\tooltool-cache
+[task 2020-01-23T17:47:59.309Z] 17:47:59     INFO - Calling ['c:\\mozilla-build\\python\\python.exe', '-u', 'Z:\\task_1579801334\\mozharness\\external_tools\\tooltool.py', '--authentication-file', 'c:\\builds\\relengapi.tok', 'fetch', '-m', 'Z:\\task_1579801334\\build\\tests\\config/tooltool-manifests/win32/releng.manifest', '-o', '-c', 'y:\\tooltool-cache'] with output_timeout 600
+[task 2020-01-23T17:47:59.412Z] 17:47:59     INFO -  INFO - File win32-minidump_stackwalk.exe not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:47:59.412Z] 17:47:59     INFO -  INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:00.659Z] 17:48:00     INFO -  INFO - File win32-minidump_stackwalk.exe fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tmpsipylb
+[task 2020-01-23T17:48:00.664Z] 17:48:00     INFO -  INFO - File integrity verified, renaming tmpsipylb to win32-minidump_stackwalk.exe
+[task 2020-01-23T17:48:00.664Z] 17:48:00     INFO -  INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:00.669Z] 17:48:00     INFO -  INFO - Local cache y:\tooltool-cache updated with win32-minidump_stackwalk.exe
+[task 2020-01-23T17:48:00.733Z] 17:48:00     INFO - Return code: 0
+[task 2020-01-23T17:48:00.733Z] 17:48:00     INFO - Chmoding Z:\task_1579801334\build\win32-minidump_stackwalk.exe to 0755
+[task 2020-01-23T17:48:00.752Z] 17:48:00     INFO - Running command: ['marionette', '--testvars=Z:\\task_1579801334\\build\\tests\\awsy\\conf\\tp6-testvars.json', '--testvars=Z:\\task_1579801334\\build\\tests\\awsy\\runtime-testvars.json', '--log-raw=-', '--log-errorsummary=Z:\\task_1579801334\\build\\blobber_upload_dir\\marionette_errorsummary.log', '--binary=Z:\\task_1579801334\\build\\application\\firefox\\firefox.exe', '--profile=Z:\\task_1579801334\\build\\profile', '--setpref=media.peerconnection.mtransport_process=false', '--setpref=network.process.enabled=false', '--setpref=layers.d3d11.enable-blacklist=false', '--gecko-log=Z:\\task_1579801334\\build\\blobber_upload_dir\\gecko.log', u'--symbols-path=https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.crashreporter-symbols.zip', '--preferences=Z:\\task_1579801334\\build\\tests\\awsy\\conf\\tp6-prefs.json', 'Z:\\task_1579801334\\build\\tests\\awsy\\awsy\\test_memory_usage.py', '--enable-webrender'] in Z:\task_1579801334\build\tests\awsy
+[task 2020-01-23T17:48:00.753Z] 17:48:00     INFO - Copy/paste: marionette --testvars=Z:\task_1579801334\build\tests\awsy\conf\tp6-testvars.json --testvars=Z:\task_1579801334\build\tests\awsy\runtime-testvars.json --log-raw=- --log-errorsummary=Z:\task_1579801334\build\blobber_upload_dir\marionette_errorsummary.log --binary=Z:\task_1579801334\build\application\firefox\firefox.exe --profile=Z:\task_1579801334\build\profile --setpref=media.peerconnection.mtransport_process=false --setpref=network.process.enabled=false --setpref=layers.d3d11.enable-blacklist=false --gecko-log=Z:\task_1579801334\build\blobber_upload_dir\gecko.log --symbols-path=https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.crashreporter-symbols.zip --preferences=Z:\task_1579801334\build\tests\awsy\conf\tp6-prefs.json Z:\task_1579801334\build\tests\awsy\awsy\test_memory_usage.py --enable-webrender
+[task 2020-01-23T17:48:00.756Z] 17:48:00     INFO - Using env: {'ALLUSERSPROFILE': 'C:\\ProgramData',
+[task 2020-01-23T17:48:00.756Z] 17:48:00     INFO -  'APPDATA': 'Z:\\task_1579801334\\AppData\\Roaming',
+[task 2020-01-23T17:48:00.756Z] 17:48:00     INFO -  'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files',
+[task 2020-01-23T17:48:00.756Z] 17:48:00     INFO -  'COMMONPROGRAMFILES(X86)': 'C:\\Program Files (x86)\\Common Files',
+[task 2020-01-23T17:48:00.756Z] 17:48:00     INFO -  'COMMONPROGRAMW6432': 'C:\\Program Files\\Common Files',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'COMPUTERNAME': 'I-08DF12EEB08A1',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'COMSPEC': 'C:\\Windows\\system32\\cmd.exe',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'DRIVERDATA': 'C:\\Windows\\System32\\Drivers\\DriverData',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'EXTERNALTOOLSPATH': 'Z:\\task_1579801334\\mozharness\\external_tools',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'EXTRA_MOZHARNESS_CONFIG': '{"test_packages_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json", "installer_url": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip"}',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'GECKO_HEAD_REPOSITORY': 'https://hg.mozilla.org/integration/autoland',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'GECKO_HEAD_REV': 'fb6b61e49217d835b2d6e435560424aab10d5475',
+[task 2020-01-23T17:48:00.757Z] 17:48:00     INFO -  'HOMEDRIVE': 'C:',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'HOMEPATH': '\\Users\\task_1579801334',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'LOCALAPPDATA': 'C:\\Users\\task_1579801334\\AppData\\Local',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'LOGONSERVER': '\\\\I-08DF12EEB08A1',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'MINIDUMP_SAVE_PATH': 'Z:\\task_1579801334\\build\\blobber_upload_dir',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'MINIDUMP_STACKWALK': 'Z:\\task_1579801334\\build\\win32-minidump_stackwalk.exe',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'MOZILLABUILD': 'C:\\mozilla-build',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'MOZ_AUTOMATION': '1',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'MOZ_SCM_LEVEL': '3',
+[task 2020-01-23T17:48:00.758Z] 17:48:00     INFO -  'MOZ_UPLOAD_DIR': 'Z:\\task_1579801334\\build\\blobber_upload_dir',
+[task 2020-01-23T17:48:00.759Z] 17:48:00     INFO -  'NUMBER_OF_PROCESSORS': '4',
+[task 2020-01-23T17:48:00.759Z] 17:48:00     INFO -  'ONEDRIVE': 'C:\\Users\\task_1579801334\\OneDrive',
+[task 2020-01-23T17:48:00.759Z] 17:48:00     INFO -  'OS': 'Windows_NT',
+[task 2020-01-23T17:48:00.759Z] 17:48:00     INFO -  'PATH': 'Z:\\task_1579801334\\build\\venv\\Scripts;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;;C:\\Program Files\\Mercurial;C:\\mozilla-build\\bin;C:\\mozilla-build\\kdiff3;C:\\mozilla-build\\moztools-x64\\bin;C:\\mozilla-build\\mozmake;C:\\mozilla-build\\msys\\bin;C:\\mozilla-build\\msys\\local\\bin;C:\\mozilla-build\\nsis-3.01;C:\\mozilla-build\\python;C:\\mozilla-build\\python\\Scripts;C:\\mozilla-build\\python3;C:\\Users\\task_1579801334\\AppData\\Local\\Microsoft\\WindowsApps',
+[task 2020-01-23T17:48:00.759Z] 17:48:00     INFO -  'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC',
+[task 2020-01-23T17:48:00.759Z] 17:48:00     INFO -  'PIP_DOWNLOAD_CACHE': 'y:\\pip-cache',
+[task 2020-01-23T17:48:00.759Z] 17:48:00     INFO -  'PROCESSOR_ARCHITECTURE': 'AMD64',
+[task 2020-01-23T17:48:00.760Z] 17:48:00     INFO -  'PROCESSOR_IDENTIFIER': 'Intel64 Family 6 Model 79 Stepping 1, GenuineIntel',
+[task 2020-01-23T17:48:00.760Z] 17:48:00     INFO -  'PROCESSOR_LEVEL': '6',
+[task 2020-01-23T17:48:00.760Z] 17:48:00     INFO -  'PROCESSOR_REVISION': '4f01',
+[task 2020-01-23T17:48:00.760Z] 17:48:00     INFO -  'PROGRAMDATA': 'C:\\ProgramData',
+[task 2020-01-23T17:48:00.760Z] 17:48:00     INFO -  'PROGRAMFILES': 'C:\\Program Files',
+[task 2020-01-23T17:48:00.760Z] 17:48:00     INFO -  'PROGRAMFILES(X86)': 'C:\\Program Files (x86)',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'PROGRAMW6432': 'C:\\Program Files',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'PROMPT': '$P$G',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'PSMODULEPATH': '%ProgramFiles%\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'PUBLIC': 'C:\\Users\\Public',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'RUN_ID': '0',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'RUST_BACKTRACE': '1',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'SCCACHE_DISABLE': '1',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'SCRIPTSPATH': 'Z:\\task_1579801334\\mozharness',
+[task 2020-01-23T17:48:00.761Z] 17:48:00     INFO -  'STYLO_THREADS': '4',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'SYSTEMDRIVE': 'C:',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'SYSTEMROOT': 'C:\\Windows',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'TASKCLUSTER_INSTANCE_TYPE': 'g3s.xlarge',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'TASKCLUSTER_ROOT_URL': 'https://firefox-ci-tc.services.mozilla.com',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'TASKCLUSTER_WORKER_LOCATION': '{"cloud":"aws","region":"us-east-1","availabilityZone":"us-east-1c"}',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'TASK_ID': 'B02j0uS8SOGRfB4TrE2q4w',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'TEMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'TMP': 'C:\\Users\\task_1579801334\\AppData\\Local\\Temp',
+[task 2020-01-23T17:48:00.762Z] 17:48:00     INFO -  'TOOLTOOL_CACHE': 'y:\\tooltool-cache',
+[task 2020-01-23T17:48:00.763Z] 17:48:00     INFO -  'USERDOMAIN': 'I-08DF12EEB08A1',
+[task 2020-01-23T17:48:00.763Z] 17:48:00     INFO -  'USERDOMAIN_ROAMINGPROFILE': 'I-08DF12EEB08A1',
+[task 2020-01-23T17:48:00.763Z] 17:48:00     INFO -  'USERNAME': 'task_1579801334',
+[task 2020-01-23T17:48:00.763Z] 17:48:00     INFO -  'USERPROFILE': 'C:\\Users\\task_1579801334',
+[task 2020-01-23T17:48:00.763Z] 17:48:00     INFO -  'WINDIR': 'C:\\Windows'}
+[task 2020-01-23T17:48:01.343Z] 17:48:01     INFO - Using workspace for temporary data: "Z:\task_1579801334\build\tests\awsy"
+[task 2020-01-23T17:48:01.344Z] 17:48:01     INFO - mozversion application_buildid: 20200123161822
+[task 2020-01-23T17:48:01.344Z] 17:48:01     INFO - mozversion application_changeset: fb6b61e49217d835b2d6e435560424aab10d5475
+[task 2020-01-23T17:48:01.344Z] 17:48:01     INFO - mozversion application_display_name: Firefox Nightly
+[task 2020-01-23T17:48:01.345Z] 17:48:01     INFO - mozversion application_id: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+[task 2020-01-23T17:48:01.345Z] 17:48:01     INFO - mozversion application_name: Firefox
+[task 2020-01-23T17:48:01.345Z] 17:48:01     INFO - mozversion application_remotingname: firefox
+[task 2020-01-23T17:48:01.346Z] 17:48:01     INFO - mozversion application_repository: https://hg.mozilla.org/integration/autoland
+[task 2020-01-23T17:48:01.346Z] 17:48:01     INFO - mozversion application_vendor: Mozilla
+[task 2020-01-23T17:48:01.346Z] 17:48:01     INFO - mozversion application_version: 74.0a1
+[task 2020-01-23T17:48:01.346Z] 17:48:01     INFO - mozversion platform_buildid: 20200123161822
+[task 2020-01-23T17:48:01.347Z] 17:48:01     INFO - mozversion platform_changeset: fb6b61e49217d835b2d6e435560424aab10d5475
+[task 2020-01-23T17:48:01.347Z] 17:48:01     INFO - mozversion platform_repository: https://hg.mozilla.org/integration/autoland
+[task 2020-01-23T17:48:01.347Z] 17:48:01     INFO - mozversion platform_version: 74.0a1
+[task 2020-01-23T17:48:01.352Z] 17:48:01     INFO - Application command: Z:\task_1579801334\build\application\firefox\firefox.exe -no-remote -marionette --wait-for-browser -profile c:\users\task_1579801334\appdata\local\temp\tmpp0ax5h.profile
+[task 2020-01-23T17:48:09.213Z] 17:48:09     INFO - Profile path is c:\users\task_1579801334\appdata\local\temp\tmpp0ax5h.profile
+[task 2020-01-23T17:48:09.213Z] 17:48:09     INFO - Starting fixture servers
+[task 2020-01-23T17:48:10.849Z] 17:48:10     INFO - Fixture server listening on http://127.0.0.1:49976/
+[task 2020-01-23T17:48:10.849Z] 17:48:10     INFO - Fixture server listening on https://127.0.0.1:49982/
+[task 2020-01-23T17:48:10.851Z] 17:48:10     INFO - mozversion application_buildid: 20200123161822
+[task 2020-01-23T17:48:10.851Z] 17:48:10     INFO - mozversion application_changeset: fb6b61e49217d835b2d6e435560424aab10d5475
+[task 2020-01-23T17:48:10.851Z] 17:48:10     INFO - mozversion application_display_name: Firefox Nightly
+[task 2020-01-23T17:48:10.852Z] 17:48:10     INFO - mozversion application_id: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+[task 2020-01-23T17:48:10.852Z] 17:48:10     INFO - mozversion application_name: Firefox
+[task 2020-01-23T17:48:10.853Z] 17:48:10     INFO - mozversion application_remotingname: firefox
+[task 2020-01-23T17:48:10.853Z] 17:48:10     INFO - mozversion application_repository: https://hg.mozilla.org/integration/autoland
+[task 2020-01-23T17:48:10.853Z] 17:48:10     INFO - mozversion application_vendor: Mozilla
+[task 2020-01-23T17:48:10.854Z] 17:48:10     INFO - mozversion application_version: 74.0a1
+[task 2020-01-23T17:48:10.854Z] 17:48:10     INFO - mozversion platform_buildid: 20200123161822
+[task 2020-01-23T17:48:10.854Z] 17:48:10     INFO - mozversion platform_changeset: fb6b61e49217d835b2d6e435560424aab10d5475
+[task 2020-01-23T17:48:10.854Z] 17:48:10     INFO - mozversion platform_repository: https://hg.mozilla.org/integration/autoland
+[task 2020-01-23T17:48:10.855Z] 17:48:10     INFO - mozversion platform_version: 74.0a1
+[task 2020-01-23T17:48:10.855Z] 17:48:10     INFO - SUITE-START | Running 1 tests
+[task 2020-01-23T17:48:11.051Z] 17:48:11     INFO - TEST-START | awsy\test_memory_usage.py TestMemoryUsage.test_open_tabs
+[task 2020-01-23T17:48:11.072Z] 17:48:11     INFO - areweslimyet run by 0 pages, 1 iterations, 15 perTabPause, 30 settleWaitTime
+[task 2020-01-23T17:48:11.077Z] 17:48:11     INFO - setting up
+[task 2020-01-23T17:48:11.111Z] 17:48:11     INFO - mozproxy mitmproxy was not provided with a 'playback_binary_manifest' Using default playback_binary_manifest
+[task 2020-01-23T17:48:11.111Z] 17:48:11     INFO - mozproxy mozproxy_dir used for mitmproxy downloads and exe files: Z:\task_1579801334\build\tests\html\testing\mozproxy
+[task 2020-01-23T17:48:11.112Z] 17:48:11     INFO - mozproxy create mitmproxy 4.0.4 dir
+[task 2020-01-23T17:48:11.112Z] 17:48:11     INFO - mozproxy downloading mitmproxy binary
+[task 2020-01-23T17:48:11.237Z] 17:48:11     INFO - mozproxy INFO - File mitmproxy-4.0.4-windows.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:11.239Z] 17:48:11     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:12.089Z] 17:48:12     INFO - mozproxy INFO - File mitmproxy-4.0.4-windows.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\mitmdump-4.0.4\tmpur5ila
+[task 2020-01-23T17:48:12.214Z] 17:48:12     INFO - mozproxy INFO - File integrity verified, renaming tmpur5ila to mitmproxy-4.0.4-windows.zip
+[task 2020-01-23T17:48:12.215Z] 17:48:12     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:12.264Z] 17:48:12     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitmproxy-4.0.4-windows.zip
+[task 2020-01-23T17:48:12.265Z] 17:48:12     INFO - mozproxy INFO - unzipping "mitmproxy-4.0.4-windows.zip"
+[task 2020-01-23T17:48:12.439Z] 17:48:12     INFO - mozproxy downloading mitmproxy pageset
+[task 2020-01-23T17:48:12.546Z] 17:48:12     INFO - mozproxy INFO - File mitm4-linux-firefox-amazon.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:12.547Z] 17:48:12     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:13.109Z] 17:48:13     INFO - mozproxy INFO - File mitm4-linux-firefox-amazon.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpotwbc9
+[task 2020-01-23T17:48:13.110Z] 17:48:13     INFO - mozproxy INFO - File mitm4-linux-firefox-apple.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:13.110Z] 17:48:13     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:13.417Z] 17:48:13     INFO - mozproxy INFO - File mitm4-linux-firefox-apple.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmptvoekh
+[task 2020-01-23T17:48:13.418Z] 17:48:13     INFO - mozproxy INFO - File mitm4-linux-firefox-bing-search.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:13.418Z] 17:48:13     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:14.002Z] 17:48:14     INFO - mozproxy INFO - File mitm4-linux-firefox-bing-search.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmp9le8ve
+[task 2020-01-23T17:48:14.003Z] 17:48:14     INFO - mozproxy INFO - File mitm4-linux-firefox-ebay.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:14.003Z] 17:48:14     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:14.234Z] 17:48:14     INFO - mozproxy INFO - File mitm4-linux-firefox-ebay.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmphna94c
+[task 2020-01-23T17:48:14.235Z] 17:48:14     INFO - mozproxy INFO - File mitm4-linux-firefox-facebook.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:14.235Z] 17:48:14     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:15.129Z] 17:48:15     INFO - mozproxy INFO - File mitm4-linux-firefox-facebook.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmp2zlxuy
+[task 2020-01-23T17:48:15.129Z] 17:48:15     INFO - mozproxy INFO - File mitm4-linux-firefox-fandom.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:15.130Z] 17:48:15     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:16.376Z] 17:48:16     INFO - mozproxy INFO - File mitm4-linux-firefox-fandom.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpt6apcn
+[task 2020-01-23T17:48:16.377Z] 17:48:16     INFO - mozproxy INFO - File mitm4-linux-firefox-google-docs.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:16.377Z] 17:48:16     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:17.920Z] 17:48:17     INFO - mozproxy INFO - File mitm4-linux-firefox-google-docs.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpbk2p2m
+[task 2020-01-23T17:48:17.921Z] 17:48:17     INFO - mozproxy INFO - File mitm4-linux-firefox-google-mail.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:17.921Z] 17:48:17     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:18.921Z] 17:48:18     INFO - mozproxy INFO - File mitm4-linux-firefox-google-mail.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpdtnhu_
+[task 2020-01-23T17:48:18.921Z] 17:48:18     INFO - mozproxy INFO - File mitm4-linux-firefox-google-search.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:18.922Z] 17:48:18     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:19.791Z] 17:48:19     INFO - mozproxy INFO - File mitm4-linux-firefox-google-search.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmplykqnx
+[task 2020-01-23T17:48:19.793Z] 17:48:19     INFO - mozproxy INFO - File mitm4-linux-firefox-google-sheets.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:19.793Z] 17:48:19     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:20.287Z] 17:48:20     INFO - mozproxy INFO - File mitm4-linux-firefox-google-sheets.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpc6ewy5
+[task 2020-01-23T17:48:20.287Z] 17:48:20     INFO - mozproxy INFO - File mitm4-linux-firefox-google-slides.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:20.287Z] 17:48:20     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:20.734Z] 17:48:20     INFO - mozproxy INFO - File mitm4-linux-firefox-google-slides.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmplt9vjo
+[task 2020-01-23T17:48:20.734Z] 17:48:20     INFO - mozproxy INFO - File mitm4-linux-firefox-imdb.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:20.735Z] 17:48:20     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:21.786Z] 17:48:21     INFO - mozproxy INFO - File mitm4-linux-firefox-imdb.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpngkj8r
+[task 2020-01-23T17:48:21.787Z] 17:48:21     INFO - mozproxy INFO - File mitm4-linux-firefox-imgur.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:21.787Z] 17:48:21     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:22.032Z] 17:48:22     INFO - mozproxy INFO - File mitm4-linux-firefox-imgur.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpd5gj5h
+[task 2020-01-23T17:48:22.033Z] 17:48:22     INFO - mozproxy INFO - File mitm4-linux-firefox-instagram-binast.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:22.033Z] 17:48:22     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:22.232Z] 17:48:22     INFO - mozproxy INFO - File mitm4-linux-firefox-instagram-binast.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmp0zwa_y
+[task 2020-01-23T17:48:22.232Z] 17:48:22     INFO - mozproxy INFO - File mitm4-linux-firefox-instagram.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:22.232Z] 17:48:22     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:22.394Z] 17:48:22     INFO - mozproxy INFO - File mitm4-linux-firefox-instagram.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpu51v2_
+[task 2020-01-23T17:48:22.395Z] 17:48:22     INFO - mozproxy INFO - File mitm4-linux-firefox-linkedin.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:22.395Z] 17:48:22     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:23.469Z] 17:48:23     INFO - mozproxy INFO - File mitm4-linux-firefox-linkedin.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpr5zpyd
+[task 2020-01-23T17:48:23.470Z] 17:48:23     INFO - mozproxy INFO - File mitm4-linux-firefox-microsoft.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:23.470Z] 17:48:23     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:24.425Z] 17:48:24     INFO - mozproxy INFO - File mitm4-linux-firefox-microsoft.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpxsczqn
+[task 2020-01-23T17:48:24.426Z] 17:48:24     INFO - mozproxy INFO - File mitm4-linux-firefox-netflix.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:24.426Z] 17:48:24     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:25.154Z] 17:48:25     INFO - mozproxy INFO - File mitm4-linux-firefox-netflix.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpezt3wo
+[task 2020-01-23T17:48:25.156Z] 17:48:25     INFO - mozproxy INFO - File mitm4-linux-firefox-office.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:25.156Z] 17:48:25     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:25.356Z] 17:48:25     INFO - mozproxy INFO - File mitm4-linux-firefox-office.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpu52taj
+[task 2020-01-23T17:48:25.356Z] 17:48:25     INFO - mozproxy INFO - File firefox-outlook.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:25.357Z] 17:48:25     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:26.562Z] 17:48:26     INFO - mozproxy INFO - File firefox-outlook.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpdiok3a
+[task 2020-01-23T17:48:26.564Z] 17:48:26     INFO - mozproxy INFO - File mitm4-linux-firefox-paypal.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:26.564Z] 17:48:26     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:26.784Z] 17:48:26     INFO - mozproxy INFO - File mitm4-linux-firefox-paypal.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmp1jgyvm
+[task 2020-01-23T17:48:26.784Z] 17:48:26     INFO - mozproxy INFO - File mitm4-linux-firefox-pinterest.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:26.785Z] 17:48:26     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:27.105Z] 17:48:27     INFO - mozproxy INFO - File mitm4-linux-firefox-pinterest.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpcnha9s
+[task 2020-01-23T17:48:27.106Z] 17:48:27     INFO - mozproxy INFO - File mitm4-linux-firefox-reddit.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:27.106Z] 17:48:27     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:28.040Z] 17:48:28     INFO - mozproxy INFO - File mitm4-linux-firefox-reddit.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmp0hjfd1
+[task 2020-01-23T17:48:28.041Z] 17:48:28     INFO - mozproxy INFO - File mitm4-linux-firefox-tumblr.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:28.041Z] 17:48:28     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:28.341Z] 17:48:28     INFO - mozproxy INFO - File mitm4-linux-firefox-tumblr.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpslg4yn
+[task 2020-01-23T17:48:28.343Z] 17:48:28     INFO - mozproxy INFO - File mitm4-linux-firefox-twitch.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:28.343Z] 17:48:28     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:29.490Z] 17:48:29     INFO - mozproxy INFO - File mitm4-linux-firefox-twitch.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpnskj4u
+[task 2020-01-23T17:48:29.491Z] 17:48:29     INFO - mozproxy INFO - File mitm4-linux-firefox-twitter.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:29.491Z] 17:48:29     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:30.434Z] 17:48:30     INFO - mozproxy INFO - File mitm4-linux-firefox-twitter.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpgolku6
+[task 2020-01-23T17:48:30.435Z] 17:48:30     INFO - mozproxy INFO - File firefox-wikipedia.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:30.435Z] 17:48:30     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:30.615Z] 17:48:30     INFO - mozproxy INFO - File firefox-wikipedia.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpsv3mjk
+[task 2020-01-23T17:48:30.616Z] 17:48:30     INFO - mozproxy INFO - File mitm4-linux-firefox-yahoo-mail.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:30.616Z] 17:48:30     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:30.835Z] 17:48:30     INFO - mozproxy INFO - File mitm4-linux-firefox-yahoo-mail.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpbiynky
+[task 2020-01-23T17:48:30.836Z] 17:48:30     INFO - mozproxy INFO - File mitmproxy-tp6-yahoo-news.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:30.836Z] 17:48:30     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:32.026Z] 17:48:32     INFO - mozproxy INFO - File mitmproxy-tp6-yahoo-news.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpzlrydt
+[task 2020-01-23T17:48:32.027Z] 17:48:32     INFO - mozproxy INFO - File mitm4-linux-firefox-yandex.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:32.028Z] 17:48:32     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:32.174Z] 17:48:32     INFO - mozproxy INFO - File mitm4-linux-firefox-yandex.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpewq8ye
+[task 2020-01-23T17:48:32.175Z] 17:48:32     INFO - mozproxy INFO - File mitm4-linux-firefox-youtube.zip not present in local cache folder y:\tooltool-cache
+[task 2020-01-23T17:48:32.175Z] 17:48:32     INFO - mozproxy INFO - Attempting to fetch from 'https://tooltool.mozilla-releng.net/'...
+[task 2020-01-23T17:48:33.040Z] 17:48:33     INFO - mozproxy INFO - File mitm4-linux-firefox-youtube.zip fetched from https://tooltool.mozilla-releng.net/ as Z:\task_1579801334\build\tests\html\testing\mozproxy\tmpp5nqbn
+[task 2020-01-23T17:48:33.050Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpotwbc9 to mitm4-linux-firefox-amazon.zip
+[task 2020-01-23T17:48:33.051Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.052Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-amazon.zip
+[task 2020-01-23T17:48:33.111Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmptvoekh to mitm4-linux-firefox-apple.zip
+[task 2020-01-23T17:48:33.111Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.131Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-apple.zip
+[task 2020-01-23T17:48:33.133Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmp9le8ve to mitm4-linux-firefox-bing-search.zip
+[task 2020-01-23T17:48:33.133Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.134Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-bing-search.zip
+[task 2020-01-23T17:48:33.143Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmphna94c to mitm4-linux-firefox-ebay.zip
+[task 2020-01-23T17:48:33.144Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.148Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-ebay.zip
+[task 2020-01-23T17:48:33.167Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmp2zlxuy to mitm4-linux-firefox-facebook.zip
+[task 2020-01-23T17:48:33.168Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.177Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-facebook.zip
+[task 2020-01-23T17:48:33.196Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpt6apcn to mitm4-linux-firefox-fandom.zip
+[task 2020-01-23T17:48:33.198Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.208Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-fandom.zip
+[task 2020-01-23T17:48:33.374Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpbk2p2m to mitm4-linux-firefox-google-docs.zip
+[task 2020-01-23T17:48:33.375Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.446Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-google-docs.zip
+[task 2020-01-23T17:48:33.485Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpdtnhu_ to mitm4-linux-firefox-google-mail.zip
+[task 2020-01-23T17:48:33.485Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.494Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-google-mail.zip
+[task 2020-01-23T17:48:33.513Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmplykqnx to mitm4-linux-firefox-google-search.zip
+[task 2020-01-23T17:48:33.513Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.518Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-google-search.zip
+[task 2020-01-23T17:48:33.557Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpc6ewy5 to mitm4-linux-firefox-google-sheets.zip
+[task 2020-01-23T17:48:33.558Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.577Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-google-sheets.zip
+[task 2020-01-23T17:48:33.636Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmplt9vjo to mitm4-linux-firefox-google-slides.zip
+[task 2020-01-23T17:48:33.637Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.661Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-google-slides.zip
+[task 2020-01-23T17:48:33.671Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpngkj8r to mitm4-linux-firefox-imdb.zip
+[task 2020-01-23T17:48:33.671Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.672Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-imdb.zip
+[task 2020-01-23T17:48:33.696Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpd5gj5h to mitm4-linux-firefox-imgur.zip
+[task 2020-01-23T17:48:33.696Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.706Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-imgur.zip
+[task 2020-01-23T17:48:33.725Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmp0zwa_y to mitm4-linux-firefox-instagram-binast.zip
+[task 2020-01-23T17:48:33.725Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.735Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-instagram-binast.zip
+[task 2020-01-23T17:48:33.745Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpu51v2_ to mitm4-linux-firefox-instagram.zip
+[task 2020-01-23T17:48:33.745Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.755Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-instagram.zip
+[task 2020-01-23T17:48:33.774Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpr5zpyd to mitm4-linux-firefox-linkedin.zip
+[task 2020-01-23T17:48:33.774Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.776Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-linkedin.zip
+[task 2020-01-23T17:48:33.787Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpxsczqn to mitm4-linux-firefox-microsoft.zip
+[task 2020-01-23T17:48:33.787Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:33.789Z] 17:48:33     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-microsoft.zip
+[task 2020-01-23T17:48:33.979Z] 17:48:33     INFO - mozproxy INFO - File integrity verified, renaming tmpezt3wo to mitm4-linux-firefox-netflix.zip
+[task 2020-01-23T17:48:33.979Z] 17:48:33     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.059Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-netflix.zip
+[task 2020-01-23T17:48:34.061Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpu52taj to mitm4-linux-firefox-office.zip
+[task 2020-01-23T17:48:34.061Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.066Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-office.zip
+[task 2020-01-23T17:48:34.096Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpdiok3a to firefox-outlook.zip
+[task 2020-01-23T17:48:34.096Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.115Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with firefox-outlook.zip
+[task 2020-01-23T17:48:34.125Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmp1jgyvm to mitm4-linux-firefox-paypal.zip
+[task 2020-01-23T17:48:34.126Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.130Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-paypal.zip
+[task 2020-01-23T17:48:34.196Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpcnha9s to mitm4-linux-firefox-pinterest.zip
+[task 2020-01-23T17:48:34.197Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.227Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-pinterest.zip
+[task 2020-01-23T17:48:34.237Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmp0hjfd1 to mitm4-linux-firefox-reddit.zip
+[task 2020-01-23T17:48:34.237Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.242Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-reddit.zip
+[task 2020-01-23T17:48:34.302Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpslg4yn to mitm4-linux-firefox-tumblr.zip
+[task 2020-01-23T17:48:34.302Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.324Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-tumblr.zip
+[task 2020-01-23T17:48:34.375Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpnskj4u to mitm4-linux-firefox-twitch.zip
+[task 2020-01-23T17:48:34.375Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.394Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-twitch.zip
+[task 2020-01-23T17:48:34.413Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpgolku6 to mitm4-linux-firefox-twitter.zip
+[task 2020-01-23T17:48:34.415Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.425Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-twitter.zip
+[task 2020-01-23T17:48:34.430Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpsv3mjk to firefox-wikipedia.zip
+[task 2020-01-23T17:48:34.431Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.431Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with firefox-wikipedia.zip
+[task 2020-01-23T17:48:34.451Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpbiynky to mitm4-linux-firefox-yahoo-mail.zip
+[task 2020-01-23T17:48:34.451Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.451Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-yahoo-mail.zip
+[task 2020-01-23T17:48:34.501Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpzlrydt to mitmproxy-tp6-yahoo-news.zip
+[task 2020-01-23T17:48:34.501Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.520Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitmproxy-tp6-yahoo-news.zip
+[task 2020-01-23T17:48:34.520Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpewq8ye to mitm4-linux-firefox-yandex.zip
+[task 2020-01-23T17:48:34.521Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.521Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-yandex.zip
+[task 2020-01-23T17:48:34.539Z] 17:48:34     INFO - mozproxy INFO - File integrity verified, renaming tmpp5nqbn to mitm4-linux-firefox-youtube.zip
+[task 2020-01-23T17:48:34.539Z] 17:48:34     INFO - mozproxy INFO - Updating local cache y:\tooltool-cache...
+[task 2020-01-23T17:48:34.544Z] 17:48:34     INFO - mozproxy INFO - Local cache y:\tooltool-cache updated with mitm4-linux-firefox-youtube.zip
+[task 2020-01-23T17:48:34.546Z] 17:48:34     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-amazon.zip"
+[task 2020-01-23T17:48:34.571Z] 17:48:34     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-apple.zip"
+[task 2020-01-23T17:48:34.703Z] 17:48:34     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-bing-search.zip"
+[task 2020-01-23T17:48:34.704Z] 17:48:34     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-ebay.zip"
+[task 2020-01-23T17:48:34.734Z] 17:48:34     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-facebook.zip"
+[task 2020-01-23T17:48:34.799Z] 17:48:34     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-fandom.zip"
+[task 2020-01-23T17:48:34.869Z] 17:48:34     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-google-docs.zip"
+[task 2020-01-23T17:48:35.196Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-google-mail.zip"
+[task 2020-01-23T17:48:35.276Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-google-search.zip"
+[task 2020-01-23T17:48:35.336Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-google-sheets.zip"
+[task 2020-01-23T17:48:35.426Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-google-slides.zip"
+[task 2020-01-23T17:48:35.577Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-imdb.zip"
+[task 2020-01-23T17:48:35.598Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-imgur.zip"
+[task 2020-01-23T17:48:35.668Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-instagram-binast.zip"
+[task 2020-01-23T17:48:35.708Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-instagram.zip"
+[task 2020-01-23T17:48:35.747Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-linkedin.zip"
+[task 2020-01-23T17:48:35.806Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-microsoft.zip"
+[task 2020-01-23T17:48:35.836Z] 17:48:35     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-netflix.zip"
+[task 2020-01-23T17:48:36.208Z] 17:48:36     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-office.zip"
+[task 2020-01-23T17:48:36.238Z] 17:48:36     INFO - mozproxy INFO - unzipping "firefox-outlook.zip"
+[task 2020-01-23T17:48:36.329Z] 17:48:36     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-paypal.zip"
+[task 2020-01-23T17:48:36.388Z] 17:48:36     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-pinterest.zip"
+[task 2020-01-23T17:48:36.608Z] 17:48:36     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-reddit.zip"
+[task 2020-01-23T17:48:36.638Z] 17:48:36     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-tumblr.zip"
+[task 2020-01-23T17:48:36.797Z] 17:48:36     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-twitch.zip"
+[task 2020-01-23T17:48:36.957Z] 17:48:36     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-twitter.zip"
+[task 2020-01-23T17:48:37.022Z] 17:48:37     INFO - mozproxy INFO - unzipping "firefox-wikipedia.zip"
+[task 2020-01-23T17:48:37.041Z] 17:48:37     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-yahoo-mail.zip"
+[task 2020-01-23T17:48:37.101Z] 17:48:37     INFO - mozproxy INFO - unzipping "mitmproxy-tp6-yahoo-news.zip"
+[task 2020-01-23T17:48:37.144Z] 17:48:37     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-yandex.zip"
+[task 2020-01-23T17:48:37.167Z] 17:48:37     INFO - mozproxy INFO - unzipping "mitm4-linux-firefox-youtube.zip"
+[task 2020-01-23T17:48:37.271Z] 17:48:37     INFO - mozproxy mitmdump path: Z:\task_1579801334\build\tests\html\testing\mozproxy\mitmdump-4.0.4\mitmdump
+[task 2020-01-23T17:48:37.271Z] 17:48:37     INFO - mozproxy browser path: Z:\task_1579801334\build\application\firefox\firefox.exe
+[task 2020-01-23T17:48:37.272Z] 17:48:37     INFO - mozproxy Starting mitmproxy playback using env path: Z:\task_1579801334\build\application\firefox;Z:\task_1579801334\build\venv\Scripts;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Windows\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;;C:\Program Files\Mercurial;C:\mozilla-build\bin;C:\mozilla-build\kdiff3;C:\mozilla-build\moztools-x64\bin;C:\mozilla-build\mozmake;C:\mozilla-build\msys\bin;C:\mozilla-build\msys\local\bin;C:\mozilla-build\nsis-3.01;C:\mozilla-build\python;C:\mozilla-build\python\Scripts;C:\mozilla-build\python3;C:\Users\task_1579801334\AppData\Local\Microsoft\WindowsApps
+[task 2020-01-23T17:48:37.274Z] 17:48:37     INFO - mozproxy Starting mitmproxy playback using command: Z:\task_1579801334\build\tests\html\testing\mozproxy\mitmdump-4.0.4\mitmdump --listen-host 127.0.0.1 --listen-port 50074 -v --set upstream_cert=false --set websocket=false --set server_replay_files=Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\yandex.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\apple.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\yahoo-mail.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\imgur.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\imdb.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\ebay.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\twitter.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\youtube.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\fandom.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\google-sheets.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\google-docs.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\google-search.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\google-mail.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\pinterest.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\tumblr.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\microsoft.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\reddit.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\paypal.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\google-slides.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\yahoo-news.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\instagram.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\amazon.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\facebook.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\bing.mp,Z:\\\task_1579801334\\\build\\\tests\\\html\\\testing\\\mozproxy\\\wikipedia.mp --scripts z:\\\task_1579801334\\\build\\\venv\\\lib\\\site-packages\\\mozproxy\\\backends\\\mitm\\\scripts\\\alternate-server-replay-4.0.4.py
+[task 2020-01-23T17:48:40.297Z] 17:48:40     INFO - mozproxy Mitmproxy playback successfully started on 127.0.0.1:50074 as pid 5820
+[task 2020-01-23T17:48:40.298Z] 17:48:40     INFO - mozproxy Installing mitmproxy CA certficate into Firefox
+[task 2020-01-23T17:48:40.298Z] 17:48:40     INFO - mozproxy creating folder: Z:\task_1579801334\build\application\firefox\distribution
+[task 2020-01-23T17:48:40.298Z] 17:48:40     INFO - mozproxy writing: Z:\task_1579801334\build\application\firefox\distribution\policies.json
+[task 2020-01-23T17:48:40.299Z] 17:48:40     INFO - mozproxy reading: Z:\task_1579801334\build\application\firefox\distribution\policies.json
+[task 2020-01-23T17:48:40.299Z] 17:48:40     INFO - mozproxy Firefox policies file contents:
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO - mozproxy {
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -   "policies": {
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -     "Certificates": {
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -       "Install": ["C:\\Users\\task_1579801334\\.mitmproxy\\mitmproxy-ca-cert.cer"]
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -     },
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -     "Proxy": {
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -       "Mode": "manual",
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -       "HTTPProxy": "127.0.0.1:50074",
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -       "SSLProxy": "127.0.0.1:50074",
+[task 2020-01-23T17:48:40.300Z] 17:48:40     INFO -       "Passthrough": "127.0.0.1",
+[task 2020-01-23T17:48:40.301Z] 17:48:40     INFO -       "Locked": true
+[task 2020-01-23T17:48:40.301Z] 17:48:40     INFO -     }
+[task 2020-01-23T17:48:40.301Z] 17:48:40     INFO -   }
+[task 2020-01-23T17:48:40.301Z] 17:48:40     INFO - }
+[task 2020-01-23T17:48:40.301Z] 17:48:40     INFO - mozproxy Verified mitmproxy CA certificate is installed in Firefox
+[task 2020-01-23T17:48:40.480Z] 17:48:40     INFO - Application command: Z:\task_1579801334\build\application\firefox\firefox.exe -no-remote -marionette --wait-for-browser -profile c:\users\task_1579801334\appdata\local\temp\tmpp0ax5h.profile
+[task 2020-01-23T17:48:42.998Z] 17:48:42     INFO - areweslimyet run by 0 pages, 1 iterations, 15 perTabPause, 30 settleWaitTime
+[task 2020-01-23T17:48:42.998Z] 17:48:42     INFO - done setting up!
+[task 2020-01-23T17:48:42.999Z] 17:48:42     INFO - starting checkpoint Start...
+[task 2020-01-23T17:48:43.492Z] 17:48:43     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-Start-0.json.gz
+[task 2020-01-23T17:49:13.493Z] 17:49:13     INFO - starting checkpoint StartSettled...
+[task 2020-01-23T17:49:13.873Z] 17:49:13     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-StartSettled-0.json.gz
+[task 2020-01-23T17:49:13.876Z] 17:49:13     INFO - loading https://www.fandom.com/articles/fallout-76-will-live-and-die-on-the-creativity-of-its-playerbase
+[task 2020-01-23T17:49:15.960Z] 17:49:15     INFO - loaded!
+[task 2020-01-23T17:49:31.124Z] 17:49:31     INFO - switching to tab
+[task 2020-01-23T17:49:31.126Z] 17:49:31     INFO - switched to tab
+[task 2020-01-23T17:49:31.131Z] 17:49:31     INFO - loading https://docs.google.com/document/d/1US-07msg12slQtI_xchzYxcKlTs6Fp7WqIc6W5GK5M8/edit?usp=sharing
+[task 2020-01-23T17:49:35.170Z] 17:49:35     INFO - loaded!
+[task 2020-01-23T17:49:50.343Z] 17:49:50     INFO - switching to tab
+[task 2020-01-23T17:49:50.346Z] 17:49:50     INFO - switched to tab
+[task 2020-01-23T17:49:50.353Z] 17:49:50     INFO - loading https://docs.google.com/presentation/d/1Ici0ceWwpFvmIb3EmKeWSq_vAQdmmdFcWqaiLqUkJng/edit?usp=sharing
+[task 2020-01-23T17:49:54.232Z] 17:49:54     INFO - loaded!
+[task 2020-01-23T17:50:09.411Z] 17:50:09     INFO - switching to tab
+[task 2020-01-23T17:50:09.413Z] 17:50:09     INFO - switched to tab
+[task 2020-01-23T17:50:09.420Z] 17:50:09     INFO - loading https://docs.google.com/spreadsheets/d/1jT9qfZFAeqNoOK97gruc34Zb7y_Q-O_drZ8kSXT-4D4/edit?usp=sharing
+[task 2020-01-23T17:50:12.429Z] 17:50:12     INFO - loaded!
+[task 2020-01-23T17:50:27.602Z] 17:50:27     INFO - switching to tab
+[task 2020-01-23T17:50:27.603Z] 17:50:27     INFO - switched to tab
+[task 2020-01-23T17:50:27.608Z] 17:50:27     INFO - loading https://en.wikipedia.org/wiki/Barack_Obama
+[task 2020-01-23T17:50:33.519Z] 17:50:33     INFO - loaded!
+[task 2020-01-23T17:50:48.676Z] 17:50:48     INFO - switching to tab
+[task 2020-01-23T17:50:48.681Z] 17:50:48     INFO - switched to tab
+[task 2020-01-23T17:50:48.686Z] 17:50:48     INFO - loading https://imgur.com/gallery/m5tYJL6
+[task 2020-01-23T17:50:52.567Z] 17:50:52     INFO - loaded!
+[task 2020-01-23T17:51:07.746Z] 17:51:07     INFO - switching to tab
+[task 2020-01-23T17:51:07.751Z] 17:51:07     INFO - switched to tab
+[task 2020-01-23T17:51:07.758Z] 17:51:07     INFO - loading https://mail.google.com/
+[task 2020-01-23T17:51:09.517Z] 17:51:09     INFO - loaded!
+[task 2020-01-23T17:51:24.682Z] 17:51:24     INFO - switching to tab
+[task 2020-01-23T17:51:24.685Z] 17:51:24     INFO - switched to tab
+[task 2020-01-23T17:51:24.689Z] 17:51:24     INFO - loading https://mail.yahoo.com/
+[task 2020-01-23T17:51:26.887Z] 17:51:26     INFO - loaded!
+[task 2020-01-23T17:51:42.050Z] 17:51:42     INFO - switching to tab
+[task 2020-01-23T17:51:42.054Z] 17:51:42     INFO - switched to tab
+[task 2020-01-23T17:51:42.058Z] 17:51:42     INFO - loading https://pinterest.com/
+[task 2020-01-23T17:51:46.572Z] 17:51:46     INFO - loaded!
+[task 2020-01-23T17:52:01.646Z] 17:52:01     INFO - switching to tab
+[task 2020-01-23T17:52:01.648Z] 17:52:01     INFO - switched to tab
+[task 2020-01-23T17:52:01.652Z] 17:52:01     INFO - loading https://twitter.com/BarackObama
+[task 2020-01-23T17:52:03.363Z] 17:52:03     INFO - loaded!
+[task 2020-01-23T17:52:18.444Z] 17:52:18     INFO - switching to tab
+[task 2020-01-23T17:52:18.455Z] 17:52:18     INFO - switched to tab
+[task 2020-01-23T17:52:18.464Z] 17:52:18     INFO - loading https://www.amazon.com/s?k=laptop&ref=nb_sb_noss_1
+[task 2020-01-23T17:52:21.235Z] 17:52:21     INFO - loaded!
+[task 2020-01-23T17:52:36.410Z] 17:52:36     INFO - switching to tab
+[task 2020-01-23T17:52:36.412Z] 17:52:36     INFO - switched to tab
+[task 2020-01-23T17:52:36.416Z] 17:52:36     INFO - loading https://www.apple.com/macbook-pro/
+[task 2020-01-23T17:52:38.110Z] 17:52:38     INFO - loaded!
+[task 2020-01-23T17:52:53.270Z] 17:52:53     INFO - switching to tab
+[task 2020-01-23T17:52:53.273Z] 17:52:53     INFO - switched to tab
+[task 2020-01-23T17:52:53.278Z] 17:52:53     INFO - loading https://www.bing.com/search?q=barack+obama
+[task 2020-01-23T17:52:53.682Z] 17:52:53     INFO - loaded!
+[task 2020-01-23T17:53:08.799Z] 17:53:08     INFO - switching to tab
+[task 2020-01-23T17:53:08.802Z] 17:53:08     INFO - switched to tab
+[task 2020-01-23T17:53:08.812Z] 17:53:08     INFO - loading https://www.ebay.com/
+[task 2020-01-23T17:53:10.549Z] 17:53:10     INFO - loaded!
+[task 2020-01-23T17:53:25.641Z] 17:53:25     INFO - switching to tab
+[task 2020-01-23T17:53:25.659Z] 17:53:25     INFO - switched to tab
+[task 2020-01-23T17:53:25.666Z] 17:53:25     INFO - loading https://www.facebook.com
+[task 2020-01-23T17:53:30.196Z] 17:53:30     INFO - loaded!
+[task 2020-01-23T17:53:45.277Z] 17:53:45     INFO - switching to tab
+[task 2020-01-23T17:53:45.279Z] 17:53:45     INFO - switched to tab
+[task 2020-01-23T17:53:45.298Z] 17:53:45     INFO - loading https://www.google.com/search?hl=en&q=barack+obama&cad=h
+[task 2020-01-23T17:53:45.923Z] 17:53:45     INFO - loaded!
+[task 2020-01-23T17:54:01.012Z] 17:54:01     INFO - switching to tab
+[task 2020-01-23T17:54:01.013Z] 17:54:01     INFO - switched to tab
+[task 2020-01-23T17:54:01.023Z] 17:54:01     INFO - loading https://www.imdb.com/title/tt0084967/?ref_=nv_sr_2
+[task 2020-01-23T17:54:04.328Z] 17:54:04     INFO - loaded!
+[task 2020-01-23T17:54:19.421Z] 17:54:19     INFO - switching to tab
+[task 2020-01-23T17:54:19.444Z] 17:54:19     INFO - switched to tab
+[task 2020-01-23T17:54:19.458Z] 17:54:19     INFO - loading https://www.instagram.com/
+[task 2020-01-23T17:54:22.180Z] 17:54:22     INFO - loaded!
+[task 2020-01-23T17:54:37.273Z] 17:54:37     INFO - switching to tab
+[task 2020-01-23T17:54:37.277Z] 17:54:37     INFO - switched to tab
+[task 2020-01-23T17:54:37.281Z] 17:54:37     INFO - loading https://www.microsoft.com/en-us/
+[task 2020-01-23T17:54:38.504Z] 17:54:38     INFO - loaded!
+[task 2020-01-23T17:54:53.593Z] 17:54:53     INFO - switching to tab
+[task 2020-01-23T17:54:53.596Z] 17:54:53     INFO - switched to tab
+[task 2020-01-23T17:54:53.609Z] 17:54:53     INFO - loading https://www.paypal.com/myaccount/summary/
+[task 2020-01-23T17:54:54.968Z] 17:54:54     INFO - loaded!
+[task 2020-01-23T17:55:10.138Z] 17:55:10     INFO - switching to tab
+[task 2020-01-23T17:55:10.141Z] 17:55:10     INFO - switched to tab
+[task 2020-01-23T17:55:10.146Z] 17:55:10     INFO - loading https://www.reddit.com/r/technology/comments/9sqwyh/we_posed_as_100_senators_to_run_ads_on_facebook/
+[task 2020-01-23T17:55:16.522Z] 17:55:16     INFO - loaded!
+[task 2020-01-23T17:55:31.637Z] 17:55:31     INFO - switching to tab
+[task 2020-01-23T17:55:31.641Z] 17:55:31     INFO - switched to tab
+[task 2020-01-23T17:55:31.653Z] 17:55:31     INFO - loading https://www.tumblr.com/dashboard
+[task 2020-01-23T17:55:36.056Z] 17:55:36     INFO - loaded!
+[task 2020-01-23T17:55:51.242Z] 17:55:51     INFO - switching to tab
+[task 2020-01-23T17:55:51.244Z] 17:55:51     INFO - switched to tab
+[task 2020-01-23T17:55:51.258Z] 17:55:51     INFO - loading https://www.yahoo.com/lifestyle/police-respond-noise-complaint-end-playing-video-games-respectful-tenants-002329963.html
+[task 2020-01-23T17:55:54.492Z] 17:55:54     INFO - loaded!
+[task 2020-01-23T17:56:09.687Z] 17:56:09     INFO - switching to tab
+[task 2020-01-23T17:56:09.689Z] 17:56:09     INFO - switched to tab
+[task 2020-01-23T17:56:09.698Z] 17:56:09     INFO - loading https://www.youtube.com
+[task 2020-01-23T17:56:13.482Z] 17:56:13     INFO - loaded!
+[task 2020-01-23T17:56:28.584Z] 17:56:28     INFO - switching to tab
+[task 2020-01-23T17:56:28.598Z] 17:56:28     INFO - switched to tab
+[task 2020-01-23T17:56:28.604Z] 17:56:28     INFO - loading https://yandex.ru/search/?text=barack%20obama&lr=10115
+[task 2020-01-23T17:56:33.034Z] 17:56:33     INFO - loaded!
+[task 2020-01-23T17:56:48.043Z] 17:56:48     INFO - starting checkpoint TabsOpen...
+[task 2020-01-23T17:56:50.993Z] 17:56:50     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-TabsOpen-0.json.gz
+[task 2020-01-23T17:57:20.993Z] 17:57:20     INFO - starting checkpoint TabsOpenSettled...
+[task 2020-01-23T17:57:24.435Z] 17:57:24     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-TabsOpenSettled-0.json.gz
+[task 2020-01-23T17:57:24.436Z] 17:57:24     INFO - starting gc...
+[task 2020-01-23T17:57:25.117Z] 17:57:25     INFO - gc done!
+[task 2020-01-23T17:57:25.117Z] 17:57:25     INFO - starting checkpoint TabsOpenForceGC...
+[task 2020-01-23T17:57:35.197Z] 17:57:35     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-TabsOpenForceGC-0.json.gz
+[task 2020-01-23T17:57:35.202Z] 17:57:35     INFO - closing window: 26
+[task 2020-01-23T17:57:36.376Z] 17:57:36     INFO - closing window: 28
+[task 2020-01-23T17:57:36.599Z] 17:57:36     INFO - closing window: 30
+[task 2020-01-23T17:57:36.817Z] 17:57:36     INFO - closing window: 32
+[task 2020-01-23T17:57:37.053Z] 17:57:37     INFO - closing window: 34
+[task 2020-01-23T17:57:37.520Z] 17:57:37     INFO - closing window: 36
+[task 2020-01-23T17:57:37.937Z] 17:57:37     INFO - closing window: 38
+[task 2020-01-23T17:57:38.549Z] 17:57:38     INFO - closing window: 40
+[task 2020-01-23T17:57:39.011Z] 17:57:39     INFO - closing window: 42
+[task 2020-01-23T17:57:39.238Z] 17:57:39     INFO - closing window: 44
+[task 2020-01-23T17:57:39.457Z] 17:57:39     INFO - closing window: 46
+[task 2020-01-23T17:57:39.531Z] 17:57:39     INFO - closing window: 48
+[task 2020-01-23T17:57:39.722Z] 17:57:39     INFO - closing window: 50
+[task 2020-01-23T17:57:39.984Z] 17:57:39     INFO - closing window: 52
+[task 2020-01-23T17:57:40.130Z] 17:57:40     INFO - closing window: 54
+[task 2020-01-23T17:57:40.282Z] 17:57:40     INFO - closing window: 56
+[task 2020-01-23T17:57:40.449Z] 17:57:40     INFO - closing window: 58
+[task 2020-01-23T17:57:40.732Z] 17:57:40     INFO - closing window: 60
+[task 2020-01-23T17:57:40.941Z] 17:57:40     INFO - closing window: 62
+[task 2020-01-23T17:57:41.069Z] 17:57:41     INFO - closing window: 64
+[task 2020-01-23T17:57:41.463Z] 17:57:41     INFO - closing window: 66
+[task 2020-01-23T17:57:41.800Z] 17:57:41     INFO - closing window: 68
+[task 2020-01-23T17:57:42.014Z] 17:57:42     INFO - closing window: 70
+[task 2020-01-23T17:57:42.177Z] 17:57:42     INFO - closing window: 72
+[task 2020-01-23T17:57:42.281Z] 17:57:42     INFO - navigating to about:blank
+[task 2020-01-23T17:57:42.343Z] 17:57:42     INFO - navigated to about:blank
+[task 2020-01-23T17:57:42.352Z] 17:57:42     INFO - starting checkpoint TabsClosedExtraProcesses...
+[task 2020-01-23T17:57:43.170Z] 17:57:43     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-TabsClosedExtraProcesses-0.json.gz
+[task 2020-01-23T17:57:43.170Z] 17:57:43     INFO - closing preloaded browser
+[task 2020-01-23T17:57:43.183Z] 17:57:43     INFO - starting checkpoint TabsClosed...
+[task 2020-01-23T17:57:43.908Z] 17:57:43     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-TabsClosed-0.json.gz
+[task 2020-01-23T17:58:13.908Z] 17:58:13     INFO - starting checkpoint TabsClosedSettled...
+[task 2020-01-23T17:58:14.305Z] 17:58:14     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-TabsClosedSettled-0.json.gz
+[task 2020-01-23T17:58:14.305Z] 17:58:14     INFO - starting gc...
+[task 2020-01-23T17:58:14.777Z] 17:58:14     INFO - gc done!
+[task 2020-01-23T17:58:14.777Z] 17:58:14     INFO - starting checkpoint TabsClosedForceGC...
+[task 2020-01-23T17:58:15.164Z] 17:58:15     INFO - checkpoint created, stored in Z:\\task_1579801334\\build\\tests\\results\\memory-report-TabsClosedForceGC-0.json.gz
+[task 2020-01-23T17:58:15.164Z] 17:58:15     INFO - setting results
+[task 2020-01-23T17:58:15.164Z] 17:58:15     INFO - tearing down!
+[task 2020-01-23T17:58:15.165Z] 17:58:15     INFO - tearing down webservers!
+[task 2020-01-23T17:58:15.165Z] 17:58:15     INFO - mozproxy Stopping mitmproxy playback, killing process 5820
+[task 2020-01-23T17:58:15.283Z] 17:58:15     INFO - mozproxy Successfully killed the mitmproxy playback process with exit code 572
+[task 2020-01-23T17:58:15.283Z] 17:58:15     INFO - mozproxy Turning off the browser proxy
+[task 2020-01-23T17:58:15.283Z] 17:58:15     INFO - mozproxy writing: Z:\task_1579801334\build\application\firefox\distribution\policies.json
+[task 2020-01-23T17:58:15.283Z] 17:58:15     INFO - processing data in Z:\task_1579801334\build\tests\results!
+[task 2020-01-23T17:58:19.215Z] 17:58:19     INFO - PERFHERDER_DATA: {"framework": {"name": "awsy"}, "suites": [{"extraOptions": ["tp6"], "name": "Resident Memory", "lowerIsBetter": true, "value": 701505232.0354093, "units": "bytes", "subtests": [{"lowerIsBetter": true, "units": "bytes", "name": "Fresh start", "value": 287145984}, {"lowerIsBetter": true, "units": "bytes", "name": "Fresh start [+30s]", "value": 281333760}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open", "value": 2142863360}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s]", "value": 2137989120}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s, forced GC]", "value": 2057261056}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed extra processes", "value": 580104192}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed", "value": 572088320}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s]", "value": 420446208}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s, forced GC]", "value": 387244032}]}, {"extraOptions": ["tp6"], "name": "Explicit Memory", "lowerIsBetter": true, "value": 480817458.45801234, "units": "bytes", "subtests": [{"lowerIsBetter": true, "units": "bytes", "name": "Fresh start", "value": 188747217}, {"lowerIsBetter": true, "units": "bytes", "name": "Fresh start [+30s]", "value": 169741801}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open", "value": 1874279793}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s]", "value": 1851895177}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s, forced GC]", "value": 1769758209}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed extra processes", "value": 364072425}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed", "value": 359206377}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s]", "value": 250969577}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s, forced GC]", "value": 212635137}]}, {"extraOptions": ["tp6"], "name": "Heap Unclassified", "lowerIsBetter": true, "value": 71222004.88291733, "units": "bytes", "subtests": [{"lowerIsBetter": true, "units": "bytes", "name": "Fresh start", "value": 29944000}, {"lowerIsBetter": true, "units": "bytes", "name": "Fresh start [+30s]", "value": 25509888}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open", "value": 215783716}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s]", "value": 208136692}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s, forced GC]", "value": 205252752}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed extra processes", "value": 62387649}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed", "value": 60291345}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s]", "value": 44379569}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s, forced GC]", "value": 40115888}]}, {"extraOptions": ["tp6"], "name": "JS", "lowerIsBetter": true, "value": 201929452.46617714, "units": "bytes", "subtests": [{"lowerIsBetter": true, "units": "bytes", "name": "Fresh start", "value": 95115584}, {"lowerIsBetter": true, "units": "bytes", "name": "Fresh start [+30s]", "value": 68842008}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open", "value": 915830928}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s]", "value": 906457704}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s, forced GC]", "value": 849144304}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed extra processes", "value": 154729160}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed", "value": 155213400}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s]", "value": 75942256}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s, forced GC]", "value": 66307488}]}, {"extraOptions": ["tp6"], "name": "Images", "lowerIsBetter": true, "value": 9480027.04917207, "units": "bytes", "subtests": [{"lowerIsBetter": true, "units": "bytes", "name": "Fresh start", "value": 982704}, {"lowerIsBetter": true, "units": "bytes", "name": "Fresh start [+30s]", "value": 1733376}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open", "value": 55527392}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s]", "value": 49557776}, {"lowerIsBetter": true, "units": "bytes", "name": "After tabs open [+30s, forced GC]", "value": 49557776}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed extra processes", "value": 12572224}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed", "value": 12572272}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s]", "value": 7189120}, {"lowerIsBetter": true, "units": "bytes", "name": "Tabs closed [+30s, forced GC]", "value": 2342816}]}]}
+[task 2020-01-23T17:58:19.215Z] 17:58:19     INFO - Perfherder data written to Z:\task_1579801334\build\tests\results\perfherder_data.json
+[task 2020-01-23T17:58:19.225Z] 17:58:19     INFO - done tearing down!
+[task 2020-01-23T17:58:19.231Z] 17:58:19     INFO - TEST-PASS | awsy\test_memory_usage.py TestMemoryUsage.test_open_tabs | took 608179ms
+[task 2020-01-23T17:58:19.232Z] 17:58:19     INFO - 
+[task 2020-01-23T17:58:19.232Z] 17:58:19     INFO - SUMMARY
+[task 2020-01-23T17:58:19.232Z] 17:58:19     INFO - -------
+[task 2020-01-23T17:58:19.232Z] 17:58:19     INFO - passed: 1
+[task 2020-01-23T17:58:19.233Z] 17:58:19     INFO - failed: 0
+[task 2020-01-23T17:58:19.233Z] 17:58:19     INFO - todo: 0
+[task 2020-01-23T17:58:19.233Z] 17:58:19     INFO - SUITE-END | took 608s
+[task 2020-01-23T17:58:21.317Z] 17:58:21     INFO - Return code: 0
+[task 2020-01-23T17:58:21.318Z] 17:58:21     INFO - AWSY exited with return code 0: SUCCESS
+[task 2020-01-23T17:58:21.318Z] 17:58:21     INFO - # TBPL SUCCESS #
+[task 2020-01-23T17:58:21.318Z] 17:58:21     INFO - Running post-action listener: _package_coverage_data
+[task 2020-01-23T17:58:21.318Z] 17:58:21     INFO - Running post-action listener: _resource_record_post_action
+[task 2020-01-23T17:58:21.318Z] 17:58:21     INFO - Running post-action listener: process_java_coverage_data
+[task 2020-01-23T17:58:21.318Z] 17:58:21     INFO - [mozharness: 2020-01-23 17:58:21.318000Z] Finished run-tests step (success)
+[task 2020-01-23T17:58:21.319Z] 17:58:21     INFO - Running post-run listener: _resource_record_post_run
+[task 2020-01-23T17:58:21.464Z] 17:58:21     INFO - Total resource usage - Wall time: 624s; CPU: 47.0%; Read bytes: 197306368; Write bytes: 3763823616; Read time: 38; Write time: 318
+[task 2020-01-23T17:58:21.464Z] 17:58:21     INFO - TinderboxPrint: CPU usage<br/>47.0%
+[task 2020-01-23T17:58:21.464Z] 17:58:21     INFO - TinderboxPrint: I/O read bytes / time<br/>197,306,368 / 38
+[task 2020-01-23T17:58:21.464Z] 17:58:21     INFO - TinderboxPrint: I/O write bytes / time<br/>3,763,823,616 / 318
+[task 2020-01-23T17:58:21.465Z] 17:58:21     INFO - TinderboxPrint: CPU idle<br/>1,327.0 (52.8%)
+[task 2020-01-23T17:58:21.465Z] 17:58:21     INFO - TinderboxPrint: CPU system<br/>517.2 (20.6%)
+[task 2020-01-23T17:58:21.465Z] 17:58:21     INFO - TinderboxPrint: CPU user<br/>651.4 (25.9%)
+[task 2020-01-23T17:58:21.466Z] 17:58:21     INFO - install - Wall time: 3s; CPU: 30.0%; Read bytes: 0; Write bytes: 1121792; Read time: 0; Write time: 0
+[task 2020-01-23T17:58:21.471Z] 17:58:21     INFO - run-tests - Wall time: 622s; CPU: 47.0%; Read bytes: 197306368; Write bytes: 3744846336; Read time: 38; Write time: 318
+[taskcluster 2020-01-23T17:58:21.676Z]    Exit Code: 0
+[taskcluster 2020-01-23T17:58:21.676Z]    User Time: 15.625ms
+[taskcluster 2020-01-23T17:58:21.676Z]  Kernel Time: 31.25ms
+[taskcluster 2020-01-23T17:58:21.676Z]    Wall Time: 12m39.5173366s
+[taskcluster 2020-01-23T17:58:21.676Z]       Result: SUCCEEDED
+[taskcluster 2020-01-23T17:58:21.676Z] === Task Finished ===
+[taskcluster 2020-01-23T17:58:21.677Z] Task Duration: 12m39.5193395s
+[taskcluster 2020-01-23T17:58:22.108Z] Uploading artifact public/logs/localconfig.json from file logs\localconfig.json with content encoding "gzip", mime type "application/octet-stream" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:22.595Z] Uploading artifact public/test_info/gecko.log from file build\blobber_upload_dir\gecko.log with content encoding "gzip", mime type "text/plain" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:22.821Z] Uploading artifact public/test_info/marionette_errorsummary.log from file build\blobber_upload_dir\marionette_errorsummary.log with content encoding "gzip", mime type "text/plain" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:23.127Z] Uploading artifact public/test_info/memory-report-Start-0.json.gz from file build\blobber_upload_dir\memory-report-Start-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:23.576Z] Uploading artifact public/test_info/memory-report-StartSettled-0.json.gz from file build\blobber_upload_dir\memory-report-StartSettled-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:23.863Z] Uploading artifact public/test_info/memory-report-TabsClosed-0.json.gz from file build\blobber_upload_dir\memory-report-TabsClosed-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:24.126Z] Uploading artifact public/test_info/memory-report-TabsClosedExtraProcesses-0.json.gz from file build\blobber_upload_dir\memory-report-TabsClosedExtraProcesses-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:24.381Z] Uploading artifact public/test_info/memory-report-TabsClosedForceGC-0.json.gz from file build\blobber_upload_dir\memory-report-TabsClosedForceGC-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:24.665Z] Uploading artifact public/test_info/memory-report-TabsClosedSettled-0.json.gz from file build\blobber_upload_dir\memory-report-TabsClosedSettled-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:24.923Z] Uploading artifact public/test_info/memory-report-TabsOpen-0.json.gz from file build\blobber_upload_dir\memory-report-TabsOpen-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:25.295Z] Uploading artifact public/test_info/memory-report-TabsOpenForceGC-0.json.gz from file build\blobber_upload_dir\memory-report-TabsOpenForceGC-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:26.335Z] Uploading artifact public/test_info/memory-report-TabsOpenSettled-0.json.gz from file build\blobber_upload_dir\memory-report-TabsOpenSettled-0.json.gz with content encoding "identity", mime type "application/x-gzip" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:27.017Z] Uploading artifact public/test_info/mitmproxy.log from file build\blobber_upload_dir\mitmproxy.log with content encoding "gzip", mime type "text/plain" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:27.497Z] Uploading artifact public/test_info/perfherder_data.json from file build\blobber_upload_dir\perfherder_data.json with content encoding "gzip", mime type "application/octet-stream" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:27.754Z] Uploading artifact public/test_info/resource-usage.json from file build\blobber_upload_dir\resource-usage.json with content encoding "gzip", mime type "application/octet-stream" and expiry 2021-01-22T16:35:19.164Z
+[taskcluster 2020-01-23T17:58:28.066Z] Uploading redirect artifact public/logs/live.log to URL https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/B02j0uS8SOGRfB4TrE2q4w/runs/0/artifacts/public/logs/live_backing.log with mime type "text/plain; charset=utf-8" and expiry 2021-01-22T16:35:19.164Z

@@ -1,0 +1,108 @@
+{
+  "provisionerId": "gecko-t",
+  "workerType": "t-win10-64-gpu-s",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "FKvNIN4OSHqJmZCo7Shi3Q",
+  "dependencies": [
+    "RLuDbKFETZ2yR-1ae7BWrA",
+    "VyxJsCV5SFKVX5TP-gamdA"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.autoland.fb6b61e49217d835b2d6e435560424aab10d5475.105840"
+  ],
+  "priority": "low",
+  "retries": 5,
+  "created": "2020-01-23T16:35:19.164Z",
+  "deadline": "2020-01-24T16:35:19.164Z",
+  "expires": "2021-01-22T16:35:19.164Z",
+  "scopes": [],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        1073807364,
+        3221225786,
+        4
+      ]
+    },
+    "artifacts": [
+      {
+        "path": "logs",
+        "type": "directory",
+        "name": "public/logs"
+      },
+      {
+        "path": "build/blobber_upload_dir",
+        "type": "directory",
+        "name": "public/test_info"
+      }
+    ],
+    "maxRunTime": 7200,
+    "command": [
+      "C:/mozilla-build/python3/python3.exe run-task -- c:\\mozilla-build\\python\\python.exe -u mozharness\\scripts\\awsy_script.py --cfg mozharness\\configs\\awsy\\taskcluster_windows_config.py --tp6 --setpref=media.peerconnection.mtransport_process=false --setpref=network.process.enabled=false --enable-webrender --setpref=layers.d3d11.enable-blacklist=false --download-symbols ondemand"
+    ],
+    "env": {
+      "SCCACHE_DISABLE": "1",
+      "GECKO_HEAD_REV": "fb6b61e49217d835b2d6e435560424aab10d5475",
+      "MOZ_SCM_LEVEL": "3",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/VyxJsCV5SFKVX5TP-gamdA/artifacts/public/build/target.zip\"}",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/integration/autoland",
+      "MOZ_AUTOMATION": "1"
+    },
+    "mounts": [
+      {
+        "content": {
+          "artifact": "public/build/mozharness.zip",
+          "taskId": "VyxJsCV5SFKVX5TP-gamdA"
+        },
+        "directory": ".",
+        "format": "zip"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/integration/autoland/raw-file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/scripts/run-task"
+        },
+        "file": "./run-task"
+      }
+    ]
+  },
+  "metadata": {
+    "owner": "ccoroiu@mozilla.com",
+    "source": "https://hg.mozilla.org/integration/autoland/file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/ci/test",
+    "description": "Are we slim yet - tp6 pageset ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=autoland&revision=fb6b61e49217d835b2d6e435560424aab10d5475))",
+    "name": "test-windows10-64-qr/opt-awsy-tp6-e10s"
+  },
+  "tags": {
+    "kind": "test",
+    "os": "windows",
+    "createdForUser": "ccoroiu@mozilla.com",
+    "retrigger": "true",
+    "label": "test-windows10-64-qr/opt-awsy-tp6-e10s",
+    "worker-implementation": "generic-worker"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579796302
+    },
+    "parent": "RLuDbKFETZ2yR-1ae7BWrA",
+    "chunks": {
+      "current": 1,
+      "total": 1
+    },
+    "suite": "awsy",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "SY",
+      "collection": {
+        "opt": true
+      },
+      "machine": {
+        "platform": "windows10-64-qr"
+      },
+      "groupName": "Are we slim yet tests by TaskCluster",
+      "tier": 1,
+      "symbol": "sy-tp6"
+    },
+    "treeherder-platform": "windows10-64-qr/opt"
+  }
+}
