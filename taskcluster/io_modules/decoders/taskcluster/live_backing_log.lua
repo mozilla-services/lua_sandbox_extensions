@@ -326,7 +326,7 @@ local function perfherder_decode(g, b, json)
     j.collection    = b.base_msg.Fields.collection
     j.framework     = j.framework.name
     j.groupSymbol   = b.base_msg.Fields.groupSymbol
-    j.platform      = b.base_msg.Fields.platform
+    j.platform      = b.base_msg.Fields.platform or "" -- non treeherder metrics
     j.project       = b.base_msg.Fields.project or "" -- non treeherder metrics
     j.pushId        = b.base_msg.Fields.pushId
     j.revision      = b.base_msg.Fields.revision or "" -- non treeherder metrics
@@ -795,7 +795,7 @@ local function get_base_msg(dh, mutable, pj, td)
         f["symbol"]       = tostring(th.symbol)
         f["tier"]         = th.tier or 1
         local m = th.machine or {}
-        f["platform"] = m.platform or pj.status.workerType
+        f["platform"]     = m.platform
 
         if type(th.collection) == "table" then
             local collection = {}
@@ -807,6 +807,8 @@ local function get_base_msg(dh, mutable, pj, td)
             end
         end
     end
+
+    if not f.platform then f.platform = pj.status.workerType end
 
     return msg
 end
