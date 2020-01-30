@@ -791,9 +791,9 @@ local function get_base_msg(dh, mutable, pj, td)
     local th = td.extra.treeherder
     if type(th) == "table" then
         f["jobKind"]      = th.jobKind
-        f["groupSymbol"]  = tostring(th.groupSymbol)
-        f["symbol"]       = tostring(th.symbol)
-        f["tier"]         = th.tier or 1
+        f["groupSymbol"]  = th.groupSymbol
+        f["symbol"]       = th.symbol
+        f["tier"]         = th.tier
         local m = th.machine or {}
         f["platform"]     = m.platform
 
@@ -867,7 +867,7 @@ local function get_parser(f)
 --        elseif f.symbol:match("Jit") then
 --            s = schemas_map.sm
         else
-            s = schemas_map[f.testtype] or schemas_map[f.kind] or schemas_map.test
+            s = schemas_map[f.testtype or ""] or schemas_map[f.kind or ""] or schemas_map.test
         end
     elseif f.jobKind == "build" then
         if f.kind == "partials" then
