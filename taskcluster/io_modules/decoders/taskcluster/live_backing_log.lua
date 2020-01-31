@@ -306,6 +306,16 @@ local function perfherder_decode(g, b, json)
             end
         end
     elseif j.framework.name == "raptor" then
+        local f = j.suites[1]
+        if f.name:match("%-power$") then
+            b.cache.global.raptor_power_embedded = true
+        elseif f.name:match("%-cpu$") then
+            b.cache.global.raptor_cpu_embedded = true
+        elseif f.name:match("%-memory$") then
+            b.cache.global.raptor_memory_embedded = true
+        else
+            b.cache.global.raptor_embedded = true
+        end
         j.recordingDate = b.cache.global.raptor_recording_date
     -- fix up inconsistent schemas
     elseif j.framework.name == "js-bench" then
@@ -627,6 +637,15 @@ local perfherder = {
     fn_js       = perfherder_decode
 }
 
+local raptor_perfherder = {
+    Type        = "line_js",
+    Component   = "perftest",
+    SubComponent= nil, -- set by the parser
+    Grammar     = l.P"perftest-output Info: PERFHERDER_DATA: " * l.C(l.P(1)^1),
+    fn          = eval_line_js,
+    fn_js       = perfherder_decode
+}
+
 local result_exit_code = l.Cg(l.digit^1 / function(s) if s == "0" then return "success" end return "failed" end, "result")
 local gecko = {
     Type        = "block",
@@ -854,7 +873,7 @@ local schemas_map = {
 --    sm                          = new_log({new_task({new_mozharness({test_sm}),perfherder})}),
     mochitest                   = new_log({new_task({new_mozharness({test,gecko,perfherder}),perfherder})}),
     partials                    = new_log({new_task()}),
-    raptor                      = new_log({new_task({new_mozharness({raptor_recording_date,perfherder}),perfherder})}), -- the perfherder data now comes 100% from the artifacts (less efficient but more consistent)
+    raptor                      = new_log({new_task({new_mozharness({raptor_recording_date,raptor_perfherder})})}),
     reftest                     = new_log({new_task({new_mozharness({test_ref,perfherder}),perfherder})}),
     test                        = new_log({new_task({new_mozharness({test,perfherder}),perfherder})}),
 }
@@ -881,20 +900,25 @@ end
 
 
 local logger = read_config("Logger")
-local function get_perfherder_artifacts_cmd(tid, rid, command)
-    local files = {"perfherder-data.json"}
+local function get_perfherder_artifacts_cmd(state, tid, rid, command)
+    local files = {}
+    if not state.cache.global.raptor_embedded then
+        files[#files + 1] = "perfherder-data.json"
+    end
     for i,v in ipairs(command) do
         if type(v) ~= "table" then break end -- windows only contains a command string but it doesn't currently enable the additional artifacts
         for j,arg in ipairs(v) do
-            if arg == "--cpu-test" then
+            if arg == "--cpu-test" and not state.cache.global.raptor_cpu_embedded then
                 files[#files + 1] = "perfherder-data-cpu.json"
-            elseif arg == "--memory-test" then
+            elseif arg == "--memory-test" and not state.cache.global.raptor_memory_embedded then
                 files[#files + 1] = "perfherder-data-memory.json"
-            elseif arg == "--power-test" then
+            elseif arg == "--power-test" and not state.cache.global.raptor_power_embedded then
                 files[#files + 1] = "perfherder-data-power.json"
             end
         end
     end
+    if #files == 0 then return nil end
+
     local perfherder_url  = string.format("%s/task/%s/runs/%d/artifacts/public/test_info", base_tc_url, tid, rid)
     local args = {}
     for i,v in ipairs(files) do
@@ -905,6 +929,7 @@ end
 
 
 local function get_perfherder_artifacts(cmd, files, state, integration_test)
+    if not cmd then return end
     if not integration_test then
         local rv = os.execute(cmd)
         if rv ~= 0 then return string.format("curl rv: %d, %s", rv, cmd) end
@@ -1021,7 +1046,7 @@ local function parse_log(lfh, base_msg, td, integration_test)
     finalize_log(g, state)
 
     if f.testtype == "raptor" then -- may need to include talos but that is usually embedded in the log
-        local cmd, files = get_perfherder_artifacts_cmd(f.taskId, f.runId, td.payload.command)
+        local cmd, files = get_perfherder_artifacts_cmd(state, f.taskId, f.runId, td.payload.command)
         get_perfherder_artifacts_retry(cmd, files, state, 1, integration_test)
     end
 
