@@ -87,6 +87,7 @@ USING
     tasks_for ) updated
 ON
   updated.taskGroupId = old.taskGroupId
+  AND updated.project = old.project
   WHEN NOT MATCHED THEN INSERT ROW
   WHEN MATCHED
   THEN
