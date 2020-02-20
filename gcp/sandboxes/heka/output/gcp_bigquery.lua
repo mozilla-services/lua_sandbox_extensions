@@ -36,9 +36,19 @@ bq_table            = "demo"
 -- Specify a module that will encode/convert the Heka message into its output representation.
 encoder_module = nil -- uses the standard behavior documented above
 
+alert = {
+  disabled = false,
+  prefix = true,
+  throttle = 0,
+  modules = {
+    email = {recipients = {"notify@example.com"}},
+  },
+}
+
 ```
 --]]
 
+local alert = require "heka.alert"
 require "io"
 require "os"
 require "string"
@@ -97,32 +107,36 @@ local bytes_written = fh:seek()
 local last_write = os.time()
 local failed_cnt = 0
 
+local alert_tmpl = [[
+The bq load command has failed with return value: %d
+The file has been temporarily saved off for manual inspection/correction.
+Generally this is just an intermittent failure but if it is caused by an invalid schema
+or corrupt file (see the project's job history) there is no reason to retry until it is
+manually corrected.  Once corrected the file should be loaded using the following command.
 
+%s.%d
+
+The file can be deleted after a successful load.
+]]
 local function bq_load(is_timer_event)
-    local status = true
     fh:close()
     if bytes_written > 0 then
         local rv = os.execute(bq_cmd)
         if rv ~= 0 then
             status = false
-            if is_timer_event then -- issue #496 - since timer_event cannot log the error and alert rety it on the next batch interval
-                fh = io.open(filename, "a")
-                fh:setvbuf("line")
-                last_write = os.time() -- reset the batch timeout, if we were to retry every ticker_interval we could use up a lot of our BQ load quota on an invalid batch
-                return status
-            end
             failed_cnt = failed_cnt + 1
-            os.rename(filename, filename .. "." .. tostring(failed_cnt))
+            local fn = filename .. "." .. tostring(failed_cnt)
+            os.rename(filename, fn)
             if failed_cnt == load_fail_cache then
                 failed_cnt = 0
             end
+            alert.send(read_config("Logger"), "bq load", string.format(alert_tmpl, rv / 256, bq_cmd, failed_cnt))
         end
     end
     fh = io.open(filename, "w")
     fh:setvbuf("line")
     bytes_written = 0
     last_write = os.time()
-    return status
 end
 
 
@@ -138,9 +152,7 @@ function process_message()
     fh:write(data, "\n")
     bytes_written = bytes_written + #data + 1
     if bytes_written >= max_file_size then
-        if not bq_load() then
-            return -1, "bq load failed"
-        end
+        bq_load()
     end
     return 0
 end
@@ -148,8 +160,6 @@ end
 
 function timer_event(ns, shutdown)
     if shutdown or ns/1e9 - last_write >= max_file_age then
-        if not bq_load(true) then
-            print "timer_event bq load failed"
-        end
+        bq_load()
     end
 end

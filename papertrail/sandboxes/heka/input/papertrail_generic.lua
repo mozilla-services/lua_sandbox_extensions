@@ -27,6 +27,7 @@ _key = "APIkey" -- required, papertrail API key
 -- decoder_module = "decoders.payload" -- default
 ```
 --]]
+require "os"
 require "table"
 require "string"
 
@@ -85,7 +86,7 @@ local function request_logs(checkpoint)
         sink    = snk(t)
     })
 
-    if c ~= 200 then return -1, string.format("HTTP status code %d", c) end
+    if c ~= 200 then return -1, string.format("HTTP status code %s", tostring(c)) end
 
     local ok, j = pcall(jdec, table.concat(t))
     if not ok then return -1, j end
@@ -93,26 +94,38 @@ local function request_logs(checkpoint)
 end
 
 
+local tt = {}
 function process_message(checkpoint)
     local rv, err, j
     repeat
         rv, err, j = request_logs(checkpoint)
         if err then return rv, err end
 
+        local cnt = 0
         for i,v in ipairs(j.events) do
-           local msg = sdu.copy_message(default_headers, false)
-           local data = v.message
-           v.message = nil
-           sdu.add_fields(msg, v)
-           local ok, err = pcall(decode, data, msg, true)
-           if not ok or err then
-               err_msg.Payload = err
-               err_msg.Fields.data = m
-               pcall(inject_message, err_msg)
-           end
+            cnt = cnt + 1
+            local msg = sdu.copy_message(default_headers, false)
+            local data = v.message
+            v.message = nil
+            sdu.add_fields(msg, v)
+            local ok, err = pcall(decode, data, msg, true)
+            if not ok or err then
+                err_msg.Payload = err
+                err_msg.Fields.data = m
+                pcall(inject_message, err_msg)
+            end
         end
         checkpoint = j.max_id
         inject_message(nil, checkpoint)
+        if j.reached_time_limit and cnt == 0 then
+            local ts = j.max_time_at or j.min_time_at or ""
+            tt.year, tt.month, tt.day, tt.hour, tt.min, tt.sec = ts:match("(%d%d%d%d)-(%d%d)-(%d%d)T(%d%d):(%d%d):(%d%d)")
+            if tt.year and os.time() - os.time(tt) >= 86000 then
+                checkpoint = nil -- expire outdated checkpoint (this is a hack since the search API should scan to the present)
+                j.reached_record_limit = true
+                print("checkpoint expired", ts)
+            end
+        end
     until not j.reached_record_limit or rv ~= 0
 
     return rv, err
