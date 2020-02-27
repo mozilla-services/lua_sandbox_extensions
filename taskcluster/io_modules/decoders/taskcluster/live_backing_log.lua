@@ -261,7 +261,10 @@ end
 local vcs_suites = {clone = true, pull = true, update = true}
 local function perfherder_decode(g, b, json)
     local j = cjson.decode(json)
-    if type(j.framework) ~= "table" then return "missing framework" end
+    if type(j.framework) ~= "table" then
+        if json == "{}" then return end
+        return "missing framework"
+    end
 
     local line = b.current
     local ns = dt.time_to_ns(line.date_time)
@@ -1074,12 +1077,15 @@ local function get_artifacts(pj, fetch_log)
     local td = fh:read("*a")
     fh:close()
     fh = nil
-    td = cjson.decode(td)
-    if td.code or td.error then
+    local ok, tj = pcall(cjson.decode, td)
+    if not ok then
+        return nil, string.format("parse error: %s, %s", tj, task_url)
+    end
+    if tj.code or tj.error then
         return nil, string.format("api error: %s, %s", tj.code or tj.error, task_url)
     end
     if fetch_log then fh = assert(io.open(log_file, "rb")) end
-    return td, fh
+    return tj, fh
 end
 
 
@@ -1102,6 +1108,7 @@ function decode(data, dh, mutable)
     or ex == "exchange/taskcluster-queue/v1/task-exception" then
         local fetch_log = ex ~= "exchange/taskcluster-queue/v1/task-exception"
         and pj.status.provisionerId ~= "scriptworker-k8s"
+        and pj.status.schedulerId ~= "taskcluster-github"
         and not (pj.task and pj.task.tags.kind == "pr")
         local td, lfh = get_artifacts(pj, fetch_log)
         if not td and lfh:match("^curl") then
