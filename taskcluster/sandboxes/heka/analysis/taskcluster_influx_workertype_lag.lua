@@ -8,7 +8,8 @@
 ## Sample Configuration
 ```lua
 filename        = 'taskcluster_influx_workertype_lag.lua'
-message_matcher = "Type == 'timing' && Fields[level] == 0 && Fields[started] != NIL"
+
+message_matcher = "Type == 'timing' && Fields[level] == 0 && Fields[started] != NIL && Logger =~ '^input.tc_task'"
 ticker_interval = 60
 memory_limit    = 20e6
 output_limit    = 8e6
@@ -17,6 +18,7 @@ preserve_data   = true
 
 preservation_version        = 0
 environment                 = "dev"
+cluster                     = "firefox"
 samples                     = 100 -- rolling window of X samples to compare against the historical values
 samples_quantile            = 0.90 -- 0.01 - 0.99
 
@@ -35,6 +37,7 @@ local util  = require "taskcluster.util"
 data = {}
 data_time_m = 0
 
+local cluster     = read_config("cluster") or error "cluster must be set"
 local environment = read_config("environment") or "dev"
 local samples     = read_config("samples") or 100
 local samples_q   = read_config("samples_quantile") or 0.90
@@ -105,8 +108,8 @@ function timer_event()
                 if sqe ~= sqe then sqe = 0 end -- NaN set to zero
                 stats_cnt = stats_cnt + 1
                 stats[stats_cnt] = string.format(
-                    "taskcluster_workertype_lag,workertype=%s,environment=%s,priority=%s count=%d,h%s=%d,s%s=%d %d",
-                    wt, environment, pri, count, label_q, q:estimate(2), label_q, sqe, data_time_m * 1e9)
+                    "taskcluster_workertype_lag,workertype=%s,environment=%s,cluster=%s,priority=%s count=%d,h%s=%d,s%s=%d %d",
+                    wt, environment, cluster, pri, count, label_q, q:estimate(2), label_q, sqe, data_time_m * 1e9)
             end
             if data_time_m - w.updated >= 86400 * 7 then data[wt][pri] = nil end -- prune anything that has been inactive for a week
         end

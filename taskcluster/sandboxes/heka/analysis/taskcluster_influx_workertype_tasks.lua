@@ -17,6 +17,7 @@ preserve_data   = true
 process_message_inject_limit = 1
 
 environment                 = "dev"
+cluster                     = "firefox"
 cuckoo_filter_items         = 100000 -- default
 cuckoo_filter_interval_size = 1      -- default
 preservation_version        = 0
@@ -36,6 +37,7 @@ cf   = cuckoo_filter_expire.new(read_config("cuckoo_filter_items") or 100000,
 data = {}
 data_time_m = 0
 
+local cluster     = read_config("cluster") or error "cluster must be set"
 local environment = read_config("environment") or "dev"
 --[[ {
 workerType = {
@@ -210,8 +212,8 @@ function timer_event()
             if row[1] then
                 stats_cnt = stats_cnt + 1
                 stats[stats_cnt] = string.format(
-                    "taskcluster_workertype_tasks,workertype=%s,environment=%s defined=%d,pending=%d,running=%d,completed=%d,failed=%d,exception=%d,concurrent=%d %d",
-                    wt, environment, row[2], row[3], row[4], row[5], row[6], row[7], row[8], time_m * 1e9)
+                    "taskcluster_workertype_tasks,workertype=%s,environment=%s,cluster=%s defined=%d,pending=%d,running=%d,completed=%d,failed=%d,exception=%d,concurrent=%d %d",
+                    wt, environment, cluster, row[2], row[3], row[4], row[5], row[6], row[7], row[8], time_m * 1e9)
                 row[1] = false
             end
             if data_time_m - time_m >= 3600 then
