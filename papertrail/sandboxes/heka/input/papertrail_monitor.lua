@@ -18,8 +18,18 @@ ticker_interval = 1800
 preserve_data = false
 
 plugin_name = "worker_metrics"
+
+alert = {
+  disabled = false,
+  prefix = true,
+  throttle = 0,
+  modules = {
+    email = {recipients = {"notify@example.com"}},
+  },
+}
 ```
 --]]
+local alert = require "heka.alert"
 require "io"
 require "os"
 require "string"
@@ -49,9 +59,9 @@ function process_message()
         local cmd = string.format("cp %s/input/%s.cfg %s/input/", sandbox_run_path, plugin_name, sandbox_load_path)
         local rv = os.execute(cmd)
         if rv ~= 0 then
-            print("error", cmd)
+            alert.send(read_config("Logger"), "restart failed", string.format("rv: %d %s", rv/256, cmd))
         else
-            print("papertrail stalled, restarting", cmd)
+            alert.send(read_config("Logger"), "stalled", "The input was successfully restarted but the data stream should be manually checked")
         end
     end
     prev_cp = curr_cp
