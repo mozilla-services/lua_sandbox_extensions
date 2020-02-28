@@ -8,7 +8,7 @@
 ## Sample Configuration
 ```lua
 filename        = 'taskcluster_influx_workertype_lag.lua'
-message_matcher = "Type == 'influx' && Logger == 'input.tc_task_running'"
+message_matcher = "Type == 'timing' && Fields[level] == 0 && Fields[started] != NIL"
 ticker_interval = 60
 memory_limit    = 20e6
 output_limit    = 8e6
@@ -17,12 +17,12 @@ preserve_data   = true
 
 preservation_version        = 0
 environment                 = "dev"
-samples                     = 1000 -- rolling window of X samples to compare against the historical values
+samples                     = 100 -- rolling window of X samples to compare against the historical values
 samples_quantile            = 0.90 -- 0.01 - 0.99
 
 ```
 --]]
-_PRESERVATION_VERSION = (read_config("preservation_version") or 0) + 1
+_PRESERVATION_VERSION = (read_config("preservation_version") or 0) + 2
 
 require "cjson"
 require "math"
@@ -36,49 +36,46 @@ data = {}
 data_time_m = 0
 
 local environment = read_config("environment") or "dev"
-local samples     = read_config("samples") or 1000
+local samples     = read_config("samples") or 100
 local samples_q   = read_config("samples_quantile") or 0.90
 samples_q = math.floor(samples_q * 100) / 100
-assert(samples_q > 0 and samples_q < 1)
-local label_q     = string.format("sp%d", samples_q * 100)
+assert(samples_q >= 0.01 and samples_q <= 0.99)
+local label_q     = string.format("p%d", samples_q * 100)
 
-local function find_wt(wt)
+local function find_wt(wt, pri)
     local w = data[wt]
+    if not w then
+        w = {}
+        data[wt] = w
+    end
+    w = w[pri]
     if not w then
         w = {
             updated = data_time_m,
-            p999 = p2.quantile(0.999),
-            p99  = p2.quantile(0.99),
-            p90  = p2.quantile(0.90),
+            q  = p2.quantile(samples_q), -- historical quantile
             samples_idx = 1,
             samples = {}
         }
-        data[wt] = w
+        data[wt][pri] = w
     end
     return w
 end
 
 
 function process_message()
-    local ok, j = pcall(cjson.decode, read_message("Payload"))
-    if not ok then return -1, j end
-    if not j.runId or j.status.state ~= "running" then return 0 end
-
-    local run               = j.status.runs[j.runId + 1]
-    local time_m, started   = util.get_time_m(run.started)
-    local scheduled         = util.get_time_t(run.scheduled)
+    local time_m, started   = util.get_time_m(read_message("Fields[started]"))
+    local scheduled         = util.get_time_t(read_message("Fields[scheduled]"))
     local lag               = started - scheduled
     if time_m > data_time_m then data_time_m = time_m end
 
-    local pid = j.status.provisionerId or "null"
-    local wt = pid .. "/" .. util.normalize_workertype(j.status.workerType)
-    local w   = find_wt(wt)
+    local pid = read_message("Fields[provisionerId]") or "null"
+    local wt = pid .. "/" .. util.normalize_workertype(read_message("Fields[workerType]"))
+    local pri = read_message("Fields[priority]") or "very-low"
+    local w   = find_wt(wt, pri)
     w.updated = data_time_m
     local idx = w.samples_idx
     w.samples[idx] = lag
-    w.p999:add(lag) -- p50 technically 0.4995 is pulled out of marker 1
-    w.p99:add(lag)
-    w.p90:add(lag)
+    w.q:add(lag)
 
     idx = idx + 1
     if idx > samples then idx = 1 end
@@ -91,25 +88,29 @@ local sq = p2.quantile(samples_q)
 function timer_event()
     local stats = {}
     local stats_cnt = 0
-    for wt, w in pairs(data) do
-        local p999 = w.p999
-        local count = p999:count(4)
-        if count > 4 then
-            sq:clear()
-            for i=1, samples do
-                local v = w.samples[i]
-                if not v then break end
-                sq:add(v)
+    for wt, t in pairs(data) do
+        local items = 0
+        for pri, w in pairs(t) do
+            items = items + 1
+            local q = w.q
+            local count = q:count(4)
+            if count > 4 then
+                sq:clear()
+                for i=1, samples do
+                    local v = w.samples[i]
+                    if not v then break end
+                    sq:add(v)
+                end
+                local sqe = sq:estimate(2)
+                if sqe ~= sqe then sqe = 0 end -- NaN set to zero
+                stats_cnt = stats_cnt + 1
+                stats[stats_cnt] = string.format(
+                    "taskcluster_workertype_lag,workertype=%s,environment=%s,priority=%s count=%d,h%s=%d,s%s=%d %d",
+                    wt, environment, pri, count, label_q, q:estimate(2), label_q, sqe, data_time_m * 1e9)
             end
-            local sqe = sq:estimate(2)
-            if sqe ~= sqe then sqe = 0 end -- NaN set to zero
-            stats_cnt = stats_cnt + 1
-            stats[stats_cnt] = string.format(
-                "taskcluster_workertype_lag,workertype=%s,environment=%s count=%d,p50=%d,p90=%d,p99=%d,p999=%d,%s=%d %d",
-                wt, environment, count, p999:estimate(1), w.p90:estimate(2), w.p99:estimate(2), p999:estimate(2),
-                label_q, sqe, data_time_m * 1e9)
+            if data_time_m - w.updated >= 86400 * 7 then data[wt][pri] = nil end -- prune anything that has been inactive for a week
         end
-        if data_time_m - w.updated >= 86400 * 7 then data[wt] = nil end -- prune anything that has been inactive for a week
+        if items == 0 then data[wt] = nil end
     end
     if stats_cnt > 0 then
         inject_message({Payload = table.concat(stats, "\n")})
