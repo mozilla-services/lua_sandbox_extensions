@@ -1,0 +1,626 @@
+[taskcluster 2020-01-23 23:37:16.847Z] Task ID: bZPP4WKDR5Whwge70OcW9g
+[taskcluster 2020-01-23 23:37:16.847Z] Worker ID: i-04ab3f0c135b3c762
+[taskcluster 2020-01-23 23:37:16.847Z] Worker Group: aws
+[taskcluster 2020-01-23 23:37:16.847Z] Worker Node Type: c3.xlarge
+[taskcluster 2020-01-23 23:37:16.847Z] Worker Type: t-linux-xlarge
+[taskcluster 2020-01-23 23:37:16.847Z] Public IP: 35.160.113.110
+[taskcluster 2020-01-23 23:37:16.847Z] Hostname: ip-10-144-36-31
+
+[taskcluster 2020-01-23 23:37:17.493Z] Downloading artifact "public/image.tar.zst" from task ID: Q9nEh1ibTHKgfh0a56uQDA.
+[taskcluster 2020-01-23 23:37:20.238Z] Downloaded artifact successfully.
+[taskcluster 2020-01-23 23:37:20.238Z] Downloaded 170.858 mb
+[taskcluster 2020-01-23 23:37:20.239Z] Decompressing downloaded image
+[taskcluster 2020-01-23 23:37:21.838Z] Loading docker image from downloaded archive.
+[taskcluster 2020-01-23 23:37:35.427Z] Image 'public/image.tar.zst' from task 'Q9nEh1ibTHKgfh0a56uQDA' loaded.  Using image ID sha256:0a0427a0e0547ec47b60a73d3a964c58df9849b0724351531022c7d22116168d.
+[taskcluster 2020-01-23 23:37:35.565Z] === Task Starting ===
+[setup 2020-01-23T23:37:36.070Z] run-task started in /builds/worker
+[volume 2020-01-23T23:37:36.072Z] changing ownership of volume /builds/worker/artifacts/ to 1000:1000
+[volume 2020-01-23T23:37:36.072Z] changing ownership of volume /builds/worker/workspace/ to 1000:1000
+[setup 2020-01-23T23:37:36.072Z] running as worker:worker
+[setup 2020-01-23T23:37:36.073Z] MOZ_FETCHES_DIR is /builds/worker/fetches
+[fetches 2020-01-23T23:37:36.073Z] fetching artifacts
+[fetches 2020-01-23T23:37:36.073Z] executing ['/usr/bin/python3', '-u', '/builds/worker/bin/fetch-content', 'task-artifacts']
+[fetches 2020-01-23T23:37:36.179Z] attempt 1/5
+[fetches 2020-01-23T23:37:36.179Z] attempt 1/5
+[fetches 2020-01-23T23:37:36.179Z] Downloading https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/XhxgW54mS3-QZ3x9lRK2Mw/artifacts/public/test_info/browsertime-results.tgz to /builds/worker/fetches/browsertime-results.tgz
+[fetches 2020-01-23T23:37:36.179Z] Downloading https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/Qgvg_VqzRW-QvEAjdckZZg/artifacts/public/visualmetrics.py to /builds/worker/fetches/visualmetrics.py
+[fetches 2020-01-23T23:37:36.179Z] Downloading https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/Qgvg_VqzRW-QvEAjdckZZg/artifacts/public/visualmetrics.py
+[fetches 2020-01-23T23:37:36.179Z] Downloading https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/XhxgW54mS3-QZ3x9lRK2Mw/artifacts/public/test_info/browsertime-results.tgz
+[fetches 2020-01-23T23:37:36.359Z] https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/XhxgW54mS3-QZ3x9lRK2Mw/artifacts/public/test_info/browsertime-results.tgz resolved to 2904363 bytes with sha256 d656c8a668c0267412d16ae8516f4b65c2c3951ae79480f137beab4e184f1565 in 0.180s
+[fetches 2020-01-23T23:37:36.378Z] https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/Qgvg_VqzRW-QvEAjdckZZg/artifacts/public/visualmetrics.py resolved to 82756 bytes with sha256 9e587fb43c46dd0c37a15bc7688cf061c82592196eafe3ddd54e2ead27997d66 in 0.199s
+[fetches 2020-01-23T23:37:36.394Z] finished fetching artifacts
+[task 2020-01-23T23:37:36.394Z] executing ['bash', '-cx', '/builds/worker/bin/run-visual-metrics.py --browsertime-results /builds/worker/fetches/browsertime-results.tgz -- --orange --perceptual --contentful --force --renderignore 5 --json --viewport']
+[task 2020-01-23T23:37:36.396Z] + /builds/worker/bin/run-visual-metrics.py --browsertime-results /builds/worker/fetches/browsertime-results.tgz -- --orange --perceptual --contentful --force --renderignore 5 --json --viewport
+[task 2020-01-23T23:37:36.676Z] 2020-01-23T23:37:36.676731Z Extracted browsertime results  path=PosixPath('/builds/worker/fetches/browsertime-results.tgz')
+[task 2020-01-23T23:37:36.677Z] 2020-01-23T23:37:36.677074Z Loaded json from file          path=PosixPath('/builds/worker/fetches/browsertime-results/jobs.json') read_json={'jobs': [{'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/1.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/2.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/3.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/4.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/5.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/6.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/7.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/8.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/9.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/10.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/11.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/12.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/13.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/14.mp4', 'test_name': 'youtube-cold'}, {'json_location': 'browsertime-results/youtube-cold/browsertime.json', 'video_location': 'browsertime-results/youtube-cold/pages/m.youtube.com/data/video/15.mp4', 'test_name': 'youtube-cold'}]}
+[task 2020-01-23T23:37:36.677Z] 2020-01-23T23:37:36.677821Z Loaded json from file          path=PosixPath('/builds/worker/fetches/browsertime-results/application.json') read_json={'application': {'name': 'fenix', 'version': 'n/a'}}
+[task 2020-01-23T23:37:36.753Z] 2020-01-23T23:37:36.753290Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/0/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:36.756Z] 2020-01-23T23:37:36.754634Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/1/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:36.757Z] 2020-01-23T23:37:36.757125Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/3/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:36.758Z] 2020-01-23T23:37:36.757278Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/2/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:37.011Z] ffmpeg version 3.2.12-1~deb9u1ffmpeg version 3.2.12-1~deb9u1ffmpeg version 3.2.12-1~deb9u1ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers Copyright (c) 2000-2018 the FFmpeg developers Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:37.011Z] 
+[task 2020-01-23T23:37:37.011Z] 
+[task 2020-01-23T23:37:37.011Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:37.011Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:37.011Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:37.011Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:37.012Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:37.012Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:37.012Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:37.012Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:37.012Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:37.012Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:37.012Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:37.012Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:37.012Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:37.013Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:37.013Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:37.013Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:37.013Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:37.013Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:37.013Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:37.013Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:37.014Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:37.014Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:37.014Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:37.014Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:37.014Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:37.014Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:37.014Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:37.015Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:37.015Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:37.015Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:37.015Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:37.015Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:37.015Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:37.015Z]  Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:37.016Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:37.016Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:37.016Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:37.016Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:37.016Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:37.016Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:37.017Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:37.017Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:37.017Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:37.017Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:37.017Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:37.025Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/2/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:37.025Z]   Metadata:
+[task 2020-01-23T23:37:37.025Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.025Z]     minor_version   : 512
+[task 2020-01-23T23:37:37.026Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.026Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:37.027Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/1/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:37.027Z]   Metadata:
+[task 2020-01-23T23:37:37.027Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.027Z]     minor_version   : 512
+[task 2020-01-23T23:37:37.027Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.027Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:37.027Z]   Duration: 00:00:06.00, start: 0.000000, bitrate: 277 kb/s
+[task 2020-01-23T23:37:37.027Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/3/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:37.028Z]   Metadata:
+[task 2020-01-23T23:37:37.028Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.028Z]     minor_version   : 512    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 275 kb/s, 2.33 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:37.028Z]     Metadata:
+[task 2020-01-23T23:37:37.028Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.028Z] 
+[task 2020-01-23T23:37:37.028Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.028Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:37.029Z]   Duration: 00:00:05.92, start: 0.000000, bitrate: 256 kb/s
+[task 2020-01-23T23:37:37.029Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 255 kb/s, 2.20 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:37.029Z]     Metadata:
+[task 2020-01-23T23:37:37.029Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.030Z]   Duration: 00:00:06.08, start: 0.000000, bitrate: 243 kb/s
+[task 2020-01-23T23:37:37.031Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 241 kb/s, 2.47 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:37.031Z]     Metadata:
+[task 2020-01-23T23:37:37.031Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.033Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/0/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:37.033Z]   Metadata:
+[task 2020-01-23T23:37:37.034Z] Output #0, image2, to '/tmp/vis-eZbF8_/viewport.png':
+[task 2020-01-23T23:37:37.034Z]   Metadata:
+[task 2020-01-23T23:37:37.034Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.034Z]     minor_version   : 512
+[task 2020-01-23T23:37:37.035Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.035Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:37.036Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:37.036Z]     Metadata:
+[task 2020-01-23T23:37:37.036Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.036Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:37.037Z] Stream mapping:
+[task 2020-01-23T23:37:37.037Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:37.037Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:37.038Z] Output #0, image2, to '/tmp/vis-DgPOhI/viewport.png':
+[task 2020-01-23T23:37:37.038Z]   Metadata:
+[task 2020-01-23T23:37:37.038Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.039Z]     minor_version   : 512
+[task 2020-01-23T23:37:37.039Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.039Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:37.039Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:37.039Z]     Metadata:
+[task 2020-01-23T23:37:37.039Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.039Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:37.039Z] Stream mapping:
+[task 2020-01-23T23:37:37.040Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:37.040Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:37.040Z] Output #0, image2, to '/tmp/vis-WKDK3a/viewport.png':
+[task 2020-01-23T23:37:37.040Z]   Metadata:
+[task 2020-01-23T23:37:37.040Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.040Z]     minor_version   : 512
+[task 2020-01-23T23:37:37.040Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.040Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:37.040Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:37.040Z]     Metadata:
+[task 2020-01-23T23:37:37.040Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.040Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:37.041Z] Stream mapping:
+[task 2020-01-23T23:37:37.041Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:37.041Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:37.041Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.042Z]     minor_version   : 512
+[task 2020-01-23T23:37:37.042Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.042Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:37.043Z]   Duration: 00:00:06.04, start: 0.000000, bitrate: 265 kb/s
+[task 2020-01-23T23:37:37.043Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 263 kb/s, 2.32 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:37.044Z]     Metadata:
+[task 2020-01-23T23:37:37.045Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.049Z] Output #0, image2, to '/tmp/vis-GZJYJ0/viewport.png':
+[task 2020-01-23T23:37:37.049Z]   Metadata:
+[task 2020-01-23T23:37:37.049Z]     major_brand     : isom
+[task 2020-01-23T23:37:37.049Z]     minor_version   : 512
+[task 2020-01-23T23:37:37.049Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:37.053Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:37.054Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:37.054Z]     Metadata:
+[task 2020-01-23T23:37:37.054Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:37.054Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:37.054Z] Stream mapping:
+[task 2020-01-23T23:37:37.055Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:37.055Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:37.189Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.257x    
+[task 2020-01-23T23:37:37.189Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:37.226Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.213x    
+[task 2020-01-23T23:37:37.226Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:37.228Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.206x    
+[task 2020-01-23T23:37:37.228Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:37.241Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.215x    
+[task 2020-01-23T23:37:37.242Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:41.191Z] 2020-01-23T23:37:41.189100Z Command succeeded              result=b'{"SpeedIndex": 906, "FirstVisualChange": 360, "LastVisualChange": 1040, "VisualProgress": "0=0, 360=11, 840=15, 960=79, 1040=100", "ContentfulSpeedIndex": 773, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=46, 840=93, 960=100, 1040=100", "PerceptualSpeedIndex": 688, "PerceptualSpeedIndexProgress": "0=0, 360=52, 840=89, 960=97, 1040=100"}\n'
+[task 2020-01-23T23:37:41.192Z] 2020-01-23T23:37:41.190184Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/4/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:41.263Z] 2020-01-23T23:37:41.263704Z Command succeeded              result=b'{"SpeedIndex": 817, "FirstVisualChange": 360, "LastVisualChange": 960, "VisualProgress": "0=0, 360=11, 640=11, 800=26, 880=92, 960=100", "ContentfulSpeedIndex": 667, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=53, 640=87, 800=98, 880=100, 960=100", "PerceptualSpeedIndex": 627, "PerceptualSpeedIndexProgress": "0=0, 360=57, 640=81, 800=94, 880=99, 960=100"}\n'
+[task 2020-01-23T23:37:41.267Z] 2020-01-23T23:37:41.265397Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/5/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:41.356Z] 2020-01-23T23:37:41.356561Z Command succeeded              result=b'{"SpeedIndex": 864, "FirstVisualChange": 360, "LastVisualChange": 1000, "VisualProgress": "0=0, 360=10, 800=15, 880=40, 920=79, 1000=100", "ContentfulSpeedIndex": 758, "videoRecordingStart": 2000, "ContentfulSpeedIndexProgress": "0=0, 360=47, 800=91, 880=97, 920=100, 1000=100", "PerceptualSpeedIndex": 663, "PerceptualSpeedIndexProgress": "0=0, 360=54, 800=89, 880=95, 920=97, 1000=100"}\n'
+[task 2020-01-23T23:37:41.360Z] 2020-01-23T23:37:41.359882Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/6/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:41.434Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:41.434Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:41.434Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:41.436Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:41.436Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:41.437Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:41.437Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:41.438Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:41.438Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:41.438Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:41.438Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:41.438Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:41.448Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/4/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:41.448Z]   Metadata:
+[task 2020-01-23T23:37:41.449Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.449Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.449Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.449Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:41.449Z]   Duration: 00:00:05.96, start: 0.000000, bitrate: 273 kb/s
+[task 2020-01-23T23:37:41.450Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 271 kb/s, 2.35 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:41.450Z]     Metadata:
+[task 2020-01-23T23:37:41.450Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.455Z] Output #0, image2, to '/tmp/vis-DLr_97/viewport.png':
+[task 2020-01-23T23:37:41.455Z]   Metadata:
+[task 2020-01-23T23:37:41.455Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.455Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.456Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.456Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:41.456Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:41.456Z]     Metadata:
+[task 2020-01-23T23:37:41.457Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.457Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:41.457Z] Stream mapping:
+[task 2020-01-23T23:37:41.457Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:41.457Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:41.467Z] 2020-01-23T23:37:41.467532Z Command succeeded              result=b'{"SpeedIndex": 789, "FirstVisualChange": 400, "LastVisualChange": 960, "VisualProgress": "0=0, 400=10, 720=15, 800=79, 920=79, 960=100", "ContentfulSpeedIndex": 727, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 400=55, 720=88, 800=92, 920=100, 960=100", "PerceptualSpeedIndex": 640, "PerceptualSpeedIndexProgress": "0=0, 400=62, 720=89, 800=95, 920=98, 960=100"}\n'
+[task 2020-01-23T23:37:41.470Z] 2020-01-23T23:37:41.470181Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/7/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:41.538Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:41.539Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:41.540Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:41.540Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:41.541Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:41.541Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:41.542Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:41.543Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:41.543Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:41.544Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:41.544Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:41.545Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:41.555Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/5/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:41.556Z]   Metadata:
+[task 2020-01-23T23:37:41.556Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.557Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.557Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.557Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:41.558Z]   Duration: 00:00:05.96, start: 0.000000, bitrate: 252 kb/s
+[task 2020-01-23T23:37:41.559Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 251 kb/s, 2.18 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:41.559Z]     Metadata:
+[task 2020-01-23T23:37:41.559Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.564Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.375x    
+[task 2020-01-23T23:37:41.565Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:41.565Z] Output #0, image2, to '/tmp/vis-ZFJVRw/viewport.png':
+[task 2020-01-23T23:37:41.566Z]   Metadata:
+[task 2020-01-23T23:37:41.566Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.566Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.567Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.567Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:41.568Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:41.568Z]     Metadata:
+[task 2020-01-23T23:37:41.568Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.569Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:41.569Z] Stream mapping:
+[task 2020-01-23T23:37:41.570Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:41.570Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:41.620Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:41.620Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:41.621Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:41.621Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:41.621Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:41.622Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:41.622Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:41.622Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:41.622Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:41.622Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:41.623Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:41.623Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:41.633Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/6/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:41.634Z]   Metadata:
+[task 2020-01-23T23:37:41.635Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.636Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.637Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.637Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:41.638Z]   Duration: 00:00:05.96, start: 0.000000, bitrate: 251 kb/s
+[task 2020-01-23T23:37:41.639Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 249 kb/s, 2.18 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:41.640Z]     Metadata:
+[task 2020-01-23T23:37:41.640Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.655Z] Output #0, image2, to '/tmp/vis-maUUYo/viewport.png':
+[task 2020-01-23T23:37:41.656Z]   Metadata:
+[task 2020-01-23T23:37:41.657Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.658Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.659Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.660Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:41.661Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:41.661Z]     Metadata:
+[task 2020-01-23T23:37:41.662Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.662Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:41.662Z] Stream mapping:
+[task 2020-01-23T23:37:41.663Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:41.663Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:41.709Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.278x    
+[task 2020-01-23T23:37:41.709Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:41.731Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:41.731Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:41.731Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:41.731Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:41.731Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:41.731Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:41.731Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:41.731Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:41.731Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:41.732Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:41.732Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:41.733Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:41.743Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/7/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:41.743Z]   Metadata:
+[task 2020-01-23T23:37:41.743Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.743Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.743Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.743Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:41.744Z]   Duration: 00:00:05.96, start: 0.000000, bitrate: 251 kb/s
+[task 2020-01-23T23:37:41.745Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 250 kb/s, 2.18 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:41.745Z]     Metadata:
+[task 2020-01-23T23:37:41.745Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.751Z] Output #0, image2, to '/tmp/vis-maSSRJ/viewport.png':
+[task 2020-01-23T23:37:41.751Z]   Metadata:
+[task 2020-01-23T23:37:41.752Z]     major_brand     : isom
+[task 2020-01-23T23:37:41.752Z]     minor_version   : 512
+[task 2020-01-23T23:37:41.752Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:41.752Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:41.752Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:41.752Z]     Metadata:
+[task 2020-01-23T23:37:41.752Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:41.752Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:41.752Z] Stream mapping:
+[task 2020-01-23T23:37:41.752Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:41.752Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:41.789Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.313x    
+[task 2020-01-23T23:37:41.789Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:41.844Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.431x    
+[task 2020-01-23T23:37:41.844Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:45.970Z] 2020-01-23T23:37:45.968002Z Command succeeded              result=b'{"SpeedIndex": 840, "FirstVisualChange": 360, "LastVisualChange": 1040, "VisualProgress": "0=0, 360=11, 760=15, 840=44, 880=79, 1040=100", "ContentfulSpeedIndex": 726, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=49, 760=90, 840=97, 880=100, 1040=100", "PerceptualSpeedIndex": 657, "PerceptualSpeedIndexProgress": "0=0, 360=54, 760=87, 840=92, 880=95, 1040=100"}\n'
+[task 2020-01-23T23:37:45.971Z] 2020-01-23T23:37:45.968885Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/8/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:46.012Z] 2020-01-23T23:37:46.011321Z Command succeeded              result=b'{"SpeedIndex": 804, "FirstVisualChange": 360, "LastVisualChange": 920, "VisualProgress": "0=0, 360=10, 760=15, 840=79, 920=100", "ContentfulSpeedIndex": 702, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=51, 760=95, 840=100, 920=100", "PerceptualSpeedIndex": 627, "PerceptualSpeedIndexProgress": "0=0, 360=57, 760=91, 840=97, 920=100"}\n'
+[task 2020-01-23T23:37:46.013Z] 2020-01-23T23:37:46.012282Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/9/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:46.068Z] 2020-01-23T23:37:46.065758Z Command succeeded              result=b'{"SpeedIndex": 787, "FirstVisualChange": 360, "LastVisualChange": 960, "VisualProgress": "0=0, 360=10, 760=15, 800=79, 880=79, 960=100", "ContentfulSpeedIndex": 712, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=50, 760=92, 800=95, 880=100, 960=100", "PerceptualSpeedIndex": 624, "PerceptualSpeedIndexProgress": "0=0, 360=57, 760=91, 800=94, 880=97, 960=100"}\n'
+[task 2020-01-23T23:37:46.068Z] 2020-01-23T23:37:46.066784Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/10/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:46.216Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:46.216Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:46.216Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:46.217Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:46.217Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:46.218Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:46.218Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:46.218Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:46.219Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:46.220Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:46.220Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:46.222Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:46.231Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/8/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:46.231Z]   Metadata:
+[task 2020-01-23T23:37:46.233Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.234Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.234Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.235Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:46.236Z]   Duration: 00:00:05.96, start: 0.000000, bitrate: 253 kb/s
+[task 2020-01-23T23:37:46.237Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 252 kb/s, 2.01 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:46.237Z]     Metadata:
+[task 2020-01-23T23:37:46.238Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:46.254Z] Output #0, image2, to '/tmp/vis-5bH5Mf/viewport.png':
+[task 2020-01-23T23:37:46.254Z]   Metadata:
+[task 2020-01-23T23:37:46.255Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.256Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.256Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.257Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:46.258Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:46.259Z]     Metadata:
+[task 2020-01-23T23:37:46.259Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:46.260Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:46.261Z] Stream mapping:
+[task 2020-01-23T23:37:46.261Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:46.262Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:46.300Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:46.300Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:46.300Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:46.300Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:46.300Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:46.300Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:46.300Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:46.300Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:46.300Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:46.302Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:46.302Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:46.302Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:46.314Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/9/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:46.314Z]   Metadata:
+[task 2020-01-23T23:37:46.314Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.315Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.315Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.315Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:46.315Z]   Duration: 00:00:06.04, start: 0.000000, bitrate: 257 kb/s
+[task 2020-01-23T23:37:46.315Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 256 kb/s, 2.48 fps, 25 tbr, 12800 tbn, 50 tbc (default)ffmpeg version 3.2.12-1~deb9u1
+[task 2020-01-23T23:37:46.315Z]     Metadata:
+[task 2020-01-23T23:37:46.315Z]  Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:46.315Z]       handler_name    :   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:46.315Z] VideoHandler
+[task 2020-01-23T23:37:46.315Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:46.315Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:46.315Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:46.315Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:46.315Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:46.315Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:46.315Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:46.316Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:46.316Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:46.316Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:46.316Z] Output #0, image2, to '/tmp/vis-ZSPaEd/viewport.png':
+[task 2020-01-23T23:37:46.316Z]   Metadata:
+[task 2020-01-23T23:37:46.316Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.317Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.317Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.317Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:46.317Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:46.317Z]     Metadata:
+[task 2020-01-23T23:37:46.317Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:46.317Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:46.318Z] Stream mapping:
+[task 2020-01-23T23:37:46.318Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:46.318Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:46.328Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/10/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:46.328Z]   Metadata:
+[task 2020-01-23T23:37:46.328Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.328Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.328Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.328Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:46.328Z]   Duration: 00:00:05.96, start: 0.000000, bitrate: 258 kb/s
+[task 2020-01-23T23:37:46.328Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 257 kb/s, 2.18 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:46.328Z]     Metadata:
+[task 2020-01-23T23:37:46.328Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:46.331Z] Output #0, image2, to '/tmp/vis-sIokxN/viewport.png':
+[task 2020-01-23T23:37:46.331Z]   Metadata:
+[task 2020-01-23T23:37:46.332Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.332Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.332Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.332Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:46.332Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:46.332Z]     Metadata:
+[task 2020-01-23T23:37:46.332Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:46.332Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:46.332Z] Stream mapping:
+[task 2020-01-23T23:37:46.332Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:46.333Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:46.395Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.301x    
+[task 2020-01-23T23:37:46.395Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:46.419Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.381x    
+[task 2020-01-23T23:37:46.419Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:46.464Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.302x    
+[task 2020-01-23T23:37:46.464Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:46.528Z] 2020-01-23T23:37:46.525354Z Command succeeded              result=b'{"SpeedIndex": 834, "FirstVisualChange": 400, "LastVisualChange": 1040, "VisualProgress": "0=0, 400=10, 760=15, 840=79, 920=79, 1040=100", "ContentfulSpeedIndex": 739, "videoRecordingStart": 2000, "ContentfulSpeedIndexProgress": "0=0, 400=54, 760=90, 840=95, 920=100, 1040=100", "PerceptualSpeedIndex": 670, "PerceptualSpeedIndexProgress": "0=0, 400=59, 760=88, 840=93, 920=96, 1040=100"}\n'
+[task 2020-01-23T23:37:46.529Z] 2020-01-23T23:37:46.526472Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/11/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:46.766Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:46.766Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:46.768Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:46.769Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:46.769Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:46.770Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:46.770Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:46.770Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:46.771Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:46.771Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:46.772Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:46.772Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:46.780Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/11/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:46.781Z]   Metadata:
+[task 2020-01-23T23:37:46.781Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.781Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.781Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.781Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:46.781Z]   Duration: 00:00:05.88, start: 0.000000, bitrate: 272 kb/s
+[task 2020-01-23T23:37:46.781Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 271 kb/s, 2.04 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:46.781Z]     Metadata:
+[task 2020-01-23T23:37:46.781Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:46.788Z] Output #0, image2, to '/tmp/vis-wU0CnG/viewport.png':
+[task 2020-01-23T23:37:46.789Z]   Metadata:
+[task 2020-01-23T23:37:46.789Z]     major_brand     : isom
+[task 2020-01-23T23:37:46.791Z]     minor_version   : 512
+[task 2020-01-23T23:37:46.791Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:46.792Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:46.793Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:46.795Z]     Metadata:
+[task 2020-01-23T23:37:46.795Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:46.796Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:46.796Z] Stream mapping:
+[task 2020-01-23T23:37:46.796Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:46.796Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:46.962Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.23x    
+[task 2020-01-23T23:37:46.963Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:50.415Z] 2020-01-23T23:37:50.413428Z Command succeeded              result=b'{"SpeedIndex": 834, "FirstVisualChange": 360, "LastVisualChange": 960, "VisualProgress": "0=0, 360=11, 760=15, 880=79, 960=100", "ContentfulSpeedIndex": 713, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=50, 760=92, 880=100, 960=100", "PerceptualSpeedIndex": 645, "PerceptualSpeedIndexProgress": "0=0, 360=55, 760=88, 880=97, 960=100"}\n'
+[task 2020-01-23T23:37:50.417Z] 2020-01-23T23:37:50.414333Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/12/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:50.638Z] 2020-01-23T23:37:50.636407Z Command succeeded              result=b'{"SpeedIndex": 821, "FirstVisualChange": 360, "LastVisualChange": 1000, "VisualProgress": "0=0, 360=10, 760=15, 840=79, 920=79, 1000=100", "ContentfulSpeedIndex": 730, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=49, 760=90, 840=95, 920=100, 1000=100", "PerceptualSpeedIndex": 642, "PerceptualSpeedIndexProgress": "0=0, 360=56, 760=89, 840=95, 920=97, 1000=100"}\n'
+[task 2020-01-23T23:37:50.639Z] 2020-01-23T23:37:50.637207Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/13/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:50.687Z] 2020-01-23T23:37:50.684865Z Command succeeded              result=b'{"SpeedIndex": 950, "FirstVisualChange": 400, "LastVisualChange": 1160, "VisualProgress": "0=0, 400=10, 880=15, 960=69, 1040=79, 1160=100", "ContentfulSpeedIndex": 835, "videoRecordingStart": 2000, "ContentfulSpeedIndexProgress": "0=0, 400=47, 880=91, 960=95, 1040=100, 1160=100", "PerceptualSpeedIndex": 738, "PerceptualSpeedIndexProgress": "0=0, 400=54, 880=89, 960=94, 1040=96, 1160=100"}\n'
+[task 2020-01-23T23:37:50.687Z] 2020-01-23T23:37:50.685833Z Running command                cmd=['/usr/bin/python', '/builds/worker/fetches/visualmetrics.py', '--video', '/builds/worker/workspace/jobs/14/pages/m.youtube.com/data/video/1.mp4', '--orange', '--perceptual', '--contentful', '--force', '--renderignore', '5', '--json', '--viewport']
+[task 2020-01-23T23:37:50.696Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:50.696Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:50.696Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:50.696Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:50.696Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:50.696Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:50.696Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:50.696Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:50.697Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:50.697Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:50.697Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:50.697Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:50.699Z] 2020-01-23T23:37:50.698547Z Command succeeded              result=b'{"SpeedIndex": 751, "FirstVisualChange": 360, "LastVisualChange": 920, "VisualProgress": "0=0, 360=10, 720=26, 800=93, 920=100", "ContentfulSpeedIndex": 539, "videoRecordingStart": 2040, "ContentfulSpeedIndexProgress": "0=0, 360=66, 720=97, 800=100, 920=100", "PerceptualSpeedIndex": 587, "PerceptualSpeedIndexProgress": "0=0, 360=61, 720=94, 800=98, 920=100"}\n'
+[task 2020-01-23T23:37:50.705Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/12/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:50.705Z]   Metadata:
+[task 2020-01-23T23:37:50.705Z]     major_brand     : isom
+[task 2020-01-23T23:37:50.706Z]     minor_version   : 512
+[task 2020-01-23T23:37:50.706Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:50.706Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:50.706Z]   Duration: 00:00:05.80, start: 0.000000, bitrate: 276 kb/s
+[task 2020-01-23T23:37:50.706Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 274 kb/s, 2.07 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:50.706Z]     Metadata:
+[task 2020-01-23T23:37:50.706Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:50.711Z] Output #0, image2, to '/tmp/vis-vkHV_P/viewport.png':
+[task 2020-01-23T23:37:50.711Z]   Metadata:
+[task 2020-01-23T23:37:50.711Z]     major_brand     : isom
+[task 2020-01-23T23:37:50.711Z]     minor_version   : 512
+[task 2020-01-23T23:37:50.711Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:50.711Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:50.711Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:50.711Z]     Metadata:
+[task 2020-01-23T23:37:50.711Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:50.711Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:50.711Z] Stream mapping:
+[task 2020-01-23T23:37:50.711Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:50.711Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:50.802Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.438x    
+[task 2020-01-23T23:37:50.802Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:50.840Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:50.840Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:50.840Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:50.840Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:50.841Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:50.841Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:50.841Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:50.842Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:50.842Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:50.842Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:50.842Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:50.842Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:50.852Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/13/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:50.852Z]   Metadata:
+[task 2020-01-23T23:37:50.853Z]     major_brand     : isom
+[task 2020-01-23T23:37:50.853Z]     minor_version   : 512
+[task 2020-01-23T23:37:50.853Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:50.853Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:50.853Z]   Duration: 00:00:05.76, start: 0.000000, bitrate: 279 kb/s
+[task 2020-01-23T23:37:50.853Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 278 kb/s, 2.26 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:50.854Z]     Metadata:
+[task 2020-01-23T23:37:50.854Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:50.858Z] Output #0, image2, to '/tmp/vis-u6ztv9/viewport.png':
+[task 2020-01-23T23:37:50.858Z]   Metadata:
+[task 2020-01-23T23:37:50.858Z]     major_brand     : isom
+[task 2020-01-23T23:37:50.858Z]     minor_version   : 512
+[task 2020-01-23T23:37:50.858Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:50.858Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:50.859Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:50.859Z]     Metadata:
+[task 2020-01-23T23:37:50.859Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:50.859Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:50.859Z] Stream mapping:
+[task 2020-01-23T23:37:50.859Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:50.859Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:50.882Z] ffmpeg version 3.2.12-1~deb9u1 Copyright (c) 2000-2018 the FFmpeg developers
+[task 2020-01-23T23:37:50.883Z]   built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+[task 2020-01-23T23:37:50.883Z]   configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+[task 2020-01-23T23:37:50.883Z]   libavutil      55. 34.101 / 55. 34.101
+[task 2020-01-23T23:37:50.883Z]   libavcodec     57. 64.101 / 57. 64.101
+[task 2020-01-23T23:37:50.883Z]   libavformat    57. 56.101 / 57. 56.101
+[task 2020-01-23T23:37:50.883Z]   libavdevice    57.  1.100 / 57.  1.100
+[task 2020-01-23T23:37:50.883Z]   libavfilter     6. 65.100 /  6. 65.100
+[task 2020-01-23T23:37:50.883Z]   libavresample   3.  1.  0 /  3.  1.  0
+[task 2020-01-23T23:37:50.883Z]   libswscale      4.  2.100 /  4.  2.100
+[task 2020-01-23T23:37:50.883Z]   libswresample   2.  3.100 /  2.  3.100
+[task 2020-01-23T23:37:50.883Z]   libpostproc    54.  1.100 / 54.  1.100
+[task 2020-01-23T23:37:50.890Z] Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/builds/worker/workspace/jobs/14/pages/m.youtube.com/data/video/1.mp4':
+[task 2020-01-23T23:37:50.890Z]   Metadata:
+[task 2020-01-23T23:37:50.890Z]     major_brand     : isom
+[task 2020-01-23T23:37:50.890Z]     minor_version   : 512
+[task 2020-01-23T23:37:50.891Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:50.891Z]     encoder         : Lavf58.20.100
+[task 2020-01-23T23:37:50.891Z]   Duration: 00:00:05.92, start: 0.000000, bitrate: 249 kb/s
+[task 2020-01-23T23:37:50.891Z]     Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1080x1584, 247 kb/s, 2.20 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+[task 2020-01-23T23:37:50.891Z]     Metadata:
+[task 2020-01-23T23:37:50.891Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:50.894Z] Output #0, image2, to '/tmp/vis-7urDKB/viewport.png':
+[task 2020-01-23T23:37:50.894Z]   Metadata:
+[task 2020-01-23T23:37:50.894Z]     major_brand     : isom
+[task 2020-01-23T23:37:50.894Z]     minor_version   : 512
+[task 2020-01-23T23:37:50.894Z]     compatible_brands: isomiso2avc1mp41
+[task 2020-01-23T23:37:50.894Z]     encoder         : Lavf57.56.101
+[task 2020-01-23T23:37:50.895Z]     Stream #0:0(und): Video: png, rgb24, 1080x1584, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+[task 2020-01-23T23:37:50.895Z]     Metadata:
+[task 2020-01-23T23:37:50.895Z]       handler_name    : VideoHandler
+[task 2020-01-23T23:37:50.895Z]       encoder         : Lavc57.64.101 png
+[task 2020-01-23T23:37:50.895Z] Stream mapping:
+[task 2020-01-23T23:37:50.895Z]   Stream #0:0 -> #0:0 (h264 (native) -> png (native))
+[task 2020-01-23T23:37:50.895Z] Press [q] to stop, [?] for help
+[task 2020-01-23T23:37:50.954Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.422x    
+[task 2020-01-23T23:37:50.956Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:50.997Z] frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.04 bitrate=N/A speed=0.394x    
+[task 2020-01-23T23:37:50.997Z] video:8kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[task 2020-01-23T23:37:53.436Z] 2020-01-23T23:37:53.435895Z Command succeeded              result=b'{"SpeedIndex": 743, "FirstVisualChange": 360, "LastVisualChange": 880, "VisualProgress": "0=0, 360=10, 680=26, 800=92, 880=100", "ContentfulSpeedIndex": 527, "videoRecordingStart": 2000, "ContentfulSpeedIndexProgress": "0=0, 360=68, 680=96, 800=100, 880=100", "PerceptualSpeedIndex": 576, "PerceptualSpeedIndexProgress": "0=0, 360=62, 680=92, 800=98, 880=100"}\n'
+[task 2020-01-23T23:37:53.834Z] 2020-01-23T23:37:53.834399Z Command succeeded              result=b'{"SpeedIndex": 713, "FirstVisualChange": 360, "LastVisualChange": 840, "VisualProgress": "0=0, 360=10, 680=26, 760=92, 840=100", "ContentfulSpeedIndex": 521, "videoRecordingStart": 2000, "ContentfulSpeedIndexProgress": "0=0, 360=69, 680=97, 760=100, 840=100", "PerceptualSpeedIndex": 563, "PerceptualSpeedIndexProgress": "0=0, 360=63, 680=94, 760=98, 840=100"}\n'
+[task 2020-01-23T23:37:53.871Z] 2020-01-23T23:37:53.871036Z Command succeeded              result=b'{"SpeedIndex": 832, "FirstVisualChange": 400, "LastVisualChange": 920, "VisualProgress": "0=0, 400=10, 720=15, 880=79, 920=100", "ContentfulSpeedIndex": 710, "videoRecordingStart": 2000, "ContentfulSpeedIndexProgress": "0=0, 400=56, 720=90, 880=100, 920=100", "PerceptualSpeedIndex": 653, "PerceptualSpeedIndexProgress": "0=0, 400=61, 720=87, 880=98, 920=100"}\n'
+[task 2020-01-23T23:37:53.882Z] 2020-01-23T23:37:53.882185Z PERFHERDER_DATA: {"suites": [{"name": "youtube-cold", "extraOptions": ["fenix"], "subtests": [{"value": 821.1428571428571, "name": "SpeedIndex", "lowerIsBetter": true, "replicates": [789, 817, 906, 864, 787, 804, 840, 834, 834, 821, 950, 751, 743, 713, 832], "unit": "ms"}, {"value": 974.2857142857143, "name": "LastVisualChange", "lowerIsBetter": true, "replicates": [960, 960, 1040, 1000, 960, 920, 1040, 1040, 960, 1000, 1160, 920, 880, 840, 920], "unit": "ms"}, {"value": 2022.857142857143, "name": "videoRecordingStart", "lowerIsBetter": true, "replicates": [2040, 2040, 2040, 2000, 2040, 2040, 2040, 2000, 2040, 2040, 2000, 2040, 2000, 2000, 2000], "unit": "ms"}, {"value": 689.4285714285714, "name": "ContentfulSpeedIndex", "lowerIsBetter": true, "replicates": [727, 667, 773, 758, 712, 702, 726, 739, 713, 730, 835, 539, 527, 521, 710], "unit": "ms"}, {"value": 368.57142857142856, "name": "FirstVisualChange", "lowerIsBetter": true, "replicates": [400, 360, 360, 360, 360, 360, 360, 400, 360, 360, 400, 360, 360, 360, 400], "unit": "ms"}, {"value": 640.0, "name": "PerceptualSpeedIndex", "lowerIsBetter": true, "replicates": [640, 627, 688, 663, 624, 627, 657, 670, 645, 642, 738, 587, 576, 563, 653], "unit": "ms"}]}], "application": {"name": "fenix", "version": "n/a"}, "type": "vismet", "framework": {"name": "browsertime"}}
+[fetches 2020-01-23T23:37:53.923Z] removing /builds/worker/fetches
+[fetches 2020-01-23T23:37:53.926Z] finished
+[taskcluster 2020-01-23 23:37:54.340Z] === Task Finished ===
+[taskcluster 2020-01-23 23:37:54.812Z] Successful task run with exit code: 0 completed in 37.967 seconds

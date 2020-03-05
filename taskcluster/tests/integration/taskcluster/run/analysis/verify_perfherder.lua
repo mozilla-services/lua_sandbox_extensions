@@ -20,7 +20,8 @@ local results = {
 {framework = 'build_metrics', taskId = 'SSXGXyVIRQGQqVKGym90mQ'},
 {framework = 'job_resource_usage', taskId = 'AuIAPvWhSiyp0eUh5vAdCw'},
 {framework = 'vcs', taskId = 'ZYFKUNR5RhmrBAq4Z4KB9g'},
-{framework = 'awsy', taskId = 'B02j0uS8SOGRfB4TrE2q4w'}
+{framework = 'awsy', taskId = 'B02j0uS8SOGRfB4TrE2q4w'},
+{framework = 'browsertime', taskId = 'bZPP4WKDR5Whwge70OcW9g'}
 }
 
 local cnt = 0

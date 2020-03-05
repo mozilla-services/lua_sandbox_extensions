@@ -1,0 +1,99 @@
+{
+  "provisionerId": "gecko-t",
+  "workerType": "t-linux-xlarge",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "Zv14iv51Sb6zPQLi-ceshA",
+  "dependencies": [
+    "Q9nEh1ibTHKgfh0a56uQDA",
+    "Qgvg_VqzRW-QvEAjdckZZg",
+    "XhxgW54mS3-QZ3x9lRK2Mw"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.mozilla-central.fb6b61e49217d835b2d6e435560424aab10d5475.37048"
+  ],
+  "priority": "medium",
+  "retries": 5,
+  "created": "2020-01-23T21:45:29.065Z",
+  "deadline": "2020-01-24T21:45:29.065Z",
+  "expires": "2021-01-22T21:45:29.065Z",
+  "scopes": [],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        72
+      ],
+      "purgeCaches": [
+        72
+      ]
+    },
+    "maxRunTime": 900,
+    "image": {
+      "path": "public/image.tar.zst",
+      "type": "task-image",
+      "taskId": "Q9nEh1ibTHKgfh0a56uQDA"
+    },
+    "artifacts": {
+      "public/perfherder-data.json": {
+        "path": "/builds/worker/artifacts/perfherder-data.json",
+        "expires": "2021-01-22T21:45:29.065Z",
+        "type": "file"
+      },
+      "public/summary.json": {
+        "path": "/builds/worker/artifacts/summary.json",
+        "expires": "2021-01-22T21:45:29.065Z",
+        "type": "file"
+      }
+    },
+    "command": [
+      "/builds/worker/bin/run-task",
+      "--fetch-hgfingerprint",
+      "--",
+      "bash",
+      "-cx",
+      "/builds/worker/bin/run-visual-metrics.py --browsertime-results /builds/worker/fetches/browsertime-results.tgz -- --orange --perceptual --contentful --force --renderignore 5 --json --viewport"
+    ],
+    "env": {
+      "SCCACHE_DISABLE": "1",
+      "MOZ_AUTOMATION": "1",
+      "MOZ_SCM_LEVEL": "3",
+      "TASKCLUSTER_VOLUMES": "/builds/worker/artifacts/;/builds/worker/workspace/",
+      "MOZ_FETCHES": "[{\"artifact\": \"public/test_info/browsertime-results.tgz\", \"extract\": true, \"task\": \"XhxgW54mS3-QZ3x9lRK2Mw\"}, {\"artifact\": \"public/visualmetrics.py\", \"extract\": true, \"task\": \"Qgvg_VqzRW-QvEAjdckZZg\"}]",
+      "MOZ_FETCHES_DIR": "fetches"
+    }
+  },
+  "metadata": {
+    "owner": "rmaries@mozilla.com",
+    "source": "https://hg.mozilla.org/mozilla-central/file/fb6b61e49217d835b2d6e435560424aab10d5475/taskcluster/ci/visual-metrics-dep",
+    "description": "Run visual metrics calculations on Raptor ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-central&revision=fb6b61e49217d835b2d6e435560424aab10d5475))",
+    "name": "test-vismet-android-hw-p2-8-0-android-aarch64/pgo-browsertime-tp6m-fenix-cold-youtube"
+  },
+  "tags": {
+    "kind": "visual-metrics-dep",
+    "worker-implementation": "docker-worker",
+    "createdForUser": "rmaries@mozilla.com",
+    "retrigger": "false",
+    "label": "test-vismet-android-hw-p2-8-0-android-aarch64/pgo-browsertime-tp6m-fenix-cold-youtube",
+    "os": "linux"
+  },
+  "extra": {
+    "index": {
+      "rank": 0
+    },
+    "treeherder": {
+      "jobKind": "other",
+      "groupSymbol": "Btime-fenix",
+      "collection": {
+        "pgo": true
+      },
+      "machine": {
+        "platform": "android-hw-p2-8-0-android-aarch64"
+      },
+      "groupName": "Browsertime performance tests on Fenix",
+      "tier": 3,
+      "symbol": "tp6m-c-2-vismet"
+    },
+    "treeherder-platform": "android-hw-p2-8-0-android-aarch64/pgo",
+    "parent": "Zv14iv51Sb6zPQLi-ceshA"
+  }
+}
