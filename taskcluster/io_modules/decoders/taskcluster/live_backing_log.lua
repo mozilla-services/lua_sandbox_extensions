@@ -89,7 +89,7 @@ fh:close()
 -- taskcluster live_backing.log
 local time          = l.Ct(dt.date_fullyear * "-" * dt.date_month * "-" * dt.date_mday * l.S"T " * dt.time_hour * ":" * dt.time_minute * ":" * dt.time_second * dt.time_secfrac^-1 * "Z")
 local time_header   = l.P"[" * l.Cg(l.alpha^1, "name") * l.space^1 * l.Cg(time, "date_time") * "]" * l.space^1
-local task_header   = l.Cg(l.Ct(dt.time_hour * ":" * dt.time_minute * ":" * dt.time_second), "time") * l.space^1 * l.Cg(l.alpha^1, "priority") * l.space^1 * "-"
+local task_header   = l.Cg(l.Ct(dt.time_hour * ":" * dt.time_minute * ":" * dt.time_second), "time") * l.space^1 * l.Cg(l.alpha^1, "priority") * l.space^1 * "-" + (dt.rfc3339_full_date * "T" * dt.rfc3339_full_time)
 local message       = l.space^0 * l.Cg(l.Cp(), "msg")
 local log_line      = l.Ct((time_header^-1 * task_header^-1) * message)
 
