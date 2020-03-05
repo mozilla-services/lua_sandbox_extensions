@@ -75,7 +75,7 @@ WITH
       name,
       manager
     FROM
-      taskclusteretl.mozilla_com)
+      taskclusteretl.person_mozilla_com)
   ON
     email = cost.owner),
   used AS (
