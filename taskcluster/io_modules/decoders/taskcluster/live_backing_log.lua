@@ -262,7 +262,7 @@ local vcs_suites = {clone = true, pull = true, update = true}
 local function perfherder_decode(g, b, json)
     local j = cjson.decode(json)
     if type(j.framework) ~= "table" then
-        if json == "{}" then return end
+        if json:match("^{}") then return end
         return "missing framework"
     end
 
