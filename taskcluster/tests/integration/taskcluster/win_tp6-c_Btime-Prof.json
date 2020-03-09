@@ -1,0 +1,122 @@
+{
+  "provisionerId": "releng-hardware",
+  "workerType": "gecko-t-win10-64-hw",
+  "schedulerId": "gecko-level-1",
+  "taskGroupId": "a0LjdlBqScCLTP6xQEsZgw",
+  "dependencies": [
+    "ExlUEdWlRaSNeurRjQX4zg",
+    "GVLf53sFQ1OIuB6zuDeI6A",
+    "MoX3sVkHTK62_3pedKJiFg",
+    "Snn0iwRHQz6vejPKVxbAhg",
+    "TXkkV5puTsCWbjy8YlbaiQ"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.try.008d3f0145c557345f88f547ab8c6ae2d8b909d9.479662"
+  ],
+  "priority": "very-low",
+  "retries": 5,
+  "created": "2020-01-23T17:17:35.677Z",
+  "deadline": "2020-01-24T17:17:35.677Z",
+  "expires": "2020-02-06T17:17:35.677Z",
+  "scopes": [],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        1073807364,
+        3221225786,
+        4
+      ]
+    },
+    "maxRunTime": 3000,
+    "artifacts": [
+      {
+        "path": "logs",
+        "type": "directory",
+        "name": "public/logs"
+      },
+      {
+        "path": "build/blobber_upload_dir",
+        "type": "directory",
+        "name": "public/test_info"
+      }
+    ],
+    "command": [
+      "C:/mozilla-build/python3/python3.exe run-task -- c:\\mozilla-build\\python\\python.exe -u mozharness\\scripts\\raptor_script.py --cfg mozharness\\configs\\raptor\\windows_config.py --browsertime --gecko-profile --app=firefox --cold --test=amazon --browsertime-browsertimejs $MOZ_FETCHES_DIR/browsertime/node_modules/browsertime/bin/browsertime.js --browsertime-node $MOZ_FETCHES_DIR/node/node.exe --browsertime-geckodriver $MOZ_FETCHES_DIR/geckodriver.exe --browsertime-chromedriver $MOZ_FETCHES_DIR/{}chromedriver.exe --browsertime-ffmpeg $MOZ_FETCHES_DIR/ffmpeg-4.1.1-win64-static/bin/ffmpeg.exe --download-symbols ondemand"
+    ],
+    "env": {
+      "SCCACHE_DISABLE": "1",
+      "TRY_COMMIT_MSG": "",
+      "GECKO_HEAD_REV": "008d3f0145c557345f88f547ab8c6ae2d8b909d9",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/try",
+      "MOZ_SCM_LEVEL": "1",
+      "TRY_SELECTOR": "fuzzy",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/GVLf53sFQ1OIuB6zuDeI6A/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/GVLf53sFQ1OIuB6zuDeI6A/artifacts/public/build/target.zip\"}",
+      "MOZ_FETCHES": "[{\"artifact\": \"public/build/browsertime.tar.bz2\", \"extract\": true, \"task\": \"ExlUEdWlRaSNeurRjQX4zg\"}, {\"artifact\": \"public/build/geckodriver.tar.bz2\", \"extract\": true, \"task\": \"MoX3sVkHTK62_3pedKJiFg\"}, {\"artifact\": \"public/build/node.tar.bz2\", \"extract\": true, \"task\": \"Snn0iwRHQz6vejPKVxbAhg\"}, {\"artifact\": \"public/ffmpeg-4.1.1-win64-static.zip\", \"extract\": true, \"task\": \"TXkkV5puTsCWbjy8YlbaiQ\"}]",
+      "MOZ_FETCHES_DIR": "fetches",
+      "MOZ_AUTOMATION": "1"
+    },
+    "mounts": [
+      {
+        "directory": ".",
+        "content": {
+          "taskId": "GVLf53sFQ1OIuB6zuDeI6A",
+          "artifact": "public/build/mozharness.zip"
+        },
+        "format": "zip"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/try/raw-file/008d3f0145c557345f88f547ab8c6ae2d8b909d9/taskcluster/scripts/run-task"
+        },
+        "file": "./run-task"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/try/raw-file/008d3f0145c557345f88f547ab8c6ae2d8b909d9/taskcluster/scripts/misc/fetch-content"
+        },
+        "file": "./fetch-content"
+      }
+    ]
+  },
+  "metadata": {
+    "owner": "rstewart@mozilla.com",
+    "source": "https://hg.mozilla.org/try/file/008d3f0145c557345f88f547ab8c6ae2d8b909d9/taskcluster/ci/test",
+    "description": "Raptor (browsertime) tp6 page-load tests with Gecko Profiling on Firefox using cold pageload-amazon ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=try&revision=008d3f0145c557345f88f547ab8c6ae2d8b909d9))",
+    "name": "test-windows10-64-shippable/opt-browsertime-tp6-profiling-firefox-cold-amazon-e10s"
+  },
+  "tags": {
+    "kind": "test",
+    "os": "windows",
+    "createdForUser": "rstewart@mozilla.com",
+    "retrigger": "true",
+    "label": "test-windows10-64-shippable/opt-browsertime-tp6-profiling-firefox-cold-amazon-e10s",
+    "test-type": "raptor",
+    "worker-implementation": "generic-worker"
+  },
+  "extra": {
+    "index": {
+      "rank": 0
+    },
+    "parent": "a0LjdlBqScCLTP6xQEsZgw",
+    "chunks": {
+      "current": 1,
+      "total": 1
+    },
+    "suite": "raptor",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "Btime-Prof",
+      "collection": {
+        "opt": true
+      },
+      "machine": {
+        "platform": "windows10-64-shippable"
+      },
+      "groupName": "Browsertime performance tests on Firefox with Gecko Profiling",
+      "tier": 3,
+      "symbol": "tp6-c-1"
+    },
+    "treeherder-platform": "windows10-64-shippable/opt"
+  }
+}

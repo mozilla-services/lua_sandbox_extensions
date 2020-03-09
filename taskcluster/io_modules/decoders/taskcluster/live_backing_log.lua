@@ -308,6 +308,10 @@ local function perfherder_decode(g, b, json)
                 end
             end
         end
+    elseif j.framework.name == "browsertime" then
+        if b.base_msg.Fields.testtype == "raptor" then
+            b.cache.global.raptor_embedded = true
+        end
     elseif j.framework.name == "raptor" then
         local f = j.suites[1]
         if f.name:match("%-power$") then

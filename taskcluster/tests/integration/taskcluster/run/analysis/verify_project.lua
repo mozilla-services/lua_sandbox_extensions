@@ -4,7 +4,7 @@
 
 require "string"
 
-local results = {"autoland", "mozilla-release", "mozilla-central", "mozilla-esr68", "try", "autoland", "mozilla-central", "try", "mozilla-beta", "android-components", "autoland", "mozilla-central"}
+local results = {"autoland", "mozilla-release", "mozilla-central", "mozilla-esr68", "try", "autoland", "mozilla-central", "try", "mozilla-beta", "android-components", "autoland", "mozilla-central", "try"}
 
 local cnt = 0
 function process_message()
