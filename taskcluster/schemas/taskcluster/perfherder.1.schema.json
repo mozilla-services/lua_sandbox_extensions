@@ -3,6 +3,20 @@
   "additionalProperties": true,
   "description": "perfherder performance measurements",
   "properties": {
+    "application": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "collection": {
       "items": {
         "type": "string"
@@ -49,10 +63,22 @@
             },
             "type": "array"
           },
+          "foreWindow": {
+            "type": "number"
+          },
           "lowerIsBetter": {
             "type": "boolean"
           },
+          "maxBackWindow": {
+            "type": "number"
+          },
+          "minBackWindow": {
+            "type": "number"
+          },
           "name": {
+            "type": "string"
+          },
+          "publicName": {
             "type": "string"
           },
           "serverUrl": {
@@ -77,10 +103,22 @@
                   },
                   "type": "array"
                 },
+                "foreWindow": {
+                  "type": "number"
+                },
                 "lowerIsBetter": {
                   "type": "boolean"
                 },
+                "maxBackWindow": {
+                  "type": "number"
+                },
+                "minBackWindow": {
+                  "type": "number"
+                },
                 "name": {
+                  "type": "string"
+                },
+                "publicName": {
                   "type": "string"
                 },
                 "ref_replicates": {
@@ -110,6 +148,12 @@
                 "value"
               ],
               "type": "object"
+            },
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
             },
             "type": "array"
           },
@@ -143,6 +187,9 @@
       "type": "integer"
     },
     "time": {
+      "type": "string"
+    },
+    "type": {
       "type": "string"
     }
   },
