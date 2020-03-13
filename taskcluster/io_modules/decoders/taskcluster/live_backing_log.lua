@@ -67,6 +67,8 @@ setfenv(1, M) -- Remove external access to contain everything in the module
 
 local doc           = rjson.parse("{}") -- reuse this object to avoid creating a lot of GC
 local base_tc_url   = cfg.base_taskcluster_url or "https://firefox-ci-tc.services.mozilla.com/api/queue/v1"
+local logger        = read_config("Logger")
+local tmp_path      = "/var/tmp"
 
 local pulse_task_schema_file = cfg.taskcluster_schema_path .. "/pulse_task.1.schema.json"
 fh = assert(io.open(pulse_task_schema_file, "r"))
@@ -906,7 +908,6 @@ local function get_parser(f)
 end
 
 
-local logger = read_config("Logger")
 local function get_perfherder_artifacts_cmd(state, tid, rid, command)
     local files = {}
     if not state.cache.global.raptor_embedded then
@@ -929,23 +930,30 @@ local function get_perfherder_artifacts_cmd(state, tid, rid, command)
     local perfherder_url  = string.format("%s/task/%s/runs/%d/artifacts/public/test_info", base_tc_url, tid, rid)
     local args = {}
     for i,v in ipairs(files) do
-        args[#args + 1] = string.format("%s/%s -o /var/tmp/%s_%s", perfherder_url, v, logger, v)
+        args[#args + 1] = string.format("%s/%s -o %s/%s_%s", perfherder_url, v, tmp_path, logger, v)
     end
-    return string.format("curl -L -s --compressed %s", table.concat(args, " ")), files
+    return string.format("curl -L -s --compressed -f --retry 2 %s", table.concat(args, " ")), files
 end
 
 
 local function get_perfherder_artifacts(cmd, files, state, integration_test)
     if not cmd then return end
     if not integration_test then
-        local rv = os.execute(cmd)
-        if rv ~= 0 then return string.format("curl rv: %d, %s", rv, cmd) end
+        -- don't bother with the return code as it only represents the last file
+        os.execute(cmd)
 
+        -- process whatever was received
         for i,v in ipairs(files) do
-            local fh = assert(io.open(string.format("/var/tmp/%s_%s", logger, v), "rb"))
-            local json = fh:read("*a")
-            fh:close()
-            perfherder_decode(nil, state, json)
+            local fh = io.open(string.format("%s/%s_%s", tmp_path, logger, v), "rb")
+            if fh then
+                local json = fh:read("*a")
+                fh:close()
+                perfherder_decode(nil, state, json)
+            else
+                inject_message({Type = "error.curl", Payload = v, Fields = {
+                    taskId = state.base_msg.Fields.taskId,
+                    detail = cmd}})
+            end
         end
     else
         for i,v in ipairs(files) do
@@ -955,16 +963,6 @@ local function get_perfherder_artifacts(cmd, files, state, integration_test)
             perfherder_decode(nil, state, json)
         end
     end
-end
-
-
-local function get_perfherder_artifacts_retry(cmd, files, state, retry, integration_test)
-    local err
-    repeat
-        local err = get_perfherder_artifacts(cmd, files, state, integration_test)
-        retry = retry - 1
-    until not err or retry > 0
-    return err
 end
 
 
@@ -1054,7 +1052,7 @@ local function parse_log(lfh, base_msg, td, integration_test)
 
     if f.testtype == "raptor" then -- may need to include talos but that is usually embedded in the log
         local cmd, files = get_perfherder_artifacts_cmd(state, f.taskId, f.runId, td.payload.command)
-        get_perfherder_artifacts_retry(cmd, files, state, 1, integration_test)
+        get_perfherder_artifacts(cmd, files, state, integration_test)
     end
 
     if integration_test then
@@ -1063,32 +1061,55 @@ local function parse_log(lfh, base_msg, td, integration_test)
 end
 
 
-local task_file = "/var/tmp/" .. read_config("Logger") .. "_task.json"
-local log_file  = "/var/tmp/" .. read_config("Logger") .. "_log.txt"
+local task_file = string.format("%s/%s_task.json", tmp_path, logger)
+local log_file  = string.format("%s/%s_log.txt", tmp_path, logger)
 local function get_artifacts(pj, fetch_log)
     local task_url  = string.format("%s/task/%s", base_tc_url, pj.status.taskId)
-    local cmd       = string.format("curl -L -s --compressed %s -o %s", task_url, task_file)
+    local cmd       = string.format("rm -f %s/%s_*;curl -L -s --compressed -f --retry 2 %s -o %s", tmp_path, logger, task_url, task_file)
 
     if fetch_log then
         local log_url = string.format("%s/runs/%d/artifacts/public/logs/live_backing.log", task_url, pj.runId)
         cmd = string.format("%s %s -o %s", cmd, log_url, log_file)
     end
 
-    local rv = os.execute(cmd)
-    if rv ~= 0 then return nil, string.format("curl rv: %d, %s", rv, cmd) end
+    -- don't bother with the return code as it only represents the last file
+    os.execute(cmd)
 
-    local fh = assert(io.open(task_file, "rb"))
+    local fh = io.open(task_file, "rb")
+    if not fh then
+        inject_message({Type = "error.curl", Payload = "task definition", Fields = {
+            taskId = pj.status.taskId,
+            detail = cmd}})
+        return
+    end
+
     local td = fh:read("*a")
     fh:close()
     fh = nil
     local ok, tj = pcall(cjson.decode, td)
     if not ok then
-        return nil, string.format("parse error: %s, %s", tj, task_url)
+        inject_message({Type = "error.parse", Payload = "task definition", Fields = {
+            taskId = pj.status.taskId,
+            detail = tj,
+            data   = td}})
+        return
     end
-    if tj.code or tj.error then
-        return nil, string.format("api error: %s, %s", tj.code or tj.error, task_url)
+    if tj.code or tj.error then -- make sure the responses isn't API error JSON
+        inject_message({Type = "error.api", Payload = "task definition", Fields = {
+            taskId = pj.status.taskId,
+            detail = tj.code or tj.error,
+            data   = td}})
+        return
     end
-    if fetch_log then fh = assert(io.open(log_file, "rb")) end
+
+    if fetch_log then
+        fh = io.open(log_file, "rb")
+        if not fh then
+            inject_message({Type = "error.curl", Payload = "log", Fields = {
+                taskId = pj.status.taskId,
+                detail = cmd}})
+        end
+    end
     return tj, fh
 end
 
@@ -1115,10 +1136,7 @@ function decode(data, dh, mutable)
         and pj.status.schedulerId ~= "taskcluster-github"
         and not (pj.task and pj.task.tags.kind == "pr")
         local td, lfh = get_artifacts(pj, fetch_log)
-        if not td and lfh:match("^curl") then
-            td, lfh = get_artifacts(pj, fetch_log)
-        end
-        if not td then return lfh end
+        if not td then return nil end
 
         inject_task_definition(pj.status.taskId, td)
         local base_msg = get_base_msg(dh, mutable, pj, td)
