@@ -1050,7 +1050,7 @@ local function parse_log(lfh, base_msg, td, integration_test)
     end
     finalize_log(g, state)
 
-    if f.testtype == "raptor" then -- may need to include talos but that is usually embedded in the log
+    if f.testtype == "raptor" and f.state == "completed" then -- talos appears to always be embedded in the log
         local cmd, files = get_perfherder_artifacts_cmd(state, f.taskId, f.runId, td.payload.command)
         get_perfherder_artifacts(cmd, files, state, integration_test)
     end
