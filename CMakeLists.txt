@@ -79,6 +79,7 @@ cuckoo_filter
 elasticsearch
 gcp
 # geoip # deprecated use maxminddb
+gzfile
 hindsight
 heka
 hyperloglog
