@@ -38,7 +38,8 @@ END
   TIMESTAMP_DIFF(started, scheduled, millisecond) / 1000 AS lag,
   TIMESTAMP_DIFF(resolved, started, millisecond) / 1000 AS execution,
   suite,
-  provisionerId
+  provisionerId,
+  workerGroup
 FROM
   taskclusteretl.timing
 WHERE
