@@ -43,6 +43,7 @@ local cjson     = require "cjson"
 local rjson     = require "rjson"
 local date      = require "date"
 local dt        = require "lpeg.date_time"
+local gzfile    = require "gzfile"
 local io        = require "io"
 local l         = require "lpeg";l.locale(l)
 local os        = require "os"
@@ -155,7 +156,7 @@ local function inject_validated_msg(j, name, schema, file, tid)
         inject_message(msg)
     else
         local msg = {
-            Type = "error." .. name .. ".validation",
+            Type = "error.schema." .. name,
             Payload = err,
             Fields = {
                 taskId  = tid,
@@ -169,7 +170,7 @@ local function inject_validated_msg(j, name, schema, file, tid)
 end
 
 
-local function inject_pulse_task(j)
+local function inject_pulse_task(j, dh)
     local ns
     local state = j.status.state
     if j.runId and j.status.runs then
@@ -182,7 +183,7 @@ local function inject_pulse_task(j)
             ns = dt.time_to_ns(time:match(run.started or run.scheduled)) -- keep the start/end in same table partition
         end
     end
-    if not ns then ns = os.time() * 1e9 end -- task defined has no time, use the ingestion time
+    if not ns then ns = dh.Timestamp or os.time() * 1e9 end -- task defined has no time, use the original ingestion time
     j.time = date.format(ns, "%Y-%m-%dT%H:%M:%SZ")
     inject_validated_msg(j, "pulse_task", pulse_task_schema, pulse_task_schema_file, j.status.taskId)
 end
@@ -533,7 +534,7 @@ local function eval_line_js(g, b)
     local ok, err = pcall(g.fn_js, g, b, json)
     if not ok or err then
         inject_message({
-            Type = "error.perfherder.parse",
+            Type = "error.parse.perfherder",
             Payload = err,
             Fields = {
                 taskId  = b.base_msg.Fields["taskId"],
@@ -751,7 +752,7 @@ local function finalize_log(g, b)
 
     if #errors > 0 and b.base_msg.Fields["state"] == "completed" then
         local msg = {
-            Type = "error.log.schema",
+            Type = "error.schema.log",
             Payload = "unclosed block",
             Fields = {
                 taskId  = b.base_msg.Fields["taskId"],
@@ -932,7 +933,7 @@ local function get_perfherder_artifacts_cmd(state, tid, rid, command)
     for i,v in ipairs(files) do
         args[#args + 1] = string.format("%s/%s -o %s/%s_%s", perfherder_url, v, tmp_path, logger, v)
     end
-    return string.format("curl -L -s --compressed -f --retry 2 %s", table.concat(args, " ")), files
+    return string.format("curl -L -s --compressed -f --retry 2 -m 60 --max-filesize 5000000 %s", table.concat(args, " ")), files
 end
 
 
@@ -950,9 +951,10 @@ local function get_perfherder_artifacts(cmd, files, state, integration_test)
                 fh:close()
                 perfherder_decode(nil, state, json)
             else
-                inject_message({Type = "error.curl", Payload = v, Fields = {
-                    taskId = state.base_msg.Fields.taskId,
-                    detail = cmd}})
+                inject_message({Type = string.format("error.curl.%s", v), Payload = "22",
+                    Fields = {
+                        taskId = state.base_msg.Fields.taskId,
+                        detail = cmd}})
             end
         end
     else
@@ -994,6 +996,8 @@ local function parse_log(lfh, base_msg, td, integration_test)
     }
     state.pmts = state.pts
 
+    local terminated = false
+    local rtime = os.time();
     local cnt = 0
     for line in lfh:lines() do
         if #line > 1024 * 5 then
@@ -1037,6 +1041,17 @@ local function parse_log(lfh, base_msg, td, integration_test)
             end
         end
         cnt = cnt + 1
+        if cnt % 10000 == 0 then
+            local delta = os.time() - rtime
+            if delta > 30 then
+                terminated = true
+                inject_message({Type = "error.parse.log",Payload = "timed out",
+                    Fields = {
+                        taskId  = f.taskId,
+                        detail  = string.format("line: %d", cnt)}})
+                break
+            end
+        end
     end
     lfh:close()
     state.current = state.buffer[state.buffer_head] -- process the last line
@@ -1044,7 +1059,7 @@ local function parse_log(lfh, base_msg, td, integration_test)
         g.fn(g, state) -- scan from the root and check everything incase the log was mal-formed
     end
 
-    if not state.sts then -- no timing information in the log, use what was provided in the pulse json
+    if not state.sts or terminated then -- no timing information in the log, use what was provided in the pulse json
         state.sts = state.pts
         state.pts = time:match(f.resolved)
     end
@@ -1062,91 +1077,112 @@ end
 
 
 local task_file = string.format("%s/%s_task.json", tmp_path, logger)
-local log_file  = string.format("%s/%s_log.txt", tmp_path, logger)
-local function get_artifacts(pj, fetch_log)
+local function get_task_definition(pj, data)
     local task_url  = string.format("%s/task/%s", base_tc_url, pj.status.taskId)
-    local cmd       = string.format("rm -f %s/%s_*;curl -L -s --compressed -f --retry 2 %s -o %s", tmp_path, logger, task_url, task_file)
+    local cmd       = string.format("rm -f %s/%s_*;curl -L -s --compressed -f --retry 2 -m 60 --max-filesize 1000000 %s -o %s",
+                                    tmp_path, logger, task_url, task_file)
 
-    if fetch_log then
-        local log_url = string.format("%s/runs/%d/artifacts/public/logs/live_backing.log", task_url, pj.runId)
-        cmd = string.format("%s %s -o %s", cmd, log_url, log_file)
+    -- put the original pulse message in the error data to simplify the retry see issue #454
+    local rv = os.execute(cmd)
+    if rv ~= 0 then
+        inject_message({Type = "error.curl.task_definition", Payload = tostring(rv/256),
+            Fields = {
+                taskId  = pj.status.taskId,
+                detail  = cmd,
+                data    = data}})
+        return
     end
-
-    -- don't bother with the return code as it only represents the last file
-    os.execute(cmd)
 
     local fh = io.open(task_file, "rb")
     if not fh then
-        inject_message({Type = "error.curl", Payload = "task definition", Fields = {
-            taskId = pj.status.taskId,
-            detail = cmd}})
+        inject_message({Type = "error.open.task_definition", Payload = "file not found",
+            Fields = {
+                taskId  = pj.status.taskId,
+                data    = data}})
         return
     end
 
-    local td = fh:read("*a")
+    local tdj = fh:read("*a")
     fh:close()
-    fh = nil
-    local ok, tj = pcall(cjson.decode, td)
+    local ok, td = pcall(cjson.decode, tdj)
     if not ok then
-        inject_message({Type = "error.parse", Payload = "task definition", Fields = {
-            taskId = pj.status.taskId,
-            detail = tj,
-            data   = td}})
-        return
-    end
-    if tj.code or tj.error then -- make sure the responses isn't API error JSON
-        inject_message({Type = "error.api", Payload = "task definition", Fields = {
-            taskId = pj.status.taskId,
-            detail = tj.code or tj.error,
-            data   = td}})
-        return
-    end
-
-    if fetch_log then
-        fh = io.open(log_file, "rb")
-        if not fh then
-            inject_message({Type = "error.curl", Payload = "log", Fields = {
+        inject_message({Type = "error.parse.task_definition", Payload = td,
+            Fields = {
                 taskId = pj.status.taskId,
-                detail = cmd}})
-        end
+                detail = tdj,
+                data   = data}})
+        return
     end
-    return tj, fh
+    if td.code or td.error then -- make sure the responses isn't API error JSON
+        inject_message({Type = "error.api.task_definition", Payload = td.code or td.error,
+            Fields = {
+                taskId = pj.status.taskId,
+                data   = data}})
+        return
+    end
+    return td
 end
 
 
-local function get_test_artifacts(fn)
+local function get_test_task_definition(fn)
     local fh = assert(io.open(fn .. ".json", "rb"))
     local td = cjson.decode(fh:read("*a"))
     fh:close()
-    fh = assert(io.open(fn .. ".log", "rb"))
-    return td, fh
+    return td
+end
+
+
+local log_file = string.format("%s/%s_log.txt", tmp_path, logger)
+local function get_log_file(ex, pj)
+    if ex == "exchange/taskcluster-queue/v1/task-exception"
+    or pj.status.provisionerId == "scriptworker-k8s"
+    or pj.status.schedulerId == "taskcluster-github"
+    or (pj.task and pj.task.tags.kind == "pr") then
+        return
+    end
+
+    local log_url   = string.format("%s/task/%s/runs/%d/artifacts/public/logs/live_backing.log", base_tc_url, pj.status.taskId, pj.runId)
+    local cmd       = string.format("curl -L -s -f --retry 2 -m 90 --max-filesize 500000000 %s -o %s ", log_url, log_file)
+    local rv = os.execute(cmd)
+    if rv ~= 0 then
+        inject_message({Type = "error.curl.log", Payload = tostring(rv/256),
+            Fields = {
+                taskId = pj.status.taskId,
+                detail = cmd}})
+        return
+    end
+
+    local fh = gzfile.open(log_file, "rb", 64 * 1024)
+    if not fh then
+        inject_message({Type = "error.open.log", Payload = "file not found",
+            Fields = {taskId = pj.status.taskId}})
+        return
+    end
+    return fh
 end
 
 
 function decode(data, dh, mutable)
     local pj = cjson.decode(data)
-    inject_pulse_task(pj) -- forward all task related pulse messages to BigQuery
+    inject_pulse_task(pj, dh) -- forward all task related pulse messages to BigQuery
 
     local ex = dh.Fields.exchange.value[1]
     if ex == "exchange/taskcluster-queue/v1/task-completed"
     or ex == "exchange/taskcluster-queue/v1/task-failed"
     or ex == "exchange/taskcluster-queue/v1/task-exception" then
-        local fetch_log = ex ~= "exchange/taskcluster-queue/v1/task-exception"
-        and pj.status.provisionerId ~= "scriptworker-k8s"
-        and pj.status.schedulerId ~= "taskcluster-github"
-        and not (pj.task and pj.task.tags.kind == "pr")
-        local td, lfh = get_artifacts(pj, fetch_log)
+        local td = get_task_definition(pj, data)
         if not td then return nil end
 
         inject_task_definition(pj.status.taskId, td)
         local base_msg = get_base_msg(dh, mutable, pj, td)
         process_exceptions(pj, base_msg)
-        parse_log(lfh, base_msg, td, false)
+        parse_log(get_log_file(ex, pj), base_msg, td, false)
     elseif ex == "integration_test" then
-        local td, lfh = get_test_artifacts(dh.Fields.filename)
+        local td = get_test_task_definition(dh.Fields.filename)
         inject_task_definition(pj.status.taskId, td)
         local base_msg = get_base_msg(dh, mutable, pj, td)
         process_exceptions(pj, base_msg)
+        local lfh = assert(gzfile.open(dh.Fields.filename .. ".log", "rb", 64 * 1024))
         parse_log(lfh, base_msg, td, true)
     end
 end
