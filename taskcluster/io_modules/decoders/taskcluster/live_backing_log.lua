@@ -1084,6 +1084,7 @@ local function get_task_definition(pj, data)
 
     -- put the original pulse message in the error data to simplify the retry see issue #454
     local rv = os.execute(cmd)
+    if rv == 35 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
     if rv ~= 0 then
         inject_message({Type = "error.curl.task_definition", Payload = tostring(rv/256),
             Fields = {
@@ -1136,6 +1137,7 @@ local log_file = string.format("%s/%s_log.txt", tmp_path, logger)
 local function get_log_file(ex, pj)
     if ex == "exchange/taskcluster-queue/v1/task-exception"
     or pj.status.provisionerId == "scriptworker-k8s"
+    or pj.status.provisionerId == "built-in"
     or pj.status.schedulerId == "taskcluster-github"
     or (pj.task and pj.task.tags.kind == "pr") then
         return
@@ -1144,6 +1146,7 @@ local function get_log_file(ex, pj)
     local log_url   = string.format("%s/task/%s/runs/%d/artifacts/public/logs/live_backing.log", base_tc_url, pj.status.taskId, pj.runId)
     local cmd       = string.format("curl -L -s -f --retry 2 -m 90 --max-filesize 500000000 %s -o %s ", log_url, log_file)
     local rv = os.execute(cmd)
+    if rv == 35 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
     if rv ~= 0 then
         inject_message({Type = "error.curl.log", Payload = tostring(rv/256),
             Fields = {
