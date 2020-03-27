@@ -969,12 +969,9 @@ end
 
 
 local function parse_log(lfh, base_msg, td, integration_test)
-    local f = base_msg.Fields
-    if not lfh then
-        inject_timing_msg(no_schema, base_msg, 0, nil) -- no log, output the timing summary only
-        return
-    end
+    if not lfh then return end
 
+    local f = base_msg.Fields
     local g = get_parser(f)
     -- the timeStarted does not match what is in the log only use it as a last resort
     local state = {
@@ -1077,8 +1074,9 @@ end
 
 
 local task_file = string.format("%s/%s_task.json", tmp_path, logger)
-local function get_task_definition(pj, data)
-    local task_url  = string.format("%s/task/%s", base_tc_url, pj.status.taskId)
+local function get_task_definition(tid, data, suffix)
+    if not suffix then suffix = "" end
+    local task_url  = string.format("%s/task/%s", base_tc_url, tid)
     local cmd       = string.format("rm -f %s/%s_*;curl -L -s --compressed -f --retry 2 -m 60 --max-filesize 1000000 %s -o %s",
                                     tmp_path, logger, task_url, task_file)
 
@@ -1086,9 +1084,9 @@ local function get_task_definition(pj, data)
     local rv = os.execute(cmd)
     if rv == 8960 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
     if rv ~= 0 then
-        inject_message({Type = "error.curl.task_definition", Payload = tostring(rv/256),
+        inject_message({Type = "error.curl.task_definition" .. suffix, Payload = tostring(rv/256),
             Fields = {
-                taskId  = pj.status.taskId,
+                taskId  = tid,
                 detail  = cmd,
                 data    = data}})
         return
@@ -1096,9 +1094,9 @@ local function get_task_definition(pj, data)
 
     local fh = io.open(task_file, "rb")
     if not fh then
-        inject_message({Type = "error.open.task_definition", Payload = "file not found",
+        inject_message({Type = "error.open.task_definition" .. suffix, Payload = "file not found",
             Fields = {
-                taskId  = pj.status.taskId,
+                taskId  = tid,
                 data    = data}})
         return
     end
@@ -1107,17 +1105,17 @@ local function get_task_definition(pj, data)
     fh:close()
     local ok, td = pcall(cjson.decode, tdj)
     if not ok then
-        inject_message({Type = "error.parse.task_definition", Payload = td,
+        inject_message({Type = "error.parse.task_definition" .. suffix, Payload = td,
             Fields = {
-                taskId = pj.status.taskId,
+                taskId = tid,
                 detail = tdj,
                 data   = data}})
         return
     end
     if td.code or td.error then -- make sure the responses isn't API error JSON
-        inject_message({Type = "error.api.task_definition", Payload = td.code or td.error,
+        inject_message({Type = "error.api.task_definition" .. suffix, Payload = td.code or td.error,
             Fields = {
-                taskId = pj.status.taskId,
+                taskId = tid,
                 data   = data}})
         return
     end
@@ -1133,34 +1131,44 @@ local function get_test_task_definition(fn)
 end
 
 
+local bf_suffix = ".backfill"
 local log_file = string.format("%s/%s_log.txt", tmp_path, logger)
-local function get_log_file(ex, pj)
-    if ex == "exchange/taskcluster-queue/v1/task-exception"
+local function get_log_file(pj, base_msg, data, suffix)
+    if pj.status.state == "exception"
     or pj.status.provisionerId == "scriptworker-k8s"
     or pj.status.provisionerId == "built-in"
     or pj.status.schedulerId == "taskcluster-github"
     or (pj.task and pj.task.tags.kind == "pr") then
+        inject_timing_msg(no_schema, base_msg, 0, nil) -- not processing the log, output the timing summary only
         return
     end
 
+    if not suffix then suffix = "" end
+    local fh
     local log_url   = string.format("%s/task/%s/runs/%d/artifacts/public/logs/live_backing.log", base_tc_url, pj.status.taskId, pj.runId)
     local cmd       = string.format("curl -L -s -f --retry 2 -m 90 --max-filesize 500000000 %s -o %s ", log_url, log_file)
-    local rv = os.execute(cmd)
+    local rv        = os.execute(cmd)
     if rv == 8960 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
-    if rv ~= 0 then
-        inject_message({Type = "error.curl.log", Payload = tostring(rv/256),
+    if rv == 0 then
+        fh = gzfile.open(log_file, "rb", 64 * 1024)
+        if not fh then
+            inject_message({Type = "error.open.log" .. suffix, Payload = "file not found",
+                Fields = {
+                    taskId = pj.status.taskId,
+                    data   = data}})
+        end
+    else
+        inject_message({Type = "error.curl.log" .. suffix, Payload = tostring(rv/256),
             Fields = {
                 taskId = pj.status.taskId,
-                detail = cmd}})
-        return
+                detail = cmd,
+                data   = data}})
     end
 
-    local fh = gzfile.open(log_file, "rb", 64 * 1024)
-    if not fh then
-        inject_message({Type = "error.open.log", Payload = "file not found",
-            Fields = {taskId = pj.status.taskId}})
-        return
+    if not fh and suffix == bf_suffix then
+        inject_timing_msg(no_schema, base_msg, 0, nil) -- unable to backfill the log just output the timing summary
     end
+
     return fh
 end
 
@@ -1173,13 +1181,13 @@ function decode(data, dh, mutable)
     if ex == "exchange/taskcluster-queue/v1/task-completed"
     or ex == "exchange/taskcluster-queue/v1/task-failed"
     or ex == "exchange/taskcluster-queue/v1/task-exception" then
-        local td = get_task_definition(pj, data)
+        local td = get_task_definition(pj.status.taskId, data)
         if not td then return nil end
 
         inject_task_definition(pj.status.taskId, td)
         local base_msg = get_base_msg(dh, mutable, pj, td)
         process_exceptions(pj, base_msg)
-        parse_log(get_log_file(ex, pj), base_msg, td, false)
+        parse_log(get_log_file(pj, base_msg, data), base_msg, td, false)
     elseif ex == "integration_test" then
         local td = get_test_task_definition(dh.Fields.filename)
         inject_task_definition(pj.status.taskId, td)
@@ -1189,5 +1197,30 @@ function decode(data, dh, mutable)
         parse_log(lfh, base_msg, td, true)
     end
 end
+
+
+-- Partial load (backfill) decoders to fill in data that was unavailable at the time
+function decode_task_definition_error(data, dh, mutable)
+    local pj = cjson.decode(data)
+    local td = get_task_definition(pj.status.taskId, data, bf_suffix)
+    if not td then return nil end
+
+    inject_task_definition(pj.status.taskId, td)
+    local base_msg = get_base_msg(dh, mutable, pj, td)
+    process_exceptions(pj, base_msg)
+    parse_log(get_log_file(pj, base_msg, data, bf_suffix), base_msg, td, false)
+end
+
+
+function decode_log_error(data, dh, mutable)
+    local pj = cjson.decode(data)
+    local td = get_task_definition(pj.status.taskId, data, bf_suffix)
+    if not td then return nil end
+
+    local base_msg = get_base_msg(dh, mutable, pj, td)
+    update_task_summary_run(pj.status.runs[pj.runId + 1], base_msg.Fields)
+    parse_log( get_log_file(pj, base_msg, data, bf_suffix), base_msg, td, false)
+end
+
 
 return M
