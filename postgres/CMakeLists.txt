@@ -7,11 +7,11 @@ project(postgres LANGUAGES NONE)
 
 externalproject_add(
     ep_postgres
-    GIT_REPOSITORY https://github.com/LuaDist/luasql-postgresql.git
-    GIT_TAG 29a3aa1964aeac93323ec5d1446ac7d32ec700df
+    GIT_REPOSITORY https://github.com/keplerproject/luasql.git
+    GIT_TAG 5496d60185db0c4578e8abe0c74343e99b799311
     CMAKE_ARGS ${EP_CMAKE_ARGS}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
 )
-externalproject_add_step(ep_postgres copy_cpack 
+externalproject_add_step(ep_postgres copy_cpack
 COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/${PROJECT_NAME}.cpack ${CMAKE_BINARY_DIR}
 DEPENDEES install)

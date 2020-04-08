@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(postgres VERSION 2.3.0 LANGUAGES C)
+project(postgres VERSION 2.5.0 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Postgres Module")
@@ -17,6 +17,7 @@ set(CPACK_STRIP_FILES           TRUE)
 set(CPACK_DEBIAN_FILE_NAME      "DEB-DEFAULT")
 set(CPACK_RPM_FILE_NAME         "RPM-DEFAULT")
 
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libmysqlclient")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpq5")
 set(CPACK_RPM_PACKAGE_LICENSE    "MIT License")
 
@@ -24,7 +25,7 @@ if(MSVC)
     set(CMAKE_C_FLAGS           "/W3 /WX")
     set(CMAKE_C_FLAGS_RELEASE   "/MD /O2 /Ob2")
 else()
-    set(CMAKE_C_FLAGS           "-std=c99 -pedantic -Werror -Wall -Wextra -fPIC")
+    set(CMAKE_C_FLAGS           "-std=c99 -pedantic -Wall -Wextra -fPIC")
     set(CMAKE_C_FLAGS_RELEASE   "-O2")
     set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
 endif()
@@ -44,8 +45,10 @@ else() # lua_sandbox build
 endif()
 
 find_package(PostgreSQL REQUIRED)
+find_package(MYSQL REQUIRED)
 
 file(WRITE postgres.def "EXPORTS\nluaopen_postgres")
+file(WRITE mysql.def "EXPORTS\nluaopen_mysql")
 
 set(POSTGRES_SRC
 src/ls_postgres.c
@@ -53,13 +56,25 @@ src/luasql.c
 postgres.def
 )
 
+set(MYSQL_SRC
+src/ls_mysql.c
+src/luasql.c
+mysql.def
+)
+
 include(CPack)
 include_directories(${LUA_INCLUDE_DIR} ${PostgreSQL_INCLUDE_DIRS})
 add_library(postgres SHARED ${POSTGRES_SRC})
+
+include_directories(${LUA_INCLUDE_DIR} ${MYSQL_INCLUDE_DIRS})
+add_library(mysql SHARED ${MYSQL_SRC})
 if(MSVC)
   target_link_libraries(postgres ${LUA_LIBRARIES})
+  target_link_libraries(mysql ${LUA_LIBRARIES})
 endif()
 target_link_libraries(postgres ${PostgreSQL_LIBRARIES})
+target_link_libraries(mysql ${MYSQL_LIBRARIES})
+message(STATUS "FOOBAR" ${MYSQL_INCLUDE_DIRS})
 
 set(DPERMISSION DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 set(EMPTY_DIR ${CMAKE_BINARY_DIR}/empty)
@@ -67,3 +82,4 @@ file(MAKE_DIRECTORY ${EMPTY_DIR})
 install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH} ${DPERMISSION})
 install(DIRECTORY ${EMPTY_DIR}/ DESTINATION ${INSTALL_IOMODULE_PATH}/luasql ${DPERMISSION})
 install(TARGETS postgres DESTINATION ${INSTALL_IOMODULE_PATH}/luasql)
+install(TARGETS mysql DESTINATION ${INSTALL_IOMODULE_PATH}/luasql)
