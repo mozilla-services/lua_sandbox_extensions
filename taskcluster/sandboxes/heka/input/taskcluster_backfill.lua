@@ -83,17 +83,26 @@ local function get_date(time_t)
 end
 
 
-function process_message()
+function process_message(checkpoint)
+    if checkpoint then
+        local td, log = string.match(checkpoint, "^(%d+)\t(%d+)$")
+        td_day = tonumber(td) or td_day
+        log_day = tonumber(log) or log_day
+    end
+
     local time_t = os.time()
     if time_t - td_day >= 86400 + 3600 then
         local cmd = string.format('rm -f %s;bq query --nouse_legacy_sql --format json \'select taskId, type, data from taskclusteretl.error where data is not NULL and type like "error.%%.task_definition" and time >= "%s" and time < "%s"\' > %s',
                                   fn, get_date(td_day), get_date(time_t), fn)
         td_day = error_query(cmd, td_day, time_t, dm.decode_task_definition_error)
     end
+
     if time_t - log_day >= 86400 + 3600 then
         local cmd = string.format('rm -f %s;bq query --nouse_legacy_sql --format json \'select taskId, type, data from taskclusteretl.error where data is not NULL and type like "error.%%.log" and time >= "%s" and time < "%s"\' > %s',
                                   fn, get_date(log_day), get_date(time_t), fn)
         log_day = error_query(cmd, log_day, time_t, dm.decode_log_error)
     end
+
+    inject_message(nil, string.format("%d\t%d", td_day, log_day))
     return 0
 end
