@@ -1,0 +1,139 @@
+{
+  "provisionerId": "releng-hardware",
+  "workerType": "gecko-t-osx-1014",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "QVAR0sWvSduH7Ub2uOCB8A",
+  "dependencies": [
+    "S_LqmDOzQ-u74DqaYmoACw",
+    "VIWls99KSnabmZe9KTANhw",
+    "f9p5sngHTq6FBIFiGd2I8g"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.autoland.3441d1bec51609d96aa19cefe91eab7f9c5838c7.113019"
+  ],
+  "priority": "low",
+  "retries": 5,
+  "created": "2020-04-15T11:35:06.003Z",
+  "deadline": "2020-04-16T11:35:06.003Z",
+  "expires": "2021-04-15T11:35:06.003Z",
+  "scopes": [],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        4
+      ]
+    },
+    "maxRunTime": 1800,
+    "artifacts": [
+      {
+        "path": "logs",
+        "type": "directory",
+        "name": "public/logs"
+      },
+      {
+        "path": "build/blobber_upload_dir",
+        "type": "directory",
+        "name": "public/test_info"
+      }
+    ],
+    "command": [
+      [
+        "chmod",
+        "+x",
+        "run-task"
+      ],
+      [
+        "/usr/local/bin/python3",
+        "run-task",
+        "--",
+        "/usr/local/bin/python2",
+        "-u",
+        "mozharness/scripts/raptor_script.py",
+        "--cfg",
+        "mozharness/configs/raptor/mac_config.py",
+        "--setpref=extensions.logging.enabled=true",
+        "--test=raptor-tp6-9-cold",
+        "--download-symbols",
+        "ondemand"
+      ]
+    ],
+    "env": {
+      "LANG": "en_US.UTF-8",
+      "SCCACHE_DISABLE": "1",
+      "SHELL": "/bin/bash",
+      "MOZ_NODE_PATH": "/usr/local/bin/node",
+      "GECKO_HEAD_REV": "3441d1bec51609d96aa19cefe91eab7f9c5838c7",
+      "MOZ_SCM_LEVEL": "3",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/integration/autoland",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/f9p5sngHTq6FBIFiGd2I8g/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/f9p5sngHTq6FBIFiGd2I8g/artifacts/public/build/target.dmg\"}",
+      "PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "MOZ_FETCHES": "[{\"artifact\": \"public/build/minidump_stackwalk.tar.xz\", \"extract\": true, \"task\": \"S_LqmDOzQ-u74DqaYmoACw\"}, {\"artifact\": \"public/build/fix-stacks.tar.xz\", \"extract\": true, \"task\": \"VIWls99KSnabmZe9KTANhw\"}]",
+      "LC_ALL": "en_US.UTF-8",
+      "MOZ_FETCHES_DIR": "fetches",
+      "MOZ_AUTOMATION": "1"
+    },
+    "mounts": [
+      {
+        "directory": ".",
+        "content": {
+          "taskId": "f9p5sngHTq6FBIFiGd2I8g",
+          "artifact": "public/build/mozharness.zip"
+        },
+        "format": "zip"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/integration/autoland/raw-file/3441d1bec51609d96aa19cefe91eab7f9c5838c7/taskcluster/scripts/run-task"
+        },
+        "file": "./run-task"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/integration/autoland/raw-file/3441d1bec51609d96aa19cefe91eab7f9c5838c7/taskcluster/scripts/misc/fetch-content"
+        },
+        "file": "./fetch-content"
+      }
+    ]
+  },
+  "metadata": {
+    "owner": "nchevobbe@mozilla.com",
+    "source": "https://hg.mozilla.org/integration/autoland/file/3441d1bec51609d96aa19cefe91eab7f9c5838c7/taskcluster/ci/test",
+    "description": "Raptor tp6-9 cold page-load on Firefox ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=autoland&revision=3441d1bec51609d96aa19cefe91eab7f9c5838c7))",
+    "name": "test-macosx1014-64-shippable/opt-raptor-tp6-9-firefox-cold-e10s"
+  },
+  "tags": {
+    "kind": "test",
+    "os": "macosx",
+    "createdForUser": "nchevobbe@mozilla.com",
+    "retrigger": "true",
+    "label": "test-macosx1014-64-shippable/opt-raptor-tp6-9-firefox-cold-e10s",
+    "test-type": "raptor",
+    "worker-implementation": "generic-worker"
+  },
+  "extra": {
+    "index": {
+      "rank": 1586950370
+    },
+    "parent": "QVAR0sWvSduH7Ub2uOCB8A",
+    "chunks": {
+      "current": 1,
+      "total": 1
+    },
+    "suite": "raptor",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "Rap",
+      "collection": {
+        "opt": true
+      },
+      "machine": {
+        "platform": "macosx1014-64-shippable"
+      },
+      "groupName": "Raptor performance tests on Firefox",
+      "tier": 1,
+      "symbol": "tp6-c-9"
+    },
+    "treeherder-platform": "macosx1014-64-shippable/opt"
+  }
+}

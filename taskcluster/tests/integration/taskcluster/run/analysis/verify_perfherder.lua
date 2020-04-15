@@ -23,6 +23,9 @@ local results = {
 {framework = 'awsy', taskId = 'B02j0uS8SOGRfB4TrE2q4w'},
 {framework = 'browsertime', taskId = 'bZPP4WKDR5Whwge70OcW9g'},
 {framework = 'browsertime', taskId = 'aZ19zQ0SS8OLeFnQoHSwNA'},
+{framework = 'build_metrics', taskId = 'HbxirNOCRYiM1yUmLBMeYQ'},
+{framework = 'raptor', taskId = 'HbxirNOCRYiM1yUmLBMeYQ', recordingDate = "2019-06-19"},
+{framework = 'raptor', taskId = 'HbxirNOCRYiM1yUmLBMeYQ', recordingDate = "2019-06-19"},
 }
 
 local cnt = 0
@@ -35,11 +38,15 @@ function process_message()
 
     local r = f.taskId
     local e = results[cnt].taskId
-    if r ~= e then error(string.format("test: %d taskId expected: %s received: %s", cnt, tostring(e), tostring(r))) end
+    if r ~= e then error(string.format("test: %d taskId expected: '%s' received: '%s'", cnt, tostring(e), tostring(r))) end
 
     r = f.framework
     e = results[cnt].framework
-    if r ~= e then error(string.format("test: %d framework expected: %s received: %s", cnt, tostring(e), tostring(r))) end
+    if r ~= e then error(string.format("test: %d framework expected: '%s' received: '%s'", cnt, tostring(e), tostring(r))) end
+
+    r = f.recordingDate
+    e = results[cnt].recordingDate
+    if r ~= e then error(string.format("test: %d recordingDate expected: '%s' received: '%s'", cnt, tostring(e), tostring(r))) end
 
     return 0
 end

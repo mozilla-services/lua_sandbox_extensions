@@ -632,9 +632,9 @@ local raptor_recording_date = {
     Type        = "update_global",
     Component   = "perfherder",
     SubComponent= "raptor",
-    Grammar     = bg{"raptor-main Info: Playback recording date: %s", "raptor_recording_date"},
-    -- "raptor-main Info: Playback recording date not available),
-    -- "raptor-main Info: Playback recording information not available,
+    Grammar     = bg{"raptor-perftest Info: Playback recording date: %.10s", "raptor_recording_date"},
+    -- "raptor-perftest Info: Playback recording date not available",
+    -- "raptor-perftest Info: Playback recording information not available"
     fn          = update_global
 }
 
@@ -883,7 +883,7 @@ local schemas_map = {
 --    sm                          = new_log({new_task({new_mozharness({test_sm}),perfherder})}),
     mochitest                   = new_log({new_task({new_mozharness({test,gecko,perfherder}),perfherder})}),
     partials                    = new_log({new_task()}),
-    raptor                      = new_log({new_task({new_mozharness({raptor_recording_date,raptor_perfherder})})}),
+    raptor                      = new_log({new_task({new_mozharness({raptor_recording_date,raptor_perfherder}),perfherder})}),
     reftest                     = new_log({new_task({new_mozharness({test_ref,perfherder}),perfherder})}),
     test                        = new_log({new_task({new_mozharness({test,perfherder}),perfherder})}),
 }
