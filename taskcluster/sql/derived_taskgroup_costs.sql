@@ -1,5 +1,5 @@
 MERGE
-  taskclusteretl.derived_taskgroup_costs_test old
+  taskclusteretl.derived_taskgroup_costs old
 USING
   (
   WITH
