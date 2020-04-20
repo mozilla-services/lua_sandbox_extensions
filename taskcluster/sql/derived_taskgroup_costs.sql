@@ -10,7 +10,8 @@ USING
       taskGroupId,
       SUM(tasks) AS tasks,
       SUM(seconds) AS total_seconds,
-      SUM(cost) AS cost
+      SUM(cost) AS cost,
+      ARRAY_AGG(DISTINCT owner) AS owners
     FROM
       taskclusteretl.derived_kind_costs
     JOIN (
@@ -20,7 +21,7 @@ USING
         taskclusteretl.derived_kind_costs
       WHERE
         date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
-        AND date < CURRENT_DATE() )
+        AND date < CURRENT_DATE())
     USING
       (taskGroupId)
     GROUP BY
@@ -39,7 +40,12 @@ USING
     GROUP BY
       taskGroupId)
   SELECT
-    a.*,
+    a.date,
+    a.project,
+    a.taskGroupId,
+    a.tasks,
+    a.total_seconds,
+    a.cost,
     b.started,
     b.resolved,
     TIMESTAMP_DIFF(b.resolved, b.started, millisecond) / 1000 AS wall_clock_seconds,
@@ -47,7 +53,8 @@ USING
     build_number,
     release_version,
     action,
-    tasks_for
+    tasks_for,
+    ARRAY_CONCAT_AGG(a.owners) AS owners
   FROM
     a
   JOIN

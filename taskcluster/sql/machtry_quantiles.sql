@@ -8,7 +8,8 @@ WITH
     project = 'try'
     AND cost IS NOT NULL
     AND tasks > 1 -- Ignore things that are likely only a decision task, due to rate of failures there
-    AND date > DATE_SUB(@run_date, INTERVAL 60 day) )
+    AND date > DATE_SUB(@run_date, INTERVAL 60 day)
+    AND 'reviewbot@noreply.mozilla.org' NOT IN UNNEST(owners) )
 SELECT
   quant
 FROM
