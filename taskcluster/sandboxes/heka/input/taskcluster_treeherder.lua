@@ -22,6 +22,15 @@ db          = "treeherder"
 db_host     = "treeherder-prod-ro.cd3i3txkp6c6.us-east-1.rds.amazonaws.com"
 db_user     = "user"
 _db_pass    = "password"
+
+alert = {
+  disabled = false,
+  prefix = true,
+  throttle = 0,
+  modules = {
+    email = {recipients = {"notify@example.com"}},
+  },
+}
 ```
 --]]
 require "cjson"
@@ -29,6 +38,7 @@ require "io"
 require "os"
 require "string"
 local driver = require "luasql.mysql"
+local alert  = require "heka.alert"
 
 local batch_dir         = read_config("batch_dir") or "/var/tmp"
 local bq_dataset        = read_config("bq_dataset") or error"must specify bq_dataset"
