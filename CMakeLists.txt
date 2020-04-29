@@ -92,11 +92,11 @@ lfs
 lpeg
 lsb
 maxminddb
-moz_ingest
-moz_logging
+# moz_ingest deprecated
+# moz_logging deprecated
 # moz_pioneer deprecated
-moz_security
-moz_telemetry
+# moz_security deprecated
+# moz_telemetry deprecated
 openssl
 papertrail
 parquet
