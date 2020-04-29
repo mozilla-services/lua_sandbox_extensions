@@ -94,7 +94,7 @@ lsb
 maxminddb
 moz_ingest
 moz_logging
-moz_pioneer
+# moz_pioneer deprecated
 moz_security
 moz_telemetry
 openssl

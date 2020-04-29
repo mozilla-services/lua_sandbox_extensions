@@ -1,0 +1,10 @@
+--- postgres/ep_postgres-prefix/src/ep_postgres/src/ls_mysql.c	2020-04-29 12:39:59.568327879 -0700
++++ ls_mysql.c	2020-04-29 12:45:07.260348905 -0700
+@@ -534,6 +534,7 @@
+ 	conn = mysql_init(NULL);
+ 	if (conn == NULL)
+ 		return luasql_faildirect(L, "error connecting: Out of memory.");
++	mysql_options(conn, MYSQL_SET_CHARSET_NAME, "utf8");
+ 
+ 	if (!mysql_real_connect(conn, host, username, password, 
+ 		sourcename, port, unix_socket, client_flag))

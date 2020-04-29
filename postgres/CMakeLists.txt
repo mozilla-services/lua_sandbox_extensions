@@ -11,6 +11,7 @@ externalproject_add(
     GIT_TAG 5496d60185db0c4578e8abe0c74343e99b799311
     CMAKE_ARGS ${EP_CMAKE_ARGS}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.${PROJECT_NAME} <SOURCE_DIR>/CMakeLists.txt
+    PATCH_COMMAND patch src/ls_mysql.c < ${CMAKE_CURRENT_SOURCE_DIR}/patch.txt
 )
 externalproject_add_step(ep_postgres copy_cpack
 COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/${PROJECT_NAME}.cpack ${CMAKE_BINARY_DIR}
