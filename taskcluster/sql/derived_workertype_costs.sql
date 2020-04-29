@@ -42,7 +42,7 @@ WITH
   cost AS (
   SELECT
     time.*,
-    ROUND(time.hours * 3600 * 1000 * cost_per_ms, 2) AS cost,
+    time.hours * 3600 * 1000 * cost_per_ms AS cost,
     cost_origin
   FROM
     time
