@@ -1,9 +1,12 @@
+DECLARE start_date DATE DEFAULT DATE_SUB(CURRENT_DATE(), INTERVAL 5 day);
+DECLARE end_date DATE DEFAULT CURRENT_DATE();
+
 DELETE
 FROM
   taskclusteretl.derived_kind_costs
 WHERE
-  date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
-  AND date < CURRENT_DATE();
+  date >= start_date
+  AND date < end_date;
 INSERT INTO
   taskclusteretl.derived_kind_costs
 WITH
@@ -19,13 +22,13 @@ WITH
     taskGroupId,
     owner,
     COUNT(*) AS tasks,
-    ROUND(SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 1000, 2) AS seconds,
-    ROUND( SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) * (
+    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 1000 AS seconds,
+    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) * (
       IF
-        (workerGroup LIKE "%gcp%",
+        (workerGroup LIKE "mdc_",
           (
           SELECT
-            cost_per_ms
+            sum(cost_per_ms)
           FROM
             taskclusteretl.derived_daily_cost_per_workertype AS tmp
           WHERE
@@ -36,10 +39,10 @@ WITH
               OR tmp.provisionerId = dts.provisionerId)
             AND tmp.workerType = dts.workerType
             AND tmp.date = dts.date
-            AND tmp.cost_origin = "gcp"),
+            AND tmp.cost_origin = workerGroup),
           (
           SELECT
-            cost_per_ms
+            sum(cost_per_ms)
           FROM
             taskclusteretl.derived_daily_cost_per_workertype AS tmp
           WHERE
@@ -49,14 +52,14 @@ WITH
               AND dts.provisionerId IS NULL
               OR tmp.provisionerId = dts.provisionerId)
             AND tmp.workerType = dts.workerType
-            AND tmp.date = dts.date
-            AND tmp.cost_origin != "gcp"))), 2) AS cost,
+            AND tmp.date = dts.date))) AS cost,
     workerGroup
   FROM
     taskclusteretl.derived_task_summary AS dts
   WHERE
-    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
-    AND date < CURRENT_DATE()
+    date >= start_date
+    AND date < end_date
+    AND execution > 0
   GROUP BY
     date,
     project,

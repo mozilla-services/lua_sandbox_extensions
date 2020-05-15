@@ -1,11 +1,15 @@
+DECLARE start_date DATE DEFAULT DATE_SUB(CURRENT_DATE(), INTERVAL 5 day);
+DECLARE end_date DATE DEFAULT CURRENT_DATE();
+
 DELETE
 FROM
   taskclusteretl.derived_workertype_costs
 WHERE
-  date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
-  AND date < CURRENT_DATE();
+  date >= start_date
+  AND date < end_date;
 INSERT INTO
   taskclusteretl.derived_workertype_costs
+
 WITH
   time AS (
   SELECT
@@ -21,16 +25,29 @@ WITH
     kind,
     owner,
     COUNT(*) AS tasks,
-    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS hours
+    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS hours,
+    -- have to special case our data centers since the workerPoolIds are not unique and both will be joined for every record
+  IF
+    (workerGroup LIKE "mdc_",
+      workerGroup,
+    IF
+      (workerGroup = "signing-mac-v1" or (workerGroup is NULL and provisionerId = "releng-hardware"),
+      IF
+        (FARM_FINGERPRINT(CAST(execution AS string)) < 0,
+          "mdc1",
+          "mdc2"),
+        NULL)) AS workerGroup
   FROM
     taskclusteretl.derived_task_summary
   WHERE
-    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
-    AND date < CURRENT_DATE()
+    date >= start_date
+    AND date < end_date
+    AND execution > 0
   GROUP BY
     date,
     provisionerId,
     workerType,
+    workerGroup,
     project,
     platform,
     taskGroupId,
@@ -41,9 +58,22 @@ WITH
     owner),
   cost AS (
   SELECT
-    time.*,
+    time.* EXCEPT(tasks,
+      hours,
+      workerGroup),
+  IF
+    (ddcpw.cost IS NULL
+      OR ddcpw.hours IS NOT NULL,
+      tasks,
+      NULL) AS tasks,
+  IF
+    (ddcpw.cost IS NULL
+      OR ddcpw.hours IS NOT NULL,
+      time.hours,
+      NULL) AS hours,
     time.hours * 3600 * 1000 * cost_per_ms AS cost,
-    cost_origin
+    cost_origin,
+    description
   FROM
     time
   LEFT JOIN (
@@ -52,21 +82,26 @@ WITH
     FROM
       taskclusteretl.derived_daily_cost_per_workertype
     WHERE
-      cluster IS NULL
-      OR cluster = "firefox") AS ddcpw
+      (cluster IS NULL
+        OR cluster = "firefox")
+      AND cost_per_ms IS NOT NULL) AS ddcpw
   ON
     (ddcpw.provisionerId IS NULL
+      AND time.provisionerId IS NULL
       OR ddcpw.provisionerId = time.provisionerId)
     AND (ddcpw.workerType IS NULL
       AND time.workerType IS NULL
       OR ddcpw.workerType = time.workerType)
+    AND (time.workerGroup IS NULL
+      OR ddcpw.cost_origin = time.workerGroup) -- further disambiguation to match the cost to the correct Mozilla datacenter
     AND ddcpw.date = time.date),
   owner AS (
   SELECT
-    cost.*,
+    cost.* EXCEPT(description),
     ifnull(name,
       cost.owner) AS owner_name,
-    manager AS manager_name
+    manager AS manager_name,
+    cost.description
   FROM
     cost
   LEFT JOIN (
@@ -83,17 +118,30 @@ WITH
     date,
     provisionerId,
     workerType,
-    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS used_hours
+    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS hours,
+  IF
+    (workerGroup LIKE "mdc_",
+      workerGroup,
+    IF
+      (workerGroup = "signing-mac-v1" or (workerGroup is NULL and provisionerId = "releng-hardware"),
+      IF
+        (FARM_FINGERPRINT(CAST(execution AS string)) < 0,
+          "mdc1",
+          "mdc2"),
+        NULL)) AS workerGroup
   FROM
     taskclusteretl.derived_task_summary
   WHERE
-    date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
-    AND date < CURRENT_DATE()
+    date >= start_date
+    AND date < end_date
   GROUP BY
     date,
     provisionerId,
-    workerType),
-  unused AS (
+    workerType,
+    workerGroup
+  HAVING
+    hours != 0),
+  total AS (
   SELECT
     *
   FROM
@@ -101,13 +149,37 @@ WITH
   WHERE
     (cluster IS NULL
       OR cluster = "firefox")
-    AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 day)
-    AND date < CURRENT_DATE() ),
+    AND date >= start_date
+    AND date < end_date
+    AND hours IS NOT NULL),
   overhead AS (
   SELECT
-    unused.date,
-    unused.provisionerId,
-    unused.workerType,
+    total.date,
+    total.provisionerId,
+    total.workerType,
+    total.cost_origin,
+    total.hours - ifnull(used.hours,
+      0) AS hours,
+    total.description
+  FROM
+    used
+  RIGHT JOIN
+    total
+  ON
+    used.date = total.date
+    AND (used.provisionerId IS NULL
+      AND total.provisionerId IS NULL
+      OR used.provisionerId = total.provisionerId)
+    AND (used.workerType IS NULL
+      AND total.workerType IS NULL
+      OR used.workerType = total.workerType)
+    AND (used.workerGroup IS NULL
+      OR total.cost_origin = used.workerGroup)),
+  overhead_cost AS (
+  SELECT
+    overhead.date,
+    overhead.provisionerId,
+    overhead.workerType,
     "-overhead-" AS project,
     "-overhead-" AS platform,
     CAST(NULL AS string) AS taskGroupId,
@@ -116,29 +188,39 @@ WITH
     0 AS tier,
     "-overhead-" AS kind,
     "-overhead-" AS owner,
-    0 AS tasks,
-    unused.hours - ifnull(used_hours,
-      0) AS hours,
+    CAST(NULL AS INT64) AS tasks,
   IF
-    (unused.hours IS NULL,
-      unused.cost,
-      (unused.hours - ifnull(used_hours,
-          0)) * 3600 * 1000 * cost_per_ms) AS cost,
-    cost_origin,
+    (ddcpw.hours IS NOT NULL,
+      overhead.hours,
+      NULL) AS hours,
+    overhead.hours * 3600 * 1000 * cost_per_ms AS cost,
+    overhead.cost_origin,
     CAST(NULL AS string) AS owner_name,
-    CAST(NULL AS ARRAY<string>) AS manager_name
+    CAST(NULL AS ARRAY<string>) AS manager_name,
+    ddcpw.description
   FROM
-    used
-  RIGHT JOIN
-    unused
+    overhead
+  LEFT JOIN (
+    SELECT
+      *
+    FROM
+      taskclusteretl.derived_daily_cost_per_workertype
+    WHERE
+      (cluster IS NULL
+        OR cluster = "firefox")
+      AND cost_per_ms IS NOT NULL) AS ddcpw
   ON
-    used.date = unused.date
-    AND (used.provisionerId IS NULL
-      AND unused.provisionerId IS NULL
-      OR used.provisionerId = unused.provisionerId)
-    AND (used.workerType IS NULL
-      AND unused.workerType IS NULL
-      OR used.workerType = unused.workerType))
+    (ddcpw.provisionerId IS NULL
+      AND overhead.provisionerId IS NULL
+      OR ddcpw.provisionerId = overhead.provisionerId)
+    AND (ddcpw.workerType IS NULL
+      AND overhead.workerType IS NULL
+      OR ddcpw.workerType = overhead.workerType)
+    AND (overhead.cost_origin IS NULL
+      OR ddcpw.cost_origin = overhead.cost_origin)
+    AND ddcpw.date = overhead.date
+    AND (ddcpw.hours IS NULL
+      OR ddcpw.description = overhead.description))
 SELECT
   *
 FROM
@@ -147,4 +229,4 @@ UNION ALL
 SELECT
   *
 FROM
-  overhead
+  overhead_cost

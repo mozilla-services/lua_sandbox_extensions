@@ -212,6 +212,7 @@ function process_message(checkpoint)
         print(string.format("loading table: %s start: %s end: %s", bq_alert_table, sts, ets))
         alert_day   = run_query(q, alert_day, et, bq_alert_table, transform_alert)
     end
+    inject_message(nil, string.format("%d\t%d", alert_day, commit_day))
 
     if time_t - commit_day >= 86400 + 3600 then
         local sts   = get_date(commit_day)
@@ -219,7 +220,7 @@ function process_message(checkpoint)
         print(string.format("loading table: %s start: %s end: %s", bq_commit_table, sts, ets))
         commit_day  = run_query(q, commit_day, et, bq_commit_table, transform_commit)
     end
-
     inject_message(nil, string.format("%d\t%d", alert_day, commit_day))
+
     return 0
 end
