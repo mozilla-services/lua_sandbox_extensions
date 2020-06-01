@@ -348,14 +348,26 @@ WITH
         FROM
           UNNEST(credits) c),
         0)) AS cost,
-  IF
-    (service.description = "Compute Engine",
-      SUM(
-      IF
-        (usage.unit = "seconds",
-          usage.amount,
-          NULL)) / 3600,
-      NULL) AS hours,
+    SUM(
+    IF
+      (usage.unit = "seconds"
+        AND cost != 0
+        AND sku.description LIKE "%Core running%"
+        AND EXISTS(
+        SELECT
+          value
+        FROM
+          UNNEST(system_labels)
+        WHERE
+          key = "compute.googleapis.com/cores"),
+        usage.amount / CAST((
+          SELECT
+            value
+          FROM
+            UNNEST(system_labels)
+          WHERE
+            key = "compute.googleapis.com/cores") AS FLOAT64),
+        NULL)) / 3600 AS hours,
     -- only sum up compute hours all other costs will be divided into this time
     "gcp" AS cost_origin,
     CASE
