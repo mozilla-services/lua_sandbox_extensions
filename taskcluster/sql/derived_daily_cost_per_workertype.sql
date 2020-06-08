@@ -193,7 +193,7 @@ WITH
     workerType,
     cost_origin,
     description),
-  /* AWS Cost Calculations */ data AS (
+  /* AWS Cost Calculations */ DATA AS (
   SELECT
     *
   FROM
@@ -205,12 +205,13 @@ WITH
   aws_costs AS (
   SELECT
     usage_start_date AS date,
+    REGEXP_EXTRACT(lineitem_usagetype, "(?:Box|Spot)Usage:(.+)") AS instanceType,
     REGEXP_EXTRACT(resourcetags_user_name, "(.+)/.+") AS provisionerId,
     ifnull(REGEXP_EXTRACT(resourcetags_user_name, ".+/(.+)"),
       resourcetags_user_name) AS workerType,
     "aws" AS cost_origin,
     CASE
-      WHEN lineitem_operation LIKE "RunInstances%" THEN "EC2 Instance"
+      WHEN lineitem_operation LIKE "RunInstances%" AND (pricing_unit = "Hours" OR pricing_unit = "Hrs") THEN "EC2 Instance"
     -- we need to bundle Spot, Reserved and On Demand compute together since we cannot
     -- map workerPoolId/task costs down to this granularity without aggregating costs at
     -- a per instance level
@@ -238,7 +239,7 @@ WITH
         AND (pricing_unit = "Hours"
           OR pricing_unit = "Hrs"),
         lineitem_usageamount,
-        NULL)) AS hours,
+        NULL)) AS billing_hours,
     -- only sum up compute hours all other costs will be divided into this time
     CASE lineitem_usageaccountid
       WHEN 692406183521 THEN "firefox"   -- TaskCluster Platform - 8100
@@ -250,7 +251,7 @@ WITH
   END
     AS cluster
   FROM
-    data
+    DATA
   WHERE
     lineitem_usageaccountid IN ( 692406183521,
       43838267467,
@@ -262,25 +263,56 @@ WITH
     AND usage_start_date < end_date
   GROUP BY
     date,
+    instanceType,
     provisionerId,
     workerType,
     description,
     cluster),
   aws_hours AS (
   SELECT
-    date,
-    provisionerId,
-    workerType,
+    a.date,
+    a.instanceType,
+    a.provisionerId,
+    a.workerType,
     cost,
-    hours,
-    cost / (hours * 3600 * 1000) AS cost_per_ms,
+    --ifnull(capacity, 1) as capacity,
+    --billing_hours,
+    ifnull(capacity,
+      1) * billing_hours AS hours,
     cost_origin,
     cluster,
     description
   FROM
-    aws_costs
+    aws_costs AS a
+  LEFT JOIN
+    taskclusteretl.workerpool_capacity AS wpc
+  ON
+    a.instanceType = wpc.instanceType
+    AND a.provisionerId = wpc.provisionerId
+    AND a.workerType = wpc.workerType
+    AND a.date = wpc.date
   WHERE
-    hours IS NOT NULL ),
+    billing_hours IS NOT NULL ),
+  aws_workerpool_hours AS (
+  SELECT
+    date,
+    provisionerId,
+    workerType,
+    SUM(cost) AS cost,
+    SUM(hours) AS hours,
+    SUM(cost) / (SUM(hours) * 3600 * 1000) AS cost_per_ms,
+    cost_origin,
+    cluster,
+    description
+  FROM
+    aws_hours
+  GROUP BY
+    date,
+    provisionerId,
+    workerType,
+    description,
+    cluster,
+    cost_origin),
   aws AS (
   SELECT
     a.date,
@@ -295,7 +327,7 @@ WITH
   FROM
     aws_costs AS a
   LEFT JOIN
-    aws_hours AS a1
+    aws_workerpool_hours AS a1
   ON
     a.date = a1.date
     AND ((a.provisionerId IS NULL
@@ -306,12 +338,12 @@ WITH
       OR a.workerType = a1.workerType)
     AND a.cluster = a1.cluster
   WHERE
-    a.hours IS NULL
+    a.billing_hours IS NULL
   UNION ALL
   SELECT
     *
   FROM
-    aws_hours),
+    aws_workerpool_hours),
   /* GCP Cost Calculations */ gcp_costs AS (
   SELECT
     EXTRACT(date
