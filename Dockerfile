@@ -12,7 +12,7 @@ RUN rpm --import /root/docker.arrow.keys.txt
 RUN yum makecache && \
     yum install -y git rpm-build c-compiler make curl gcc gcc-c++ systemd-devel \
     autoconf automake centos-release-scl epel-release zlib-devel openssl-devel \
-    postgresql-devel libcurl-devel lua-devel librabbitmq-devel mariadb-devel && \
+    postgresql-devel libcurl-devel lua-devel librabbitmq-devel mariadb-devel libyaml-devel && \
     yum install -y https://packages.red-data-tools.org/centos/red-data-tools-release-1.0.0-1.noarch.rpm && \
     yum install -y libmaxminddb-devel jq libmaxminddb librdkafka-devel jansson-devel devtoolset-7 && \
     yum install -y --enablerepo=epel arrow-devel-0.9.0 && \

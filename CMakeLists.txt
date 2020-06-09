@@ -91,6 +91,7 @@ libinjection
 lfs
 lpeg
 lsb
+lyaml
 maxminddb
 # moz_ingest deprecated
 # moz_logging deprecated
