@@ -22,7 +22,7 @@ local results = {
 {framework = 'vcs', taskId = 'ZYFKUNR5RhmrBAq4Z4KB9g'},
 {framework = 'awsy', taskId = 'B02j0uS8SOGRfB4TrE2q4w'},
 {framework = 'browsertime', taskId = 'bZPP4WKDR5Whwge70OcW9g'},
-{framework = 'browsertime', taskId = 'aZ19zQ0SS8OLeFnQoHSwNA'},
+{framework = 'browsertime', taskId = 'aZ19zQ0SS8OLeFnQoHSwNA', recordingDate = "2019-06-19"},
 {framework = 'build_metrics', taskId = 'HbxirNOCRYiM1yUmLBMeYQ'},
 {framework = 'raptor', taskId = 'HbxirNOCRYiM1yUmLBMeYQ', recordingDate = "2019-06-19"},
 {framework = 'raptor', taskId = 'HbxirNOCRYiM1yUmLBMeYQ', recordingDate = "2019-06-19"},
