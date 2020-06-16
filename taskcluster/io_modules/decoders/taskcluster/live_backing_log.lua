@@ -314,6 +314,7 @@ local function perfherder_decode(g, b, json)
     elseif j.framework.name == "browsertime" then
         if b.base_msg.Fields.testtype == "raptor" then
             b.cache.global.raptor_embedded = true
+            j.recordingDate = b.cache.global.raptor_recording_date
         end
     elseif j.framework.name == "raptor" then
         local f = j.suites[1]
