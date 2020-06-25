@@ -9,7 +9,6 @@ WHERE
   AND date < end_date;
 INSERT INTO
   taskclusteretl.derived_workertype_costs
-
 WITH
   time AS (
   SELECT
@@ -31,7 +30,9 @@ WITH
     (workerGroup LIKE "mdc_",
       workerGroup,
     IF
-      (workerGroup = "signing-mac-v1" or (workerGroup is NULL and provisionerId = "releng-hardware"),
+      (workerGroup = "signing-mac-v1"
+        OR (workerGroup IS NULL
+          AND provisionerId = "releng-hardware"),
       IF
         (FARM_FINGERPRINT(CAST(execution AS string)) < 0,
           "mdc1",
@@ -82,7 +83,9 @@ WITH
     FROM
       taskclusteretl.derived_daily_cost_per_workertype
     WHERE
-      (cluster IS NULL
+      date >= start_date
+      AND date < end_date
+      AND (cluster IS NULL
         OR cluster = "firefox")
       AND cost_per_ms IS NOT NULL) AS ddcpw
   ON
@@ -100,7 +103,9 @@ WITH
     cost.* EXCEPT(description),
     ifnull(name,
       cost.owner) AS owner_name,
-    IFNULL(manager, ["Collaborator", "Mitchell Baker"]) AS manager_name,
+    IFNULL(manager,
+      ["Collaborator",
+      "Mitchell Baker"]) AS manager_name,
     cost.description
   FROM
     cost
@@ -123,7 +128,9 @@ WITH
     (workerGroup LIKE "mdc_",
       workerGroup,
     IF
-      (workerGroup = "signing-mac-v1" or (workerGroup is NULL and provisionerId = "releng-hardware"),
+      (workerGroup = "signing-mac-v1"
+        OR (workerGroup IS NULL
+          AND provisionerId = "releng-hardware"),
       IF
         (FARM_FINGERPRINT(CAST(execution AS string)) < 0,
           "mdc1",
@@ -206,7 +213,9 @@ WITH
     FROM
       taskclusteretl.derived_daily_cost_per_workertype
     WHERE
-      (cluster IS NULL
+      date >= start_date
+      AND date < end_date
+      AND (cluster IS NULL
         OR cluster = "firefox")
       AND cost_per_ms IS NOT NULL) AS ddcpw
   ON
@@ -220,7 +229,36 @@ WITH
       OR ddcpw.cost_origin = overhead.cost_origin)
     AND ddcpw.date = overhead.date
     AND (ddcpw.hours IS NULL
-      OR ddcpw.description = overhead.description))
+      OR ddcpw.description = overhead.description)),
+  overhead_notime AS (
+  SELECT
+    date,
+    provisionerId,
+    workerType,
+    "-overhead-" AS project,
+    "-overhead-" AS platform,
+    CAST(NULL AS string) AS taskGroupId,
+    CAST(NULL AS string) AS collection,
+    CAST(NULL AS string) AS suite,
+    0 AS tier,
+    "-overhead-" AS kind,
+    "-overhead-" AS owner,
+    CAST(NULL AS INT64) AS tasks,
+    CAST(NULL AS float64) AS hours,
+    cost,
+    cost_origin,
+    CAST(NULL AS string) AS owner_name,
+    CAST(NULL AS ARRAY<string>) AS manager_name,
+    description
+  FROM
+    taskclusteretl.derived_daily_cost_per_workertype
+  WHERE
+    date >= start_date
+    AND date < end_date
+    AND (cluster IS NULL
+      OR cluster = "firefox")
+    AND (hours IS NULL
+      AND cost_per_ms IS NULL))
 SELECT
   *
 FROM
@@ -230,3 +268,8 @@ SELECT
   *
 FROM
   overhead_cost
+UNION ALL
+SELECT
+  *
+FROM
+  overhead_notime
