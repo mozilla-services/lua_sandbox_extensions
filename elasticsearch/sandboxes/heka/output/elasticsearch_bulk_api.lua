@@ -13,16 +13,13 @@ ticker_interval = 10 -- flush every 10 seconds or flush_count (50000) messages
 memory_limit    = 200e6
 
 address             = "127.0.0.1"
+-- TLS support; only set if you want TLS
 ssl_params = {
-  mode = "client",
   protocol = "tlsv1_2",
-  key = "/etc/hindsight/certs/client-key.pem",
-  certificate = "/etc/hindsight/certs/client.pem",
-  cafile = "/etc/hindsight/certs/ca.pem",
+  cafile = "/etc/ssl/certs/ca-certificates.crt",
   verify = {"peer", "fail_if_no_peer_cert"},
   options = {"all", "no_sslv3"}
 }
--- set tls_params if you want to enable tls connection
 port                = 9200
 timeout             = 10    -- socket timeout
 flush_count         = 50000
@@ -79,56 +76,38 @@ if ssl_params then
     ssl_ctx = assert(ssl.newcontext(ssl_params))
 end
 
--- lifted straight from luasec https module
--- Forward calls to the real connection object.
-local function reg(conn)
-   local mt = getmetatable(conn.sock).__index
-   for name, method in pairs(mt) do
-      if type(method) == "function" then
-         conn[name] = function (self, ...)
-                         return method(self.sock, ...)
-                      end
-      end
-   end
-end
-local function ssl_socket(params)
-    -- 'create' function for LuaSocket
-    return function ()
-        local conn = {}
-        conn.sock = socket.try(socket.tcp())
-        local so = getmetatable(conn.sock).__index.setoption
-        function conn:setoption(...)
-            return so(self.sock, ...)
+local function connection_factory()
+    local t = {c = try(socket.tcp())}
+
+    function idx (tbl, key)
+        return function (prxy, ...)
+            local c = prxy.c
+            return c[key](c,...)
         end
-        local st = getmetatable(conn.sock).__index.settimeout
-        function conn:settimeout(...)
-            return st(self.sock, ...)
-        end
-        -- Replace TCP's connection function
-        function conn:connect(host, port)
-            socket.try(self.sock:connect(host, port))
-            self.sock = socket.try(ssl.wrap(self.sock, params))
-            self.sock:sni(host)
-            socket.try(self.sock:dohandshake())
-            reg(self, getmetatable(self.sock))
-            return 1
-        end
-        return conn
     end
+
+    function t:connect(host, port)
+        -- print ("proxy connect ", host, port)
+        try(self.c:connect(host, port))
+        self.c:setoption("tcp-nodelay", true)
+        self.c:setoption("keepalive", true)
+        self.c:settimeout(timeout)
+        if ssl_params then
+            self.c = try(ssl.wrap(self.c, ssl_params))
+            self.c:sni(host)
+            -- print("TLS wrapped!") -- debug
+            try(self.c:dohandshake())
+            -- print("TLS handshaked!") -- debug
+        end
+        return 1
+    end
+
+    return setmetatable(t, {__index = idx})
 end
 
 local client
 local function create_client()
-    local client
-    if ssl_params then
-        client = http.open(address, port, ssl_socket(ssl_ctx))
-    else
-        client = http.open(address, port)
-    end
-    --client.c:setoption("tcp-nodelay", true)
-    --client.c:setoption("keepalive", true)
-    client.c:settimeout(timeout)
-    return client
+    return http.open(address, port, connection_factory)
 end
 local pcreate_client = socket.protect(create_client);
 
