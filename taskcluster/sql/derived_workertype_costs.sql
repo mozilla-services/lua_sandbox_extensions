@@ -100,7 +100,7 @@ WITH
     cost.* EXCEPT(description),
     ifnull(name,
       cost.owner) AS owner_name,
-    manager AS manager_name,
+    IFNULL(manager, ["Collaborator", "Mitchell Baker"]) AS manager_name,
     cost.description
   FROM
     cost
