@@ -77,7 +77,7 @@ if ssl_params then
 end
 
 local function connection_factory()
-    local t = {c = try(socket.tcp())}
+    local t = {c = socket.try(socket.tcp())}
 
     function idx (tbl, key)
         return function (prxy, ...)
@@ -88,15 +88,15 @@ local function connection_factory()
 
     function t:connect(host, port)
         -- print ("proxy connect ", host, port)
-        try(self.c:connect(host, port))
+        socket.try(self.c:connect(host, port))
         self.c:setoption("tcp-nodelay", true)
         self.c:setoption("keepalive", true)
         self.c:settimeout(timeout)
         if ssl_params then
-            self.c = try(ssl.wrap(self.c, ssl_params))
+            self.c = socket.try(ssl.wrap(self.c, ssl_params))
             self.c:sni(host)
             -- print("TLS wrapped!") -- debug
-            try(self.c:dohandshake())
+            socket.try(self.c:dohandshake())
             -- print("TLS handshaked!") -- debug
         end
         return 1
