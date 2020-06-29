@@ -14,6 +14,8 @@ memory_limit    = 200e6
 
 address             = "127.0.0.1"
 port                = 9200
+-- set basic auth parameters to enable basic authentication
+basic_auth_params   = { username = "Aladdin", password = "open sesame" }
 timeout             = 10    -- socket timeout
 flush_count         = 50000
 flush_on_shutdown   = false
@@ -22,7 +24,6 @@ max_retry           = 0     -- number of seconds (retries once per second)
 discard_on_error    = false -- discard the batch after max_retry + 1 failed attempts to send the batch
 abort_on_error      = false -- stop this plugin after max_retry + 1 failed attempts to send the batch
 -- when setting abort_on_error = true, consider also settings shutdown_on_terminate or remove_checkpoints_on_terminate
-
 -- See the elasticsearch module directory for the various encoders and configuration documentation.
 encoder_module  = "encoders.elasticsearch.payload"
 encoders_elasticsearch_common    = {
@@ -36,16 +37,18 @@ encoders_elasticsearch_common    = {
 require "table"
 require "rjson"
 require "string"
-local ltn12         = require "ltn12"
-local time          = require "os".time
-local socket        = require "socket"
-local http          = require("socket.http")
-local address       = read_config("address") or "127.0.0.1"
-local port          = read_config("port") or 9200
-local timeout       = read_config("timeout") or 10
-local discard       = read_config("discard_on_error")
-local abort         = read_config("abort_on_error")
-local max_retry     = read_config("max_retry") or 0
+local ltn12             = require "ltn12"
+local time              = require "os".time
+local socket            = require "socket"
+local http              = require("socket.http")
+local mime              = require "mime"
+local address           = read_config("address") or "127.0.0.1"
+local port              = read_config("port") or 9200
+local basic_auth_params = read_config("basic_auth_params") or false
+local timeout           = read_config("timeout") or 10
+local discard           = read_config("discard_on_error")
+local abort             = read_config("abort_on_error")
+local max_retry         = read_config("max_retry") or 0
 assert(not (abort and discard), "abort_on_error and discard_on_error are mutually exclusive")
 
 local encoder_module = read_config("encoder_module") or "encoders.elasticsearch.payload"
@@ -79,6 +82,18 @@ local req_headers = {
     ["accept"]          = "application/json",
     ["connection"]      = "keep-alive",
 }
+
+local function basic_auth_string(params)
+    assert(type(params.username) == 'string')
+    assert(type(params.password) == 'string')
+    return "Basic " .. mime.b64(params.username .. ":" .. params.password)
+end
+-- from the basic auth RFC
+assert(basic_auth_string({ username = "Aladdin", password = "open sesame" }) == "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==")
+
+if basic_auth_params then
+    req_headers["authorization"] = basic_auth_string(basic_auth_params)
+end
 
 local batch_count   = 0
 
