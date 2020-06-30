@@ -86,7 +86,7 @@ SELECT
   cost,
   ifnull(name,
     a.owner) AS owner_name,
-  manager AS manager_name,
+  IFNULL(manager, ["Collaborator", "Mitchell Baker"]) AS manager_name,
   workerGroup
 FROM
   a

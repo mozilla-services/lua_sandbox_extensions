@@ -13,6 +13,13 @@ ticker_interval = 10 -- flush every 10 seconds or flush_count (50000) messages
 memory_limit    = 200e6
 
 address             = "127.0.0.1"
+-- TLS support; only set if you want TLS
+ssl_params = {
+  protocol = "tlsv1_2",
+  cafile = "/etc/ssl/certs/ca-certificates.crt",
+  verify = {"peer", "fail_if_no_peer_cert"},
+  options = {"all", "no_sslv3"}
+}
 port                = 9200
 -- set basic auth parameters to enable basic authentication
 basic_auth_params   = { username = "Aladdin", _password = "open sesame" }
@@ -49,6 +56,7 @@ local timeout           = read_config("timeout") or 10
 local discard           = read_config("discard_on_error")
 local abort             = read_config("abort_on_error")
 local max_retry         = read_config("max_retry") or 0
+local ssl_params        = read_config("ssl_params")
 assert(not (abort and discard), "abort_on_error and discard_on_error are mutually exclusive")
 
 local encoder_module = read_config("encoder_module") or "encoders.elasticsearch.payload"
@@ -63,13 +71,43 @@ local ticker_interval   = read_config("ticker_interval")
 local flush_count       = read_config("flush_count") or 50000
 assert(flush_count > 0, "flush_count must be greater than zero")
 
+local ssl, ssl_ctx
+if ssl_params then
+    ssl = require "ssl"
+    -- Force client mode
+    ssl_params.mode = "client"
+    ssl_ctx = assert(ssl.newcontext(ssl_params))
+end
+
+local function connection_factory()
+    local t = {c = socket.try(socket.tcp())}
+
+    function idx (tbl, key)
+        return function (prxy, ...)
+            local c = prxy.c
+            return c[key](c,...)
+        end
+    end
+
+    function t:connect(host, port)
+        socket.try(self.c:connect(host, port))
+        self.c:setoption("tcp-nodelay", true)
+        self.c:setoption("keepalive", true)
+        self.c:settimeout(timeout)
+        if ssl_params then
+            self.c = socket.try(ssl.wrap(self.c, ssl_params))
+            self.c:sni(host)
+            socket.try(self.c:dohandshake())
+        end
+        return 1
+    end
+
+    return setmetatable(t, {__index = idx})
+end
+
 local client
 local function create_client()
-    local client = http.open(address, port)
-    client.c:setoption("tcp-nodelay", true)
-    client.c:setoption("keepalive", true)
-    client.c:settimeout(timeout)
-    return client
+    return http.open(address, port, connection_factory)
 end
 local pcreate_client = socket.protect(create_client);
 
