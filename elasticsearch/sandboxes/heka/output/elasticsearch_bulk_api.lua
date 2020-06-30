@@ -53,7 +53,7 @@ local timeout       = read_config("timeout") or 10
 local discard       = read_config("discard_on_error")
 local abort         = read_config("abort_on_error")
 local max_retry     = read_config("max_retry") or 0
-local ssl_params    = read_config("ssl_params") or false
+local ssl_params    = read_config("ssl_params")
 assert(not (abort and discard), "abort_on_error and discard_on_error are mutually exclusive")
 
 local encoder_module = read_config("encoder_module") or "encoders.elasticsearch.payload"
@@ -87,7 +87,6 @@ local function connection_factory()
     end
 
     function t:connect(host, port)
-        -- print ("proxy connect ", host, port)
         socket.try(self.c:connect(host, port))
         self.c:setoption("tcp-nodelay", true)
         self.c:setoption("keepalive", true)
@@ -95,9 +94,7 @@ local function connection_factory()
         if ssl_params then
             self.c = socket.try(ssl.wrap(self.c, ssl_params))
             self.c:sni(host)
-            -- print("TLS wrapped!") -- debug
             socket.try(self.c:dohandshake())
-            -- print("TLS handshaked!") -- debug
         end
         return 1
     end
