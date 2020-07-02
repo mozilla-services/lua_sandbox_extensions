@@ -140,16 +140,19 @@ end
 
 local function open_file(checkpoint)
     local fh, err = io.open(input_filename, "rb")
-    if not fh then return nil, 0 end
+    if not fh then
+        print(err)
+        checkpoint = 0
+    end
 
     if checkpoint ~= 0 then
         local seek = fh:seek("end")
         if checkpoint > seek or not fh:seek("set", checkpoint) then
             print(string.format("invalid checkpoint: %d end: %d, starting from the beginning", checkpoint, seek))
             checkpoint = 0
-            inject_message(nil, checkpoint)
         end
     end
+    inject_message(nil, checkpoint)
     return fh, checkpoint
 end
 
@@ -169,8 +172,6 @@ local function follow_name(fh, checkpoint)
             flush_remaining()
             inode = tinode
             fh:close()
-            if not tinode then return nil end
-
             fh, checkpoint = open_file(0)
             if not fh then return nil end
         else
@@ -199,11 +200,7 @@ function process_message(checkpoint)
     checkpoint = checkpoint or 0
     if not fh then
         fh, checkpoint = open_file(checkpoint)
-        if not fh then
-            print("file not found:", input_filename)
-            inject_message(nil, checkpoint)
-            return 0
-        end
+        if not fh then return 0 end
     end
     fh = follow(fh, checkpoint)
     return 0
