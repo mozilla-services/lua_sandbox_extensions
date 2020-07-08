@@ -94,7 +94,10 @@ WITH
       OR ddcpw.provisionerId = time.provisionerId)
     AND (ddcpw.workerType IS NULL
       AND time.workerType IS NULL
-      OR ddcpw.workerType = time.workerType)
+      OR (ddcpw.workerType = time.workerType
+        OR (ddcpw.provisionerId = "scriptworker-k8s"
+          AND time.provisionerId = "scriptworker-k8s") -- Bug 1632297 cannot match scriptworkers on workerType
+        ))
     AND (time.workerGroup IS NULL
       OR ddcpw.cost_origin = time.workerGroup) -- further disambiguation to match the cost to the correct Mozilla datacenter
     AND ddcpw.date = time.date),
@@ -122,7 +125,11 @@ WITH
   SELECT
     date,
     provisionerId,
-    workerType,
+  IF
+    (provisionerId = "scriptworker-k8s",
+      NULL,
+      workerType) AS workerType,
+    -- Bug 1632297 cannot match scriptworkers on workerType
     SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS hours,
   IF
     (workerGroup LIKE "mdc_",

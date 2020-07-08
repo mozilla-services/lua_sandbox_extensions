@@ -349,19 +349,23 @@ WITH
     EXTRACT(date
     FROM
       usage_start_time) date,
-    (
-    SELECT
-      CASE
-        WHEN STARTS_WITH(value, "proj-git-cinnabar") THEN "proj-git-cinnabar"
-        WHEN STARTS_WITH(value, "proj-bors-ng") THEN "proj-git-cinnabar"
-        WHEN REGEXP_CONTAINS(value, "_") THEN REGEXP_EXTRACT(value, "([^_]+)")
-      ELSE
-      REGEXP_EXTRACT(value, "([^-]+\\-[^-]+)")
-    END
-    FROM
-      UNNEST(labels)
-    WHERE
-      key = "worker-pool-id") AS provisionerId,
+    ifnull( (
+      SELECT
+        CASE
+          WHEN STARTS_WITH(value, "proj-git-cinnabar") THEN "proj-git-cinnabar"
+          WHEN STARTS_WITH(value, "proj-bors-ng") THEN "proj-git-cinnabar"
+          WHEN REGEXP_CONTAINS(value, "_") THEN REGEXP_EXTRACT(value, "([^_]+)")
+        ELSE
+        REGEXP_EXTRACT(value, "([^-]+\\-[^-]+)")
+      END
+      FROM
+        UNNEST(labels)
+      WHERE
+        key = "worker-pool-id"),
+    IF
+      (project.id = "moz-fx-relengworker-prod-a67d",
+        "scriptworker-k8s",
+        NULL)) AS provisionerId,
     (
     SELECT
       CASE
@@ -403,7 +407,7 @@ WITH
     -- only sum up compute hours all other costs will be divided into this time
     "gcp" AS cost_origin,
     CASE
-      WHEN STARTS_WITH(project.id, "fxci-prod") THEN "firefox"
+      WHEN STARTS_WITH(project.id, "fxci-prod") OR project.id = "moz-fx-relengworker-prod-a67d" THEN "firefox"
       WHEN STARTS_WITH(project.id, "fxci-stag") THEN "stage"
     ELSE
     REGEXP_EXTRACT(project.id, "([^-]+)")
@@ -418,36 +422,65 @@ WITH
     AND EXTRACT(date
     FROM
       usage_start_time) >= start_date
-    AND EXISTS (
+    AND (EXISTS (
     SELECT
       value
     FROM
       UNNEST(labels)
     WHERE
       key = "managed-by"
-      AND value = "taskcluster")
+      AND value = "taskcluster") OR project.id = "moz-fx-relengworker-prod-a67d")
   GROUP BY
     date,
     provisionerId,
     workerType,
     cost_origin,
     cluster,
-    description),
-  gcp_hours AS (
+    description
+  HAVING
+    cost !=0
+    OR hours != 0),
+  tc_scriptworker_hours AS (
   SELECT
     date,
     provisionerId,
+    SUM(TIMESTAMP_DIFF(resolved, started, millisecond)) / 3600000 AS hours
+  FROM
+    taskclusteretl.derived_task_summary
+  WHERE
+    date >= start_date
+    AND date < end_date
+    AND provisionerId = "scriptworker-k8s"
+  GROUP BY
+    date,
+    provisionerId ),
+  gcp_hours AS (
+  SELECT
+    gcp_costs.date,
+    gcp_costs.provisionerId,
     workerType,
     cost,
-    hours,
-    cost / (hours * 3600 * 1000) AS cost_per_ms,
+  IF
+    (gcp_costs.hours < swh.hours,
+      swh.hours,
+      gcp_costs.hours) AS hours,
+    cost / (
+    IF
+      (gcp_costs.hours < swh.hours,
+        swh.hours,
+        gcp_costs.hours) * 3600 * 1000) AS cost_per_ms,
     cost_origin,
     cluster,
     description
   FROM
     gcp_costs
+  LEFT JOIN
+    tc_scriptworker_hours AS swh -- Bug 1632297
+  ON
+    gcp_costs.provisionerId = swh.provisionerId
+    AND gcp_costs.date = swh.date
   WHERE
-    hours IS NOT NULL ),
+    gcp_costs.hours IS NOT NULL ),
   gcp AS (
   SELECT
     a.date,
