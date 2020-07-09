@@ -45,11 +45,12 @@ function process_message()
     fh = open_log()
     fh:write("log 1 line one\nlog 1 start of line two")
     fh:flush()
-    -- fh:write(" end of line two\n") -- tail will incorrectly return the partial line tow
+    -- fh:write(" end of line two\n") -- tail will incorrectly return the partial line two
     socket.sleep(1)
     os.execute("mv output/rotate.log output/rotate.log.0")
+    socket.sleep(.5) -- delay creating the next inode for the rotated log
     fh = open_log()
-    fh:write("log 2 line one\n")
+    fh:write("log 2 line one beyond the checkpoint of the initial file\n")
     fh:close()
     return 0
 end

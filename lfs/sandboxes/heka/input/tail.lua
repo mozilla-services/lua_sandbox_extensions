@@ -79,19 +79,16 @@ if delimiter then
     local start_delimiter = delimiter:match("^^") and delimiter ~= "^$"
     local buffer
     local buffer_idx
-    local buffer_size
 
     local function reset_buffer()
         buffer            = {}
         buffer_idx        = 0
-        buffer_size       = 0
     end
     reset_buffer()
 
     local function append_data(data)
         buffer_idx = buffer_idx + 1
         buffer[buffer_idx] = data
-        buffer_size = buffer_size + #data + 1
     end
 
     local function decode_record()
@@ -106,16 +103,23 @@ if delimiter then
     end
 
     read_until_eof = function(fh, checkpoint)
+        local prev = checkpoint
         for data in fh:lines() do
+            local curr = fh:seek()
             if data:match(delimiter) then
-                if not start_delimiter then append_data(data) end
-                checkpoint = checkpoint + buffer_size
+                if not start_delimiter then
+                    append_data(data)
+                    checkpoint = curr
+                else
+                    checkpoint = prev
+                end
                 decode_record()
                 inject_message(nil, checkpoint)
                 if start_delimiter then append_data(data) end
             else
                 append_data(data)
             end
+            prev = curr
         end
     end
 
@@ -131,7 +135,7 @@ else
                 err_msg.Payload = err
                 pcall(inject_message, err_msg)
             end
-            checkpoint = checkpoint + #data + 1
+            checkpoint = fh:seek()
             inject_message(nil, checkpoint)
         end
     end
