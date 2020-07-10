@@ -38,6 +38,22 @@ Opens a file in the specified mode
 - gzf (userdata object/nil)
 - err (nil/string)
 
+#### string
+```lua
+local s = gzfile.string(filename, mode, buffer_size, max_bytes)
+```
+
+Expands the entire gzip file into a string.
+
+*Arguments*
+- filename (string) File to open.
+- mode (string) defaults to "rb"
+- buffer_size (unsigned) Internal buffer size (default 8192)
+- max_bytes (unsigned) The maximum length of the expanded string (default 1MB).
+
+*Return*
+- s (string/nil) throws on error
+
 #### version
 ```lua
 require "gzfile"
@@ -67,7 +83,7 @@ Creates an iterator to read the file one line at a time.
 which the line is truncated (default 1MB).
 
 *Return*
-- line (string/nil) Returs nil at EOF
+- line (string/nil) Returns nil at EOF
 
 #### close
 ```lua

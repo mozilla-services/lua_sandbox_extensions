@@ -3,8 +3,9 @@
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 require "string"
+require "table"
 require "gzfile"
-assert(gzfile.version() == "0.0.1", gzfile.version())
+assert(gzfile.version() == "0.0.2", gzfile.version())
 
 local errors = {
     function()
@@ -74,8 +75,26 @@ local function run_test(fn, results, max_line)
     gzf:close()
 end
 
+
+local function run_string_test(fn, results)
+    local s = assert(gzfile.string(fn))
+    assert(s == table.concat(results))
+end
+
+
+local function run_string_fail(fn, err, max_bytes)
+    local ok, s = pcall(gzfile.string, fn, nil, nil, max_bytes)
+    if(s ~= err) then
+        error(string.format("received: %s expected: %s", s, err))
+    end
+end
+
 assert(not gzfile.open("foo.txt"))
 run_test("uncompressed.log", uncompressed)
 run_test("uncompressed.log", uncompressed_trunc, 80)
 run_test("compressed.log", compressed_trunc, 80)
 run_test("compressed.log", compressed, 32 * 1024)
+run_string_test("compressed.log", compressed)
+run_string_test("uncompressed.log", uncompressed)
+run_string_fail("uncompressed.log", "max_bytes exceeded", 50)
+run_string_fail("foo.txt", "open failed")
