@@ -1,0 +1,210 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": true,
+  "definitions": {
+    "cpu_times": {
+      "items": {
+        "properties": {
+          "times": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "named_metrics": {
+      "properties": {
+        "cpu_percent_cores": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "cpu_percent_mean": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "cpu_times": {
+          "$ref": "#/definitions/cpu_times"
+        },
+        "cpu_times_sum": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "cpu_times_total": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "end": {
+          "type": "number"
+        },
+        "io": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "description": "build resources",
+  "properties": {
+    "cpu_times_fields": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "duration": {
+      "type": "number"
+    },
+    "end": {
+      "type": "number"
+    },
+    "events": {
+      "type": "array"
+    },
+    "io_fields": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "overall": {
+      "$ref": "#/definitions/named_metrics"
+    },
+    "phases": {
+      "items": {
+        "$ref": "#/definitions/named_metrics"
+      },
+      "type": "array"
+    },
+    "samples": {
+      "items": {
+        "properties": {
+          "cpu_percent_mean": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "cpu_percent_cores": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "cpu_times": {
+            "$ref": "#/definitions/cpu_times"
+          },
+          "cpu_times_sum": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "cpu_times_total": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "io": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "start": {
+            "type": "number"
+          },
+          "swap": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "virt": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "start": {
+      "type": "number"
+    },
+    "swap_fields": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "system": {
+      "properties": {
+        "cpu_logical_count": {
+          "type": "integer"
+        },
+        "cpu_physical_count": {
+          "type": "integer"
+        },
+        "swap_total": {
+          "type": "integer"
+        },
+        "vmem_total": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "version": {
+      "type": "integer"
+    },
+    "virt_fields": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "cpu_times_fields",
+    "io_fields",
+    "virt_fields",
+    "swap_fields",
+    "samples",
+    "phases",
+    "system",
+    "start",
+    "end",
+    "duration",
+    "overall"
+  ],
+  "title": "build resources",
+  "type": "object"
+}

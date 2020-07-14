@@ -30,6 +30,7 @@ end
 
 local td_day    = get_start_of_day(os.time())
 local log_day   = td_day
+local br_day    = br_day
 local fn        = string.format("/var/tmp/%s.json", read_config("Logger"))
 
 local function error_query(cmd, st, et, decode)
@@ -85,9 +86,10 @@ end
 
 function process_message(checkpoint)
     if checkpoint then
-        local td, log = string.match(checkpoint, "^(%d+)\t(%d+)$")
+        local td, log, br = string.match(checkpoint, "^(%d+)\t(%d+)\t?(%d*)$")
         td_day = tonumber(td) or td_day
         log_day = tonumber(log) or log_day
+        br_day = tonumber(br) or br_day
     end
 
     local time_t = os.time()
@@ -103,6 +105,12 @@ function process_message(checkpoint)
         log_day = error_query(cmd, log_day, time_t, dm.decode_log_error)
     end
 
-    inject_message(nil, string.format("%d\t%d", td_day, log_day))
+    if time_t - br_day >= 86400 + 3600 then
+        local cmd = string.format('rm -f %s;bq query --nouse_legacy_sql --format json \'select taskId, type, data from taskclusteretl.error where data is not NULL and type like "error.%%.build_resource" and time >= "%s" and time < "%s"\' > %s',
+                                  fn, get_date(log_day), get_date(time_t), fn)
+        br_day = error_query(cmd, br_day, time_t, dm.decode_build_resource_error)
+    end
+
+    inject_message(nil, string.format("%d\t%d\t%d", td_day, log_day, br_day))
     return 0
 end

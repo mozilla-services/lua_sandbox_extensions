@@ -10,6 +10,7 @@ Parses the Taskcluster live_backing.log
 decoders_taskcluster_live_backing_log = {
     -- taskcluster_schema_path = "/usr/share/luasandbox/schemas/taskcluster" -- default
     -- base_taskcluster_url = "https://firefox-ci-tc.services.mozilla.com/api/queue/v1" -- default
+    -- delay = nil -- default (integer/nil) Seconds to delay data processing/s3 fetches
 }
 
 ## Functions
@@ -37,6 +38,7 @@ local module_cfg    = string.gsub(module_name, "%.", "_")
 local cfg           = read_config(module_cfg) or {}
 assert(type(cfg) == "table", module_cfg .. " must be a table")
 cfg.taskcluster_schema_path = cfg.task_cluster_schema_path or "/usr/share/luasandbox/schemas/taskcluster"
+if cfg.delay then cfg.delay = cfg.delay * 1e9 end
 
 local bg        = require "lpeg.printf".build_grammar
 local cjson     = require "cjson"
@@ -48,6 +50,7 @@ local io        = require "io"
 local l         = require "lpeg";l.locale(l)
 local os        = require "os"
 local sdu       = require "lpeg.sub_decoder_util"
+local sleep     = require "socket".sleep
 local string    = require "string"
 local table     = require "table"
 
@@ -70,6 +73,7 @@ local doc           = rjson.parse("{}") -- reuse this object to avoid creating a
 local base_tc_url   = cfg.base_taskcluster_url or "https://firefox-ci-tc.services.mozilla.com/api/queue/v1"
 local logger        = read_config("Logger")
 local tmp_path      = "/var/tmp"
+local mms           = read_config("max_message_size")
 
 local pulse_task_schema_file = cfg.taskcluster_schema_path .. "/pulse_task.1.schema.json"
 fh = assert(io.open(pulse_task_schema_file, "r"))
@@ -87,6 +91,12 @@ local perfherder_schema_file = cfg.taskcluster_schema_path .. "/perfherder.1.sch
 local fh = assert(io.open(perfherder_schema_file, "r"))
 local perfherder_schema = fh:read("*a")
 perfherder_schema = rjson.parse_schema(perfherder_schema)
+fh:close()
+
+local build_resources_schema_v2_file = cfg.taskcluster_schema_path .. "/build_resources.2.schema.json"
+local fh = assert(io.open(build_resources_schema_v2_file, "r"))
+local build_resources_schema_v2 = fh:read("*a")
+build_resources_schema_v2 = rjson.parse_schema(build_resources_schema_v2)
 fh:close()
 
 -- taskcluster live_backing.log
@@ -209,6 +219,55 @@ local function inject_task_definition(tid, td)
     td.payload = payload_o
     td.extra   = extra_o
     td.tags    = tags_o
+end
+
+
+local function transform_cpu_times(t)
+    if type(t.cpu_percent_cores) ~= "table" then
+        t.cpu_percent_cores = nil
+    end
+
+    if type(t.cpu_times) ~= "table" then
+        t.cpu_times = nil
+        return
+    end
+
+    local tt = {}
+    for i,v in ipairs(t.cpu_times) do
+        tt[i] = {times = v}
+    end
+    t.cpu_times = tt
+end
+
+
+local function inject_build_resources(pj, j)
+    if not j or j.version ~= 2 then return end
+
+    local t = j.samples or {}
+    for i,v in ipairs(t) do
+        transform_cpu_times(v)
+    end
+
+    t = j.phases or {}
+    for i,v in ipairs(t) do
+        transform_cpu_times(v)
+    end
+
+    t = j.overall or {}
+    transform_cpu_times(t)
+
+
+    j.time          = pj.status.runs[pj.runId + 1].started
+    j.taskId        = pj.status.taskId
+    j.runId         = pj.runId
+    j.workerGroup   = pj.workerGroup
+    j.workerId      = pj.workerId
+    j.provisionerId = pj.status.provisionerId
+    j.workerType    = pj.status.workerType
+    j.schedulerId   = pj.status.schedulerId
+    j.taskGroupId   = pj.status.taskGroupId
+
+    inject_validated_msg(j, "build_resources_v2", build_resources_schema_v2, build_resources_schema_v2_file, j.taskId)
 end
 
 
@@ -910,61 +969,94 @@ local function get_parser(f)
 end
 
 
-local function get_perfherder_artifacts_cmd(state, tid, rid, command)
+local function get_artifact_path(tid, rid, path)
+    return string.format("task/%s/runs/%d/artifacts/%s", tid, rid, path)
+end
+
+
+local tfn = string.format("%s/%s_curl", tmp_path, logger)
+local function get_artifact_handle(tid, path, data, logtype)
+    local url = base_tc_url .."/" .. path
+    local cmd = string.format("rm -f %s;curl -L -s -f --retry 2 -m 90 --max-filesize 500000000 %s -o %s ", tfn, url, tfn)
+
+    -- put the original pulse message in the error data to simplify the retry see issue #454
+    local rv = os.execute(cmd)
+    if rv == 8960 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
+    if rv ~= 0 then
+        inject_message({Type = string.format("error.curl.%s", logtype),
+            Payload = tostring(rv/256),
+            Fields = {
+                taskId = tid,
+                detail = cmd,
+                data   = data}})
+        return
+    end
+
+    local fh = gzfile.open(tfn, "rb", 64 * 1024)
+    if not fh then
+        inject_message({Type = string.format("error.open.%s", logtype),
+            Payload = "file not found",
+            Fields = {
+                taskId = tid,
+                data   = data}})
+    end
+    return fh
+end
+
+
+local function get_artifact_string(tid, path, data, logtype)
+    local url = base_tc_url .. "/" .. path
+    local cmd = string.format("rm -f %s;curl -L -s -f --retry 2 -m 60 --max-filesize %d %s -o %s", tfn, mms, url, tfn)
+
+    local rv = os.execute(cmd)
+    if rv == 8960 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
+    if rv ~= 0 then
+        if type(data) == "table" then data = cjson.encode(data) end
+        inject_message({Type = string.format("error.curl.%s", logtype),
+            Payload = tostring(rv/256),
+            Fields = {
+                taskId = tid,
+                detail = cmd,
+                data   = data}})
+        return
+    end
+
+    local ok, s = pcall(gzfile.string, tfn, "rb", 64 * 1024, mms)
+    if not ok then
+        if type(data) == "table" then data = cjson.encode(data) end
+        inject_message({Type = string.format("error.open.%s", logtype),
+            Payload = s,
+            Fields = {
+                taskId = tid,
+                data   = data}})
+        return
+    end
+    return s
+end
+
+
+local function get_external_perfherder_artifacts(state, tid, rid, command)
     local files = {}
     if not state.cache.global.raptor_embedded then
-        files[#files + 1] = "perfherder-data.json"
+        files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data.json")
     end
     for i,v in ipairs(command) do
         if type(v) ~= "table" then break end -- windows only contains a command string but it doesn't currently enable the additional artifacts
         for j,arg in ipairs(v) do
             if arg == "--cpu-test" and not state.cache.global.raptor_cpu_embedded then
-                files[#files + 1] = "perfherder-data-cpu.json"
+                files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data-cpu.json")
             elseif arg == "--memory-test" and not state.cache.global.raptor_memory_embedded then
-                files[#files + 1] = "perfherder-data-memory.json"
+                files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data-memory.json")
             elseif arg == "--power-test" and not state.cache.global.raptor_power_embedded then
-                files[#files + 1] = "perfherder-data-power.json"
+                files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data-power.json")
             end
         end
     end
     if #files == 0 then return nil end
 
-    local perfherder_url  = string.format("%s/task/%s/runs/%d/artifacts/public/test_info", base_tc_url, tid, rid)
-    local args = {}
     for i,v in ipairs(files) do
-        args[#args + 1] = string.format("%s/%s -o %s/%s_%s", perfherder_url, v, tmp_path, logger, v)
-    end
-    return string.format("curl -L -s --compressed -f --retry 2 -m 60 --max-filesize 5000000 %s", table.concat(args, " ")), files
-end
-
-
-local function get_perfherder_artifacts(cmd, files, state, integration_test)
-    if not cmd then return end
-    if not integration_test then
-        -- don't bother with the return code as it only represents the last file
-        os.execute(cmd)
-
-        -- process whatever was received
-        for i,v in ipairs(files) do
-            local fh = io.open(string.format("%s/%s_%s", tmp_path, logger, v), "rb")
-            if fh then
-                local json = fh:read("*a")
-                fh:close()
-                perfherder_decode(nil, state, json)
-            else
-                inject_message({Type = string.format("error.curl.%s", v), Payload = "22",
-                    Fields = {
-                        taskId = state.base_msg.Fields.taskId,
-                        detail = cmd}})
-            end
-        end
-    else
-        for i,v in ipairs(files) do
-            local fh = assert(io.open(string.format("%s_%s", state.base_msg.Fields.filename, v), "rb"))
-            local json = fh:read("*a")
-            fh:close()
-            perfherder_decode(nil, state, json)
-        end
+        local s  = get_artifact_string(tid, v, state.base_msg, "perfherder")
+        perfherder_decode(nil, state, s)
     end
 end
 
@@ -1064,8 +1156,7 @@ local function parse_log(lfh, base_msg, td, integration_test)
     finalize_log(g, state)
 
     if f.testtype == "raptor" and f.state == "completed" then -- talos appears to always be embedded in the log
-        local cmd, files = get_perfherder_artifacts_cmd(state, f.taskId, f.runId, td.payload.command)
-        get_perfherder_artifacts(cmd, files, state, integration_test)
+        get_external_perfherder_artifacts(state, f.taskId, f.runId, td.payload.command)
     end
 
     if integration_test then
@@ -1074,53 +1165,38 @@ local function parse_log(lfh, base_msg, td, integration_test)
 end
 
 
-local task_file = string.format("%s/%s_task.json", tmp_path, logger)
-local function get_task_definition(tid, data, suffix)
-    if not suffix then suffix = "" end
-    local task_url  = string.format("%s/task/%s", base_tc_url, tid)
-    local cmd       = string.format("rm -f %s/%s_*;curl -L -s --compressed -f --retry 2 -m 60 --max-filesize 1000000 %s -o %s",
-                                    tmp_path, logger, task_url, task_file)
+local function json_decode(json, tid, data, logtype)
+    if not json then return end
 
-    -- put the original pulse message in the error data to simplify the retry see issue #454
-    local rv = os.execute(cmd)
-    if rv == 8960 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
-    if rv ~= 0 then
-        inject_message({Type = "error.curl.task_definition" .. suffix, Payload = tostring(rv/256),
-            Fields = {
-                taskId  = tid,
-                detail  = cmd,
-                data    = data}})
-        return
-    end
-
-    local fh = io.open(task_file, "rb")
-    if not fh then
-        inject_message({Type = "error.open.task_definition" .. suffix, Payload = "file not found",
-            Fields = {
-                taskId  = tid,
-                data    = data}})
-        return
-    end
-
-    local tdj = fh:read("*a")
-    fh:close()
-    local ok, td = pcall(cjson.decode, tdj)
+    local ok, j = pcall(cjson.decode, json)
     if not ok then
-        inject_message({Type = "error.parse.task_definition" .. suffix, Payload = td,
+        inject_message({Type = "error.parse." .. logtype,
+            Payload = j,
             Fields = {
                 taskId = tid,
-                detail = tdj,
+                detail = json,
                 data   = data}})
         return
     end
-    if td.code or td.error then -- make sure the responses isn't API error JSON
-        inject_message({Type = "error.api.task_definition" .. suffix, Payload = td.code or td.error,
+    return j
+end
+
+
+local function get_task_definition(tid, data, logtype)
+    logtype = "task_definition" .. (logtype or "")
+    local path = string.format("task/%s", tid)
+    local s = get_artifact_string(tid, path, data, logtype)
+    local j = json_decode(s, tid, data, logtype)
+
+    if j and (j.code or j.error) then -- make sure the responses isn't API error JSON
+        inject_message({Type = "error.api." .. logtype,
+            Payload = j.code or j.error,
             Fields = {
                 taskId = tid,
                 data   = data}})
         return
     end
-    return td
+    return j
 end
 
 
@@ -1132,9 +1208,8 @@ local function get_test_task_definition(fn)
 end
 
 
-local bf_suffix = ".backfill"
-local log_file = string.format("%s/%s_log.txt", tmp_path, logger)
-local function get_log_file(pj, base_msg, data, suffix)
+local bf_logtype = ".backfill"
+local function get_log_file(pj, base_msg, data, logtype)
     if pj.status.state == "exception"
     or pj.status.provisionerId == "scriptworker-k8s"
     or pj.status.provisionerId == "built-in"
@@ -1144,40 +1219,25 @@ local function get_log_file(pj, base_msg, data, suffix)
         return
     end
 
-    if not suffix then suffix = "" end
-    local fh
-    local log_url   = string.format("%s/task/%s/runs/%d/artifacts/public/logs/live_backing.log", base_tc_url, pj.status.taskId, pj.runId)
-    local cmd       = string.format("curl -L -s -f --retry 2 -m 90 --max-filesize 500000000 %s -o %s ", log_url, log_file)
-    local rv        = os.execute(cmd)
-    if rv == 8960 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
-    if rv == 0 then
-        fh = gzfile.open(log_file, "rb", 64 * 1024)
-        if not fh then
-            inject_message({Type = "error.open.log" .. suffix, Payload = "file not found",
-                Fields = {
-                    taskId = pj.status.taskId,
-                    data   = data}})
-        end
-    else
-        inject_message({Type = "error.curl.log" .. suffix, Payload = tostring(rv/256),
-            Fields = {
-                taskId = pj.status.taskId,
-                detail = cmd,
-                data   = data}})
-    end
-
-    if not fh and suffix == bf_suffix then
+    local tid = pj.status.taskId
+    local path = get_artifact_path(tid, pj.runId, "public/logs/live_backing.log")
+    local fh = get_artifact_handle(tid, path, data, "log" .. (logtype or ""))
+    if not fh and logtype == bf_logtype then
         inject_timing_msg(no_schema, base_msg, 0, nil) -- unable to backfill the log just output the timing summary
     end
-
     return fh
 end
 
 
 function decode(data, dh, mutable)
     local pj = cjson.decode(data)
+    local cur_ns = os.time() * 1e9
+    if cfg.delay and cur_ns - dh.Timestamp < cfg.delay then
+        sleep((cfg.delay - (cur_ns - dh.Timestamp)) / 1e9)
+    end
     inject_pulse_task(pj, dh) -- forward all task related pulse messages to BigQuery
 
+    local used_tmp = false
     local ex = dh.Fields.exchange.value[1]
     if ex == "exchange/taskcluster-queue/v1/task-completed"
     or ex == "exchange/taskcluster-queue/v1/task-failed"
@@ -1185,10 +1245,22 @@ function decode(data, dh, mutable)
         local td = get_task_definition(pj.status.taskId, data)
         if not td then return nil end
 
+        used_tmp = true
         inject_task_definition(pj.status.taskId, td)
         local base_msg = get_base_msg(dh, mutable, pj, td)
         process_exceptions(pj, base_msg)
         parse_log(get_log_file(pj, base_msg, data), base_msg, td, false)
+    elseif ex == "exchange/taskcluster-queue/v1/artifact-created"
+        and pj.artifact.storageType ~= "error" then
+        if pj.artifact.name == "public/build/build_resources.json" then
+            used_tmp        = true
+            local logtype   = "build_resources"
+            local tid       = pj.status.taskId
+            local path      = get_artifact_path(tid, pj.runId, pj.artifact.name)
+            local s         = get_artifact_string(tid, path, data, logtype)
+            local j         = json_decode(s, tid, data, logtype)
+            inject_build_resources(pj, j)
+        end
     elseif ex == "integration_test" then
         local td = get_test_task_definition(dh.Fields.filename)
         inject_task_definition(pj.status.taskId, td)
@@ -1196,31 +1268,49 @@ function decode(data, dh, mutable)
         process_exceptions(pj, base_msg)
         local lfh = assert(gzfile.open(dh.Fields.filename .. ".log", "rb", 64 * 1024))
         parse_log(lfh, base_msg, td, true)
+    elseif ex == "integration_test_artifact" then
+        local s = gzfile.string(dh.Fields.filename .. ".json", "rb", 64 * 1024, mms)
+        local j = json_decode(s, pj.status.taskId, data, dh.Fields.filename)
+        if pj.artifact.name == "public/build/build_resources.json" then
+            inject_build_resources(pj, j)
+        end
     end
+    if used_tmp then os.execute("rm " .. tfn) end
 end
 
 
 -- Partial load (backfill) decoders to fill in data that was unavailable at the time
 function decode_task_definition_error(data, dh, mutable)
     local pj = cjson.decode(data)
-    local td = get_task_definition(pj.status.taskId, data, bf_suffix)
+    local td = get_task_definition(pj.status.taskId, data, bf_logtype)
     if not td then return nil end
 
     inject_task_definition(pj.status.taskId, td)
     local base_msg = get_base_msg(dh, mutable, pj, td)
     process_exceptions(pj, base_msg)
-    parse_log(get_log_file(pj, base_msg, data, bf_suffix), base_msg, td, false)
+    parse_log(get_log_file(pj, base_msg, data, bf_logtype), base_msg, td, false)
 end
 
 
 function decode_log_error(data, dh, mutable)
     local pj = cjson.decode(data)
-    local td = get_task_definition(pj.status.taskId, data, bf_suffix)
+    local td = get_task_definition(pj.status.taskId, data, bf_logtype)
     if not td then return nil end
 
     local base_msg = get_base_msg(dh, mutable, pj, td)
     update_task_summary_run(pj.status.runs[pj.runId + 1], base_msg.Fields)
-    parse_log( get_log_file(pj, base_msg, data, bf_suffix), base_msg, td, false)
+    parse_log( get_log_file(pj, base_msg, data, bf_logtype), base_msg, td, false)
+end
+
+
+function decode_build_resources_error(data, dh, mutable)
+    local pj        = cjson.decode(data)
+    local logtype   = "build_resources" .. bf_logtype
+    local tid       = pj.status.taskId
+    local path      = get_artifact_path(tid, pj.runId, pj.artifact.name)
+    local s         = get_artifact_string(tid, path, data, logtype)
+    local j         = json_decode(s, tid, data, logtype)
+    inject_build_resources(pj, j)
 end
 
 
