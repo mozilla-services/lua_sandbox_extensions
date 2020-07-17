@@ -1,0 +1,16 @@
+{
+  "artifacts": [
+    {
+      "storageType": "s3",
+      "name": "public/logs/live_backing.log",
+      "expires": "2020-07-29T20:55:54.564Z",
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "storageType": "s3",
+      "name": "public/test_info/perfherder-data.json",
+      "expires": "2020-07-29T20:55:54.564Z",
+      "contentType": "application/json"
+    }
+  ]
+}

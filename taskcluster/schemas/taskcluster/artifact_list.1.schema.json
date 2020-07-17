@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": true,
+  "description": "task/run artifact list",
+  "properties": {
+    "artifact": {
+      "additionalProperties": true,
+      "properties": {
+        "contentType": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "storageType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contentType",
+        "expires",
+        "name",
+        "storageType"
+      ],
+      "type": "object"
+    },
+    "provisionerId": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "integer"
+    },
+    "taskGroupId": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "time": {
+      "type": "string"
+    },
+    "workerGroup": {
+      "type": "string"
+    },
+    "workerId": {
+      "type": "string"
+    },
+    "workerType": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "time",
+    "taskId",
+    "runId",
+    "taskGroupId",
+    "artifacts"
+  ],
+  "title": "artifact list",
+  "type": "object"
+}

@@ -17,8 +17,7 @@ local err_msg = {
     }
 }
 
-local testtype
-local dh = {Fields = {exchange = {value = {"integration_test"}}, filename = ""}}
+local dh = {Fields = {exchange = {value = {"exchange/taskcluster-queue/v1/task-completed"}}}}
 function process_message()
     local cnt = 0
     local fh = assert(io.open("tests.txt", "rb"))
@@ -26,12 +25,6 @@ function process_message()
         local jfh = assert(io.open(jfn, "rb"))
         local data = jfh:read("*a")
         jfh:close()
-        dh.Fields.filename, testtype = jfn:match("(.+)_([^.]+).json$")
-        if testtype == "artifact"  then
-            dh.Fields.exchange.value[1] = "integration_test_artifact"
-        else
-            dh.Fields.exchange.value[1] = "integration_test"
-        end
         local ok, err = pcall(decode, data, dh)
         if (not ok or err) and send_decode_failures then
             err_msg.Payload = err

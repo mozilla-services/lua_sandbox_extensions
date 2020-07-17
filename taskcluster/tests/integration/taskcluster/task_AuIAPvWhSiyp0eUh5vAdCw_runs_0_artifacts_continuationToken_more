@@ -1,0 +1,11 @@
+{
+  "artifacts": [
+    {
+      "storageType": "s3",
+      "name": "public/logs/more.log",
+      "expires": "2020-07-29T20:55:54.564Z",
+      "contentType": "text/plain; charset=utf-8"
+    }
+  ],
+  "continuationToken": "more1"
+}
