@@ -28,6 +28,7 @@ max_file_size       = 1024 * 1024 * 1024 -- default
 -- Idle files are only checked every ticker_interval seconds.
 max_file_age        = 3600 -- default
 load_fail_cache     = 50 -- default number of files to save off for manual recovery
+load_timeout        = nil -- default number of seconds before the load will be killed Issue #498
 bq_dataset          = "test"
 bq_table            = "demo"
 --json_field        = "Payload" -- default should contain a single line of JSON with no new lines
@@ -58,6 +59,7 @@ local batch_dir         = read_config("batch_dir") or "/var/tmp"
 local max_file_size     = read_config("max_file_size") or 1024 * 1024 * 1024
 local max_file_age      = read_config("max_file_age") or 3600
 local load_fail_cache   = read_config("load_fail_cache") or 50
+local load_timeout      = tonumber(read_config("load_timeout"))
 local bq_dataset        = read_config("bq_dataset") or error"must specify bq_dataset"
 local bq_table          = read_config("bq_table") or error"must specify bq_table"
 local tsv_fields        = read_config("tsv_fields")
@@ -70,8 +72,9 @@ if encoder_module then
     end
 end
 
-local filename          = string.format("%s/%s", batch_dir, read_config("Logger"))
+local filename = string.format("%s/%s", batch_dir, read_config("Logger"))
 local bq_cmd
+local retry_at
 
 
 local function load_data()
@@ -100,6 +103,9 @@ else
     bq_cmd = string.format("bq load --source_format NEWLINE_DELIMITED_JSON --ignore_unknown_values %s.%s %s", bq_dataset, bq_table, filename)
 end
 
+if load_timeout then
+    bq_cmd = string.format("timeout -s 9 %d %s", load_timeout, bq_cmd);
+end
 
 local fh = assert(io.open(filename, "a")) -- append to the current batch
 fh:setvbuf("line")
@@ -119,24 +125,34 @@ manually corrected.  Once corrected the file should be loaded using the followin
 The file can be deleted after a successful load.
 ]]
 local function bq_load(is_timer_event)
+    if retry_at and os.time() < retry_at then return end
+
+    local mode = "w"
     fh:close()
     if bytes_written > 0 then
         local rv = os.execute(bq_cmd)
         if rv ~= 0 then
-            status = false
-            failed_cnt = failed_cnt + 1
-            local fn = filename .. "." .. tostring(failed_cnt)
-            os.rename(filename, fn)
-            if failed_cnt == load_fail_cache then
-                failed_cnt = 0
+            if not retry_at then
+                retry_at = os.time() + 60
+                mode = "a"
+            else
+                failed_cnt = failed_cnt + 1
+                local fn = filename .. "." .. tostring(failed_cnt)
+                os.rename(filename, fn)
+                if failed_cnt == load_fail_cache then
+                    failed_cnt = 0
+                end
+                alert.send(read_config("Logger"), "bq load", string.format(alert_tmpl, rv / 256, bq_cmd, failed_cnt))
             end
-            alert.send(read_config("Logger"), "bq load", string.format(alert_tmpl, rv / 256, bq_cmd, failed_cnt))
         end
     end
-    fh = io.open(filename, "w")
+    if mode == "w" then
+        retry_at = nil
+        bytes_written = 0
+        last_write = os.time()
+    end
+    fh = io.open(filename, mode)
     fh:setvbuf("line")
-    bytes_written = 0
-    last_write = os.time()
 end
 
 
