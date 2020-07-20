@@ -80,9 +80,9 @@ RUN git clone https://github.com/cisco/cjose.git && \
     mkdir -p streaming_algorithms/release && cd streaming_algorithms/release && \
     cmake -DCMAKE_BUILD_TYPE=release -DCPACK_GENERATOR=RPM .. && \
     make && ctest && make packages && rpm -i luasandbox*.rpm && cd ../.. && \
-    git clone https://github.com/mozilla-services/mozilla-pipeline-schemas.git && \
-    mkdir -p mozilla-pipeline-schemas/release && cd mozilla-pipeline-schemas/release && \
-    cmake .. && make && cpack -G RPM && rpm -i *.rpm && cd ../.. && \
+#    git clone https://github.com/mozilla-services/mozilla-pipeline-schemas.git && \
+#    mkdir -p mozilla-pipeline-schemas/release && cd mozilla-pipeline-schemas/release && \
+#    cmake .. && make && cpack -G RPM && rpm -i *.rpm && cd ../.. && \
     git clone https://github.com/trink/lua_date.git && \
     mkdir -p lua_date/release && cd lua_date && \
     git submodule init && git submodule update && \

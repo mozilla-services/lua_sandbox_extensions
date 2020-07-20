@@ -25,4 +25,4 @@ deploy:
     script: bash docker_push.sh $TRAVIS_BRANCH
     on:
       all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^dev|master$
+      condition: $TRAVIS_BRANCH =~ ^dev|master|test$

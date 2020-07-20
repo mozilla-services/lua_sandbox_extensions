@@ -10,7 +10,6 @@ Parses the Taskcluster live_backing.log
 decoders_taskcluster_live_backing_log = {
     -- taskcluster_schema_path = "/usr/share/luasandbox/schemas/taskcluster" -- default
     -- base_taskcluster_url = "https://firefox-ci-tc.services.mozilla.com/api/queue/v1" -- default
-    -- delay = nil -- default (integer/nil) Seconds to delay data processing/s3 fetches
     -- integration_test = nil -- default
 }
 
@@ -39,7 +38,6 @@ local module_cfg    = string.gsub(module_name, "%.", "_")
 local cfg           = read_config(module_cfg) or {}
 assert(type(cfg) == "table", module_cfg .. " must be a table")
 cfg.taskcluster_schema_path = cfg.task_cluster_schema_path or "/usr/share/luasandbox/schemas/taskcluster"
-if cfg.delay then cfg.delay = cfg.delay * 1e9 end
 
 local bg        = require "lpeg.printf".build_grammar
 local cjson     = require "cjson"
@@ -51,7 +49,6 @@ local io        = require "io"
 local l         = require "lpeg";l.locale(l)
 local os        = require "os"
 local sdu       = require "lpeg.sub_decoder_util"
-local sleep     = require "socket".sleep
 local string    = require "string"
 local table     = require "table"
 
@@ -345,12 +342,14 @@ local function perfherder_decode(g, b, json)
         end
     elseif j.framework.name == "raptor" then
         local f = j.suites[1]
-        if f.name:match("%-power$") then
+        if f.type == "power" then
             b.cache.global.raptor_power_embedded = true
-        elseif f.name:match("%-cpu$") then
+        elseif f.type == "cpu" then
             b.cache.global.raptor_cpu_embedded = true
-        elseif f.name:match("%-memory$") then
+        elseif f.type == "memory" then
             b.cache.global.raptor_memory_embedded = true
+        elseif f.type == "mozproxy" then
+            b.cache.global.raptor_mozproxy_embedded = true
         else
             b.cache.global.raptor_embedded = true
         end
@@ -1089,7 +1088,7 @@ local function get_external_perfherder_artifacts(state, tid, rid, command)
     if not state.cache.global.raptor_embedded then
         files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data.json")
     end
-    for i,v in ipairs(command) do
+    for i,v in ipairs(command) do -- todo switch this to use the artifact list
         if type(v) ~= "table" then break end -- windows only contains a command string but it doesn't currently enable the additional artifacts
         for j,arg in ipairs(v) do
             if arg == "--cpu-test" and not state.cache.global.raptor_cpu_embedded then
@@ -1110,7 +1109,7 @@ local function get_external_perfherder_artifacts(state, tid, rid, command)
 end
 
 
-local function parse_log(lfh, base_msg, td, integration_test)
+local function parse_log(lfh, base_msg, td)
     if not lfh then return end
 
     local f = base_msg.Fields
@@ -1242,10 +1241,6 @@ end
 
 function decode(data, dh, mutable)
     local pj = cjson.decode(data)
-    local cur_ns = os.time() * 1e9
-    if cfg.delay and cur_ns - dh.Timestamp < cfg.delay then
-        sleep((cfg.delay - (cur_ns - dh.Timestamp)) / 1e9)
-    end
     inject_pulse_task(pj, dh) -- forward all task related pulse messages to BigQuery
 
     local ex = dh.Fields.exchange.value[1]
@@ -1258,7 +1253,7 @@ function decode(data, dh, mutable)
             inject_task_definition(pj.status.taskId, td)
             local base_msg = get_base_msg(dh, mutable, pj, td)
             process_exceptions(pj, base_msg)
-            parse_log(get_log_file(pj, base_msg, data), base_msg, td, false)
+            parse_log(get_log_file(pj, base_msg, data), base_msg, td)
         end
         os.execute("rm -f " .. tfn)
     end
@@ -1274,7 +1269,7 @@ function decode_task_definition_error(data, dh, mutable)
     inject_task_definition(pj.status.taskId, td)
     local base_msg = get_base_msg(dh, mutable, pj, td)
     process_exceptions(pj, base_msg)
-    parse_log(get_log_file(pj, base_msg, data, bf_logtype), base_msg, td, false)
+    parse_log(get_log_file(pj, base_msg, data, bf_logtype), base_msg, td)
 end
 
 
@@ -1285,7 +1280,7 @@ function decode_log_error(data, dh, mutable)
 
     local base_msg = get_base_msg(dh, mutable, pj, td)
     update_task_summary_run(pj.status.runs[pj.runId + 1], base_msg.Fields)
-    parse_log(get_log_file(pj, base_msg, data, bf_logtype), base_msg, td, false)
+    parse_log(get_log_file(pj, base_msg, data, bf_logtype), base_msg, td)
 end
 
 

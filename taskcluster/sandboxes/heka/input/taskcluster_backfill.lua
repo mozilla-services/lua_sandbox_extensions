@@ -30,7 +30,7 @@ end
 
 local td_day    = get_start_of_day(os.time())
 local log_day   = td_day
-local al_day    = al_day
+local al_day    = td_day
 local fn        = string.format("/var/tmp/%s_query.json", read_config("Logger"))
 
 local function error_query(cmd, st, et, decode)
