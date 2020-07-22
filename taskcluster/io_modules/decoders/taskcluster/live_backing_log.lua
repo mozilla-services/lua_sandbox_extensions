@@ -287,6 +287,8 @@ end
 
 local vcs_suites = {clone = true, pull = true, update = true}
 local function perfherder_decode(g, b, json)
+    if not json then return end
+
     local j = cjson.decode(json)
     if type(j.framework) ~= "table" then
         if json:match("^{}") then return end
@@ -1071,15 +1073,13 @@ end
 
 local function process_artifact_history(pj, data)
     local rid = pj.runId + 1
-    for i=1, rid - 1  do
+    for i=1, rid  do
         local run = pj.status.runs[i]
-        if run.state == "exception" and run.resolved then
+        if (i == rid or run.state == "exception") and run.started then
             local j = get_artifact_list(pj, i - 1, data)
             inject_artifact_list(j)
         end
     end
-    local j = get_artifact_list(pj, rid - 1, data)
-    inject_artifact_list(j)
 end
 
 
@@ -1103,7 +1103,7 @@ local function get_external_perfherder_artifacts(state, tid, rid, command)
     if #files == 0 then return nil end
 
     for i,v in ipairs(files) do
-        local s  = get_artifact_string(tid, v, state.base_msg, "perfherder")
+        local s = get_artifact_string(tid, v, state.base_msg, "perfherder")
         perfherder_decode(nil, state, s)
     end
 end
