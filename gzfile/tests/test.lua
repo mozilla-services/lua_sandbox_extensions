@@ -5,7 +5,7 @@
 require "string"
 require "table"
 require "gzfile"
-assert(gzfile.version() == "0.0.2", gzfile.version())
+assert(gzfile.version() == "0.0.3", gzfile.version())
 
 local errors = {
     function()
@@ -43,6 +43,12 @@ local uncompressed = {
     "line four no terminating new line",
 }
 
+local uncompressed_strip = {
+    "line one",
+    "line two",
+    "This is a long line three that should be truncated at eighty characters 12345678 truncated",
+}
+
 local uncompressed_trunc = {
     "line one\n",
     "line two\n",
@@ -76,6 +82,20 @@ local function run_test(fn, results, max_line)
 end
 
 
+local function run_test_tail(fn, results, striplf)
+    local gzf = assert(gzfile.open(fn, "rb"))
+    local cnt = 0
+    for line in gzf:lines_tail(striplf) do
+        cnt = cnt + 1
+        if line ~= results[cnt] then
+            error(string.format("line: %d received: %s expected: %s", cnt, line, results[cnt]))
+        end
+    end
+    assert(cnt == #results, cnt)
+    gzf:close()
+end
+
+
 local function run_string_test(fn, results)
     local s = assert(gzfile.string(fn))
     assert(s == table.concat(results))
@@ -98,3 +118,8 @@ run_string_test("compressed.log", compressed)
 run_string_test("uncompressed.log", uncompressed)
 run_string_fail("uncompressed.log", "max_bytes exceeded", 50)
 run_string_fail("foo.txt", "open failed")
+
+uncompressed[4] = nil
+run_test_tail("uncompressed.log", uncompressed)
+run_test_tail("uncompressed.log", uncompressed_strip, true)
+run_test_tail("compressed.log", compressed)

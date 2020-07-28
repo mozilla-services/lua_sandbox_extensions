@@ -8,9 +8,6 @@ todo: when more than line splitting is needed the file should be read in chunks
 and passed to a generic splitter buffer with a token/match specification and a
 find function similar to the Heka stream reader.
 
-warning: if the file being tailed is not flushed on newline Lua reads and
-returns the partial line before the <eof> so it may be improperly split.
-
 ## Sample Configuration
 ```lua
 filename = "tail.lua"
@@ -49,7 +46,8 @@ input_filename = "/var/log/text.log"
 -- send_decode_failures = false
 ```
 --]]
-require "io"
+require "gzfile"
+require "lfs"
 require "string"
 local sdu       = require "lpeg.sub_decoder_util"
 local decode    = sdu.load_sub_decoder(read_config("decoder_module") or "decoders.payload", read_config("printf_messages"))
@@ -72,6 +70,13 @@ local err_msg = {
     }
 }
 
+local fh, inode, offset
+
+local function write_checkpoint()
+    inject_message(nil, string.format("%d:%d", inode, offset))
+end
+
+
 local read_until_eof
 local function flush_remaining() return end
 if delimiter then
@@ -79,16 +84,19 @@ if delimiter then
     local start_delimiter = delimiter:match("^^") and delimiter ~= "^$"
     local buffer
     local buffer_idx
+    local buffer_size
 
     local function reset_buffer()
         buffer            = {}
         buffer_idx        = 0
+        buffer_size       = 0
     end
     reset_buffer()
 
     local function append_data(data)
         buffer_idx = buffer_idx + 1
         buffer[buffer_idx] = data
+        buffer_size = buffer_size + #data + 1
     end
 
     local function decode_record()
@@ -102,24 +110,17 @@ if delimiter then
         reset_buffer()
     end
 
-    read_until_eof = function(fh, checkpoint)
-        local prev = checkpoint
-        for data in fh:lines() do
-            local curr = fh:seek()
+    read_until_eof = function()
+        for data in fh:lines_tail(true) do
             if data:match(delimiter) then
-                if not start_delimiter then
-                    append_data(data)
-                    checkpoint = curr
-                else
-                    checkpoint = prev
-                end
+                if not start_delimiter then append_data(data) end
+                offset = offset + buffer_size
                 decode_record()
-                inject_message(nil, checkpoint)
+                write_checkpoint()
                 if start_delimiter then append_data(data) end
             else
                 append_data(data)
             end
-            prev = curr
         end
     end
 
@@ -128,36 +129,17 @@ if delimiter then
     end
 
 else
-    read_until_eof = function(fh, checkpoint)
-        for data in fh:lines() do
+    read_until_eof = function()
+        for data in fh:lines_tail(true) do
             local ok, err = pcall(decode, data, default_headers)
             if (not ok or err) and send_decode_failures then
                 err_msg.Payload = err
                 pcall(inject_message, err_msg)
             end
-            checkpoint = fh:seek()
-            inject_message(nil, checkpoint)
+            offset = offset + #data + 1
+            write_checkpoint()
         end
     end
-end
-
-
-local function open_file(checkpoint)
-    local fh, err = io.open(input_filename, "rb")
-    if not fh then
-        print(err)
-        checkpoint = 0
-    end
-
-    if checkpoint ~= 0 then
-        local seek = fh:seek("end")
-        if checkpoint > seek or not fh:seek("set", checkpoint) then
-            print(string.format("invalid checkpoint: %d end: %d, starting from the beginning", checkpoint, seek))
-            checkpoint = 0
-        end
-    end
-    inject_message(nil, checkpoint)
-    return fh, checkpoint
 end
 
 
@@ -166,46 +148,73 @@ local function get_inode()
 end
 
 
-local inode
-local function follow_name(fh, checkpoint)
-    if not inode then inode = get_inode() end
-    while true do
-        read_until_eof(fh, checkpoint)
-        local tinode = get_inode()
-        if inode ~= tinode then
-            flush_remaining()
-            inode = tinode
-            fh:close()
-            fh, checkpoint = open_file(0)
-            if not fh then return nil end
-        else
-            return fh -- poll
-        end
+local function open_file()
+    local err
+    fh, err = gzfile.open(input_filename, "rb")
+    if not fh then
+        print(err)
+        return fh
+    end
+
+    local cinode = get_inode()
+    if inode ~= cinode then
+        inode = cinode
+        offset = 0
+    end
+
+    if offset ~= 0 then fh:seek("set", offset) end
+    write_checkpoint()
+    return fh
+end
+
+
+local function follow_name()
+    if not fh then return end
+    read_until_eof()
+    if inode ~= get_inode() then
+        flush_remaining()
+        fh:close()
+        fh = nil
     end
 end
 
 
-local function follow_descriptor(fh, checkpoint)
-    read_until_eof(fh, checkpoint)
-    return fh -- poll
+local function follow_descriptor()
+    if not fh then return end
+    read_until_eof()
 end
 
 
 if follow == "name" then
-    require "lfs"
     follow = follow_name
 else
     follow = follow_descriptor
 end
 
 
-local fh
 function process_message(checkpoint)
-    checkpoint = checkpoint or 0
     if not fh then
-        fh, checkpoint = open_file(checkpoint)
-        if not fh then return 0 end
+        local t = type(checkpoint)
+        if t == "string" then
+            local i, o = checkpoint:match("(%d+):(%d+)")
+            inode  = tonumber(i) or 0
+            offset = tonumber(o) or 0
+        elseif t == "number" then  -- migrate the old checkpoint format
+            inode  = get_inode() or 0
+            offset = checkpoint
+        else
+            inode  = 0
+            offset = 0
+        end
+        open_file()
     end
-    fh = follow(fh, checkpoint)
+    local ok, err = pcall(follow)
+    if not ok then
+        if fh then
+            fh:close()
+            fh = nil
+        end
+        return -1, err
+    end
     return 0
 end

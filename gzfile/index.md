@@ -49,7 +49,7 @@ Expands the entire gzip file into a string.
 - filename (string) File to open.
 - mode (string) defaults to "rb"
 - buffer_size (unsigned) Internal buffer size (default 8192)
-- max_bytes (unsigned) The maximum length of the expanded string (default 1MB).
+- max_bytes (unsigned) The maximum length of the expanded string (default 1MB)
 
 *Return*
 - s (string/nil) throws on error
@@ -76,7 +76,8 @@ Returns a string with the running version of the gzfile module.
 local iter = gzf:lines(max_bytes)
 ```
 
-Creates an iterator to read the file one line at a time.
+Creates an iterator to read the file one line at a time (including the line
+feed)
 
 *Arguments*
 - max_bytes (unsigned) The maximum number of bytes allowed in a line after
@@ -84,6 +85,40 @@ which the line is truncated (default 1MB).
 
 *Return*
 - line (string/nil) Returns nil at EOF
+
+
+#### lines_tail
+```lua
+local iter = gzf:lines_tail(striplf)
+```
+
+Creates an iterator to read the file one line at a time as it is being actively
+written.  It will not return partial lines when encountering an EOF.
+
+*Arguments*
+- striplf (boolean) true if you want the line feed character stripped to match
+the behavior of io.lines()
+
+*Return*
+- line (string/nil) Returns nil when there are no more full lines currently
+available
+
+
+#### seek
+```lua
+gzf:seek()
+```
+
+Sets and gets the file position.
+
+*Arguments*
+- whence (string/nil) "set" (default) or "cur" (end is not supported by gzseek)
+- offset (integer/nil) position in the file from whence
+
+*Return*
+- offset (number/nil) uncompressed offset in the file
+- error (string/nil) set if offset is nil
+
 
 #### close
 ```lua

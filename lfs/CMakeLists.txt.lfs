@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(lfs VERSION 1.6.8 LANGUAGES C)
+project(lfs VERSION 1.6.9 LANGUAGES C)
 
 set(CPACK_PACKAGE_NAME luasandbox-${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua FileSystem Module")
@@ -37,7 +37,7 @@ if(LUA51) # build against installed lua 5.1
     find_program(LUA NAMES lua lua.bat)
     add_test(NAME test COMMAND ${LUA} test.lua)
 else() # lua_sandbox build
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, luasandbox (>= 1.0.2), luasandbox-lpeg (>= 1.0.10)")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, luasandbox (>= 1.0.2), luasandbox-lpeg (>= 1.0.10), luasandbox-gzfile (>= 0.0.3)")
     set(CPACK_RPM_PACKAGE_REQUIRES "luasandbox-lpeg >= 1.0.10")
     find_package(luasandbox 1.0.2 REQUIRED CONFIG)
     set(LUA_LIBRARIES ${LUASANDBOX_LIBRARIES})

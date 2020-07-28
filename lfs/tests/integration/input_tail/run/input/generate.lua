@@ -40,13 +40,22 @@ decoder_module  = "decoders.payload"
 ]])
 fh:close()
 
+fn = string.format("%s/input/compressed.cfg", load_path)
+fh = assert(io.open(fn, "w+"))
+fh:write([[filename = "tail.lua"
+input_filename = "compressed.log.gz"
+decoder_module  = "decoders.payload"
+]])
+fh:close()
+
 function process_message()
     socket.sleep(3)
     fh = open_log()
     fh:write("log 1 line one\nlog 1 start of line two")
     fh:flush()
-    -- fh:write(" end of line two\n") -- tail will incorrectly return the partial line two
-    socket.sleep(1)
+    socket.sleep(2)
+    fh:write(" end of line two\n")
+    fh:close()
     os.execute("mv output/rotate.log output/rotate.log.0")
     socket.sleep(.5) -- delay creating the next inode for the rotated log
     fh = open_log()
