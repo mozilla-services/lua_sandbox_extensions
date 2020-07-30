@@ -1,0 +1,67 @@
+[taskcluster 2020-01-28 16:00:42.864Z] Task ID: ZYFKUNR5RhmrBAq4Z4KB9g
+[taskcluster 2020-01-28 16:00:42.864Z] Worker ID: i-04b99c91f855bd0c4
+[taskcluster 2020-01-28 16:00:42.864Z] Worker Group: aws
+[taskcluster 2020-01-28 16:00:42.864Z] Worker Node Type: c5.xlarge
+[taskcluster 2020-01-28 16:00:42.864Z] Worker Type: decision
+[taskcluster 2020-01-28 16:00:42.864Z] Public IP: 35.173.218.48
+[taskcluster 2020-01-28 16:00:42.864Z] Hostname: ip-10-145-18-249
+[taskcluster 2020-01-28 16:00:42.864Z] using cache "level-3-checkouts-sparse-v2" -> /builds/worker/checkouts
+
+[taskcluster 2020-01-28 16:00:43.932Z] === Task Starting ===
+[setup 2020-01-28T16:00:44.279Z] run-task started
+[cache 2020-01-28T16:00:44.280Z] cache /builds/worker/checkouts exists; requirements: gid=1000 uid=1000 version=1
+[setup 2020-01-28T16:00:44.280Z] running as worker:worker
+[vcs 2020-01-28T16:00:44.280Z] executing ['hg', 'robustcheckout', '--sharebase', '/builds/worker/checkouts/hg-store', '--purge', '--upstream', 'https://hg.mozilla.org/mozilla-unified', '--sparseprofile', 'build/sparse-profiles/taskgraph', '--branch', 'default', 'https://hg.mozilla.org/releases/mozilla-beta', '/builds/worker/checkouts/gecko']
+[vcs 2020-01-28T16:00:44.325Z] (using Mercurial 4.5.2)
+[vcs 2020-01-28T16:00:44.326Z] ensuring https://hg.mozilla.org/releases/mozilla-beta@default is available at /builds/worker/checkouts/gecko
+[vcs 2020-01-28T16:00:44.327Z] (existing repository shared store: /builds/worker/checkouts/hg-store/8ba995b74e18334ab3707f27e9eb8f4e37ba3d29/.hg)
+[vcs 2020-01-28T16:00:45.187Z] (pulling to obtain default)
+[vcs 2020-01-28T16:00:46.512Z] (remote resolved default to ed18b0818d433d7ed29c58c77f9d9a77c6b06e06; result is not deterministic)
+[vcs 2020-01-28T16:00:47.139Z] searching for changes
+[vcs 2020-01-28T16:00:50.869Z] adding changesets
+[vcs 2020-01-28T16:00:50.870Z] 
+[vcs 2020-01-28T16:00:50.877Z] changesets [=============================================================>] 1/1
+[vcs 2020-01-28T16:00:50.877Z]                                                                                 
+[vcs 2020-01-28T16:00:50.877Z] adding manifests
+[vcs 2020-01-28T16:00:50.896Z] adding file changes
+[vcs 2020-01-28T16:00:51.229Z] added 1 changesets with 1 changes to 1 files
+[vcs 2020-01-28T16:00:51.270Z] new changesets ed18b0818d43
+[vcs 2020-01-28T16:00:51.270Z] (purging working directory)
+[vcs 2020-01-28T16:00:52.139Z] (sparse profile build/sparse-profiles/taskgraph already set; no need to update sparse config)
+[vcs 2020-01-28T16:00:54.733Z] 
+[vcs 2020-01-28T16:00:55.742Z] updating [                                                        ]   100/13476
+[vcs 2020-01-28T16:00:56.432Z] updating [=============================>                      ]  7799/13476 01s
+[vcs 2020-01-28T16:00:56.432Z]                                                                                 
+[vcs 2020-01-28T16:00:56.694Z] 12977 files updated, 0 files merged, 499 files removed, 0 files unresolved
+[vcs 2020-01-28T16:00:56.701Z] updated to ed18b0818d433d7ed29c58c77f9d9a77c6b06e06
+[vcs 2020-01-28T16:00:56.703Z] PERFHERDER_DATA: {"framework": {"name": "vcs"}, "suites": [{"extraOptions": ["c5.xlarge"], "lowerIsBetter": true, "name": "pull", "shouldAlert": false, "subtests": [], "value": 4.607558965682983}, {"extraOptions": ["c5.xlarge"], "lowerIsBetter": true, "name": "purge", "shouldAlert": false, "subtests": [], "value": 0.6195411682128906}, {"extraOptions": ["c5.xlarge"], "lowerIsBetter": true, "name": "update_sparse", "shouldAlert": false, "subtests": [], "value": 4.561252117156982}, {"extraOptions": ["c5.xlarge"], "lowerIsBetter": true, "name": "overall", "shouldAlert": false, "subtests": [], "value": 12.375648021697998}]}
+[vcs 2020-01-28T16:00:57.059Z] TinderboxPrint:<a href=https://hg.mozilla.org/releases/mozilla-beta/rev/ed18b0818d433d7ed29c58c77f9d9a77c6b06e06 title='Built from mozilla-beta revision ed18b0818d433d7ed29c58c77f9d9a77c6b06e06'>ed18b0818d433d7ed29c58c77f9d9a77c6b06e06</a>
+[task 2020-01-28T16:00:57.059Z] executing ['bash', '-cx', 'cd /builds/worker/checkouts/gecko && ln -s /builds/worker/artifacts artifacts && ./mach --log-no-times taskgraph cron --head-repository=https://hg.mozilla.org/releases/mozilla-beta --project=mozilla-beta --level=3']
+[task 2020-01-28T16:00:57.061Z] + cd /builds/worker/checkouts/gecko
+[task 2020-01-28T16:00:57.061Z] + ln -s /builds/worker/artifacts artifacts
+[task 2020-01-28T16:00:57.062Z] + ./mach --log-no-times taskgraph cron --head-repository=https://hg.mozilla.org/releases/mozilla-beta --project=mozilla-beta --level=3
+[task 2020-01-28T16:00:57.948Z] Starting new HTTP connection (1): taskcluster
+[task 2020-01-28T16:00:58.074Z] "GET /queue/v1/task/ZYFKUNR5RhmrBAq4Z4KB9g HTTP/1.1" 200 None
+[task 2020-01-28T16:00:58.078Z] calculated cron schedule time is 2020-01-28 16:00:00
+[task 2020-01-28T16:00:58.111Z] not running cron job bouncer-check
+[task 2020-01-28T16:00:58.111Z] not running cron job chromium-update
+[task 2020-01-28T16:00:58.111Z] not running cron job condprof
+[task 2020-01-28T16:00:58.111Z] not running cron job customv8-update
+[task 2020-01-28T16:00:58.111Z] not running cron job daily-releases
+[task 2020-01-28T16:00:58.111Z] not running cron job general-perf-testing
+[task 2020-01-28T16:00:58.111Z] not running cron job l10n-bumper
+[task 2020-01-28T16:00:58.111Z] not running cron job nightly-desktop
+[task 2020-01-28T16:00:58.111Z] not running cron job nightly-desktop-linux
+[task 2020-01-28T16:00:58.111Z] not running cron job nightly-desktop-osx
+[task 2020-01-28T16:00:58.111Z] not running cron job nightly-desktop-win32
+[task 2020-01-28T16:00:58.111Z] not running cron job nightly-desktop-win64
+[task 2020-01-28T16:00:58.111Z] not running cron job nightly-desktop-win64-aarch64
+[task 2020-01-28T16:00:58.111Z] not running cron job periodic-update
+[task 2020-01-28T16:00:58.112Z] not running cron job pipfile-update
+[task 2020-01-28T16:00:58.112Z] not running cron job raptor-tp6m
+[task 2020-01-28T16:00:58.112Z] not running cron job searchfox-index
+[task 2020-01-28T16:00:58.112Z] not running cron job ship-geckoview
+[task 2020-01-28T16:00:58.112Z] not running cron job system-symbols
+[task 2020-01-28T16:00:58.112Z] not running cron job tp6m-fennec-v68
+[taskcluster 2020-01-28 16:00:59.123Z] === Task Finished ===
+[taskcluster 2020-01-28 16:00:59.193Z] Successful task run with exit code: 0 completed in 16.329 seconds

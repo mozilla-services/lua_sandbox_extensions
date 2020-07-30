@@ -1,0 +1,70 @@
+{
+  "provisionerId": "gecko-3",
+  "workerType": "decision",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "ZYFKUNR5RhmrBAq4Z4KB9g",
+  "dependencies": [],
+  "requires": "all-completed",
+  "routes": [
+    "notify.email.ciduty+failedcron@mozilla.com.on-failed",
+    "notify.email.ciduty+exceptioncron@mozilla.com.on-exception",
+    "notify.email.sheriffs+failedcron@mozilla.org.on-failed",
+    "notify.email.sheriffs+exceptioncron@mozilla.org.on-exception"
+  ],
+  "priority": "lowest",
+  "retries": 5,
+  "created": "2020-01-28T16:00:00.000Z",
+  "deadline": "2020-01-28T17:00:00.000Z",
+  "expires": "2020-02-04T16:00:00.000Z",
+  "scopes": [
+    "assume:hook-id:project-releng/cron-task-releases-mozilla-beta"
+  ],
+  "payload": {
+    "image": "taskcluster/decision:2.1.0@sha256:6db3b697d7a3c7aba440d72f04199331b872111cefff57206b8b8b1d53230360",
+    "env": {
+      "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/releases/mozilla-beta",
+      "GECKO_HEAD_REF": "default",
+      "HG_STORE_PATH": "/builds/worker/checkouts/hg-store",
+      "TASKCLUSTER_CACHES": "/builds/worker/checkouts",
+      "TASKCLUSTER_ROOT_URL": "https://firefox-ci-tc.services.mozilla.com"
+    },
+    "cache": {
+      "level-3-checkouts-sparse-v2": "/builds/worker/checkouts"
+    },
+    "features": {
+      "taskclusterProxy": true,
+      "chainOfTrust": true
+    },
+    "maxRunTime": 1800,
+    "command": [
+      "/builds/worker/bin/run-task",
+      "--vcs-checkout=/builds/worker/checkouts/gecko",
+      "--sparse-profile=build/sparse-profiles/taskgraph",
+      "--",
+      "bash",
+      "-cx",
+      "cd /builds/worker/checkouts/gecko && ln -s /builds/worker/artifacts artifacts && ./mach --log-no-times taskgraph cron --head-repository=https://hg.mozilla.org/releases/mozilla-beta --project=mozilla-beta --level=3"
+    ],
+    "retry-exit-status": [
+      72
+    ],
+    "purge-caches-exit-status": [
+      72
+    ],
+    "artifacts": {
+      "public": {
+        "type": "directory",
+        "path": "/builds/worker/artifacts"
+      }
+    }
+  },
+  "metadata": {
+    "owner": "mozilla-taskcluster-maintenance@mozilla.com",
+    "source": "https://firefox-ci-tc.services.mozilla.com/hooks/#project-releng/cron-task-releases-mozilla-beta",
+    "description": "See https://firefox-ci-tc.services.mozilla.com/hooks/#project-releng/cron-task-releases-mozilla-beta",
+    "name": "Cron task for https://hg.mozilla.org/releases/mozilla-beta"
+  },
+  "tags": {},
+  "extra": {}
+}

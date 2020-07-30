@@ -1,0 +1,148 @@
+{
+  "provisionerId": "proj-autophone",
+  "workerType": "gecko-t-bitbar-gw-perf-p2",
+  "schedulerId": "gecko-level-3",
+  "taskGroupId": "DRmWdkINS5KKmbffJ21nIA",
+  "dependencies": [
+    "DWI-p_c8RhKDsSBm6NELtA",
+    "DRmWdkINS5KKmbffJ21nIA"
+  ],
+  "requires": "all-completed",
+  "routes": [
+    "tc-treeherder.v2.mozilla-central.a170089a8a033b5a2d8bba365656965aebe3a444.37050"
+  ],
+  "priority": "medium",
+  "retries": 5,
+  "created": "2020-01-24T10:32:39.866Z",
+  "deadline": "2020-01-25T10:32:39.866Z",
+  "expires": "2021-01-23T10:32:39.866Z",
+  "scopes": [],
+  "payload": {
+    "onExitStatus": {
+      "retry": [
+        4
+      ]
+    },
+    "maxRunTime": 1800,
+    "artifacts": [
+      {
+        "path": "artifacts/public",
+        "type": "directory",
+        "name": "public/test/"
+      },
+      {
+        "path": "workspace/logs",
+        "type": "directory",
+        "name": "public/logs/"
+      },
+      {
+        "path": "workspace/build/blobber_upload_dir",
+        "type": "directory",
+        "name": "public/test_info/"
+      }
+    ],
+    "command": [
+      [
+        "chmod",
+        "+x",
+        "run-task"
+      ],
+      [
+        "./run-task",
+        "--user",
+        "root",
+        "--group",
+        "root",
+        "--",
+        "/builds/taskcluster/script.py",
+        "bash",
+        "./test-linux.sh",
+        "--cfg",
+        "mozharness/configs/raptor/android_hw_config.py",
+        "--test=raptor-speedometer",
+        "--app=geckoview",
+        "--binary=org.mozilla.geckoview_example",
+        "--cpu-test",
+        "--memory-test",
+        "--page-cycles 5",
+        "--activity=org.mozilla.geckoview_example.GeckoViewActivity",
+        "--device-name=p2_aarch64",
+        "--download-symbols",
+        "ondemand"
+      ]
+    ],
+    "env": {
+      "XPCOM_DEBUG_BREAK": "warn",
+      "MOZ_NO_REMOTE": "1",
+      "MOZ_HIDE_RESULTS_TABLE": "1",
+      "TASKCLUSTER_WORKER_TYPE": "t-bitbar-gw-perf-p2",
+      "GECKO_HEAD_REV": "a170089a8a033b5a2d8bba365656965aebe3a444",
+      "SCCACHE_DISABLE": "1",
+      "MOZ_SCM_LEVEL": "3",
+      "NEED_XVFB": "false",
+      "MOZHARNESS_URL": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/DWI-p_c8RhKDsSBm6NELtA/artifacts/public/build/mozharness.zip",
+      "EXTRA_MOZHARNESS_CONFIG": "{\"test_packages_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/DWI-p_c8RhKDsSBm6NELtA/artifacts/public/build/target.test_packages.json\", \"installer_url\": \"https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/DWI-p_c8RhKDsSBm6NELtA/artifacts/public/build/geckoview_example.apk\"}",
+      "MOZ_AUTOMATION": "1",
+      "NO_FAIL_ON_TEST_ERRORS": "1",
+      "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/mozilla-central",
+      "MOZ_NODE_PATH": "/usr/local/bin/node",
+      "MOZHARNESS_CONFIG": "raptor/android_hw_config.py",
+      "MOZHARNESS_SCRIPT": "raptor_script.py",
+      "MOZILLA_BUILD_URL": "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/DWI-p_c8RhKDsSBm6NELtA/artifacts/public/build/geckoview_example.apk"
+    },
+    "mounts": [
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/mozilla-central/raw-file/a170089a8a033b5a2d8bba365656965aebe3a444/taskcluster/scripts/tester/test-linux.sh"
+        },
+        "file": "test-linux.sh"
+      },
+      {
+        "content": {
+          "url": "https://hg.mozilla.org/mozilla-central/raw-file/a170089a8a033b5a2d8bba365656965aebe3a444/taskcluster/scripts/run-task"
+        },
+        "file": "./run-task"
+      }
+    ]
+  },
+  "metadata": {
+    "owner": "cron@noreply.mozilla.org",
+    "source": "https://hg.mozilla.org/mozilla-central/file/a170089a8a033b5a2d8bba365656965aebe3a444/taskcluster/ci/test",
+    "description": "Raptor Speedometer cpu/memory on GeckoView ([Treeherder push](https://treeherder.mozilla.org/#/jobs?repo=mozilla-central&revision=a170089a8a033b5a2d8bba365656965aebe3a444))",
+    "name": "test-android-hw-p2-8-0-android-aarch64/pgo-raptor-speedometer-geckoview-cpu-memory-e10s"
+  },
+  "tags": {
+    "kind": "test",
+    "os": "linux-bitbar",
+    "createdForUser": "cron@noreply.mozilla.org",
+    "retrigger": "true",
+    "label": "test-android-hw-p2-8-0-android-aarch64/pgo-raptor-speedometer-geckoview-cpu-memory-e10s",
+    "test-type": "raptor",
+    "worker-implementation": "generic-worker"
+  },
+  "extra": {
+    "index": {
+      "rank": 1579858237
+    },
+    "parent": "DRmWdkINS5KKmbffJ21nIA",
+    "chunks": {
+      "current": 1,
+      "total": 1
+    },
+    "suite": "raptor",
+    "treeherder": {
+      "jobKind": "test",
+      "groupSymbol": "Rap",
+      "collection": {
+        "pgo": true
+      },
+      "machine": {
+        "platform": "android-hw-p2-8-0-android-aarch64"
+      },
+      "groupName": "Raptor performance tests on Firefox",
+      "tier": 1,
+      "symbol": "sp-cm"
+    },
+    "treeherder-platform": "android-hw-p2-8-0-android-aarch64/pgo"
+  }
+}

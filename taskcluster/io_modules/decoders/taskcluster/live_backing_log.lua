@@ -339,21 +339,23 @@ local function perfherder_decode(g, b, json)
         end
     elseif j.framework.name == "browsertime" then
         if b.base_msg.Fields.testtype == "raptor" then
-            b.cache.global.raptor_embedded = true
+            if not b.cache.global.raptor_embedded then b.cache.global.raptor_embedded = {} end
+            b.cache.global.raptor_embedded["public/test_info/perfherder-data.json"] = true
             j.recordingDate = b.cache.global.raptor_recording_date
         end
     elseif j.framework.name == "raptor" then
+        if not b.cache.global.raptor_embedded then b.cache.global.raptor_embedded = {} end
         local f = j.suites[1]
         if f.type == "power" then
-            b.cache.global.raptor_power_embedded = true
+            b.cache.global.raptor_embedded["public/test_info/perfherder-data-power.json"] = true
         elseif f.type == "cpu" then
-            b.cache.global.raptor_cpu_embedded = true
+            b.cache.global.raptor_embedded["public/test_info/perfherder-data-cpu.json"] = true
         elseif f.type == "memory" then
-            b.cache.global.raptor_memory_embedded = true
+            b.cache.global.raptor_embedded["public/test_info/perfherder-data-memory.json"] = true
         elseif f.type == "mozproxy" then
-            b.cache.global.raptor_mozproxy_embedded = true
+            b.cache.global.raptor_embedded["public/test_info/perfherder-data-mozproxy.json"] = true
         else
-            b.cache.global.raptor_embedded = true
+            b.cache.global.raptor_embedded["public/test_info/perfherder-data.json"] = true
         end
         j.recordingDate = b.cache.global.raptor_recording_date
     -- fix up inconsistent schemas
@@ -785,8 +787,7 @@ local function finalize_log(g, b)
             Payload = "unclosed block",
             Fields = {
                 taskId  = b.base_msg.Fields["taskId"],
-                detail  = table.concat(errors, "|"),
-                data    = b.data
+                detail  = table.concat(errors, "|")
             }
         }
         inject_message(msg)
@@ -938,31 +939,34 @@ local function get_parser(f)
 end
 
 
-local function json_decode(json, tid, data, logtype)
+local function json_decode(json, tid, recover, logtype)
     if not json then return end
 
     local ok, j = pcall(cjson.decode, json)
     if not ok then
-        inject_message({Type = "error.parse." .. logtype,
+        inject_message({
+            Type = "error.parse.json." .. logtype,
             Payload = j,
             Fields = {
                 taskId = tid,
                 detail = json,
-                data   = data}})
+                data   = cjson.encode(recover)}})
         return
     end
     return j
 end
 
 
-local function json_decode_api(json, tid, data, logtype)
+local function json_decode_api(json, tid, recover, logtype)
     local j = json_decode(json, tid, data, logtype)
     if j and (j.code or j.error) then -- make sure the responses isn't API error JSON
-        inject_message({Type = "error.api." .. logtype,
+        inject_message({
+            Type = "error.api." .. logtype,
             Payload = j.code or j.error,
             Fields = {
                 taskId = tid,
-                data   = data}})
+                detail = json,
+                data   = cjson.encode(recover)}})
         return
     end
     return j
@@ -975,7 +979,7 @@ end
 
 
 local tfn = string.format("%s/%s_curl", tmp_path, logger)
-local function get_artifact_handle(tid, path, data, logtype)
+local function get_artifact_handle(tid, path, recover, logtype)
     local url = get_url(path)
     local cmd = string.format("rm -f %s;curl -L -s -f --retry 2 -m 90 --max-filesize 500000000 %s -o %s ", tfn, url, tfn)
 
@@ -988,7 +992,7 @@ local function get_artifact_handle(tid, path, data, logtype)
             Fields = {
                 taskId = tid,
                 detail = cmd,
-                data   = data}})
+                data   = cjson.encode(recover)}})
         return
     end
 
@@ -998,57 +1002,57 @@ local function get_artifact_handle(tid, path, data, logtype)
             Payload = "file not found",
             Fields = {
                 taskId = tid,
-                data   = data}})
+                detail = cmd,
+                data   = cjson.encode(recover)}})
     end
     return fh
 end
 
 
-local function get_artifact_string(tid, path, data, logtype)
+local function get_artifact_string(tid, path, recover, logtype)
     local url = get_url(path)
     local cmd = string.format("rm -f %s;curl -L -s -f --retry 2 -m 60 --max-filesize %d %s -o %s", tfn, mms, url, tfn)
 
     local rv = os.execute(cmd)
     if rv == 8960 then rv = os.execute(cmd) end -- CURLE_SSL_CONNECT_ERROR happens tens of times per day, but worth a retry to avoid a backfill later
     if rv ~= 0 then
-        if type(data) == "table" then data = cjson.encode(data) end
         inject_message({Type = string.format("error.curl.%s", logtype),
             Payload = tostring(rv/256),
             Fields = {
                 taskId = tid,
                 detail = cmd,
-                data   = data}})
+                data   = cjson.encode(recover)}})
         return
     end
 
     local ok, s = pcall(gzfile.string, tfn, "rb", 64 * 1024, mms)
     if not ok then
-        if type(data) == "table" then data = cjson.encode(data) end
         inject_message({Type = string.format("error.open.%s", logtype),
             Payload = s,
             Fields = {
                 taskId = tid,
-                data   = data}})
+                detail = cmd,
+                data   = cjson.encode(recover)}})
         return
     end
     return s
 end
 
 
-local function get_artifact_list(pj, rid, data, token, logtype)
-    local full_logtype = "artifact_list" or (logtype or "")
-    local tid          = pj.status.taskId
-    local path         = string.format("task/%s/runs/%d/artifacts", tid, rid)
+local function get_artifact_list(pj, rid, recover, token)
+    local logtype   = "artifact_list"
+    local tid       = pj.status.taskId
+    local path      = string.format("task/%s/runs/%d/artifacts", tid, rid)
     if token then
         path = path .. "?continuationToken=" .. token
     end
 
-    local s = get_artifact_string(tid, path, data, full_logtype)
-    local j = json_decode_api(s, tid, data, logtype)
+    local s = get_artifact_string(tid, path, recover, logtype)
+    local j = json_decode_api(s, tid, recover, logtype)
     if not j or not j.artifacts then return end
 
      if j.continuationToken then
-        local cj = get_artifact_list(pj, rid, data, j.continuationToken, logtype)
+        local cj = get_artifact_list(pj, rid, recover, j.continuationToken)
         if cj and cj.artifacts then
             for i,v in ipairs(cj.artifacts) do
                 j.artifacts[#j.artifacts + 1] = v
@@ -1071,45 +1075,57 @@ local function get_artifact_list(pj, rid, data, token, logtype)
 end
 
 
-local function process_artifact_history(pj, data)
+local function process_artifact_history(pj, recover)
     local rid = pj.runId + 1
+    local j
     for i=1, rid  do
         local run = pj.status.runs[i]
         if (i == rid or run.state == "exception") and run.started then
-            local j = get_artifact_list(pj, i - 1, data)
+            recover.runId = i - 1
+            j = get_artifact_list(pj, recover.runId, recover)
             inject_artifact_list(j)
         end
     end
+    return j
 end
 
 
-local function get_external_perfherder_artifacts(state, tid, rid, command)
+local function get_external_perfherder_artifacts(state, tid, rid, al)
     local files = {}
-    if not state.cache.global.raptor_embedded then
-        files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data.json")
-    end
-    for i,v in ipairs(command) do -- todo switch this to use the artifact list
-        if type(v) ~= "table" then break end -- windows only contains a command string but it doesn't currently enable the additional artifacts
-        for j,arg in ipairs(v) do
-            if arg == "--cpu-test" and not state.cache.global.raptor_cpu_embedded then
-                files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data-cpu.json")
-            elseif arg == "--memory-test" and not state.cache.global.raptor_memory_embedded then
-                files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data-memory.json")
-            elseif arg == "--power-test" and not state.cache.global.raptor_power_embedded then
-                files[#files + 1] = get_artifact_path(tid, rid, "public/test_info/perfherder-data-power.json")
+    for i,v in ipairs(al.artifacts) do
+        if v.name:match("perfherder%-data") then
+            local fetch = false
+            if state.cache.global.raptor_embedded then
+                if not state.cache.global.raptor_embedded[v.name] then
+                    fetch = true
+                end
+            else
+                fetch = true
             end
+            if fetch then files[#files + 1] = get_artifact_path(tid, rid, v.name) end
         end
     end
     if #files == 0 then return nil end
 
+    local recover = {
+        path        = nil,
+        base_msg    = state.base_msg,
+        current = {
+            date_time = state.current.date_time
+        },
+        cache = {
+            global = state.cache.global
+        }
+    }
     for i,v in ipairs(files) do
-        local s = get_artifact_string(tid, v, state.base_msg, "perfherder")
+        recover.path = v
+        local s = get_artifact_string(tid, v, recover, "perfherder")
         perfherder_decode(nil, state, s)
     end
 end
 
 
-local function parse_log(lfh, base_msg, td)
+local function parse_log(lfh, base_msg, al)
     if not lfh then return end
 
     local f = base_msg.Fields
@@ -1183,7 +1199,9 @@ local function parse_log(lfh, base_msg, td)
             local delta = os.time() - rtime
             if delta > 30 then
                 terminated = true
-                inject_message({Type = "error.parse.log",Payload = "timed out",
+                inject_message({
+                    Type = "error.parse.log",
+                    Payload = "timed out",
                     Fields = {
                         taskId  = f.taskId,
                         detail  = string.format("line: %d", cnt)}})
@@ -1203,23 +1221,22 @@ local function parse_log(lfh, base_msg, td)
     end
     finalize_log(g, state)
 
-    if f.testtype == "raptor" and f.state == "completed" then -- talos appears to always be embedded in the log
-        get_external_perfherder_artifacts(state, f.taskId, f.runId, td.payload.command)
+    if al and f.testtype == "raptor" and f.state == "completed" then -- talos appears to always be embedded in the log
+        get_external_perfherder_artifacts(state, f.taskId, f.runId, al)
     end
 end
 
 
-local function get_task_definition(tid, data, logtype)
-    logtype = "task_definition" .. (logtype or "")
+local function get_task_definition(tid, recover)
+    local logtype = "task_definition"
     local path = string.format("task/%s", tid)
-    local s = get_artifact_string(tid, path, data, logtype)
-    local j = json_decode_api(s, tid, data, logtype)
+    local s = get_artifact_string(tid, path, recover, logtype)
+    local j = json_decode_api(s, tid, recover, logtype)
     return j
 end
 
 
-local bf_logtype = ".backfill"
-local function get_log_file(pj, base_msg, data, logtype)
+local function get_log_file(pj, base_msg, recover)
     if pj.status.state == "exception"
     or pj.status.provisionerId == "scriptworker-k8s"
     or pj.status.provisionerId == "built-in"
@@ -1231,8 +1248,8 @@ local function get_log_file(pj, base_msg, data, logtype)
 
     local tid = pj.status.taskId
     local path = get_artifact_path(tid, pj.runId, "public/logs/live_backing.log")
-    local fh = get_artifact_handle(tid, path, data, "log" .. (logtype or ""))
-    if not fh and logtype == bf_logtype then
+    local fh = get_artifact_handle(tid, path, recover, "log")
+    if not fh and not recover then
         inject_timing_msg(no_schema, base_msg, 0, nil) -- unable to backfill the log just output the timing summary
     end
     return fh
@@ -1247,13 +1264,15 @@ function decode(data, dh, mutable)
     if ex == "exchange/taskcluster-queue/v1/task-completed"
     or ex == "exchange/taskcluster-queue/v1/task-failed"
     or ex == "exchange/taskcluster-queue/v1/task-exception" then
-        process_artifact_history(pj, data)
-        local td = get_task_definition(pj.status.taskId, data)
-        if td then
-            inject_task_definition(pj.status.taskId, td)
-            local base_msg = get_base_msg(dh, mutable, pj, td)
+        local recover = { pj = pj }
+        recover.al = process_artifact_history(pj, recover)
+        recover.td = get_task_definition(pj.status.taskId, recover)
+        if recover.td then
+            inject_task_definition(pj.status.taskId, recover.td)
+            local base_msg = get_base_msg(dh, mutable, pj, recover.td)
             process_exceptions(pj, base_msg)
-            parse_log(get_log_file(pj, base_msg, data), base_msg, td)
+            local lfh = get_log_file(pj, base_msg, recover)
+            parse_log(lfh, base_msg, recover.al)
         end
         os.execute("rm -f " .. tfn)
     end
@@ -1261,36 +1280,45 @@ end
 
 
 -- Partial load (backfill) decoders to fill in data that was unavailable at the time
+function decode_artifact_list_error(data, dh, mutable)
+    local recover   = cjson.decode(data)
+    local pj        = recover.pj
+    local j         = get_artifact_list(pj, recover.runId)
+    inject_artifact_list(j)
+end
+
+
 function decode_task_definition_error(data, dh, mutable)
-    local pj = cjson.decode(data)
-    local td = get_task_definition(pj.status.taskId, data, bf_logtype)
+    local recover = cjson.decode(data)
+    local pj = recover.pj
+    local al = recover.al or get_artifact_list(pj, pj.runId)
+    local td = get_task_definition(pj.status.taskId, nil)
     if not td then return nil end
 
     inject_task_definition(pj.status.taskId, td)
     local base_msg = get_base_msg(dh, mutable, pj, td)
-    process_exceptions(pj, base_msg)
-    parse_log(get_log_file(pj, base_msg, data, bf_logtype), base_msg, td)
+    process_exceptions(recover.pj, base_msg)
+    local lfh = get_log_file(pj, base_msg)
+    parse_log(lfh, base_msg, recover.al)
 end
 
 
 function decode_log_error(data, dh, mutable)
-    local pj = cjson.decode(data)
-    local td = get_task_definition(pj.status.taskId, data, bf_logtype)
-    if not td then return nil end
-
+    local recover = cjson.decode(data)
+    local pj = recover.pj
+    local al = recover.al or get_artifact_list(pj, pj.runId)
+    local td = recover.td
     local base_msg = get_base_msg(dh, mutable, pj, td)
     update_task_summary_run(pj.status.runs[pj.runId + 1], base_msg.Fields)
-    parse_log(get_log_file(pj, base_msg, data, bf_logtype), base_msg, td)
+    local lfh = get_log_file(pj, base_msg)
+    parse_log(lfh, base_msg, recover.al)
 end
 
 
-function decode_artifact_list_error(data, dh, mutable)
-    local pj = cjson.decode(data)
-    local rid = tonumber(dh.Payload:match("/runs/(%d+)/artifacts"))
-    if not rid then return end
-
-    local j = get_artifact_list(pj, rid, data, nil, bf_logtype)
-    inject_artifact_list(j)
+function decode_perfherder_error(data, dh, mutable)
+    local state = cjson.decode(data)
+    local s = get_artifact_string(state.base_msg.Fields.taskId, state.path, nil, "perfherder")
+    perfherder_decode(nil, state, s)
 end
 
 

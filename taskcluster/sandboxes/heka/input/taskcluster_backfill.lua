@@ -10,6 +10,7 @@
 filename            = 'taskcluster_backfill.lua'
 ticker_interval     = 3600 -- won't perform a backfill until at least an hour into the next day
 instruction_limit   = 0
+integration_test    = false
 
 decoders_taskcluster_live_backing_log = {
     -- taskcluster_schema_path = "/usr/share/luasandbox/schemas/taskcluster" -- default
@@ -23,17 +24,24 @@ require "cjson"
 require "os"
 require "string"
 local dm = require "decoders.taskcluster.live_backing_log"
+local integration_test = read_config("integration_test")
 
 local function get_start_of_day(time_t)
     return time_t - (time_t % 86400)
 end
 
-local td_day    = get_start_of_day(os.time())
-local log_day   = td_day
-local al_day    = td_day
-local fn        = string.format("/var/tmp/%s_query.json", read_config("Logger"))
 
-local function error_query(cmd, st, et, decode)
+local fn = string.format("/var/tmp/%s_query.json", read_config("Logger"))
+
+
+local function get_decoder(typ)
+    local name = typ:match("error%.curl%.(.+)") or ""
+    name = string.format("decode_%s_error", name)
+    return dm[name] or function() return end
+end
+
+
+local function error_query(cmd, st, et)
     print("cmd", cmd)
     local rv = os.execute(cmd)
     if rv ~= 0 then
@@ -52,14 +60,14 @@ local function error_query(cmd, st, et, decode)
         ok, j = pcall(cjson.decode, j)
         if ok then
             for i, row in ipairs(j) do
-                local ok, err = pcall(decode, row.data, {Payload = row.detail})
+                local decode = get_decoder(row.type)
+                local ok, err = pcall(decode, row.data)
                 if not ok or err then
                     pcall(inject_message, {
                         Type    = row.type .. ".backfill",
                         Payload = err,
                         Fields  = {
-                            taskId = row.taskId,
-                            data = row.data}})
+                            taskId = row.taskId}})
                 end
             end
         else
@@ -85,32 +93,33 @@ end
 
 
 function process_message(checkpoint)
-    if checkpoint then
-        local td, log, al = string.match(checkpoint, "^(%d+)\t(%d+)\t?(%d*)$")
-        td_day = tonumber(td) or td_day
-        log_day = tonumber(log) or log_day
-        al_day = tonumber(al) or al_day
-    end
-
     local time_t = os.time()
-    if time_t - td_day >= 86400 + 3600 then
-        local cmd = string.format('rm -f %s;bq query --nouse_legacy_sql --format json \'select taskId, type, data from taskclusteretl.error where data is not NULL and type like "error.curl.%%.task_definition" and time >= "%s" and time < "%s"\' > %s',
-                                  fn, get_date(td_day), get_date(time_t), fn)
-        td_day = error_query(cmd, td_day, time_t, dm.decode_task_definition_error)
+    checkpoint = checkpoint or get_start_of_day(time_t)
+
+    if time_t - checkpoint >= 86400 + 3600 then
+        local cmd = string.format('rm -f %s;bq query --nouse_legacy_sql --format json \'select taskId, type, data from taskclusteretl.error where data is not NULL and type like "error.curl.%%" and time >= "%s" and time < "%s"\' > %s',
+                                  fn, get_date(checkpoint), get_date(time_t), fn)
+        checkpoint = error_query(cmd, checkpoint, time_t)
     end
 
-    if time_t - log_day >= 86400 + 3600 then
-        local cmd = string.format('rm -f %s;bq query --nouse_legacy_sql --format json \'select taskId, type, data from taskclusteretl.error where data is not NULL and type like "error.curl.%%.log" and time >= "%s" and time < "%s"\' > %s',
-                                  fn, get_date(log_day), get_date(time_t), fn)
-        log_day = error_query(cmd, log_day, time_t, dm.decode_log_error)
-    end
-
-    if time_t - al_day >= 86400 + 3600 then
-        local cmd = string.format('rm -f %s;bq query --nouse_legacy_sql --format json \'select taskId, type, data, detail from taskclusteretl.error where data is not NULL and type like "error.curl.%%.artifact_list" and time >= "%s" and time < "%s"\' > %s',
-                                  fn, get_date(log_day), get_date(time_t), fn)
-        al_day = error_query(cmd, al_day, time_t, dm.decode_artifact_list_error)
-    end
-
-    inject_message(nil, string.format("%d\t%d\t%d", td_day, log_day, al_day))
+    inject_message(nil, checkpoint)
     return 0
+end
+
+if integration_test then
+    os.execute("rm -f " .. fn)
+    process_message = function()
+        for i = 1,10 do
+            os.execute("sleep 1")
+            local fh = io.open(fn, "rb")
+            if fh then
+                fh:close()
+                break
+            end
+        end
+        local time_t = os.time()
+        local checkpoint = error_query("echo starting", 0, time_t)
+        assert(rv ~= checkpoint, "checkpoint was not advanced")
+        return 0
+    end
 end
