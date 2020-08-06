@@ -13,6 +13,7 @@ local expected = {
     {Type = "error.curl.artifact_list", taskId = "C0PGASalTF6MZNoTg0eLGQ"},
     {Type = "error.curl.task_definition", taskId = "C0PGASalTF6MZNoTg0eLGQ"},
     {Type = "error.curl.log", taskId = "ZYFKUNR5RhmrBAq4Z4KB9g"},
+    {Type = "error.curl.resource_monitor", taskId = "USQ8K5YcQJKQgybb28cyXg"},
     {Type = "error.curl.perfherder", taskId = "USQ8K5YcQJKQgybb28cyXg"},
     }
 

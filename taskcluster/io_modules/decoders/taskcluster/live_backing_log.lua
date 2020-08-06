@@ -97,6 +97,12 @@ local artifact_list_schema = fh:read("*a")
 artifact_list_schema = rjson.parse_schema(artifact_list_schema)
 fh:close()
 
+local resource_monitor_schema_file = cfg.taskcluster_schema_path .. "/resource_monitor.49.schema.json"
+fh = assert(io.open(resource_monitor_schema_file, "r"))
+local resource_monitor_schema = fh:read("*a")
+resource_monitor_schema = rjson.parse_schema(resource_monitor_schema)
+fh:close()
+local resource_monitor_path = "public/monitoring/resource-monitor.json"
 
 local function get_url(path)
     return base_tc_url .. "/" .. path
@@ -1075,6 +1081,30 @@ local function get_artifact_list(pj, rid, recover, token)
 end
 
 
+local function process_resource_monitor(pj, recover)
+    local logtype   = "resource_monitor"
+    local tid       = pj.status.taskId
+    local rid       = pj.runId
+    local path      = get_artifact_path(tid, rid, resource_monitor_path)
+
+    local s = get_artifact_string(tid, path, recover, logtype)
+    local j = json_decode_api(s, tid, recover, logtype)
+    if not j or not j.version then return end
+
+    local t = {}
+    t.taskId        = tid
+    t.provisionerId = pj.status.provisionerId
+    t.taskGroupId   = pj.status.taskGroupId
+    t.workerType    = pj.status.workerType
+    t.workerGroup   = pj.workerGroup
+    t.workerId      = pj.workerId
+    t.runId         = rid
+    t.time          = pj.status.runs[rid + 1].started
+    t.payload       = j
+    inject_validated_msg(t, logtype, resource_monitor_schema, resource_moniter_file, tid)
+end
+
+
 local function process_artifact_history(pj, recover)
     local rid = pj.runId + 1
     local j
@@ -1256,6 +1286,18 @@ local function get_log_file(pj, base_msg, recover)
 end
 
 
+local function get_resource_monitor(pj, al, recover)
+    if al then
+        for i,v in ipairs(al.artifacts) do
+            if v.name == resource_monitor_path then
+                process_resource_monitor(pj, recover)
+                break
+            end
+        end
+    end
+end
+
+
 function decode(data, dh, mutable)
     local pj = cjson.decode(data)
     inject_pulse_task(pj, dh) -- forward all task related pulse messages to BigQuery
@@ -1266,6 +1308,7 @@ function decode(data, dh, mutable)
     or ex == "exchange/taskcluster-queue/v1/task-exception" then
         local recover = { pj = pj }
         recover.al = process_artifact_history(pj, recover)
+        get_resource_monitor(pj, recover.al, recover)
         recover.td = get_task_definition(pj.status.taskId, recover)
         if recover.td then
             inject_task_definition(pj.status.taskId, recover.td)
@@ -1283,8 +1326,16 @@ end
 function decode_artifact_list_error(data, dh, mutable)
     local recover   = cjson.decode(data)
     local pj        = recover.pj
-    local j         = get_artifact_list(pj, recover.runId)
-    inject_artifact_list(j)
+    local al        = get_artifact_list(pj, recover.runId)
+    inject_artifact_list(al)
+    if recover.runId == pj.runId then get_resource_monitor(pj, al) end
+end
+
+
+function decode_resource_monitor_error(data, dh, mutable)
+    local recover   = cjson.decode(data)
+    local pj        = recover.pj
+    process_resource_monitor(pj)
 end
 
 

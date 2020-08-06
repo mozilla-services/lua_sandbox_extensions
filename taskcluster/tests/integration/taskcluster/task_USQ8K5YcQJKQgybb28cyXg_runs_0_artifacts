@@ -23,6 +23,12 @@
       "name": "public/test_info/perfherder-data-memory.json",
       "expires": "2020-07-29T20:55:54.564Z",
       "contentType": "application/json"
+    },
+    {
+      "storageType": "s3",
+      "name": "public/monitoring/resource-monitor.json",
+      "expires": "2020-07-29T20:55:54.564Z",
+      "contentType": "application/json"
     }
   ]
 }

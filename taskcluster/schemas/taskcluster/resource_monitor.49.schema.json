@@ -1,0 +1,245 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": true,
+  "definitions": {
+    "summary_struct": {
+      "additionalProperties": true,
+      "properties": {
+        "maximum": {
+          "type": "number"
+        },
+        "mean": {
+          "type": "number"
+        },
+        "minimum": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "summary_struct_int": {
+      "additionalProperties": true,
+      "properties": {
+        "maximum": {
+          "type": "integer"
+        },
+        "mean": {
+          "type": "number"
+        },
+        "minimum": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "description": "resource monitor",
+  "properties": {
+    "payload": {
+      "additionalProperties": true,
+      "properties": {
+        "end": {
+          "type": "number"
+        },
+        "samples": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "available_memory": {
+                "type": "integer"
+              },
+              "cpu": {
+                "additionalProperties": true,
+                "properties": {
+                  "idle": {
+                    "type": "number"
+                  },
+                  "iowait": {
+                    "type": "number"
+                  },
+                  "percent": {
+                    "type": "number"
+                  },
+                  "steal": {
+                    "type": "number"
+                  },
+                  "system": {
+                    "type": "number"
+                  },
+                  "user": {
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              },
+              "disk": {
+                "additionalProperties": true,
+                "properties": {
+                  "read_bytes": {
+                    "type": "integer"
+                  },
+                  "read_count": {
+                    "type": "integer"
+                  },
+                  "write_bytes": {
+                    "type": "integer"
+                  },
+                  "write_count": {
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "memory": {
+                "additionalProperties": true,
+                "properties": {
+                  "rss": {
+                    "type": "integer"
+                  },
+                  "swap": {
+                    "type": "integer"
+                  },
+                  "vms": {
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "network": {
+                "additionalProperties": true,
+                "properties": {
+                  "bytes_recv": {
+                    "type": "integer"
+                  },
+                  "bytes_sent": {
+                    "type": "integer"
+                  },
+                  "packets_recv": {
+                    "type": "integer"
+                  },
+                  "packets_sent": {
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "process_count": {
+                "type": "integer"
+              },
+              "system_memory_used_percent": {
+                "type": "number"
+              },
+              "thread_cound": {
+                "type": "integer"
+              },
+              "timestamp": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "start": {
+          "type": "integer"
+        },
+        "summary": {
+          "additionalProperties": true,
+          "properties": {
+            "available_memory": {
+              "$ref": "#/definitions/summary_struct_int"
+            },
+            "cpu_iowait": {
+              "$ref": "#/definitions/summary_struct"
+            },
+            "cpu_percent": {
+              "$ref": "#/definitions/summary_struct"
+            },
+            "cpu_system": {
+              "$ref": "#/definitions/summary_struct"
+            },
+            "cpu_user": {
+              "$ref": "#/definitions/summary_struct"
+            },
+            "memory_percent": {
+              "$ref": "#/definitions/summary_struct"
+            },
+            "rss": {
+              "$ref": "#/definitions/summary_struct_int"
+            }
+          },
+          "type": "object"
+        },
+        "system_info": {
+          "additionalProperties": true,
+          "properties": {
+            "cpu_logical_count": {
+              "type": "integer"
+            },
+            "cpu_physical_count": {
+              "type": "integer"
+            },
+            "memory_stats": {
+              "additionalProperties": true,
+              "properties": {
+                "swap_total": {
+                  "type": "integer"
+                },
+                "vmem_total": {
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "version": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "end",
+        "samples",
+        "start",
+        "summary",
+        "system_info",
+        "version"
+      ],
+      "type": "object"
+    },
+    "provisionerId": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "integer"
+    },
+    "taskGroupId": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "time": {
+      "type": "string"
+    },
+    "workerGroup": {
+      "type": "string"
+    },
+    "workerId": {
+      "type": "string"
+    },
+    "workerType": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "time",
+    "taskId",
+    "runId",
+    "taskGroupId",
+    "payload"
+  ],
+  "title": "resource monitor",
+  "type": "object"
+}

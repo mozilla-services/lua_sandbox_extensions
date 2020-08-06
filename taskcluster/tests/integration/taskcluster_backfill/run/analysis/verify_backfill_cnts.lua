@@ -5,7 +5,7 @@
 require "string"
 require "table"
 
-local ecnts = {task_definition = 1, perfherder = 2, timing = 9, artifact_list = 1}
+local ecnts = {task_definition = 1, perfherder = 2, timing = 9, artifact_list = 1, resource_monitor = 1}
 local acnts = {}
 
 function process_message()

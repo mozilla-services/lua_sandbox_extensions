@@ -43,6 +43,10 @@ local fn = string.format("/var/tmp/%s_query.json", read_config("Logger"))
 local qfn = string.format("/var/tmp/%s_query.sql", read_config("Logger"))
 
 local sql = [[
+DECLARE
+  start_date DATE DEFAULT DATE_SUB(CURRENT_DATE(), INTERVAL 8 day);
+DECLARE
+  end_date DATE DEFAULT DATE_SUB(CURRENT_DATE(), INTERVAL 1 day);
 WITH
   hist AS (
   SELECT
