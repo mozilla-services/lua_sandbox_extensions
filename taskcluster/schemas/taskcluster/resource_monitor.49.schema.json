@@ -46,7 +46,7 @@
             "additionalProperties": true,
             "properties": {
               "available_memory": {
-                "type": "integer"
+                "type": "number"
               },
               "cpu": {
                 "additionalProperties": true,
@@ -76,16 +76,16 @@
                 "additionalProperties": true,
                 "properties": {
                   "read_bytes": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "read_count": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "write_bytes": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "write_count": {
-                    "type": "integer"
+                    "type": "number"
                   }
                 },
                 "type": "object"
@@ -94,10 +94,10 @@
                 "additionalProperties": true,
                 "properties": {
                   "rss": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "swap": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "vms": {
                     "type": "number"
@@ -109,31 +109,31 @@
                 "additionalProperties": true,
                 "properties": {
                   "bytes_recv": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "bytes_sent": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "packets_recv": {
-                    "type": "integer"
+                    "type": "number"
                   },
                   "packets_sent": {
-                    "type": "integer"
+                    "type": "number"
                   }
                 },
                 "type": "object"
               },
               "process_count": {
-                "type": "integer"
+                "type": "number"
               },
               "system_memory_used_percent": {
                 "type": "number"
               },
               "thread_cound": {
-                "type": "integer"
+                "type": "number"
               },
               "timestamp": {
-                "type": "integer"
+                "type": "number"
               }
             },
             "type": "object"
