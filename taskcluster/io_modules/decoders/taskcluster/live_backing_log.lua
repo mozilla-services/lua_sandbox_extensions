@@ -1123,7 +1123,7 @@ end
 local function get_external_perfherder_artifacts(state, tid, rid, al)
     local files = {}
     for i,v in ipairs(al.artifacts) do
-        if v.name:match("perfherder%-data") then
+        if v.name:match("perfherder%-data") and v.storageType ~= "error" then
             local fetch = false
             if state.cache.global.raptor_embedded then
                 if not state.cache.global.raptor_embedded[v.name] then
@@ -1289,7 +1289,7 @@ end
 local function get_resource_monitor(pj, al, recover)
     if al then
         for i,v in ipairs(al.artifacts) do
-            if v.name == resource_monitor_path then
+            if v.name == resource_monitor_path and v.storageType ~= "error" then
                 process_resource_monitor(pj, recover)
                 break
             end
