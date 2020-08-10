@@ -13,13 +13,17 @@ encoders_elasticsearch_common = {
     -- than the system time.
     es_index_from_timestamp = false -- optional, default shown
 
+    -- Elastic 7 and newer are moving to type-less documents (use `type_name = nil` or `_doc`)
+    -- https://www.elastic.co/guide/en/elasticsearch/reference/7.x/removal-of-types.html
+    es_version = 5 -- optional, default shown
+
     -- String to use as the `_index` key's value in the  generated JSON.
     -- Supports field interpolation as described below.
     index = "heka-%{%Y.%m.%d}" -- optional, default shown
 
     -- String to use as the `_type` key's value in the generated JSON.
     -- Supports field interpolation as described below.
-    type_name = "_doc" -- optional, default shown
+    type_name = nil -- optional, default shown
 
     -- String to use as the `_id` key's value in the generated JSON.
     -- Supports field interpolation as described below.
@@ -126,7 +130,11 @@ function load_encoder_cfg()
     end
 
     if cfg.type_name == nil then
-        cfg.type_name = "_doc"
+      if cfg.es_version < 7 then
+        cfg.type_name = "message"
+      else
+        assert(cfg.type_name == "_doc", "type_name must be nil or _doc, types are deprecated since Elasic 7.0")
+      end
     else
         assert(type(cfg.type_name) == "string", "type_name must be nil or a string")
     end
