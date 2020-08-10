@@ -40,7 +40,6 @@ local function get_start_of_day(time_t)
 end
 
 local fn = string.format("/var/tmp/%s_query.json", read_config("Logger"))
-local qfn = string.format("/var/tmp/%s_query.sql", read_config("Logger"))
 
 local sql = [[
 DECLARE
@@ -212,14 +211,9 @@ WHERE
   AND delta > 1000
 ]]
 
-local fh = assert(io.open(qfn, "wb"))
-fh:write(sql)
-fh:close()
-fh = nil
-
 
 local function usage_query(cmd, st, et)
-    print("cmd", cmd)
+    print("running usage_query")
     local rv = os.execute(cmd)
     if rv ~= 0 then
         pcall(inject_message, {
@@ -262,7 +256,7 @@ function process_message(checkpoint)
     checkpoint = checkpoint or get_start_of_day(time_t)
 
     if time_t - checkpoint >= 86400 + (3600 * 8) then
-        local cmd = string.format("rm -f %s;bq query --nouse_legacy_sql --format prettyjson --flagfile %s > %s", fn, qfn, fn)
+        local cmd = string.format("rm -f %s;bq query --nouse_legacy_sql --format prettyjson '%s' > %s", fn, sql, fn)
         checkpoint = usage_query(cmd, checkpoint, time_t)
     end
 
