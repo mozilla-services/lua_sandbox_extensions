@@ -19,7 +19,7 @@ encoders_elasticsearch_common = {
 
     -- String to use as the `_type` key's value in the generated JSON.
     -- Supports field interpolation as described below.
-    type_name = "message" -- optional, default shown
+    type_name = "_doc" -- optional, default shown
 
     -- String to use as the `_id` key's value in the generated JSON.
     -- Supports field interpolation as described below.
@@ -126,7 +126,7 @@ function load_encoder_cfg()
     end
 
     if cfg.type_name == nil then
-        cfg.type_name = "message"
+        cfg.type_name = "_doc"
     else
         assert(type(cfg.type_name) == "string", "type_name must be nil or a string")
     end
