@@ -114,7 +114,8 @@ if cfg.integration_test then
 end
 
 -- taskcluster live_backing.log
-local time          = l.Ct(dt.date_fullyear * "-" * dt.date_month * "-" * dt.date_mday * l.S"T " * dt.time_hour * ":" * dt.time_minute * ":" * dt.time_second * dt.time_secfrac^-1 * "Z")
+-- multiple timestamp formats https://github.com/taskcluster/taskcluster/pull/3468
+local time          = l.Ct(dt.date_fullyear * "-" * dt.date_month * "-" * dt.date_mday * l.S"T " * dt.time_hour * ":" * dt.time_minute * ":" * dt.time_second * dt.time_secfrac^-1 * (l.P"Z" + l.P"+00:00"))
 local time_header   = l.P"[" * l.Cg(l.alpha^1, "name") * l.space^1 * l.Cg(time, "date_time") * "]" * l.space^1
 local task_header   = l.Cg(l.Ct(dt.time_hour * ":" * dt.time_minute * ":" * dt.time_second), "time") * l.space^1 * l.Cg(l.alpha^1, "priority") * l.space^1 * "-" + (dt.rfc3339_full_date * "T" * dt.rfc3339_full_time)
 local message       = l.space^0 * l.Cg(l.Cp(), "msg")
@@ -207,7 +208,8 @@ local function inject_pulse_task(j, dh)
             ns = dt.time_to_ns(time:match(run.started or run.scheduled)) -- keep the start/end in same table partition
         end
     end
-    if not ns then ns = dh.Timestamp or os.time() * 1e9 end -- task defined has no time, use the original ingestion time
+    -- dt.time_to_ns returns 0 when given a nil argument
+    if not ns or ns == 0 then ns = dh.Timestamp or os.time() * 1e9 end -- task defined has no time, use the original ingestion time
     j.time = date.format(ns, "%Y-%m-%dT%H:%M:%SZ")
     inject_validated_msg(j, "pulse_task", pulse_task_schema, pulse_task_schema_file, j.status.taskId)
 end
