@@ -73,16 +73,19 @@ local function process_config(y, time_t)
     local dstr = os.date("%Y-%m-%d", time_t)
     local entries = {}
     for i,v in ipairs(y.pools) do
-        local pid, wt = string.match(v.pool_id, "([^/]+)/(.+)")
-        for m,n in ipairs(v.config.instance_types) do
-            local cap = n.capacityPerInstance or 1
-            if cap > 1 then
-                if pid == "{pool-group}" then
-                    for o,p in ipairs(v.variants) do
-                        entries[#entries + 1] = {date = dstr, provisionerId = p["pool-group"], workerType = wt, providerId = v.provider_id, capacity = cap, instanceType = n.instanceType or n.machine_type}
+        -- 'static' providers do not contain instance_types configuration
+        if v.provider_id ~= "static" then
+            local pid, wt = string.match(v.pool_id, "([^/]+)/(.+)")
+            for m,n in ipairs(v.config.instance_types) do
+                local cap = n.capacityPerInstance or 1
+                if cap > 1 then
+                    if pid == "{pool-group}" then
+                        for o,p in ipairs(v.variants) do
+                            entries[#entries + 1] = {date = dstr, provisionerId = p["pool-group"], workerType = wt, providerId = v.provider_id, capacity = cap, instanceType = n.instanceType or n.machine_type}
+                        end
+                    else
+                        entries[#entries + 1] = {date = dstr, provisionerId = pid, workerType = wt, providerId = v.provider_id, capacity = cap, instanceType = n.instanceType or n.machine_type}
                     end
-                else
-                    entries[#entries + 1] = {date = dstr, provisionerId = pid, workerType = wt, providerId = v.provider_id, capacity = cap, instanceType = n.instanceType or n.machine_type}
                 end
             end
         end
