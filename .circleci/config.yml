@@ -1,0 +1,81 @@
+# These environment variables must be set in CircleCI UI
+#
+# DOCKERHUB_REPO - docker hub repo, format: <username>/<repo>
+# DOCKER_USER
+# DOCKER_PASS
+#
+
+version: 2.1
+jobs:
+  build_test:
+    docker:
+      - image: mozilla/cidockerbases:docker-latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: /
+    steps:
+      - checkout:
+          path: /lua_sandbox_extensions
+      - setup_remote_docker:
+          docker_layer_caching: true
+          version: 19.03.13
+
+      - run:
+          working_directory: /lua_sandbox_extensions
+          command: |
+            docker build -t local/lua_sandbox_extensions .
+
+      - run:
+          command: |
+            docker run local/lua_sandbox_extensions \
+            bash -c 'cd /root/lua_sandbox_extensions/release && ctest -V -C integration'
+
+      - run: docker save -o /tmp/docker_image_build.tar local/lua_sandbox_extensions
+
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - docker_image_build.tar
+  deploy:
+    docker:
+      - image: mozilla/cidockerbases:docker-latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: /
+    steps:
+      - checkout:
+          path: /lua_sandbox_extensions
+
+      - setup_remote_docker:
+          docker_layer_caching: true
+          version: 19.03.13
+
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - run: docker load -i /tmp/workspace/docker_image_build.tar
+
+      - run:
+          working_directory: /lua_sandbox_extensions
+          command: |
+            ./docker_push.sh $CIRCLE_BRANCH
+
+workflows:
+  version: 2.1
+  build_test_deploy:
+    jobs:
+      - build_test:
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - build_test
+          filters:
+            branches:
+              only:
+                - dev
+                - test
+                - master
