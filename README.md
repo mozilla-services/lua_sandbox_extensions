@@ -45,19 +45,19 @@ decoupling the module and business logic maintenance and deployment.
 ### Docker Images
 
 Docker images [are built](https://hub.docker.com/r/mozilla/lua_sandbox_extensions/) from
-the `dev` and `master` branches. These images contain [hindsight](https://github.com/mozilla-services/hindsight),
+the `dev` and `main` branches. These images contain [hindsight](https://github.com/mozilla-services/hindsight),
 [lua_sandbox](https://github.com/mozilla-services/lua_sandbox) and have all of the extensions
 from this repository installed.
 
-    # Get master branch docker image
-    docker pull mozilla/lua_sandbox_extensions:master
-    
+    # Get main branch docker image
+    docker pull mozilla/lua_sandbox_extensions:main
+
     # Get dev branch docker image
     docker pull mozilla/lua_sandbox_extensions:dev
 
 ## Releases
 
-* The master branch is the current release and is considered stable at all
+* The main branch is the current release and is considered stable at all
   times.
 * New versions can be released as frequently as every two weeks (our sprint
   cycle). The only exception would be for a high priority patch.
@@ -65,13 +65,13 @@ from this repository installed.
   project dashboard.
 * New releases occur the day after the sprint finishes.
   * The version in the dev branch is updated
-  * The changes are merged into master
+  * The changes are merged into main
   * A new tag is created
 
 ## Contributions
 
 * All pull requests must be made against the dev branch, direct commits to
-  master are not permitted.
+  main are not permitted.
 * All non trivial contributions should start with an issue being filed (if it is
   a new feature please propose your design/approach before doing any work as not
   all feature requests are accepted).
