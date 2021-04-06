@@ -1,8 +1,8 @@
 #!/bin/bash
 
 tag=""
-if [[ $1 = "master" ]]; then
-    tag="mozilla/lua_sandbox_extensions:master"
+if [[ $1 = "main" ]]; then
+    tag="mozilla/lua_sandbox_extensions:main"
 elif [[ $1 = "dev" ]]; then
     tag="mozilla/lua_sandbox_extensions:dev"
 elif [[ $1 = "test" ]]; then

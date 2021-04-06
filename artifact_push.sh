@@ -1,5 +1,5 @@
 #!/bin/bash
-curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
+curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/main/install | bash
 tar -C dist -zcvf all.tgz .
 
 export ARTIFACTS_PERMISSIONS="public-read"

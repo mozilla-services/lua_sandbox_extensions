@@ -150,7 +150,7 @@ local function extract_lua_docs(path, paths)
         local ofh = assert(io.open(string.format("%s/%s", output_dir, outfn), "w"))
         p.entries[get_filename(line)] = {line = line, title = title}
         ofh:write(doc)
-        ofh:write(string.format("\n\nsource code: [%s](https://github.com/mozilla-services/lua_sandbox_extensions/blob/master/%s)\n", get_filename(line), line))
+        ofh:write(string.format("\n\nsource code: [%s](https://github.com/mozilla-services/lua_sandbox_extensions/blob/main/%s)\n", get_filename(line), line))
         ofh:close()
     end
     fh:close()
