@@ -29,7 +29,7 @@ decoupling the module and business logic maintenance and deployment.
     cd release
 
     # UNIX
-    cmake -DCMAKE_BUILD_TYPE=release -DENABLE_ALL_EXT=true -DCPACK_GENERATOR=TGZ ..
+    cmake .. -DCMAKE_BUILD_TYPE=release -DENABLE_ALL_EXT=true -DCPACK_GENERATOR=TGZ ..
     # or cherry pick using -DEXT_xxx=on i.e. -DEXT_lpeg=on (specifying no
     # extension will provide a list of all available extensions)
     make
