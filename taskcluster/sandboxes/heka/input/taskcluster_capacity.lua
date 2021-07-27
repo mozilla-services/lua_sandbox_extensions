@@ -72,9 +72,10 @@ end
 local function process_config(y, time_t)
     local dstr = os.date("%Y-%m-%d", time_t)
     local entries = {}
+    -- only include valid_providers, 'azure2' and 'static' are not supported
+    local valid_providers = {google=true, aws=true}
     for i,v in ipairs(y.pools) do
-        -- 'static' providers do not contain instance_types configuration
-        if v.provider_id ~= "static" then
+        if valid_providers[v.provider_id] then
             local pid, wt = string.match(v.pool_id, "([^/]+)/(.+)")
             for m,n in ipairs(v.config.instance_types) do
                 local cap = n.capacityPerInstance or 1
