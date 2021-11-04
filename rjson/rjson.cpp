@@ -33,7 +33,26 @@ int luaopen_rjson(lua_State *lua);
 #include "luasandbox_output.h"
 #endif
 
+#include "rjson_allocator.h"
 namespace rj = rapidjson;
+
+#ifdef LUA_SANDBOX
+typedef SandboxMemoryAllocator Allocator;
+typedef rj::GenericDocument<rj::UTF8<>, SandboxMemoryAllocator > Document;
+typedef rj::GenericValue<rj::UTF8<>, SandboxMemoryAllocator > Value;
+typedef rj::GenericSchemaDocument<Value, SandboxMemoryAllocator > SchemaDocument;
+typedef rj::GenericSchemaValidator<SchemaDocument, rj::BaseReaderHandler<rj::UTF8<char>, void>, SandboxMemoryAllocator> SchemaValidator;
+typedef rj::GenericStringBuffer<rj::UTF8<>, SandboxMemoryAllocator > StringBuffer;
+typedef rj::GenericPointer<Value, SandboxMemoryAllocator> Pointer;
+#else
+typedef rj::MemoryPoolAllocator Allocator;
+typedef rj::Document Document;
+typedef rj::Value Value;
+typedef rj::SchemaDocument SchemaDocument;
+typedef rj::Validator SchemaValidator;
+typedef rj::StringBuffer StringBuffer;
+typedef rj::Pointer Pointer;
+#endif
 
 typedef struct rjson_buffer
 {
@@ -45,22 +64,22 @@ typedef struct rjson_buffer
 
 typedef struct rjson
 {
-  rj::MemoryPoolAllocator<>             *mpa;
-  rj::Document                          *doc;
-  rj::Value                             *val;
-  std::unordered_map<rj::Value *, bool> *refs;
-  rjson_buffer                          insitu;
+  Allocator                         *mpa;
+  Document                          *doc;
+  Value                             *val;
+  std::unordered_map<Value *, bool> *refs;
+  rjson_buffer                       insitu;
 } rjson;
 
 typedef struct rjson_schema
 {
-  rj::SchemaDocument *doc;
+  SchemaDocument *doc;
 } rjson_schema;
 
 typedef struct rjson_object_iterator
 {
-  rj::Value::MemberIterator *it;
-  rj::Value::MemberIterator *end;
+  Value::MemberIterator *it;
+  Value::MemberIterator *end;
 } rjson_object_iterator;
 
 static const char *mozsvc_rjson             = "mozsvc.rjson";
@@ -75,23 +94,34 @@ static void init_rjson_buffer(rjson_buffer *b)
   b->capacity = 0;
 }
 
-
-static void init_rjson(rjson *j)
+static Allocator* make_memory_allocator(lua_State *lua)
 {
-  j->mpa = new rj::MemoryPoolAllocator<>;
-  j->doc = new rj::Document(j->mpa);
+  #ifdef LUA_SANDBOX
+    lua_getfield(lua, LUA_REGISTRYINDEX, LSB_HEKA_THIS_PTR);
+    lsb_heka_sandbox *hsb = static_cast<lsb_heka_sandbox *>(lua_touserdata(lua, -1));
+    lua_pop(lua, 1); // remove this ptr
+    return new Allocator(hsb);
+  #else
+    return new Allocator();
+  #endif
+}
+
+static void init_rjson(rjson *j, lua_State *lua)
+{
+  j->mpa = make_memory_allocator(lua);
+  j->doc = new Document(j->mpa);
   j->val = NULL;
-  j->refs = new std::unordered_map<rj::Value *, bool>;
+  j->refs = new std::unordered_map<Value *, bool>;
   init_rjson_buffer(&j->insitu);
 }
 
 
-static rj::Value* check_value(lua_State *lua)
+static Value* check_value(lua_State *lua)
 {
   int n = lua_gettop(lua);
   luaL_argcheck(lua, n >= 1 && n <= 2, 0, "invalid number of arguments");
   rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
-  rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, 2));
+  Value *v = static_cast<Value *>(lua_touserdata(lua, 2));
   if (!v) {
     int t = lua_type(lua, 2);
     if (t == LUA_TNONE) {
@@ -126,7 +156,7 @@ static int iter_gc(lua_State *lua)
 }
 
 
-static void delete_owned_refs(std::unordered_map<rj::Value *, bool> *refs)
+static void delete_owned_refs(std::unordered_map<Value *, bool> *refs)
 {
   auto end = refs->end();
   for (auto it = refs->begin(); it != end; ++it) {
@@ -160,13 +190,14 @@ static int rjson_parse_schema(lua_State *lua)
   lua_setmetatable(lua, -2);
 
   { // allows doc to be destroyed before the longjmp
-    rj::Document doc;
+    Allocator *a = make_memory_allocator(lua);
+    Document doc (a);
     if (doc.Parse(json).HasParseError()) {
       lua_pushfstring(lua, "failed to parse offset:%f %s",
                       (lua_Number)doc.GetErrorOffset(),
                       rj::GetParseError_En(doc.GetParseError()));
     } else {
-      hs->doc = new rj::SchemaDocument(doc);
+      hs->doc = new SchemaDocument(doc, NULL, a);
       if (!hs->doc) {
         lua_pushstring(lua, "memory allocation failed");
       }
@@ -188,7 +219,7 @@ static int rjson_parse(lua_State *lua)
     luaL_typerror(lua, 2, "boolean");
   }
   rjson *j = static_cast<rjson *>(lua_newuserdata(lua, sizeof*j));
-  init_rjson(j);
+  init_rjson(j, lua);
   luaL_getmetatable(lua, mozsvc_rjson);
   lua_setmetatable(lua, -2);
 
@@ -262,18 +293,17 @@ static int rjson_dparse(lua_State *lua)
 
 static int rjson_validate(lua_State *lua)
 {
-  rjson *j = static_cast<rjson *>
-      (luaL_checkudata(lua, 1, mozsvc_rjson));
+  rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
   rjson_schema *hs = static_cast<rjson_schema *>
       (luaL_checkudata(lua, 2, mozsvc_rjson_schema));
 
-  rj::SchemaValidator validator(*hs->doc);
-  rj::Value *v = j->doc ? j->doc : j->val;
+  SchemaValidator validator(*hs->doc, j->mpa);
+  Value *v = j->doc ? j->doc : j->val;
   if (!v->Accept(validator)) {
     lua_pushboolean(lua, false);
     luaL_Buffer b;
     luaL_buffinit(lua, &b);
-    rj::StringBuffer sb;
+    StringBuffer sb(j->mpa);
     validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
     luaL_addstring(&b, "SchemaURI: ");
     luaL_addstring(&b, sb.GetString());
@@ -301,7 +331,7 @@ static int rjson_find(lua_State *lua)
 {
   rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
   int start = 3;
-  rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, 2));
+  Value *v = static_cast<Value *>(lua_touserdata(lua, 2));
   if (!v) {
     v = j->doc ? j->doc : j->val;
     start = 2;
@@ -318,7 +348,7 @@ static int rjson_find(lua_State *lua)
           lua_pushnil(lua);
           return 1;
         }
-        rj::Value::MemberIterator itr = v->FindMember(lua_tostring(lua, i));
+        Value::MemberIterator itr = v->FindMember(lua_tostring(lua, i));
         if (itr == v->MemberEnd()) {
           lua_pushnil(lua);
           return 1;
@@ -353,7 +383,7 @@ static int rjson_find(lua_State *lua)
 
 static int rjson_type(lua_State *lua)
 {
-  rj::Value *v = check_value(lua);
+  Value *v = check_value(lua);
   if (!v) {
     lua_pushnil(lua);
     return 1;
@@ -386,7 +416,7 @@ static int rjson_type(lua_State *lua)
 
 static int rjson_size(lua_State *lua)
 {
-  rj::Value *v = check_value(lua);
+  Value *v = check_value(lua);
   if (!v) {
     lua_pushnil(lua);
     return 1;
@@ -418,7 +448,7 @@ static int rjson_object_iter(lua_State *lua)
 {
   rjson_object_iterator *hoi = static_cast<rjson_object_iterator *>
       (lua_touserdata(lua, lua_upvalueindex(1)));
-  rj::Value *v = (rj::Value *)lua_touserdata(lua, lua_upvalueindex(2));
+  Value *v = (Value *)lua_touserdata(lua, lua_upvalueindex(2));
   rjson *j = (rjson *)lua_touserdata(lua, lua_upvalueindex(3));
 
   if (j->refs->find(v) == j->refs->end()) {
@@ -426,7 +456,7 @@ static int rjson_object_iter(lua_State *lua)
   }
 
   if (*hoi->it != *hoi->end) {
-    rj::Value *next = &(*hoi->it)->value;
+    Value *next = &(*hoi->it)->value;
     j->refs->insert(std::make_pair(next, false));
     lua_pushlstring(lua, (*hoi->it)->name.GetString(),
                     (size_t)(*hoi->it)->name.GetStringLength());
@@ -444,7 +474,7 @@ static int rjson_array_iter(lua_State *lua)
 {
   rj::SizeType it = (rj::SizeType)lua_tonumber(lua, lua_upvalueindex(1));
   rj::SizeType end = (rj::SizeType)lua_tonumber(lua, lua_upvalueindex(2));
-  rj::Value *v = (rj::Value *)lua_touserdata(lua, lua_upvalueindex(3));
+  Value *v = (Value *)lua_touserdata(lua, lua_upvalueindex(3));
   rjson *j = (rjson *)lua_touserdata(lua, lua_upvalueindex(4));
 
   if (j->refs->find(v) == j->refs->end()) {
@@ -452,7 +482,7 @@ static int rjson_array_iter(lua_State *lua)
   }
 
   if (it != end) {
-    rj::Value *next = &(*v)[it];
+    Value *next = &(*v)[it];
     j->refs->insert(std::make_pair(next, false));
     lua_pushnumber(lua, (lua_Number)it);
     lua_pushlightuserdata(lua, next);
@@ -470,7 +500,7 @@ static int rjson_array_iter(lua_State *lua)
 
 static int rjson_value(lua_State *lua)
 {
-  rj::Value *v = check_value(lua);
+  Value *v = check_value(lua);
   if (!v) {
     lua_pushnil(lua);
     return 1;
@@ -503,7 +533,7 @@ static int rjson_value(lua_State *lua)
 
 static int rjson_iter(lua_State *lua)
 {
-  rj::Value *v = check_value(lua);
+  Value *v = check_value(lua);
   if (!v) {
     lua_pushnil(lua);
     return 1;
@@ -514,8 +544,8 @@ static int rjson_iter(lua_State *lua)
     {
       rjson_object_iterator *hoi = static_cast<rjson_object_iterator *>
           (lua_newuserdata(lua, sizeof*hoi));
-      hoi->it = new rj::Value::MemberIterator;
-      hoi->end = new rj::Value::MemberIterator;
+      hoi->it = new Value::MemberIterator;
+      hoi->end = new Value::MemberIterator;
       luaL_getmetatable(lua, mozsvc_rjson_object_iter);
       lua_setmetatable(lua, -2);
       if (!hoi->it || !hoi->end) {
@@ -545,11 +575,11 @@ static int rjson_iter(lua_State *lua)
 }
 
 
-static rj::Value* remove_value(lua_State *lua, bool shallow)
+static Value* remove_value(lua_State *lua, bool shallow)
 {
   rjson *j = static_cast<rjson *>(luaL_checkudata(lua, 1, mozsvc_rjson));
-  rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, 2));
-  rj::Value *rv = NULL;
+  Value *v = static_cast<Value *>(lua_touserdata(lua, 2));
+  Value *rv = NULL;
 
   int n = lua_gettop(lua);
   int start = 3;
@@ -570,13 +600,13 @@ static rj::Value* remove_value(lua_State *lua, bool shallow)
         if (!v->IsObject()) {
           return rv;
         }
-        rj::Value::MemberIterator itr = v->FindMember(lua_tostring(lua, i));
+        Value::MemberIterator itr = v->FindMember(lua_tostring(lua, i));
         if (itr == v->MemberEnd()) {
           return rv;
         }
         if (i == n) {
           j->refs->erase(&itr->value);
-          rv = new rj::Value;
+          rv = new Value;
           if (shallow) {
             j->refs->insert(std::make_pair(rv, true));
           }
@@ -598,7 +628,7 @@ static rj::Value* remove_value(lua_State *lua, bool shallow)
         }
         if (i == n) {
           j->refs->erase(&(*v)[idx]);
-          rv = new rj::Value;
+          rv = new Value;
           if (shallow) {
             j->refs->insert(std::make_pair(rv, true));
           }
@@ -619,16 +649,16 @@ static rj::Value* remove_value(lua_State *lua, bool shallow)
 
 static int rjson_remove(lua_State *lua)
 {
-  rj::Value *v = remove_value(lua, false);
+  Value *v = remove_value(lua, false);
   if (!v) {
     lua_pushnil(lua);
     return 1;
   }
   rjson *nv = static_cast<rjson *>(lua_newuserdata(lua, sizeof*nv));
-  nv->mpa = new rj::MemoryPoolAllocator<>;
+  nv->mpa = make_memory_allocator(lua);
   nv->doc = NULL;
-  nv->val = new rj::Value(*v, *nv->mpa); // deep copy
-  nv->refs = new std::unordered_map<rj::Value *, bool>;
+  nv->val = new Value(*v, *nv->mpa); // deep copy
+  nv->refs = new std::unordered_map<Value *, bool>;
   init_rjson_buffer(&nv->insitu);
   luaL_getmetatable(lua, mozsvc_rjson);
   lua_setmetatable(lua, -2);
@@ -645,7 +675,7 @@ static int rjson_remove(lua_State *lua)
 
 static int rjson_remove_shallow(lua_State *lua)
 {
-  rj::Value *v = remove_value(lua, true);
+  Value *v = remove_value(lua, true);
   if (!v) {
     lua_pushnil(lua);
     return 1;
@@ -756,7 +786,7 @@ private:
 
 static int rjson_make_field(lua_State *lua)
 {
-  rj::Value *v = check_value(lua);
+  Value *v = check_value(lua);
   if (!v) {
     lua_pushnil(lua);
     return 1;
@@ -778,7 +808,7 @@ static int output_rjson(lua_State *lua)
   lsb_output_buffer *ob = static_cast<lsb_output_buffer *>
       (lua_touserdata(lua, -1));
   rjson *j = static_cast<rjson *>(lua_touserdata(lua, -2));
-  rj::Value *v = static_cast<rj::Value *>(lua_touserdata(lua, -3));
+  Value *v = static_cast<Value *>(lua_touserdata(lua, -3));
   if (!(ob && j)) {
     return 1;
   }
@@ -920,7 +950,7 @@ static int rjson_parse_message(lua_State *lua)
   if (!json.s) return luaL_error(lua, "field not found");
 
   rjson *j = static_cast<rjson *>(lua_newuserdata(lua, sizeof*j));
-  init_rjson(j);
+  init_rjson(j, lua);
   luaL_getmetatable(lua, mozsvc_rjson);
   lua_setmetatable(lua, -2);
 
